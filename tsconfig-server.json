@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "outDir": "build/server",
+    "module": "commonjs",
+    "target": "es5",
+    "lib": ["es6", "dom", "es2017.object"],
+    "sourceMap": true,
+    "allowJs": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "experimentalDecorators": true,
+    "importHelpers": true
+  },
+  "files": [
+    "src/Server/index.ts",
+    "types/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "scripts",
+    "config",
+    "src/index.ts",
+    "src/registerServiceWorker.ts"
+  ]
+}

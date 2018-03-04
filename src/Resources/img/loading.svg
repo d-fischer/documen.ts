@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke="#d3d3d3">
+    <style scoped="scoped">
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+            transform-origin: 50% 50%;
+            fill: none;
+        }
+    </style>
+    <path class="loading-spinner" d="M32,32 m0,-24 a24,24 0 0,1 24,24" fill="none" stroke-width="8" />
+    <path class="loading-spinner second" d="M32,32 m0,24 a24,24 0 0,1 -24,-24" fill="none" stroke-width="8" />
+</svg>

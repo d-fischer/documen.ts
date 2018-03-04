@@ -1,0 +1,11 @@
+@import "../vars";
+
+.Card {
+	margin: 1em;
+	padding: 1em;
+	border: 1px solid $invertedBorderColor;
+
+	h3, h4 {
+		margin: 0;
+	}
+}
