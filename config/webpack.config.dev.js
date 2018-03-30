@@ -5,9 +5,6 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 
@@ -16,16 +13,25 @@ const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
 
 module.exports = {
+	mode: 'development',
 	devtool: 'cheap-module-source-map',
 	devServer: {
+		disableHostCheck: true,
+		clientLogLevel: 'none',
+		contentBase: paths.appPublic,
+		watchContentBase: true,
 		inline: true,
 		hot: true,
-		contentBase: './public',
 		port: 3000,
-		historyApiFallback: true
+		historyApiFallback: true,
+		watchOptions: {
+			ignored: /node_modules/
+		},
+		stats: {
+			entrypoints: true
+		}
 	},
 	entry: [
-		'react-hot-loader/patch',
 		require.resolve('webpack/hot/dev-server'),
 		require.resolve('react-error-overlay'),
 		paths.appIndexJs,
@@ -45,16 +51,13 @@ module.exports = {
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
-		plugins: [
-			new ModuleScopePlugin(paths.appSrc),
-		],
 	},
 	module: {
 		strictExportPresence: true,
 		rules: [
 			{
 				test: /\.tsx?$/,
-				loader: require.resolve('tslint-loader'),
+				loader: 'tslint-loader',
 				enforce: 'pre',
 				include: paths.appSrc,
 				options: {
@@ -63,7 +66,7 @@ module.exports = {
 			},
 			{
 				test: /\.js$/,
-				loader: require.resolve('source-map-loader'),
+				loader: 'source-map-loader',
 				enforce: 'pre',
 				include: paths.appSrc,
 			},
@@ -80,14 +83,14 @@ module.exports = {
 					/\.s[ac]ss$/,
 					/Resources\/.+\.svg$/
 				],
-				loader: require.resolve('file-loader'),
+				loader: 'file-loader',
 				options: {
 					name: 'static/media/[name].[hash:8].[ext]',
 				},
 			},
 			{
 				test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-				loader: require.resolve('url-loader'),
+				loader: 'url-loader',
 				options: {
 					limit: 10000,
 					name: 'static/media/[name].[hash:8].[ext]',
@@ -96,28 +99,25 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				include: paths.appSrc,
-				use: [
-					'react-hot-loader/webpack',
-					{
-						loader: 'ts-loader',
-						options: {
-							silent: true
-						}
+				use: {
+					loader: 'awesome-typescript-loader',
+					options: {
+						silent: true
 					}
-				],
+				},
 			},
 			{
 				test: /\.css$/,
 				use: [
-					require.resolve('style-loader'),
+					'style-loader',
 					{
-						loader: require.resolve('css-loader'),
+						loader: 'css-loader',
 						options: {
 							importLoaders: 1,
 						},
 					},
 					{
-						loader: require.resolve('postcss-loader'),
+						loader: 'postcss-loader',
 						options: {
 							ident: 'postcss',
 							plugins: () => [
@@ -139,15 +139,15 @@ module.exports = {
 			{
 				test: /\.s[ac]ss$/,
 				use: [
-					require.resolve('style-loader'),
+					'style-loader',
 					{
-						loader: require.resolve('css-loader'),
+						loader: 'css-loader',
 						options: {
 							sourceMap: true
 						}
 					},
 					{
-						loader: require.resolve('sass-loader'),
+						loader: 'sass-loader',
 						options: {
 							sourceMap: true,
 							includePaths: [
@@ -165,7 +165,6 @@ module.exports = {
 		],
 	},
 	plugins: [
-		new InterpolateHtmlPlugin(env.raw),
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: paths.appHtml,
@@ -174,7 +173,6 @@ module.exports = {
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.HotModuleReplacementPlugin(),
 		new CaseSensitivePathsPlugin(),
-		new WatchMissingNodeModulesPlugin(paths.appNodeModules),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 	],
 	node: {

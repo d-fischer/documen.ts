@@ -3,14 +3,11 @@
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 
 const publicPath = paths.servedPath;
-const shouldUseRelativeAssetPaths = publicPath === './';
 const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
 
@@ -18,13 +15,8 @@ if (env.stringified['process.env'].NODE_ENV !== '"production"') {
 	throw new Error('Production builds must have NODE_ENV=production.');
 }
 
-const cssFilename = 'style.css';
-
-const extractTextPluginOptions = shouldUseRelativeAssetPaths
-	? {publicPath: Array(cssFilename.split('/').length).join('../')}
-	: {};
-
 module.exports = {
+	mode: 'production',
 	target: 'node',
 	externals: nodeExternals({whitelist: [/\.css$/]}),
 	bail: true,
@@ -46,16 +38,13 @@ module.exports = {
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
 		extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
-		plugins: [
-			new ModuleScopePlugin(paths.appSrc),
-		],
 	},
 	module: {
 		strictExportPresence: true,
 		rules: [
 			{
 				test: /\.tsx?$/,
-				loader: require.resolve('tslint-loader'),
+				loader: 'tslint-loader',
 				enforce: 'pre',
 				include: paths.appSrc,
 				options: {
@@ -64,7 +53,7 @@ module.exports = {
 			},
 			{
 				test: /\.js$/,
-				loader: require.resolve('source-map-loader'),
+				loader: 'source-map-loader',
 				enforce: 'pre',
 				include: paths.appSrc,
 			},
@@ -81,7 +70,7 @@ module.exports = {
 					/\.png$/,
 					/Resources\/.+\.svg$/
 				],
-				loader: require.resolve('file-loader'),
+				loader: 'file-loader',
 				options: {
 					name: 'static/media/[name].[hash:8].[ext]',
 					emitFile: false
@@ -89,7 +78,7 @@ module.exports = {
 			},
 			{
 				test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-				loader: require.resolve('url-loader'),
+				loader: 'url-loader',
 				options: {
 					limit: 10000,
 					name: 'static/media/[name].[hash:8].[ext]',
@@ -99,70 +88,68 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				include: paths.appSrc,
-				loader: require.resolve('awesome-typescript-loader')
+				loader: 'awesome-typescript-loader',
 			},
 			{
 				test: /\.css$/,
-				loader: ExtractTextPlugin.extract({
-					fallback: require.resolve('style-loader'),
-					use: [
-						{
-							loader: require.resolve('css-loader'),
-							options: {
-								importLoaders: 1,
-								minimize: true,
-								sourceMap: true,
-							},
+				exclude: /node_modules/,
+				loader: [
+					{
+						loader: 'css-loader/locals',
+						options: {
+							importLoaders: 1,
+							minimize: true,
+							sourceMap: true,
 						},
-						{
-							loader: require.resolve('postcss-loader'),
-							options: {
-								// Necessary for external CSS imports to work
-								// https://github.com/facebookincubator/create-react-app/issues/2677
-								ident: 'postcss',
-								plugins: () => [
-									require('postcss-flexbugs-fixes'),
-									autoprefixer({
-										browsers: [
-											'>1%',
-											'last 4 versions',
-											'Firefox ESR',
-											'not ie < 9', // React doesn't support IE8 anyway
-										],
-										flexbox: 'no-2009',
-									}),
-								],
-							},
+					},
+					{
+						loader: 'postcss-loader',
+						options: {
+							// Necessary for external CSS imports to work
+							// https://github.com/facebookincubator/create-react-app/issues/2677
+							ident: 'postcss',
+							plugins: () => [
+								require('postcss-flexbugs-fixes'),
+								autoprefixer({
+									browsers: [
+										'>1%',
+										'last 4 versions',
+										'Firefox ESR',
+										'not ie < 9', // React doesn't support IE8 anyway
+									],
+									flexbox: 'no-2009',
+								}),
+							],
 						},
-					],
-					...extractTextPluginOptions
-				}),
+					},
+				]
+			},
+			{
+				test: /\.css$/,
+				include: /node_modules/,
+				loader: 'css-loader/locals'
 			},
 			{
 				test: /\.s[ac]ss$/,
-				loader: ExtractTextPlugin.extract({
-					fallback: require.resolve('style-loader'),
-					use: [
-						{
-							loader: require.resolve('css-loader'),
-							options: {
-								importLoaders: 1,
-								minimize: true,
-								sourceMap: true
-							}
-						},
-						{
-							loader: require.resolve('sass-loader'),
-							options: {
-								sourceMap: true,
-								includePaths: [
-									path.resolve(paths.appNodeModules, './compass-mixins/lib')
-								]
-							}
+				loader: [
+					{
+						loader: 'css-loader/locals',
+						options: {
+							importLoaders: 1,
+							minimize: true,
+							sourceMap: true
 						}
-					],
-					...extractTextPluginOptions
-				})
+					},
+					{
+						loader: 'sass-loader',
+						options: {
+							sourceMap: true,
+							includePaths: [
+								path.resolve(paths.appNodeModules, './compass-mixins/lib')
+							]
+						}
+					}
+				]
 			},
 			{
 				test: /Resources\/.+\.svg$/,
@@ -171,22 +158,19 @@ module.exports = {
 			}
 		],
 	},
+	optimization: {
+		minimize: false
+	},
+	performance: {
+		hints: false
+	},
+	stats: {
+		children: false,
+		modules: false
+	},
 	plugins: [
 		new webpack.DefinePlugin(env.stringified),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				warnings: false,
-				comparisons: false,
-			},
-			output: {
-				comments: false,
-				ascii_only: true,
-			},
-			sourceMap: true,
-		}),
-		new ExtractTextPlugin({filename: cssFilename}),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-		new webpack.ProgressPlugin()
 	],
 	node: {
 		__dirname: false

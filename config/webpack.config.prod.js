@@ -4,16 +4,12 @@ const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 
 const publicPath = paths.servedPath;
-const shouldUseRelativeAssetPaths = publicPath === './';
 const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
 
@@ -21,13 +17,8 @@ if (env.stringified['process.env'].NODE_ENV !== '"production"') {
 	throw new Error('Production builds must have NODE_ENV=production.');
 }
 
-const cssFilename = 'static/css/[name].[contenthash:8].css';
-
-const extractTextPluginOptions = shouldUseRelativeAssetPaths
-	? {publicPath: Array(cssFilename.split('/').length).join('../')}
-	: {};
-
 module.exports = {
+	mode: 'production',
 	bail: true,
 	devtool: 'source-map',
 	entry: [paths.appIndexJs],
@@ -46,16 +37,13 @@ module.exports = {
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
-		plugins: [
-			new ModuleScopePlugin(paths.appSrc),
-		],
 	},
 	module: {
 		strictExportPresence: true,
 		rules: [
 			{
 				test: /\.tsx?$/,
-				loader: require.resolve('tslint-loader'),
+				loader: 'tslint-loader',
 				enforce: 'pre',
 				include: paths.appSrc,
 				options: {
@@ -64,7 +52,7 @@ module.exports = {
 			},
 			{
 				test: /\.js$/,
-				loader: require.resolve('source-map-loader'),
+				loader: 'source-map-loader',
 				enforce: 'pre',
 				include: paths.appSrc,
 			},
@@ -81,14 +69,14 @@ module.exports = {
 					/\.png$/,
 					/Resources\/.+\.svg$/
 				],
-				loader: require.resolve('file-loader'),
+				loader: 'file-loader',
 				options: {
 					name: 'static/media/[name].[hash:8].[ext]',
 				},
 			},
 			{
 				test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-				loader: require.resolve('url-loader'),
+				loader: 'url-loader',
 				options: {
 					limit: 10000,
 					name: 'static/media/[name].[hash:8].[ext]',
@@ -97,70 +85,65 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				include: paths.appSrc,
-				loader: require.resolve('awesome-typescript-loader')
+				loader: 'awesome-typescript-loader'
 			},
 			{
 				test: /\.css$/,
-				loader: ExtractTextPlugin.extract({
-					fallback: require.resolve('style-loader'),
-					use: [
-						{
-							loader: require.resolve('css-loader'),
-							options: {
-								importLoaders: 1,
-								minimize: true,
-								sourceMap: true,
-							},
+				loader: [
+					'style-loader',
+					{
+						loader: 'css-loader',
+						options: {
+							importLoaders: 1,
+							minimize: true,
+							sourceMap: true,
 						},
-						{
-							loader: require.resolve('postcss-loader'),
-							options: {
-								// Necessary for external CSS imports to work
-								// https://github.com/facebookincubator/create-react-app/issues/2677
-								ident: 'postcss',
-								plugins: () => [
-									require('postcss-flexbugs-fixes'),
-									autoprefixer({
-										browsers: [
-											'>1%',
-											'last 4 versions',
-											'Firefox ESR',
-											'not ie < 9', // React doesn't support IE8 anyway
-										],
-										flexbox: 'no-2009',
-									}),
-								],
-							},
+					},
+					{
+						loader: 'postcss-loader',
+						options: {
+							// Necessary for external CSS imports to work
+							// https://github.com/facebookincubator/create-react-app/issues/2677
+							ident: 'postcss',
+							sourceMap: true,
+							plugins: () => [
+								require('postcss-flexbugs-fixes'),
+								autoprefixer({
+									browsers: [
+										'>1%',
+										'last 4 versions',
+										'Firefox ESR',
+										'not ie < 9', // React doesn't support IE8 anyway
+									],
+									flexbox: 'no-2009',
+								}),
+							],
 						},
-					],
-					...extractTextPluginOptions
-				}),
+					},
+				],
 			},
 			{
 				test: /\.s[ac]ss$/,
-				loader: ExtractTextPlugin.extract({
-					fallback: require.resolve('style-loader'),
-					use: [
-						{
-							loader: require.resolve('css-loader'),
-							options: {
-								importLoaders: 1,
-								minimize: true,
-								sourceMap: true
-							}
-						},
-						{
-							loader: require.resolve('sass-loader'),
-							options: {
-								sourceMap: true,
-								includePaths: [
-									path.resolve(paths.appNodeModules, './compass-mixins/lib')
-								]
-							}
+				loader: [
+					'style-loader',
+					{
+						loader: 'css-loader',
+						options: {
+							importLoaders: 1,
+							minimize: true,
+							sourceMap: true
 						}
-					],
-					...extractTextPluginOptions
-				})
+					},
+					{
+						loader: 'sass-loader',
+						options: {
+							sourceMap: true,
+							includePaths: [
+								path.resolve(paths.appNodeModules, './compass-mixins/lib')
+							]
+						}
+					}
+				]
 			},
 			{
 				test: /Resources\/.+\.svg$/,
@@ -169,8 +152,17 @@ module.exports = {
 			}
 		],
 	},
+	optimization: {
+		minimize: true
+	},
+	performance: {
+		hints: false
+	},
+	stats: {
+		children: false,
+		modules: false
+	},
 	plugins: [
-		new InterpolateHtmlPlugin(env.raw),
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: paths.appHtml,
@@ -188,18 +180,6 @@ module.exports = {
 			},
 		}),
 		new webpack.DefinePlugin(env.stringified),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				warnings: false,
-				comparisons: false,
-			},
-			output: {
-				comments: false,
-				ascii_only: true,
-			},
-			sourceMap: true,
-		}),
-		new ExtractTextPlugin({filename: cssFilename}),
 		new ManifestPlugin({fileName: 'asset-manifest.json'}),
 		new SWPrecacheWebpackPlugin({
 			dontCacheBustUrlsMatching: /\.\w{8}\./,
@@ -217,8 +197,7 @@ module.exports = {
 			navigateFallback: publicUrl + '/index.html',
 			staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
 		}),
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-		new webpack.ProgressPlugin()
+		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
 	],
 	node: {
 		dgram: 'empty',
