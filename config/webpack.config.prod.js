@@ -3,6 +3,7 @@
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
@@ -90,7 +91,7 @@ module.exports = {
 			{
 				test: /\.css$/,
 				loader: [
-					'style-loader',
+					MiniCssExtractPlugin.loader,
 					{
 						loader: 'css-loader',
 						options: {
@@ -125,7 +126,7 @@ module.exports = {
 			{
 				test: /\.s[ac]ss$/,
 				loader: [
-					'style-loader',
+					MiniCssExtractPlugin.loader,
 					{
 						loader: 'css-loader',
 						options: {
@@ -153,7 +154,17 @@ module.exports = {
 		],
 	},
 	optimization: {
-		minimize: true
+		minimize: true,
+		splitChunks: {
+			cacheGroups: {
+				style: {
+					name: 'style',
+					test: /\.s?css$/,
+					chunks: 'all',
+					enforce: true
+				}
+			}
+		}
 	},
 	performance: {
 		hints: false
@@ -197,7 +208,10 @@ module.exports = {
 			navigateFallback: publicUrl + '/index.html',
 			staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
 		}),
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+		new MiniCssExtractPlugin({
+			filename: 'static/css/[name].css'
+		})
 	],
 	node: {
 		dgram: 'empty',

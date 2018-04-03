@@ -1,8 +1,3 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
-const style = fs.readFileSync(path.resolve(__dirname, 'style.css'));
-
 export default function render(html: string) {
 	return `<!doctype html>
 <html lang="en">
@@ -10,7 +5,7 @@ export default function render(html: string) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Twitch.js documentation</title>
-    <style>${style}</style>
+    <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 <body>
 <div id="root">${html}</div>
