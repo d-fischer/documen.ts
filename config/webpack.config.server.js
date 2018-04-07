@@ -5,15 +5,8 @@ const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
-const getClientEnvironment = require('./env');
 
-const publicPath = paths.servedPath;
-const publicUrl = publicPath.slice(0, -1);
-const env = getClientEnvironment(publicUrl);
-
-if (env.stringified['process.env'].NODE_ENV !== '"production"') {
-	throw new Error('Production builds must have NODE_ENV=production.');
-}
+require('./env'); // for NODE_PATH
 
 module.exports = {
 	mode: 'production',
@@ -26,7 +19,6 @@ module.exports = {
 	output: {
 		path: paths.serverBuild,
 		filename: 'server.js',
-		publicPath: publicPath,
 		devtoolModuleFilenameTemplate: info =>
 			path
 				.relative(paths.appSrc, info.absoluteResourcePath)
@@ -169,7 +161,6 @@ module.exports = {
 		modules: false
 	},
 	plugins: [
-		new webpack.DefinePlugin(env.stringified),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 	],
 	node: {
