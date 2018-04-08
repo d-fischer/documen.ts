@@ -26,14 +26,34 @@ interface ReferenceSource {
 	character: number;
 }
 
-export interface ReferenceType {
-	type: string;
-	types: ReferenceType[];
+export interface IntrinsicReferenceType {
+	type: 'intrinsic';
 	name: string;
-	id?: string;
+}
+
+export interface ReferenceReferenceType {
+	type: 'reference';
+	name: string;
+	id: string;
 	typeArguments?: ReferenceType[];
+}
+
+export interface ArrayReferenceType {
+	type: 'array';
 	elementType?: ReferenceType;
 }
+
+export interface UnionReferenceType {
+	type: 'union';
+	types: ReferenceType[];
+}
+
+export interface StringLiteralReferenceType {
+	type: 'stringLiteral';
+	value: string;
+}
+
+export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType;
 
 export enum ReferenceNodeKind {
 	Global = 0,

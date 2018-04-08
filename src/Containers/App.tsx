@@ -18,7 +18,7 @@ export class App extends React.Component {
 			<div className="App">
 				<NavMenu>
 					<NavMenu.Item path="/" exact={true}>Welcome</NavMenu.Item>
-					<NavMenu.Group title="Class reference">
+					<NavMenu.Group title="Classes">
 						{filterByMember(reference.children, 'kind', ReferenceNodeKind.Class).map(value => <NavMenu.Item key={value.id} path={`/classes/${value.name}`}>{value.name}</NavMenu.Item>)}
 					</NavMenu.Group>
 				</NavMenu>

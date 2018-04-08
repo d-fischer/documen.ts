@@ -22,10 +22,13 @@ export const buildType = (def?: ReferenceType): React.ReactNode => {
 		case 'array': {
 			return <>{buildType(def.elementType)}[]</>;
 		}
+		case 'stringLiteral': {
+			return <>"{def.value}"</>;
+		}
 		default: {
 			return (
 				<>
-					{def.name}{def.typeArguments ? (
+					{def.name}{def.type === 'reference' && def.typeArguments ? (
 					<>
 						&lt;
 						{def.typeArguments.map((param, idx) => (
