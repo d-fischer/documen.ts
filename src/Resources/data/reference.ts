@@ -82,25 +82,52 @@ export enum ReferenceNodeKind {
 	Event = 8388608
 }
 
-export interface ReferenceNode {
+export interface AbstractReferenceNode {
 	id: number;
 	name: string;
 	kind: ReferenceNodeKind;
+	kindString: string;
 	comment?: ReferenceComment;
-	kindString?: string;
-	sources?: ReferenceSource[];
-	defaultValue?: string;
+	sources: ReferenceSource[];
 	flags: ReferenceFlags;
+	defaultValue?: string;
 	children: ReferenceNode[];
-	signatures?: ReferenceSignatureNode[];
-	getSignature?: ReferenceSignatureNode[];
 	groups: ReferenceGroup[];
 	type?: ReferenceType;
 }
 
-export interface ReferenceSignatureNode extends ReferenceNode {
-	parameters: ReferenceNode[];
+export interface ClassReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Class;
 }
+
+export interface SignatureReferenceNode extends AbstractReferenceNode {
+	parameters?: ReferenceNode[];
+}
+
+export interface PropertyReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Property;
+}
+
+export interface GetSignatureReferenceNode extends AbstractReferenceNode {
+	parameters?: ReferenceNode[];
+}
+
+export interface MethodReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Method;
+	signatures?: SignatureReferenceNode[];
+}
+
+export interface ConstructorReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Constructor;
+	signatures: SignatureReferenceNode[];
+}
+
+export interface AccessorReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Accessor;
+	getSignature?: GetSignatureReferenceNode[];
+}
+
+export type ReferenceNode = ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode;
 
 import * as data from './reference.json';
 

@@ -1,5 +1,7 @@
 'use strict';
 
+const PORT = process.env.PORT || 3000;
+
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
@@ -22,7 +24,7 @@ module.exports = {
 		watchContentBase: true,
 		inline: true,
 		hot: true,
-		port: 3000,
+		port: PORT,
 		historyApiFallback: true,
 		watchOptions: {
 			ignored: /node_modules/

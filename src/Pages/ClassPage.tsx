@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import CodeLink from '../Components/CodeLink';
-import reference, { ReferenceNodeKind, ReferenceSignatureNode } from '../Resources/data/reference';
+import reference, { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, ReferenceNodeKind, SignatureReferenceNode } from '../Resources/data/reference';
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
 import FunctionParamDesc from '../Components/FunctionParamDesc';
 import FunctionSignature from '../Components/FunctionSignature';
-import { buildType, hasTag } from '../Tools/CodeBuilders';
+import { hasTag } from '../Tools/CodeBuilders';
+import PropertyCard from '../Components/PropertyCard';
 
 interface ClassPageRouteProps {
 	clazz: string;
@@ -22,16 +23,18 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 		return null;
 	}
 
-	const constructor = findByMember(symbol.children, 'kind', ReferenceNodeKind.Constructor);
-	let constructorSigs: ReferenceSignatureNode[] = [];
+	const constructor: ConstructorReferenceNode | undefined = findByMember(symbol.children, 'kind', ReferenceNodeKind.Constructor);
+	let constructorSigs: SignatureReferenceNode[] = [];
 	if (constructor) {
-		constructorSigs = constructor.signatures!;
+		constructorSigs = constructor.signatures;
 	}
 
-	const properties = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Property);
+	const methods: MethodReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Method);
+
+	const properties: PropertyReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Property);
 	const propertiesWithoutEvents = properties.filter(prop => !hasTag(prop, 'eventListener'));
 
-	const accessors = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Accessor);
+	const accessors: AccessorReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Accessor);
 
 	return (
 		<>
@@ -52,28 +55,26 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 						))}
 					</>
 				) : null}
+				{methods.length ? (
+					<>
+						<h2>Methods</h2>
+						{methods.map(method => method.signatures && method.signatures.map(sig => (
+							<Card key={sig.id}>
+								<FunctionSignature signature={sig}/>
+								<FunctionParamDesc signature={sig}/>
+							</Card>
+						)))}
+					</>
+				) : null}
 				{propertiesWithoutEvents.length || accessors.length ? (
 					<>
 						<h2>Properties</h2>
-						{propertiesWithoutEvents.map(prop => (
-							<Card key={prop.id}>
-								<h3>{prop.name}</h3>
-								{prop.type ? <h4>Type: {buildType(prop.type)}</h4> : null}
-								{prop.comment && prop.comment.shortText ? <p>{prop.comment.shortText}</p> : null}
-							</Card>
-						))}
+						{propertiesWithoutEvents.map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
 						{accessors.map(acc => {
 							if (!acc.getSignature || acc.getSignature.length < 1) {
 								return null;
 							}
-							const getSig = acc.getSignature[0];
-							return (
-								<Card key={acc.id}>
-									<h3>{acc.name}</h3>
-									{getSig.type ? <h4>Type: {buildType(getSig.type)}</h4> : null}
-									{getSig.comment && getSig.comment.shortText ? <p>{getSig.comment.shortText}</p> : null}
-								</Card>
-							);
+							return <PropertyCard key={acc.id} name={acc.name} definition={acc.getSignature[0]}/>;
 						})}
 					</>
 				) : null}

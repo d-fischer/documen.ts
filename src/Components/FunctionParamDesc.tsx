@@ -2,15 +2,15 @@ import * as React from 'react';
 import * as Icon from 'react-fontawesome';
 
 import { buildType } from '../Tools/CodeBuilders';
-import { ReferenceSignatureNode } from '../Resources/data/reference';
+import { SignatureReferenceNode } from '../Resources/data/reference';
 
 import './FunctionParamDesc.scss';
 
 interface FunctionParamDescProps {
-	signature: ReferenceSignatureNode;
+	signature: SignatureReferenceNode;
 }
 
-const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature }) => (
+const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature }) => signature.parameters ? (
 	<table className="FunctionParamDesc">
 		<thead>
 		<tr>
@@ -26,13 +26,13 @@ const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature }) => 
 			<tr key={param.name}>
 				<td>{param.name}</td>
 				<td>{buildType(param.type)}</td>
-				<td>{param.flags.isOptional ? '' : <Icon name="check"/>}</td>
+				<td>{param.flags.isOptional || param.defaultValue ? '' : <Icon name="check"/>}</td>
 				<td>{param.defaultValue || <em>none</em>}</td>
 				<td>{param.comment && param.comment.shortText ? param.comment.shortText : <em>none</em>}</td>
 			</tr>
 		))}
 		</tbody>
 	</table>
-);
+) : null;
 
 export default FunctionParamDesc;
