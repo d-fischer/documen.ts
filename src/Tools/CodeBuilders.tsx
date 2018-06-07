@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ReferenceNode, ReferenceType } from '../Resources/data/reference';
+import { ReferenceNode, ReferenceNodeKind, ReferenceType } from '../Resources/data/reference';
+import TypeLink from '../Components/TypeLink';
 
 export const buildType = (def?: ReferenceType): React.ReactNode => {
 	if (!def) {
@@ -8,6 +9,13 @@ export const buildType = (def?: ReferenceType): React.ReactNode => {
 
 	switch (def.type) {
 		case 'union': {
+			if (def.types.length === 2) {
+				const undefIndex = def.types.findIndex(type => type.type === 'intrinsic' && type.name === 'undefined');
+				if (undefIndex !== -1) {
+					const defIndex = +!undefIndex; // 0 => 1, 1 => 0 to find the type that isn't undefined
+					return <>?{buildType(def.types[defIndex])}</>;
+				}
+			}
 			return (
 				<>
 					{def.types.map((type, idx) => (
@@ -28,7 +36,7 @@ export const buildType = (def?: ReferenceType): React.ReactNode => {
 		default: {
 			return (
 				<>
-					{def.name}{def.type === 'reference' && def.typeArguments ? (
+					{def.type === 'reference' && def.id ? <TypeLink name={def.name}>{def.name}</TypeLink> : def.name}{def.type === 'reference' && def.typeArguments ? (
 					<>
 						&lt;
 						{def.typeArguments.map((param, idx) => (
@@ -70,5 +78,18 @@ export const isStringLiteral = (def?: ReferenceType): boolean => {
 			return def.types.every(isStringLiteral);
 		default:
 			return false;
+	}
+};
+
+export const getPageType = (node: ReferenceNode): string => {
+	switch (node.kind) {
+		case ReferenceNodeKind.Class:
+			return 'classes';
+		case ReferenceNodeKind.Enum:
+			return 'enums';
+		case ReferenceNodeKind.Interface:
+			return 'interfaces';
+		default:
+			return 'unknown';
 	}
 };

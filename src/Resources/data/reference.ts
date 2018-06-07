@@ -101,6 +101,7 @@ export interface ClassReferenceNode extends AbstractReferenceNode {
 }
 
 export interface SignatureReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.CallSignature;
 	parameters?: ReferenceNode[];
 }
 
@@ -127,7 +128,17 @@ export interface AccessorReferenceNode extends AbstractReferenceNode {
 	getSignature?: GetSignatureReferenceNode[];
 }
 
-export type ReferenceNode = ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode;
+export interface EnumReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Enum;
+}
+
+export interface EnumMemberReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.EnumMember;
+}
+
+export type ReferenceNode =
+	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
+	EnumMemberReferenceNode;
 
 import * as data from './reference.json';
 

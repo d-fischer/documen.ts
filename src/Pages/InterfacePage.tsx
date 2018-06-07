@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import CodeLink from '../Components/CodeLink';
-import reference, { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, ReferenceNodeKind, SignatureReferenceNode } from '../Resources/data/reference';
+import reference, { MethodReferenceNode, PropertyReferenceNode, ReferenceNodeKind } from '../Resources/data/reference';
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
 import FunctionParamDesc from '../Components/FunctionParamDesc';
 import FunctionSignature from '../Components/FunctionSignature';
-import { getPageType, hasTag } from '../Tools/CodeBuilders';
+import { getPageType } from '../Tools/CodeBuilders';
 import PropertyCard from '../Components/PropertyCard';
 
 interface ClassPageRouteProps {
 	name: string;
 }
 
-const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match: { params: { name } } }) => {
+const InterfacePage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match: { params: { name } } }) => {
 	const symbol = findByMember(reference.children, 'name', name);
 
 	if (!symbol) {
@@ -24,22 +24,13 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 	}
 
 	const correctPageType = getPageType(symbol);
-	if (correctPageType !== 'classes') {
+	if (correctPageType !== 'interfaces') {
 		return <Redirect to={`/${correctPageType}/${name}`}/>;
-	}
-
-	const constructor: ConstructorReferenceNode | undefined = findByMember(symbol.children, 'kind', ReferenceNodeKind.Constructor);
-	let constructorSigs: SignatureReferenceNode[] = [];
-	if (constructor) {
-		constructorSigs = constructor.signatures;
 	}
 
 	const methods: MethodReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Method);
 
 	const properties: PropertyReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Property);
-	const propertiesWithoutEvents = properties.filter(prop => !hasTag(prop, 'eventListener'));
-
-	const accessors: AccessorReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Accessor);
 
 	return (
 		<>
@@ -49,17 +40,6 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 				{symbol.comment && symbol.comment.shortText && <p>{symbol.comment.shortText}</p>}
 			</PageHeader>
 			<PageContent>
-				{constructorSigs.length ? (
-					<>
-						<h2>{constructorSigs.length === 1 ? 'Constructor' : 'Constructors'}</h2>
-						{constructorSigs.map(sig => (
-							<Card key={sig.id}>
-								<FunctionSignature signature={sig} isConstructor={true}/>
-								<FunctionParamDesc signature={sig}/>
-							</Card>
-						))}
-					</>
-				) : null}
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
@@ -71,16 +51,10 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 						)))}
 					</>
 				) : null}
-				{propertiesWithoutEvents.length || accessors.length ? (
+				{properties.length ? (
 					<>
 						<h2>Properties</h2>
-						{propertiesWithoutEvents.map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
-						{accessors.map(acc => {
-							if (!acc.getSignature || acc.getSignature.length < 1) {
-								return null;
-							}
-							return <PropertyCard key={acc.id} name={acc.name} definition={acc.getSignature[0]}/>;
-						})}
+						{properties.map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
 					</>
 				) : null}
 			</PageContent>
@@ -88,4 +62,4 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 	);
 };
 
-export default ClassPage;
+export default InterfacePage;

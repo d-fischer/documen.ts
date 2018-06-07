@@ -20,12 +20,12 @@ body {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
-}
 
-.App .NavMenu {
-	width: 250px;
-}
+	.NavMenu {
+		width: 250px;
+	}
 
-.App__main {
-	flex: 1;
+	&__main {
+		flex: 1;
+	}
 }
