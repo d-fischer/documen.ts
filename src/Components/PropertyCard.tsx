@@ -13,6 +13,7 @@ const PropertyCard: React.SFC<PropertyCardProps> = ({ name, definition }) => (
 		<h3>{name || definition.name}</h3>
 		{definition.type ? <h4>{isStringLiteral(definition.type) ? 'Value' : 'Type'}: {buildType(definition.type)}</h4> : null}
 		{definition.comment && definition.comment.shortText ? <p>{definition.comment.shortText}</p> : null}
+		{definition.comment && definition.comment.text ? <p>{definition.comment.text}</p> : null}
 	</Card>
 );
 export default PropertyCard;

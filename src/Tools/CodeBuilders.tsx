@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { ReferenceNode, ReferenceNodeKind, ReferenceType } from '../Resources/data/reference';
+import { default as reference, ReferenceNode, ReferenceNodeKind, ReferenceType, TypeAliasReferenceNode } from '../Resources/data/reference';
 import TypeLink from '../Components/TypeLink';
+import { findByMember } from './ArrayTools';
+import TypeAliasHint from '../Components/TypeAliasHint';
 
 export const buildType = (def?: ReferenceType): React.ReactNode => {
 	if (!def) {
@@ -34,6 +36,12 @@ export const buildType = (def?: ReferenceType): React.ReactNode => {
 			return <>"{def.value}"</>;
 		}
 		default: {
+			if (def.type === 'reference' && def.id) {
+				const referencedType: TypeAliasReferenceNode | undefined = findByMember(reference.children, 'id', def.id);
+				if (referencedType && referencedType.kind === ReferenceNodeKind.TypeAlias) {
+					return <TypeAliasHint name={referencedType.name} type={referencedType.type} />;
+				}
+			}
 			return (
 				<>
 					{def.type === 'reference' && def.id ? <TypeLink name={def.name}>{def.name}</TypeLink> : def.name}{def.type === 'reference' && def.typeArguments ? (

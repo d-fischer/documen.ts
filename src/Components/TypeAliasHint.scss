@@ -1,0 +1,60 @@
+@import "../vars";
+
+.TypeAliasHint {
+	position: relative;
+
+	> abbr {
+		border-bottom: 1px dashed;
+		cursor: help;
+	}
+
+	&__hint {
+		position: absolute;
+		display: none;
+		top: 100%;
+		left: 50%;
+		z-index: 1;
+		@include translateX(-50%);
+
+	}
+
+	&__toolTip {
+		position: relative;
+		margin-top: 5px;
+		border-radius: 3px;
+		padding: .5em;
+		background: $invertedBackgroundColorActive;
+		white-space: nowrap;
+		border: 1px solid $invertedBorderColor;
+
+		&:before {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+			margin-left: -5px;
+			border-width: 0 5px 5px;
+			border-color: transparent transparent $invertedBorderColor;
+			border-style: solid;
+		}
+
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+			margin-left: -4px;
+			border-width: 0 4px 4px;
+			border-color: transparent transparent $invertedBackgroundColorActive;
+			border-style: solid;
+		}
+	}
+
+	&:hover {
+		> .TypeAliasHint__hint {
+			display: block;
+		}
+	}
+}

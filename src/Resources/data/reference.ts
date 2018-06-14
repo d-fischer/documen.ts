@@ -34,7 +34,7 @@ export interface IntrinsicReferenceType {
 export interface ReferenceReferenceType {
 	type: 'reference';
 	name: string;
-	id: string;
+	id: number;
 	typeArguments?: ReferenceType[];
 }
 
@@ -56,6 +56,7 @@ export interface StringLiteralReferenceType {
 export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType;
 
 export enum ReferenceNodeKind {
+	// noinspection JSUnusedGlobalSymbols
 	Global = 0,
 	ExternalModule = 1,
 	Module = 2,
@@ -134,6 +135,11 @@ export interface EnumReferenceNode extends AbstractReferenceNode {
 
 export interface EnumMemberReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.EnumMember;
+}
+
+export interface TypeAliasReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.TypeAlias;
+	type: ReferenceType;
 }
 
 export type ReferenceNode =
