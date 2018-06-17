@@ -3,7 +3,7 @@ import * as Paginate from 'react-paginate';
 
 import './DataTable.scss';
 
-export type DataTableColumnConfigMap<T extends { id: number }> = {[K in keyof T]: {
+export type DataTableColumnConfigMap<T extends { id: number }> = {[K in Extract<keyof T, string>]: {
 	custom?: false;
 	key: K;
 	title?: string;
@@ -130,14 +130,9 @@ export default class DataTable<T extends { id: number }> extends React.Component
 		});
 	}
 
-	private _getColumnConfig() {
-		let columnConfig = this.props.columns;
-
-		if (!columnConfig) {
-			columnConfig = this.props.data.length ? Object.keys(this.props.data[0]).map((key: keyof T) => ({ key })) : [];
-		}
-
-		return columnConfig;
+	private _getColumnConfig(): DataTableColumnConfig<T> {
+		const keys = (Object.keys(this.props.data[0]) as Array<Extract<keyof T, string>>);
+		return this.props.columns || this.props.data.length ? keys.map(key => ({ key })) : [];
 	}
 
 	private _getCountPerPage() {

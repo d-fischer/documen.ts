@@ -146,6 +146,6 @@ export type ReferenceNode =
 	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
 	EnumMemberReferenceNode;
 
-import * as data from './reference.json';
+import data from './reference.json';
 
 export default data as ReferenceNode;

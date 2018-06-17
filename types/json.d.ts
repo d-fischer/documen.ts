@@ -1,4 +1,4 @@
 declare module "*.json" {
-	const root: any;
-	export = root;
+	const data: any;
+	export default data;
 }
