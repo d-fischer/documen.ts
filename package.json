@@ -75,7 +75,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "resolutions": {
-    "@types/react": "16.1.0",
+    "@types/react": "16.3.18",
     "@types/tapable": "1.0.0"
   },
   "scripts": {
