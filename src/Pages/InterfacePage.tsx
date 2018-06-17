@@ -5,11 +5,9 @@ import reference, { MethodReferenceNode, PropertyReferenceNode, ReferenceNodeKin
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
-import Card from '../Containers/Card';
-import FunctionParamDesc from '../Components/FunctionParamDesc';
-import FunctionSignature from '../Components/FunctionSignature';
 import { getPageType } from '../Tools/CodeBuilders';
 import PropertyCard from '../Components/PropertyCard';
+import MethodCard from '../Components/MethodCard';
 
 interface ClassPageRouteProps {
 	name: string;
@@ -43,12 +41,7 @@ const InterfacePage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ ma
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
-						{methods.map(method => method.signatures && method.signatures.map(sig => (
-							<Card key={sig.id}>
-								<FunctionSignature signature={sig}/>
-								<FunctionParamDesc signature={sig}/>
-							</Card>
-						)))}
+						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} sig={sig}/>))}
 					</>
 				) : null}
 				{properties.length ? (

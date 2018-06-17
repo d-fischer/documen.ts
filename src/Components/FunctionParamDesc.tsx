@@ -28,7 +28,7 @@ const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature }) => 
 				<td>{buildType(param.type)}</td>
 				<td>{param.flags.isOptional || param.defaultValue ? '' : <Icon name="check"/>}</td>
 				<td>{param.defaultValue || <em>none</em>}</td>
-				<td>{param.comment && param.comment.shortText ? param.comment.shortText : <em>none</em>}</td>
+				<td>{param.comment && param.comment.text ? param.comment.text : <em>none</em>}</td>
 			</tr>
 		))}
 		</tbody>

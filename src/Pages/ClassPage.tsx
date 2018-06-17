@@ -5,11 +5,10 @@ import reference, { AccessorReferenceNode, ConstructorReferenceNode, MethodRefer
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
-import Card from '../Containers/Card';
-import FunctionParamDesc from '../Components/FunctionParamDesc';
-import FunctionSignature from '../Components/FunctionSignature';
 import { getPageType, hasTag } from '../Tools/CodeBuilders';
 import PropertyCard from '../Components/PropertyCard';
+import parseMarkdown from '../Tools/MarkdownParser';
+import MethodCard from '../Components/MethodCard';
 
 interface ClassPageRouteProps {
 	name: string;
@@ -49,26 +48,17 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 				{symbol.comment && symbol.comment.shortText && <p>{symbol.comment.shortText}</p>}
 			</PageHeader>
 			<PageContent>
+				{symbol.comment && symbol.comment.text && parseMarkdown(symbol.comment.text)}
 				{constructorSigs.length ? (
 					<>
 						<h2>{constructorSigs.length === 1 ? 'Constructor' : 'Constructors'}</h2>
-						{constructorSigs.map(sig => (
-							<Card key={sig.id}>
-								<FunctionSignature signature={sig} isConstructor={true}/>
-								<FunctionParamDesc signature={sig}/>
-							</Card>
-						))}
+						{constructorSigs.map(sig => <MethodCard key={sig.id} sig={sig} isConstructor={true}/>)}
 					</>
 				) : null}
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
-						{methods.map(method => method.signatures && method.signatures.map(sig => (
-							<Card key={sig.id}>
-								<FunctionSignature signature={sig}/>
-								<FunctionParamDesc signature={sig}/>
-							</Card>
-						)))}
+						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} sig={sig}/>))}
 					</>
 				) : null}
 				{propertiesWithoutEvents.length || accessors.length ? (
