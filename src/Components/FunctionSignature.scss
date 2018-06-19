@@ -1,7 +1,6 @@
 @import "../vars";
 
 .FunctionSignature {
-	background-color: $invertedBackgroundColorActive;
-	font-family: Monaco, Menlo, "Lucida Console", monospace;
-	margin: 0 0 1em;
+	font-family: $codeFonts;
+	margin: 0 0 .5em;
 }

@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { SignatureReferenceNode } from '../Resources/data/reference';
-import { buildType } from '../Tools/CodeBuilders';
 
 import './FunctionSignature.scss';
 
@@ -10,16 +9,15 @@ interface FunctionSignatureProps {
 	isConstructor?: boolean;
 }
 
-const FunctionSignature: React.SFC<FunctionSignatureProps> = ({ signature, isConstructor }) => (
-	<div className="FunctionSignature">
+const FunctionSignature: React.SFC<FunctionSignatureProps> = ({ signature }) => (
+	<h3 className="FunctionSignature">
 		{signature.name}({signature.parameters && signature.parameters.map((param, idx) => (
 			<React.Fragment key={param.name}>
 				{idx !== 0 ? ', ' : ''}
 				{param.name}
 			</React.Fragment>
-		)
-	)}){isConstructor ? '' : <>: {buildType(signature.type)}</>}
-	</div>
+		))})
+	</h3>
 );
 
 export default FunctionSignature;
