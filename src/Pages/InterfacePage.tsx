@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
-import CodeLink from '../Components/CodeLink';
 import reference, { MethodReferenceNode, PropertyReferenceNode, ReferenceNodeKind } from '../Resources/data/reference';
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
-import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
 import { getPageType } from '../Tools/CodeBuilders';
 import PropertyCard from '../Components/PropertyCard';
 import MethodCard from '../Components/MethodCard';
+import SymbolHeader from '../Components/SymbolHeader';
+import parseMarkdown from '../Tools/MarkdownParser';
 
 interface ClassPageRouteProps {
 	name: string;
@@ -32,12 +32,9 @@ const InterfacePage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ ma
 
 	return (
 		<>
-			<PageHeader>
-				<h1>{symbol.name}</h1>
-				<CodeLink symbol={symbol}/>
-				{symbol.comment && symbol.comment.shortText && <p>{symbol.comment.shortText}</p>}
-			</PageHeader>
+			<SymbolHeader symbol={symbol}/>
 			<PageContent>
+				{symbol.comment && symbol.comment.text && parseMarkdown(symbol.comment.text)}
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
-import CodeLink from '../Components/CodeLink';
 import reference, { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, ReferenceNodeKind, SignatureReferenceNode } from '../Resources/data/reference';
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
-import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
 import { getPageType, hasTag } from '../Tools/CodeBuilders';
 import PropertyCard from '../Components/PropertyCard';
 import parseMarkdown from '../Tools/MarkdownParser';
 import MethodCard from '../Components/MethodCard';
+import SymbolHeader from '../Components/SymbolHeader';
 
 interface ClassPageRouteProps {
 	name: string;
@@ -42,11 +41,7 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 
 	return (
 		<>
-			<PageHeader>
-				<h1>{symbol.name}</h1>
-				<CodeLink symbol={symbol}/>
-				{symbol.comment && symbol.comment.shortText && <p>{symbol.comment.shortText}</p>}
-			</PageHeader>
+			<SymbolHeader symbol={symbol}/>
 			<PageContent>
 				{symbol.comment && symbol.comment.text && parseMarkdown(symbol.comment.text)}
 				{constructorSigs.length ? (

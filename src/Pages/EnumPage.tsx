@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
-import CodeLink from '../Components/CodeLink';
 import reference, {
 	EnumMemberReferenceNode,
 	ReferenceNodeKind
 } from '../Resources/data/reference';
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
-import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
 import { getPageType } from '../Tools/CodeBuilders';
+import SymbolHeader from '../Components/SymbolHeader';
+import parseMarkdown from '../Tools/MarkdownParser';
 
 interface EnumPageRouteProps {
 	name: string;
@@ -32,12 +32,9 @@ const EnumPage: React.SFC<RouteComponentProps<EnumPageRouteProps>> = ({ match: {
 
 	return (
 		<>
-			<PageHeader>
-				<h1>{symbol.name}</h1>
-				<CodeLink symbol={symbol}/>
-				{symbol.comment && symbol.comment.shortText && <p>{symbol.comment.shortText}</p>}
-			</PageHeader>
+			<SymbolHeader symbol={symbol}/>
 			<PageContent>
+				{symbol.comment && symbol.comment.text && parseMarkdown(symbol.comment.text)}
 				{members.length ? (
 					<>
 						<h2>{members.length === 1 ? 'Member' : 'Members'}</h2>
