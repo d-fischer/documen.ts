@@ -91,27 +91,29 @@ export interface AbstractReferenceNode {
 	comment?: ReferenceComment;
 	sources: ReferenceSource[];
 	flags: ReferenceFlags;
-	defaultValue?: string;
 	children: ReferenceNode[];
 	groups: ReferenceGroup[];
-	type?: ReferenceType;
 }
 
 export interface ClassReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.Class;
+	typeParameter?: TypeParameterReferenceNode[];
 }
 
 export interface SignatureReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.CallSignature;
-	parameters?: ReferenceNode[];
+	parameters?: ParameterReferenceNode[];
+	type: ReferenceType;
 }
 
 export interface PropertyReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.Property;
+	type: ReferenceType;
 }
 
 export interface GetSignatureReferenceNode extends AbstractReferenceNode {
 	parameters?: ReferenceNode[];
+	type: ReferenceType;
 }
 
 export interface MethodReferenceNode extends AbstractReferenceNode {
@@ -142,9 +144,24 @@ export interface TypeAliasReferenceNode extends AbstractReferenceNode {
 	type: ReferenceType;
 }
 
+export interface InterfaceReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Interface;
+	typeParameter?: TypeParameterReferenceNode[];
+}
+
+export interface TypeParameterReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.TypeParameter;
+}
+
+export interface ParameterReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Parameter;
+	type: ReferenceType;
+	defaultValue?: string;
+}
+
 export type ReferenceNode =
 	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
-	EnumMemberReferenceNode;
+	EnumMemberReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode;
 
 import data from './reference.json';
 
