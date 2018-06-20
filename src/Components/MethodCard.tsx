@@ -3,7 +3,7 @@ import Card from '../Containers/Card';
 import FunctionSignature from './FunctionSignature';
 import FunctionParamDesc from './FunctionParamDesc';
 import { SignatureReferenceNode } from '../Resources/data/reference';
-import { buildType } from '../Tools/CodeBuilders';
+import { buildType, getTag, hasTag } from '../Tools/CodeBuilders';
 
 import './MethodCard.scss';
 import parseMarkdown from '../Tools/MarkdownParser';
@@ -16,6 +16,11 @@ interface MethodCardProps {
 const MethodCard: React.SFC<MethodCardProps> = ({ sig, isConstructor }) => (
 	<Card id={`symbol__${sig.name}`} key={sig.id} className="MethodCard">
 		<FunctionSignature signature={sig} isConstructor={isConstructor}/>
+		{hasTag(sig, 'deprecated') && (
+			<div className="Card__deprecationNotice">
+				<strong>Deprecated.</strong> {parseMarkdown(getTag(sig, 'deprecated')!)}
+			</div>
+		)}
 		{sig.comment && sig.comment.shortText && <p>{sig.comment.shortText}</p>}
 		{sig.comment && sig.comment.text && parseMarkdown(sig.comment.text)}
 		<FunctionParamDesc signature={sig}/>

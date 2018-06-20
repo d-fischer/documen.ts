@@ -8,4 +8,16 @@
 	h3, h4 {
 		margin: 0;
 	}
+
+	&__deprecationNotice {
+		color: #aa0000;
+
+		strong {
+			text-transform: uppercase;
+		}
+
+		p {
+			display: inline;
+		}
+	}
 }
