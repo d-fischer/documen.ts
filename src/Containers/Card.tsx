@@ -4,10 +4,11 @@ import './Card.scss';
 
 interface CardProps {
 	className?: string;
+	id?: string;
 }
 
-const Card: React.SFC<CardProps> = ({ className, children }) => (
-	<div className={`Card${className ? (` ${className}`) : ''}`}>
+const Card: React.SFC<CardProps> = ({ className, id, children }) => (
+	<div id={id} className={`Card${className ? (` ${className}`) : ''}`}>
 		{children}
 	</div>
 );

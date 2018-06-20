@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as commonmark from 'commonmark';
 import * as ReactRenderer from 'commonmark-react-renderer';
-
-import { getPageType } from './CodeBuilders';
-import { findByMember } from './ArrayTools';
-import reference from '../Resources/data/reference';
-import { Link } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 
 import SyntaxHighlighter from 'react-syntax-highlighter/light';
 // tslint:disable-next-line:match-default-export-name
 import darcula from 'react-syntax-highlighter/styles/hljs/darcula';
+
+import { getPageType } from './CodeBuilders';
+import { findByMember } from './ArrayTools';
+import reference from '../Resources/data/reference';
 
 export default function parseMarkdown(source: string) {
 	const parser = new commonmark.Parser();
@@ -25,11 +25,13 @@ export default function parseMarkdown(source: string) {
 
 		// transform linked type names
 		if (node.type === 'text') {
-			const re = /{@(\w+)}/g;
+			const re = /{@((\w+)(?:#(\w+))?)}/g;
 			let match;
 			// tslint:disable-next-line:no-conditional-assignment
 			while (node.literal && (match = re.exec(node.literal))) {
-				const entry = findByMember(reference.children, 'name', match[1]);
+				const [fullMatch, fullSymbolName, symbolName, memberName] = match;
+
+				const entry = findByMember(reference.children, 'name', symbolName);
 				if (!entry) {
 					continue;
 				}
@@ -45,14 +47,18 @@ export default function parseMarkdown(source: string) {
 				}
 
 				const link = new commonmark.Node('link');
-				link.destination = `/${pageType}/${match[1]}`;
+				link.destination = `/${pageType}/${symbolName}`;
+
+				if (memberName) {
+					link.destination += `#symbol__${memberName}`;
+				}
 
 				const linkText = new commonmark.Node('text');
-				linkText.literal = match[1];
+				linkText.literal = fullSymbolName;
 				link.appendChild(linkText);
 				node.insertBefore(link);
 
-				node.literal = node.literal.substr(match.index + match[0].length);
+				node.literal = node.literal.substr(match.index + fullMatch.length);
 
 				if (!node.literal) {
 					node.unlink();
@@ -75,7 +81,7 @@ export default function parseMarkdown(source: string) {
 				let type: string | React.ComponentClass;
 
 				if (mdProps.href.startsWith('/')) {
-					type = Link;
+					type = HashLink;
 					props.to = mdProps.href;
 				} else {
 					type = 'a';

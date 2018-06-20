@@ -12,4 +12,12 @@
 		padding: .5em;
 		text-align: center;
 	}
+
+	p {
+		margin: 0;
+
+		+ p {
+			margin-top: .5em;
+		}
+	}
 }

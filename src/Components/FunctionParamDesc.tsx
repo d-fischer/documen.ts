@@ -5,6 +5,7 @@ import { buildType } from '../Tools/CodeBuilders';
 import { SignatureReferenceNode } from '../Resources/data/reference';
 
 import './FunctionParamDesc.scss';
+import parseMarkdown from '../Tools/MarkdownParser';
 
 interface FunctionParamDescProps {
 	signature: SignatureReferenceNode;
@@ -28,7 +29,7 @@ const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature }) => 
 				<td>{buildType(param.type)}</td>
 				<td>{param.flags.isOptional || param.defaultValue ? '' : <Icon name="check"/>}</td>
 				<td>{param.defaultValue || <em>none</em>}</td>
-				<td>{param.comment && param.comment.text ? param.comment.text : <em>none</em>}</td>
+				<td>{param.comment && param.comment.text ? parseMarkdown(param.comment.text) : <em>none</em>}</td>
 			</tr>
 		))}
 		</tbody>
