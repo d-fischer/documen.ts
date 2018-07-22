@@ -85,7 +85,7 @@
     "@types/tapable": "1.0.0"
   },
   "scripts": {
-    "dev": "webpack-dev-server --progress --config config/webpack.config.dev.js",
+    "dev": "node $NODE_DEBUG_OPTION node_modules/.bin/webpack-dev-server --progress --config config/webpack.config.dev.js",
     "build-client": "cross-env NODE_ENV=production node $NODE_DEBUG_OPTION node_modules/.bin/webpack --progress --config config/webpack.config.prod.js",
     "build-server": "cross-env NODE_ENV=production node $NODE_DEBUG_OPTION node_modules/.bin/webpack --progress --config config/webpack.config.server.js",
     "build": "npm run build-client && npm run build-server",

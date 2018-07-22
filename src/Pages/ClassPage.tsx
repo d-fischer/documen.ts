@@ -8,6 +8,7 @@ import PropertyCard from '../Components/PropertyCard';
 import parseMarkdown from '../Tools/MarkdownParser';
 import MethodCard from '../Components/MethodCard';
 import SymbolHeader from '../Components/SymbolHeader';
+import EventCard from '../Components/EventCard';
 
 interface ClassPageRouteProps {
 	name: string;
@@ -36,6 +37,7 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 
 	const properties: PropertyReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Property);
 	const propertiesWithoutEvents = properties.filter(prop => !hasTag(prop, 'eventListener'));
+	const events = properties.filter(prop => hasTag(prop, 'eventListener'));
 
 	const accessors: AccessorReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Accessor);
 
@@ -48,6 +50,12 @@ const ClassPage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match:
 					<>
 						<h2>{constructorSigs.length === 1 ? 'Constructor' : 'Constructors'}</h2>
 						{constructorSigs.map(sig => <MethodCard key={sig.id} sig={sig} isConstructor={true}/>)}
+					</>
+				) : null}
+				{events.length ? (
+					<>
+						<h2>Events</h2>
+						{events.map(prop => <EventCard key={prop.id} definition={prop}/>)}
 					</>
 				) : null}
 				{methods.length ? (

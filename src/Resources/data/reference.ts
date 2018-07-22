@@ -9,12 +9,13 @@ interface ReferenceGroup {
 	children: number[];
 }
 
-interface ReferenceCommentTag {
+export interface ReferenceCommentTag {
 	tag: string;
 	text: string;
+	param?: string;
 }
 
-interface ReferenceComment {
+export interface ReferenceComment {
 	shortText?: string;
 	text?: string;
 	tags?: ReferenceCommentTag[];
@@ -53,7 +54,12 @@ export interface StringLiteralReferenceType {
 	value: string;
 }
 
-export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType;
+export interface ReflectionReferenceType {
+	type: 'reflection';
+	declaration: TypeLiteralReferenceNode;
+}
+
+export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType | ReflectionReferenceType;
 
 export enum ReferenceNodeKind {
 	// noinspection JSUnusedGlobalSymbols
@@ -157,6 +163,11 @@ export interface ParameterReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.Parameter;
 	type: ReferenceType;
 	defaultValue?: string;
+}
+
+export interface TypeLiteralReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.TypeLiteral;
+	signatures?: SignatureReferenceNode[];
 }
 
 export type ReferenceNode =

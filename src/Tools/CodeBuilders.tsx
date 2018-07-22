@@ -35,6 +35,10 @@ export const buildType = (def?: ReferenceType): React.ReactNode => {
 		case 'stringLiteral': {
 			return <>"{def.value}"</>;
 		}
+		case 'reflection': {
+			// TODO
+			return '';
+		}
 		default: {
 			if (def.type === 'reference' && def.id) {
 				const referencedType: TypeAliasReferenceNode | undefined = findByMember(reference.children, 'id', def.id);
