@@ -9,7 +9,8 @@ const WelcomePage: React.SFC = () => (
 			<h1>Twitch.js</h1>
 		</PageHeader>
 		<PageContent>
-			<p>There isn't a lot to see on this page yet.</p>
+			<p>Welcome to the Twitch.js documentation.</p>
+			<p>For now, you can browse the reference by checking the menu bar on the left. Actual documentation will follow.</p>
 		</PageContent>
 	</>
 );
