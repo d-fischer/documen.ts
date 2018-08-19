@@ -63,7 +63,7 @@
 		"no-misused-new": true,
 		"no-object-literal-type-assertion": true,
 		"no-reference": true,
-		"no-require-imports": true,
+		"no-require-imports": false,
 		"no-return-await": true,
 		"no-shadowed-variable": true,
 		"no-sparse-arrays": true,

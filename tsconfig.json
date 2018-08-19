@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"outDir": "build/dist",
-		"module": "es2015",
+		"outDir": "lib",
+		"module": "commonjs",
 		"target": "es5",
 		"lib": ["es6", "es2017", "dom"],
 		"sourceMap": true,
@@ -25,6 +25,10 @@
 			}
 		]
 	},
+	"include": [
+		"types",
+		"src/Generator"
+	],
 	"exclude": [
 		"node_modules",
 		"build",

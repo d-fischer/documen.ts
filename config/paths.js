@@ -36,13 +36,15 @@ module.exports = {
   serverBuild: resolveApp('build/server'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.tsx'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
-  serverIndexJs: resolveApp('src/Server/index.ts'),
   yarnLockFile: resolveApp('yarn.lock'),
   appNodeModules: resolveApp('node_modules'),
   appTsConfig: resolveApp('tsconfig.json'),
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),
+	entryPoints: {
+  	spa: resolveApp('src/SPA/index.tsx'),
+		html: resolveApp('src/HTML/index.tsx')
+	}
 };

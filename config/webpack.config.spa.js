@@ -1,51 +1,36 @@
 'use strict';
 
-const PORT = process.env.PORT || 3000;
-
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const getClientEnvironment = require('./env');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const paths = require('./paths');
+const getClientEnvironment = require('./env');
 
-const publicPath = '/';
-const publicUrl = '';
+const publicPath = paths.servedPath;
+const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
 
+if (env.stringified['process.env'].NODE_ENV !== '"production"') {
+	throw new Error('Production builds must have NODE_ENV=production.');
+}
+
 module.exports = {
-	mode: 'development',
-	devtool: 'cheap-module-source-map',
-	devServer: {
-		disableHostCheck: true,
-		clientLogLevel: 'none',
-		contentBase: paths.appPublic,
-		watchContentBase: true,
-		inline: true,
-		hot: true,
-		port: PORT,
-		historyApiFallback: true,
-		watchOptions: {
-			ignored: /node_modules/
-		},
-		stats: {
-			entrypoints: true
-		}
-	},
-	entry: [
-		require.resolve('webpack/hot/dev-server'),
-		require.resolve('react-error-overlay'),
-		paths.entryPoints.spa,
-	],
+	mode: 'production',
+	bail: true,
+	devtool: 'source-map',
+	entry: [paths.entryPoints.spa],
 	output: {
 		path: paths.appBuild,
-		pathinfo: true,
 		filename: 'static/js/bundle.js',
-		chunkFilename: 'static/js/[name].chunk.js',
 		publicPath: publicPath,
 		devtoolModuleFilenameTemplate: info =>
-			path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+			path
+				.relative(paths.appSrc, info.absoluteResourcePath)
+				.replace(/\\/g, '/'),
 	},
 	resolve: {
 		modules: ['node_modules', paths.appNodeModules].concat(
@@ -58,16 +43,6 @@ module.exports = {
 		strictExportPresence: true,
 		rules: [
 			{
-				test: /\.tsx?$/,
-				loader: 'tslint-loader',
-				enforce: 'pre',
-				include: paths.appSrc,
-				options: {
-					typeCheck: true,
-					tsConfigFile: 'tsconfig-client.json'
-				}
-			},
-			{
 				test: /\.js$/,
 				loader: 'source-map-loader',
 				enforce: 'pre',
@@ -76,14 +51,14 @@ module.exports = {
 			{
 				exclude: [
 					/\.html$/,
-					/\.[jt]sx?(\?.*)?$/,
+					/\.[jt]sx?$/,
 					/\.css$/,
+					/\.s[ac]ss/,
 					/\.json$/,
 					/\.bmp$/,
 					/\.gif$/,
 					/\.jpe?g$/,
 					/\.png$/,
-					/\.s[ac]ss$/,
 					/Resources\/.+\.svg$/
 				],
 				loader: 'file-loader',
@@ -102,28 +77,30 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				include: paths.appSrc,
-				use: {
-					loader: 'awesome-typescript-loader',
-					options: {
-						silent: true,
-						configFileName: 'tsconfig-client.json'
-					}
-				},
+				loader: 'awesome-typescript-loader',
+				options: {
+					silent: true
+				}
 			},
 			{
 				test: /\.css$/,
-				use: [
-					'style-loader',
+				loader: [
+					MiniCssExtractPlugin.loader,
 					{
 						loader: 'css-loader',
 						options: {
 							importLoaders: 1,
+							minimize: true,
+							sourceMap: true,
 						},
 					},
 					{
 						loader: 'postcss-loader',
 						options: {
+							// Necessary for external CSS imports to work
+							// https://github.com/facebookincubator/create-react-app/issues/2677
 							ident: 'postcss',
+							sourceMap: true,
 							plugins: () => [
 								require('postcss-flexbugs-fixes'),
 								autoprefixer({
@@ -142,11 +119,13 @@ module.exports = {
 			},
 			{
 				test: /\.s[ac]ss$/,
-				use: [
-					'style-loader',
+				loader: [
+					MiniCssExtractPlugin.loader,
 					{
 						loader: 'css-loader',
 						options: {
+							importLoaders: 1,
+							minimize: true,
 							sourceMap: true
 						}
 					},
@@ -155,7 +134,7 @@ module.exports = {
 						options: {
 							sourceMap: true,
 							includePaths: [
-								path.resolve(paths.appNodeModules, './compass-mixins/lib')
+								path.dirname(require.resolve('compass-mixins'))
 							]
 						}
 					}
@@ -168,24 +147,70 @@ module.exports = {
 			}
 		],
 	},
+	optimization: {
+		minimize: true,
+		splitChunks: {
+			cacheGroups: {
+				style: {
+					name: 'style',
+					test: /\.s?css$/,
+					chunks: 'all',
+					enforce: true
+				}
+			}
+		}
+	},
+	performance: {
+		hints: false
+	},
+	stats: {
+		children: false,
+		modules: false
+	},
 	plugins: [
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: paths.appHtml,
+			minify: {
+				removeComments: true,
+				collapseWhitespace: true,
+				removeRedundantAttributes: true,
+				useShortDoctype: true,
+				removeEmptyAttributes: true,
+				removeStyleLinkTypeAttributes: true,
+				keepClosingSlash: true,
+				minifyJS: true,
+				minifyCSS: true,
+				minifyURLs: true,
+			},
 		}),
-		new webpack.NamedModulesPlugin(),
 		new webpack.DefinePlugin(env.stringified),
-		new webpack.HotModuleReplacementPlugin(),
-		new CaseSensitivePathsPlugin(),
+		new ManifestPlugin({fileName: 'asset-manifest.json'}),
+		new SWPrecacheWebpackPlugin({
+			dontCacheBustUrlsMatching: /\.\w{8}\./,
+			filename: 'service-worker.js',
+			logger(message) {
+				if (message.indexOf('Total precache size is') === 0) {
+					return;
+				}
+				if (message.indexOf('Skipping static resource') === 0) {
+					return;
+				}
+				console.log(message);
+			},
+			minify: false,
+			navigateFallback: publicUrl + '/index.html',
+			staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
+		}),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+		new MiniCssExtractPlugin({
+			filename: 'static/css/[name].css'
+		})
 	],
 	node: {
 		dgram: 'empty',
 		fs: 'empty',
 		net: 'empty',
 		tls: 'empty',
-	},
-	performance: {
-		hints: false,
 	},
 };

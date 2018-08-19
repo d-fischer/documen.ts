@@ -1,72 +1,39 @@
 'use strict';
 
-const PORT = process.env.PORT || 3000;
-
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const getClientEnvironment = require('./env');
+const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
 
-const publicPath = '/';
-const publicUrl = '';
-const env = getClientEnvironment(publicUrl);
+require('./env'); // for NODE_PATH
 
 module.exports = {
-	mode: 'development',
-	devtool: 'cheap-module-source-map',
-	devServer: {
-		disableHostCheck: true,
-		clientLogLevel: 'none',
-		contentBase: paths.appPublic,
-		watchContentBase: true,
-		inline: true,
-		hot: true,
-		port: PORT,
-		historyApiFallback: true,
-		watchOptions: {
-			ignored: /node_modules/
-		},
-		stats: {
-			entrypoints: true
-		}
-	},
-	entry: [
-		require.resolve('webpack/hot/dev-server'),
-		require.resolve('react-error-overlay'),
-		paths.entryPoints.spa,
-	],
+	mode: 'production',
+	target: 'node',
+	externals: nodeExternals({whitelist: [/\.css$/]}),
+	bail: true,
+	devtool: 'source-map',
+	entry: [paths.entryPoints.html],
+	context: __dirname,
 	output: {
-		path: paths.appBuild,
-		pathinfo: true,
-		filename: 'static/js/bundle.js',
-		chunkFilename: 'static/js/[name].chunk.js',
-		publicPath: publicPath,
+		path: paths.serverBuild,
+		filename: 'server.js',
 		devtoolModuleFilenameTemplate: info =>
-			path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+			path
+				.relative(paths.appSrc, info.absoluteResourcePath)
+				.replace(/\\/g, '/'),
 	},
 	resolve: {
 		modules: ['node_modules', paths.appNodeModules].concat(
 			// It is guaranteed to exist because we tweak it in `env.js`
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
-		extensions: ['.ts', '.tsx', '.js', '.jsx'],
+		extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
 	},
 	module: {
 		strictExportPresence: true,
 		rules: [
-			{
-				test: /\.tsx?$/,
-				loader: 'tslint-loader',
-				enforce: 'pre',
-				include: paths.appSrc,
-				options: {
-					typeCheck: true,
-					tsConfigFile: 'tsconfig-client.json'
-				}
-			},
 			{
 				test: /\.js$/,
 				loader: 'source-map-loader',
@@ -76,19 +43,20 @@ module.exports = {
 			{
 				exclude: [
 					/\.html$/,
-					/\.[jt]sx?(\?.*)?$/,
+					/\.[jt]sx?$/,
 					/\.css$/,
+					/\.s[ac]ss/,
 					/\.json$/,
 					/\.bmp$/,
 					/\.gif$/,
 					/\.jpe?g$/,
 					/\.png$/,
-					/\.s[ac]ss$/,
 					/Resources\/.+\.svg$/
 				],
 				loader: 'file-loader',
 				options: {
 					name: 'static/media/[name].[hash:8].[ext]',
+					emitFile: false
 				},
 			},
 			{
@@ -97,32 +65,34 @@ module.exports = {
 				options: {
 					limit: 10000,
 					name: 'static/media/[name].[hash:8].[ext]',
+					emitFile: false
 				},
 			},
 			{
 				test: /\.tsx?$/,
 				include: paths.appSrc,
-				use: {
-					loader: 'awesome-typescript-loader',
-					options: {
-						silent: true,
-						configFileName: 'tsconfig-client.json'
-					}
-				},
+				loader: 'awesome-typescript-loader',
+				options: {
+					silent: true
+				}
 			},
 			{
 				test: /\.css$/,
-				use: [
-					'style-loader',
+				exclude: /node_modules/,
+				loader: [
 					{
-						loader: 'css-loader',
+						loader: 'css-loader/locals',
 						options: {
 							importLoaders: 1,
+							minimize: true,
+							sourceMap: true,
 						},
 					},
 					{
 						loader: 'postcss-loader',
 						options: {
+							// Necessary for external CSS imports to work
+							// https://github.com/facebookincubator/create-react-app/issues/2677
 							ident: 'postcss',
 							plugins: () => [
 								require('postcss-flexbugs-fixes'),
@@ -138,15 +108,21 @@ module.exports = {
 							],
 						},
 					},
-				],
+				]
+			},
+			{
+				test: /\.css$/,
+				include: /node_modules/,
+				loader: 'css-loader/locals'
 			},
 			{
 				test: /\.s[ac]ss$/,
-				use: [
-					'style-loader',
+				loader: [
 					{
-						loader: 'css-loader',
+						loader: 'css-loader/locals',
 						options: {
+							importLoaders: 1,
+							minimize: true,
 							sourceMap: true
 						}
 					},
@@ -168,24 +144,20 @@ module.exports = {
 			}
 		],
 	},
+	optimization: {
+		minimize: true
+	},
+	performance: {
+		hints: false
+	},
+	stats: {
+		children: false,
+		modules: false
+	},
 	plugins: [
-		new HtmlWebpackPlugin({
-			inject: true,
-			template: paths.appHtml,
-		}),
-		new webpack.NamedModulesPlugin(),
-		new webpack.DefinePlugin(env.stringified),
-		new webpack.HotModuleReplacementPlugin(),
-		new CaseSensitivePathsPlugin(),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 	],
 	node: {
-		dgram: 'empty',
-		fs: 'empty',
-		net: 'empty',
-		tls: 'empty',
-	},
-	performance: {
-		hints: false,
+		__dirname: false
 	},
 };

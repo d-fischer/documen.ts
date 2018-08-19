@@ -1,0 +1,25 @@
+@import "../../vars";
+
+.NavMenuItem {
+	height: 1em;
+	padding: .5em;
+	line-height: 1em;
+	display: block;
+	text-decoration: none;
+	color: $invertedTextColor;
+	transition: .3s background-color ease-in-out, .3s border-left-color ease-in-out;
+	border-left: .25em solid transparent;
+
+	&:hover {
+		background-color: $invertedBackgroundColorHover;
+	}
+
+	&--active {
+		border-color: $accentColor;
+		background-color: $invertedBackgroundColorActive;
+
+		&:hover {
+			border-left-color: $focusAccentColor;
+		}
+	}
+}

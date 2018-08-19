@@ -1,0 +1,24 @@
+@import "../../vars";
+
+.FunctionParamDesc {
+	border: 1px solid $invertedBorderColor;
+	margin: .5em 0;
+
+	th {
+		padding: .5em;
+		background-color: $invertedBackgroundColorActive;
+	}
+
+	td {
+		padding: .5em;
+		text-align: center;
+	}
+
+	p {
+		margin: 0;
+
+		+ p {
+			margin-top: .5em;
+		}
+	}
+}

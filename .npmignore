@@ -1,7 +1,5 @@
 /build
-/node_modules
-/lib
-/src/Common/Resources/data/reference.json
+/src/Generator
 
 /.idea
 .DS_Store
