@@ -139,13 +139,8 @@ module.exports = {
 						}
 					}
 				]
-			},
-			{
-				test: /Resources\/.+\.svg$/,
-				exclude: /node_modules/,
-				loader: 'svg-react-loader'
 			}
-		],
+		]
 	},
 	optimization: {
 		minimize: true,

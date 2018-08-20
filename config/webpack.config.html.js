@@ -4,11 +4,15 @@ const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const paths = require('./paths');
+const getClientEnvironment = require('./env');
 
-require('./env'); // for NODE_PATH
+const publicPath = paths.servedPath;
+const publicUrl = publicPath.slice(0, -1);
+const env = getClientEnvironment(publicUrl);
 
-module.exports = {
+module.exports = outDir => ({
 	mode: 'production',
 	target: 'node',
 	externals: nodeExternals({whitelist: [/\.css$/]}),
@@ -17,12 +21,14 @@ module.exports = {
 	entry: [paths.entryPoints.html],
 	context: __dirname,
 	output: {
-		path: paths.serverBuild,
-		filename: 'server.js',
+		path: outDir,
+		filename: 'generator.js',
 		devtoolModuleFilenameTemplate: info =>
 			path
 				.relative(paths.appSrc, info.absoluteResourcePath)
 				.replace(/\\/g, '/'),
+		library: 'DocumenTSHTMLGenerator',
+		libraryTarget: 'umd'
 	},
 	resolve: {
 		modules: ['node_modules', paths.appNodeModules].concat(
@@ -55,8 +61,7 @@ module.exports = {
 				],
 				loader: 'file-loader',
 				options: {
-					name: 'static/media/[name].[hash:8].[ext]',
-					emitFile: false
+					name: 'static/media/[name].[hash:8].[ext]'
 				},
 			},
 			{
@@ -64,8 +69,7 @@ module.exports = {
 				loader: 'url-loader',
 				options: {
 					limit: 10000,
-					name: 'static/media/[name].[hash:8].[ext]',
-					emitFile: false
+					name: 'static/media/[name].[hash:8].[ext]'
 				},
 			},
 			{
@@ -78,10 +82,15 @@ module.exports = {
 			},
 			{
 				test: /\.css$/,
-				exclude: /node_modules/,
 				loader: [
 					{
-						loader: 'css-loader/locals',
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							publicPath: '../../'
+						}
+					},
+					{
+						loader: 'css-loader',
 						options: {
 							importLoaders: 1,
 							minimize: true,
@@ -94,6 +103,7 @@ module.exports = {
 							// Necessary for external CSS imports to work
 							// https://github.com/facebookincubator/create-react-app/issues/2677
 							ident: 'postcss',
+							sourceMap: true,
 							plugins: () => [
 								require('postcss-flexbugs-fixes'),
 								autoprefixer({
@@ -108,18 +118,19 @@ module.exports = {
 							],
 						},
 					},
-				]
-			},
-			{
-				test: /\.css$/,
-				include: /node_modules/,
-				loader: 'css-loader/locals'
+				],
 			},
 			{
 				test: /\.s[ac]ss$/,
 				loader: [
 					{
-						loader: 'css-loader/locals',
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							publicPath: '../../'
+						}
+					},
+					{
+						loader: 'css-loader',
 						options: {
 							importLoaders: 1,
 							minimize: true,
@@ -131,21 +142,13 @@ module.exports = {
 						options: {
 							sourceMap: true,
 							includePaths: [
-								path.resolve(paths.appNodeModules, './compass-mixins/lib')
+								path.dirname(require.resolve('compass-mixins'))
 							]
 						}
 					}
 				]
-			},
-			{
-				test: /Resources\/.+\.svg$/,
-				exclude: /node_modules/,
-				loader: 'svg-react-loader'
 			}
-		],
-	},
-	optimization: {
-		minimize: true
+		]
 	},
 	performance: {
 		hints: false
@@ -155,9 +158,12 @@ module.exports = {
 		modules: false
 	},
 	plugins: [
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+		new webpack.DefinePlugin(env.stringified),
+		new MiniCssExtractPlugin({
+			filename: 'static/css/style.css'
+		})
 	],
 	node: {
 		__dirname: false
 	},
-};
+});

@@ -1,5 +1,4 @@
 import Generator, { GeneratorOptions } from './Generator';
-import { argv } from 'yargs';
 import * as path from 'path';
 import resolveHome = require('untildify');
 import webpack = require('webpack');
@@ -19,7 +18,7 @@ export default class SPAGenerator extends Generator {
 			// tslint:disable-next-line:no-var-requires
 			const webpackConfig = require('../../../config/webpack.config.spa');
 
-			webpackConfig.output.path = path.resolve(this._options.baseDir!, resolveHome(argv.outDir));
+			webpackConfig.output.path = path.resolve(this._options.baseDir!, resolveHome(this._options.outDir));
 
 			const webpackCompiler = webpack(webpackConfig);
 

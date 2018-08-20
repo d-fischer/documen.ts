@@ -1,15 +1,16 @@
-import SPAGenerator from './SPAGenerator';
 import * as TypeDoc from 'typedoc';
-import { argv } from 'yargs';
 import * as path from 'path';
 import { ReferenceNode } from '../../Common/Reference';
+import RouterMode from '../../Common/HTMLRenderer/RouterMode';
 
 export type GeneratorMode = 'spa' | 'html';
 
 export interface GeneratorOptions {
-	inputFolders: string[];
+	inputDirs: string[];
+	outDir: string;
 	baseDir?: string;
 	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
+	routerMode: RouterMode;
 }
 
 export default abstract class Generator {
@@ -17,21 +18,6 @@ export default abstract class Generator {
 
 	protected constructor(protected _mode: GeneratorMode, options: GeneratorOptions) {
 		this._options = { baseDir: process.cwd(), ...options };
-	}
-
-	static create(mode: string, options: GeneratorOptions) {
-		switch (mode) {
-			case 'spa': {
-				return new SPAGenerator(options);
-			}
-			case 'html': {
-				// return new HTMLGenerator(options);
-				throw new Error('HTML generator not implemented yet');
-			}
-			default: {
-				throw new Error(`Generator '${mode} not found`);
-			}
-		}
 	}
 
 	createReferenceStructure(): ReferenceNode {
@@ -46,7 +32,7 @@ export default abstract class Generator {
 			} // tslint:disable-line:no-empty
 		});
 		const baseDir = this._options.baseDir!;
-		const files = typeDoc.expandInputFiles(argv._.map(dir => path.resolve(baseDir, dir)));
+		const files = typeDoc.expandInputFiles(this._options.inputDirs.map(dir => path.resolve(baseDir, dir)));
 		const project = typeDoc.convert(files);
 		const data = typeDoc.serializer.projectToObject(project);
 

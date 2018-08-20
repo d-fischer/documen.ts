@@ -2,8 +2,8 @@
 	"compilerOptions": {
 		"outDir": "lib",
 		"module": "commonjs",
-		"target": "es5",
-		"lib": ["es6", "es2017", "dom"],
+		"target": "es6",
+		"lib": ["es2017", "dom"],
 		"sourceMap": true,
 		"allowJs": true,
 		"jsx": "react",
@@ -17,6 +17,7 @@
 		"suppressImplicitAnyIndexErrors": true,
 		"noUnusedLocals": true,
 		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 		"importHelpers": true,
 		"plugins": [
 			{
@@ -27,7 +28,8 @@
 	},
 	"include": [
 		"types",
-		"src/Generator"
+		"src/Generator",
+		"node_modules/clime"
 	],
 	"exclude": [
 		"node_modules",
