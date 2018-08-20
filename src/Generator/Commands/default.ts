@@ -75,5 +75,3 @@ export default class CLICommand extends Command {
 		}
 	}
 }
-
-

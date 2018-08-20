@@ -22,7 +22,7 @@ const insertIntoSkeleton = (html: string) => {
 </html>`;
 };
 
-const render = (url: string, routerMode: RouterMode = 'htmlSuffix') => {
+const render = (url: string, routerMode: RouterMode = 'server') => {
 	let elem: React.ReactElement<any>;
 	switch (routerMode) {
 		case 'htmlSuffix': {
@@ -34,7 +34,8 @@ const render = (url: string, routerMode: RouterMode = 'htmlSuffix') => {
 			break;
 		}
 		case 'htaccess':
-		case 'subDirectories': {
+		case 'subDirectories':
+		case 'server': {
 			elem = (
 				<StaticRouter context={{}} location={url}>
 					<App/>

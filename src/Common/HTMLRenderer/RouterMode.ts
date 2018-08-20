@@ -1,3 +1,3 @@
-type RouterMode = 'htmlSuffix' | 'subDirectories' | 'htaccess';
+type RouterMode = 'htmlSuffix' | 'subDirectories' | 'htaccess' | 'server';
 
 export default RouterMode;

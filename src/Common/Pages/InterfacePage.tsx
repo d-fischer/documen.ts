@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
-import reference, { MethodReferenceNode, PropertyReferenceNode, ReferenceNodeKind } from '../Reference';
+import reference, { MethodReferenceNode, PropertyReferenceNode } from '../Reference';
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import { getPageType } from '../Tools/CodeBuilders';
@@ -8,6 +8,7 @@ import PropertyCard from '../Components/PropertyCard';
 import MethodCard from '../Components/MethodCard';
 import SymbolHeader from '../Components/SymbolHeader';
 import parseMarkdown from '../Tools/MarkdownParser';
+import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 
 interface ClassPageRouteProps {
 	name: string;

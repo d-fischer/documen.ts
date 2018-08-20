@@ -9,6 +9,8 @@ import { ReferenceNode } from '../../Common/Reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 import RouterMode from '../../Common/HTMLRenderer/RouterMode';
+import { filterByMember } from '../../Common/Tools/ArrayTools';
+import { ReferenceNodeKind } from '../../Common/Reference/ReferenceNodeKind';
 
 export default class HTMLGenerator extends Generator {
 	constructor(options: GeneratorOptions) {
@@ -37,8 +39,12 @@ export default class HTMLGenerator extends Generator {
 				await fs.copy(path.join(tmpDir, 'static'), path.join(outDir, 'static'));
 
 				const { default: render } = require(path.resolve(tmpDir, 'generator.js'));
-				await this._renderToFile(render, '/', outDir);
-				await this._renderToFile(render, '/classes/Channel', outDir);
+				await Promise.all([
+					'/',
+					...filterByMember(data.children, 'kind', ReferenceNodeKind.Class).map(value => `/classes/${value.name}`),
+					...filterByMember(data.children, 'kind', ReferenceNodeKind.Interface).map(value => `/interfaces/${value.name}`),
+					...filterByMember(data.children, 'kind', ReferenceNodeKind.Enum).map(value => `/enums/${value.name}`)
+				].map(async (resourcePath: string) => this._renderToFile(render, resourcePath, outDir)));
 
 				cleanup();
 				resolve();

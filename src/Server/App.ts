@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as express from 'express';
 import * as compression from 'compression';
-import render from './Renderer';
+import render from '../Common/HTMLRenderer/HTMLRenderer';
 
 const app = express();
 

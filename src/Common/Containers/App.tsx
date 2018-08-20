@@ -8,11 +8,12 @@ import InterfacePage from '../Pages/InterfacePage';
 import EnumPage from '../Pages/EnumPage';
 
 import NavMenu from '../Components/NavMenu';
-import reference, { ReferenceNodeKind } from '../Reference';
+import reference from '../Reference';
 import { filterByMember } from '../Tools/ArrayTools';
 
 import 'font-awesome/css/font-awesome.css';
 import './App.scss';
+import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 
 export class App extends React.Component {
 	render() {

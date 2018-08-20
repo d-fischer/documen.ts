@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { default as reference, ReferenceNode, ReferenceNodeKind, ReferenceType, TypeAliasReferenceNode } from '../Reference';
+import { default as reference, ReferenceNode, ReferenceType, TypeAliasReferenceNode } from '../Reference';
 import TypeLink from '../Components/TypeLink';
 import { findByMember } from './ArrayTools';
 import TypeAliasHint from '../Components/TypeAliasHint';
+import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 
 export const buildType = (def?: ReferenceType): React.ReactNode => {
 	if (!def) {

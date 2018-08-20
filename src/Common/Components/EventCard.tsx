@@ -3,7 +3,6 @@ import Card from '../Containers/Card';
 import reference, {
 	ParameterReferenceNode,
 	PropertyReferenceNode,
-	ReferenceNodeKind,
 	SignatureReferenceNode
 } from '../Reference';
 import { getTag, hasTag } from '../Tools/CodeBuilders';
@@ -12,6 +11,7 @@ import parseMarkdown from '../Tools/MarkdownParser';
 import './EventCard.scss';
 import FunctionParamDesc from './FunctionParamDesc';
 import { findByMember } from '../Tools/ArrayTools';
+import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 
 interface EventCardProps {
 	name?: string;

@@ -1,4 +1,4 @@
-import { ReferenceNode } from './Reference';
+import { ReferenceNodeKind } from './ReferenceNodeKind';
 
 interface ReferenceFlags {
 	isExported: boolean;
@@ -64,34 +64,6 @@ export interface ReflectionReferenceType {
 }
 
 export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType | ReflectionReferenceType;
-
-export enum ReferenceNodeKind {
-	// noinspection JSUnusedGlobalSymbols
-	Global = 0,
-	ExternalModule = 1,
-	Module = 2,
-	Enum = 4,
-	EnumMember = 16,
-	Variable = 32,
-	Function = 64,
-	Class = 128,
-	Interface = 256,
-	Constructor = 512,
-	Property = 1024,
-	Method = 2048,
-	CallSignature = 4096,
-	IndexSignature = 8192,
-	ConstructorSignature = 16384,
-	Parameter = 32768,
-	TypeLiteral = 65536,
-	TypeParameter = 131072,
-	Accessor = 262144,
-	GetSignature = 524288,
-	SetSignature = 1048576,
-	ObjectLiteral = 2097152,
-	TypeAlias = 4194304,
-	Event = 8388608
-}
 
 export interface AbstractReferenceNode {
 	id: number;
@@ -182,5 +154,5 @@ export type ReferenceNode =
 declare global {
 	const GENERATED_REFERENCE: ReferenceNode;
 }
-
-export default GENERATED_REFERENCE;
+const reference = GENERATED_REFERENCE;
+export default reference;
