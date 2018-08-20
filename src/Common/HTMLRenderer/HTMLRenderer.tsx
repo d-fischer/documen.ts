@@ -17,7 +17,6 @@ const insertIntoSkeleton = (html: string) => {
 </head>
 <body>
 <div id="root">${html}</div>
-<script src="/static/js/bundle.js"></script>
 </body>
 </html>`;
 };
