@@ -3,13 +3,13 @@
 .CodeLink {
 	color: $accentColor;
 	transition: color .3s ease-in-out;
-	font-size: 1.5em;
+	margin-left: 1em;
+
+	&__icon {
+		width: 1.5em;
+	}
 
 	&:hover {
 		color: $focusAccentColor;
-	}
-
-	.fa {
-		margin-left: .5em;
 	}
 }

@@ -52,7 +52,7 @@ export default class HTMLGenerator extends Generator {
 		});
 	}
 
-	private async _renderToFile(render: (path: string, routerMode?: RouterMode) => string, resourcePath: string, outDir: string) {
+	private async _renderToFile(render: (path: string, baseUrl?: string, routerMode?: RouterMode) => string, resourcePath: string, outDir: string) {
 		let relativeOutFile = resourcePath;
 		if (resourcePath.endsWith('/')) {
 			relativeOutFile += 'index.html';
@@ -63,7 +63,7 @@ export default class HTMLGenerator extends Generator {
 		}
 		const outFile = path.join(outDir, relativeOutFile);
 		await fs.mkdirp(path.dirname(outFile));
-		const str = render(resourcePath, this._options.routerMode);
+		const str = render(resourcePath, this._options.baseUrl, this._options.routerMode);
 
 		await fs.writeFile(outFile, str);
 	}

@@ -18,6 +18,9 @@ export class CLICommandOptions extends Options {
 
 	@option({ flag: 'r', description: 'render mode', default: 'htmlSuffix' })
 	routerMode: RouterMode;
+
+	@option({ flag: 'b', description: 'base URL', default: '' })
+	baseUrl: string;
 }
 
 @command()
@@ -32,6 +35,7 @@ export default class CLICommand extends Command {
 		const generatorOptions: GeneratorOptions = {
 			inputDirs: inputFolders,
 			outDir: options.outDir,
+			baseUrl: options.baseUrl,
 			baseDir: cwd,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
 				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);

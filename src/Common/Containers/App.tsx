@@ -11,7 +11,6 @@ import NavMenu from '../Components/NavMenu';
 import reference from '../Reference';
 import { filterByMember } from '../Tools/ArrayTools';
 
-import 'font-awesome/css/font-awesome.css';
 import './App.scss';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 

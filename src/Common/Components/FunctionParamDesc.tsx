@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as Icon from 'react-fontawesome';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 import { buildType } from '../Tools/CodeBuilders';
 import { ReferenceCommentTag, SignatureReferenceNode } from '../Reference';
@@ -45,7 +46,7 @@ const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature, addit
 					<td>{buildType(param.type)}</td>
 					{isCallback || (
 						<>
-							<td>{param.flags.isOptional || param.defaultValue ? '' : <Icon name="check"/>}</td>
+							<td>{param.flags.isOptional || param.defaultValue ? '' : <Icon className="FunctionParamDesc__check" icon={faCheck}/>}</td>
 							<td>{param.defaultValue || <em>none</em>}</td>
 						</>
 					)}

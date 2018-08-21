@@ -9,6 +9,7 @@ export interface GeneratorOptions {
 	inputDirs: string[];
 	outDir: string;
 	baseDir?: string;
+	baseUrl?: string;
 	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
 	routerMode: RouterMode;
 }
