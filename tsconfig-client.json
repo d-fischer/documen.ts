@@ -4,5 +4,8 @@
 		"types",
 		"src/Common",
 		"src/Client"
-	]
+	],
+	"compilerOptions": {
+		"importHelpers": false
+	}
 }

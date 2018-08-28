@@ -1,4 +1,4 @@
-import Generator, { GeneratorOptions } from './Generator';
+import Generator from './Generator';
 import * as path from 'path';
 import resolveHome = require('untildify');
 import webpack = require('webpack');
@@ -7,10 +7,6 @@ import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 
 export default class SPAGenerator extends Generator {
-	constructor(options: GeneratorOptions) {
-		super('spa', options);
-	}
-
 	async generate(data: ReferenceNode) {
 		return new Promise<void>((resolve, reject) => {
 			process.chdir(path.join(__dirname, '../../..'));
@@ -18,15 +14,20 @@ export default class SPAGenerator extends Generator {
 			// tslint:disable-next-line:no-var-requires
 			const webpackConfig = require('../../../config/webpack.config.spa');
 
-			webpackConfig.output.path = path.resolve(this._options.baseDir!, resolveHome(this._options.outDir));
+			webpackConfig.output.path = path.resolve(this._config.baseDir, resolveHome(this._config.outputDir));
 
 			const webpackCompiler = webpack(webpackConfig);
 
-			if (this._options.webpackProgressCallback) {
-				(new webpack.ProgressPlugin(this._options.webpackProgressCallback)).apply(webpackCompiler);
+			const { webpackProgressCallback, ...configWithoutCallback } = this._config;
+
+			if (webpackProgressCallback) {
+				(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
 			}
 
-			(new webpack.DefinePlugin({ GENERATED_REFERENCE: JSON.stringify(data) })).apply(webpackCompiler);
+			(new webpack.DefinePlugin({
+				__DOCTS_REFERENCE: JSON.stringify(data),
+				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback)
+			})).apply(webpackCompiler);
 
 			webpackCompiler.run((err, stats) => {
 				if (err) {

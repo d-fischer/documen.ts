@@ -13,7 +13,9 @@ import ts from 'react-syntax-highlighter/languages/hljs/typescript';
 const Router = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
 
 registerLanguage('javascript', js);
+registerLanguage('js', js);
 registerLanguage('typescript', ts);
+registerLanguage('ts', ts);
 
 ReactDOM.render(
 	<Router>

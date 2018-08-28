@@ -152,7 +152,7 @@ export type ReferenceNode =
 	EnumMemberReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode;
 
 declare global {
-	const GENERATED_REFERENCE: ReferenceNode;
+	const __DOCTS_REFERENCE: ReferenceNode;
 }
-const reference = GENERATED_REFERENCE;
+const reference = __DOCTS_REFERENCE;
 export default reference;

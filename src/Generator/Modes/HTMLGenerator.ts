@@ -1,4 +1,4 @@
-import Generator, { GeneratorOptions } from './Generator';
+import Generator from './Generator';
 import * as path from 'path';
 import resolveHome = require('untildify');
 import webpack = require('webpack');
@@ -8,17 +8,15 @@ import fs = require('fs-extra');
 import { ReferenceNode } from '../../Common/Reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
-import RouterMode from '../../Common/HTMLRenderer/RouterMode';
 import { filterByMember } from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/Reference/ReferenceNodeKind';
+import { ArticleContent } from '../../Common/Components/PageArticle';
+
+type RenderEntry = [string, string, Promise<string>];
 
 export default class HTMLGenerator extends Generator {
-	constructor(options: GeneratorOptions) {
-		super('spa', options);
-	}
-
 	async generate(data: ReferenceNode) {
-		const outDir = path.resolve(this._options.baseDir!, resolveHome(this._options.outDir));
+		const outDir = path.resolve(this._config.baseDir, resolveHome(this._config.outputDir));
 
 		await fs.emptyDir(outDir);
 
@@ -40,11 +38,24 @@ export default class HTMLGenerator extends Generator {
 
 				const { default: render } = require(path.resolve(tmpDir, 'generator.js'));
 				await Promise.all([
-					'/',
-					...filterByMember(data.children, 'kind', ReferenceNodeKind.Class).map(value => `/classes/${value.name}`),
-					...filterByMember(data.children, 'kind', ReferenceNodeKind.Interface).map(value => `/interfaces/${value.name}`),
-					...filterByMember(data.children, 'kind', ReferenceNodeKind.Enum).map(value => `/enums/${value.name}`)
-				].map(async (resourcePath: string) => this._renderToFile(render, resourcePath, outDir)));
+					['/', this._config.indexTitle, fs.readFile(this._config.indexFile, 'utf-8')],
+					...([] as RenderEntry[]).concat(...((this._config.configDir && this._config.categories) ? this._config.categories.map(cat => cat.articles.map(art => ([
+						`/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(this._config.configDir!, art.file), 'utf-8')
+					] as RenderEntry))) : [])),
+					...filterByMember(data.children, 'kind', ReferenceNodeKind.Class).map(value => `/reference/classes/${value.name}`),
+					...filterByMember(data.children, 'kind', ReferenceNodeKind.Interface).map(value => `/reference/interfaces/${value.name}`),
+					...filterByMember(data.children, 'kind', ReferenceNodeKind.Enum).map(value => `/reference/enums/${value.name}`)
+				].map(async (entry: RenderEntry | string) => {
+					if (Array.isArray(entry)) {
+						const [resourcePath, title, contentPromise] = entry;
+						return this._renderToFile(render, resourcePath, outDir, {
+							content: await contentPromise,
+							title
+						});
+					}
+
+					return this._renderToFile(render, entry, outDir);
+				}));
 
 				cleanup();
 				resolve();
@@ -52,18 +63,18 @@ export default class HTMLGenerator extends Generator {
 		});
 	}
 
-	private async _renderToFile(render: (path: string, baseUrl?: string, routerMode?: RouterMode) => string, resourcePath: string, outDir: string) {
+	private async _renderToFile(render: (path: string, article?: ArticleContent) => string, resourcePath: string, outDir: string, content?: ArticleContent) {
 		let relativeOutFile = resourcePath;
 		if (resourcePath.endsWith('/')) {
 			relativeOutFile += 'index.html';
-		} else if (this._options.routerMode === 'subDirectories') {
+		} else if (this._config.routerMode === 'subDirectories') {
 			relativeOutFile += '/index.html';
 		} else {
 			relativeOutFile += '.html';
 		}
 		const outFile = path.join(outDir, relativeOutFile);
 		await fs.mkdirp(path.dirname(outFile));
-		const str = render(resourcePath, this._options.baseUrl, this._options.routerMode);
+		const str = render(resourcePath, content);
 
 		await fs.writeFile(outFile, str);
 	}
@@ -76,12 +87,15 @@ export default class HTMLGenerator extends Generator {
 			const webpackConfig = require('../../../config/webpack.config.html')(outputDirectory);
 			const webpackCompiler = webpack(webpackConfig);
 
-			if (this._options.webpackProgressCallback) {
-				(new webpack.ProgressPlugin(this._options.webpackProgressCallback)).apply(webpackCompiler);
+			const { webpackProgressCallback, ...configWithoutCallback } = this._config;
+
+			if (webpackProgressCallback) {
+				(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
 			}
 
 			(new webpack.DefinePlugin({
-				GENERATED_REFERENCE: JSON.stringify(data)
+				__DOCTS_REFERENCE: JSON.stringify(data),
+				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback)
 			})).apply(webpackCompiler);
 
 			webpackCompiler.run((err, stats) => {
