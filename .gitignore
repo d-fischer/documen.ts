@@ -1,7 +1,6 @@
 /build
 /node_modules
 /lib
-/src/Common/Resources/data/reference.json
 
 /.idea
 .DS_Store
