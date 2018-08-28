@@ -77,7 +77,8 @@ module.exports = outDir => ({
 				include: paths.appSrc,
 				loader: 'awesome-typescript-loader',
 				options: {
-					silent: true
+					silent: true,
+					importHelpers: false
 				}
 			},
 			{
