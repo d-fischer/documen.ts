@@ -3,7 +3,7 @@
 	"include": [
 		"types",
 		"src/Common",
-		"src/Client"
+		"src/SPA"
 	],
 	"compilerOptions": {
 		"importHelpers": false

@@ -9,6 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
+const fs = require('fs-extra');
 
 const publicPath = '/';
 const publicUrl = '';
@@ -64,7 +65,7 @@ module.exports = {
 				include: paths.appSrc,
 				options: {
 					typeCheck: true,
-					tsConfigFile: 'tsconfig-client.json'
+					tsConfigFile: 'tsconfig-spa.json'
 				}
 			},
 			{
@@ -106,7 +107,7 @@ module.exports = {
 					loader: 'awesome-typescript-loader',
 					options: {
 						silent: true,
-						configFileName: 'tsconfig-client.json'
+						configFileName: 'tsconfig-spa.json'
 					}
 				},
 			},
@@ -170,6 +171,10 @@ module.exports = {
 		}),
 		new webpack.NamedModulesPlugin(),
 		new webpack.DefinePlugin(env.stringified),
+		new webpack.DefinePlugin({
+			__DOCTS_REFERENCE: fs.readFileSync(path.join(process.cwd(), 'docs.json'), 'UTF-8'),
+			__DOCTS_CONFIG: '{}'
+		}),
 		new webpack.HotModuleReplacementPlugin(),
 		new CaseSensitivePathsPlugin(),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
