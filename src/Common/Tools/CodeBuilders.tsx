@@ -5,7 +5,24 @@ import { findByMember } from './ArrayTools';
 import TypeAliasHint from '../Components/TypeAliasHint';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 
-export const buildType = (def?: ReferenceType): React.ReactNode => {
+export const isOptionalType = (def?: ReferenceType) => {
+	if (!def) {
+		return true;
+	}
+
+	if (def.type === 'union') {
+		if (def.types.length === 2) {
+			const undefIndex = def.types.findIndex(type => type.type === 'intrinsic' && type.name === 'undefined');
+			if (undefIndex !== -1) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+};
+
+export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false): React.ReactNode => {
 	if (!def) {
 		return 'void';
 	}
@@ -16,6 +33,9 @@ export const buildType = (def?: ReferenceType): React.ReactNode => {
 				const undefIndex = def.types.findIndex(type => type.type === 'intrinsic' && type.name === 'undefined');
 				if (undefIndex !== -1) {
 					const defIndex = +!undefIndex; // 0 => 1, 1 => 0 to find the type that isn't undefined
+					if (ignoreUndefined) {
+						return buildType(def.types[defIndex], true);
+					}
 					return <>?{buildType(def.types[defIndex])}</>;
 				}
 			}

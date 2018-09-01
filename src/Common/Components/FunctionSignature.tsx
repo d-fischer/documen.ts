@@ -14,7 +14,7 @@ const FunctionSignature: React.SFC<FunctionSignatureProps> = ({ signature }) => 
 		{signature.name}({signature.parameters && signature.parameters.map((param, idx) => (
 			<React.Fragment key={param.name}>
 				{idx !== 0 ? ', ' : ''}
-				{param.name}
+				{param.name === '__namedParameters' ? 'params' : param.name}
 			</React.Fragment>
 		))})
 	</h3>

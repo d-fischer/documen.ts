@@ -147,9 +147,15 @@ export interface TypeLiteralReferenceNode extends AbstractReferenceNode {
 	signatures?: SignatureReferenceNode[];
 }
 
+export interface VariableReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Variable;
+	type: ReferenceType;
+	defaultValue?: string;
+}
+
 export type ReferenceNode =
 	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
-	EnumMemberReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode;
+	EnumMemberReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode | VariableReferenceNode;
 
 declare global {
 	const __DOCTS_REFERENCE: ReferenceNode;

@@ -64,7 +64,7 @@ const EventCard: React.SFC<EventCardProps> = ({ name, definition }) => {
 			{handlerDefinition ? (
 				<h3 className="EventCard__example">
 					{name || definition.name}({handlerDefinition.parameters && handlerDefinition.parameters.map((param, idx) => {
-					let paramDesc: React.ReactNode = param.name;
+					let paramDesc: React.ReactNode = param.name === '__namedParameters' ? 'params' : param.name;
 					const paramDef = getParamDefinition(param);
 					if (paramDef) {
 						paramDesc = (

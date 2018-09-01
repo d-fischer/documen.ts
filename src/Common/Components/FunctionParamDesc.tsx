@@ -2,17 +2,62 @@ import * as React from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
-import { buildType } from '../Tools/CodeBuilders';
-import { ReferenceCommentTag, SignatureReferenceNode } from '../Reference';
+import { buildType, hasTag, isOptionalType } from '../Tools/CodeBuilders';
+import reference, { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, SignatureReferenceNode, VariableReferenceNode } from '../Reference';
 
 import './FunctionParamDesc.scss';
 import parseMarkdown from '../Tools/MarkdownParser';
+import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { findByMember } from '../Tools/ArrayTools';
 
 interface FunctionParamDescProps {
 	signature: SignatureReferenceNode;
 	additionalTags?: ReferenceCommentTag[];
 	isCallback?: boolean;
 }
+
+const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode, additionalTags?: ReferenceCommentTag[], isCallback?: boolean, expandParams?: boolean, paramNamePrefix: string = '') => {
+	let desc = param.comment && (param.comment.text || param.comment.shortText);
+
+	if (!desc && additionalTags) {
+		const correctTag = additionalTags.find(tag => tag.tag === 'param' && tag.param === param.name);
+		if (correctTag) {
+			desc = correctTag.text;
+		}
+	}
+
+	const paramName = paramNamePrefix + (param.name === '__namedParameters' ? 'params' : param.name);
+	const defaultValue = param.kind === ReferenceNodeKind.Property ? undefined : param.defaultValue;
+
+	let result: React.ReactNode[] = [];
+
+	if (param.type.type === 'reflection') {
+		result.push(...param.type.declaration.children.map(
+			(subParam: VariableReferenceNode) => renderParam(subParam, additionalTags, isCallback, expandParams, `${paramName}.`)
+		));
+	} else if (param.type.type === 'reference' && param.type.id && expandParams) {
+		const ref = findByMember(reference.children, 'id', param.type.id);
+		if (ref && ref.kind === ReferenceNodeKind.Interface) {
+			result.push(...ref.children.map((subParam: PropertyReferenceNode) => renderParam(subParam, additionalTags, isCallback, expandParams, `${paramName}.`)))
+		}
+	}
+
+	result.unshift(
+		<tr key={paramName}>
+			<td>{paramName}</td>
+			<td>{param.type.type === 'reflection' ? 'object' : buildType(param.type, param.kind !== ReferenceNodeKind.Parameter)}</td>
+			{isCallback || (
+				<>
+					<td>{param.flags.isOptional || defaultValue || isOptionalType(param.type) ? '' : <Icon className="FunctionParamDesc__check" icon={faCheck}/>}</td>
+					<td>{defaultValue || <em>none</em>}</td>
+				</>
+			)}
+			<td>{desc ? parseMarkdown(desc) : <em>{result.length ? 'see below' : 'none'}</em>}</td>
+		</tr>
+	);
+
+	return result;
+};
 
 const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature, additionalTags, isCallback }) => signature.parameters ? (
 	<table className="FunctionParamDesc">
@@ -30,30 +75,7 @@ const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature, addit
 		</tr>
 		</thead>
 		<tbody>
-		{signature.parameters.map(param => {
-			let desc = param.comment && (param.comment.text || param.comment.shortText);
-
-			if (!desc && additionalTags) {
-				const correctTag = additionalTags.find(tag => tag.tag === 'param' && tag.param === param.name);
-				if (correctTag) {
-					desc = correctTag.text;
-				}
-			}
-
-			return (
-				<tr key={param.name}>
-					<td>{param.name}</td>
-					<td>{buildType(param.type)}</td>
-					{isCallback || (
-						<>
-							<td>{param.flags.isOptional || param.defaultValue ? '' : <Icon className="FunctionParamDesc__check" icon={faCheck}/>}</td>
-							<td>{param.defaultValue || <em>none</em>}</td>
-						</>
-					)}
-					<td>{desc ? parseMarkdown(desc) : <em>none</em>}</td>
-				</tr>
-			);
-		})}
+		{signature.parameters.map(param => renderParam(param, additionalTags, isCallback, hasTag(signature, 'expandParams')))}
 		</tbody>
 	</table>
 ) : null;
