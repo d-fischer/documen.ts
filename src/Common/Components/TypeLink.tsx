@@ -15,7 +15,7 @@ const TypeLink: React.SFC<TypeLinkProps> = ({ name, children }) => {
 		return <>{children}</>;
 	}
 
-	return <Link to={`/${getPageType(symbol)}/${name}`}>{children}</Link>;
+	return <Link to={`/reference/${getPageType(symbol)}/${name}`}>{children}</Link>;
 };
 
 export default TypeLink;
