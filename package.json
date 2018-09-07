@@ -77,7 +77,6 @@
     "nodemon": "^1.17.2",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.4.0",
-    "tslint-language-service": "^0.9.9",
     "tslint-loader": "^3.6.0",
     "tslint-react": "^3.5.1"
   },
