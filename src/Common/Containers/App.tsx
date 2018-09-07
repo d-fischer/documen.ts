@@ -18,6 +18,9 @@ import config from '../Config';
 
 export class App extends React.Component {
 	render() {
+		const classes = filterByMember(reference.children, 'kind', ReferenceNodeKind.Class);
+		const interfaces = filterByMember(reference.children, 'kind', ReferenceNodeKind.Interface);
+		const enums = filterByMember(reference.children, 'kind', ReferenceNodeKind.Enum);
 		return (
 			<div className="App">
 				<NavMenu>
@@ -29,15 +32,21 @@ export class App extends React.Component {
 							))}
 						</NavMenu.Group>
 					))}
-					<NavMenu.Group title="Classes">
-						{filterByMember(reference.children, 'kind', ReferenceNodeKind.Class).map(value => <NavMenu.Item key={value.id} path={`/reference/classes/${value.name}`}>{value.name}</NavMenu.Item>)}
-					</NavMenu.Group>
-					<NavMenu.Group title="Interfaces">
-						{filterByMember(reference.children, 'kind', ReferenceNodeKind.Interface).map(value => <NavMenu.Item key={value.id} path={`/reference/interfaces/${value.name}`}>{value.name}</NavMenu.Item>)}
-					</NavMenu.Group>
-					<NavMenu.Group title="Enums">
-						{filterByMember(reference.children, 'kind', ReferenceNodeKind.Enum).map(value => <NavMenu.Item key={value.id} path={`/reference/enums/${value.name}`}>{value.name}</NavMenu.Item>)}
-					</NavMenu.Group>
+					{classes.length ? (
+						<NavMenu.Group title="Classes">
+							{classes.map(value => <NavMenu.Item key={value.id} path={`/reference/classes/${value.name}`}>{value.name}</NavMenu.Item>)}
+						</NavMenu.Group>
+					) : null}
+					{interfaces.length ? (
+						<NavMenu.Group title="Interfaces">
+							{interfaces.map(value => <NavMenu.Item key={value.id} path={`/reference/interfaces/${value.name}`}>{value.name}</NavMenu.Item>)}
+						</NavMenu.Group>
+					) : null}
+					{enums.length ? (
+						<NavMenu.Group title="Enums">
+							{enums.map(value => <NavMenu.Item key={value.id} path={`/reference/enums/${value.name}`}>{value.name}</NavMenu.Item>)}
+						</NavMenu.Group>
+					) : null}
 				</NavMenu>
 				<div className="App__main">
 					<main className="App__content">
