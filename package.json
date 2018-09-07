@@ -1,6 +1,6 @@
 {
   "name": "@d-fischer/documen.ts",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "homepage": "https://twitchjs-docs.naimabot.com/",
   "main": "lib/Generator/index.js",
   "dependencies": {
