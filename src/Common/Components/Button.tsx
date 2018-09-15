@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import './Button.scss';
 
-type ButtonStyle = 'primary' | 'danger' | 'twitch';
+type ButtonStyle = 'primary' | 'danger';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	className?: string;

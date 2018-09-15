@@ -19,7 +19,7 @@
 		border-color: $focusAccentColor;
 	}
 
-	&--primary, &--danger, &--twitch {
+	&--primary, &--danger {
 		color: white;
 		transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
 
@@ -45,16 +45,6 @@
 		&:hover, &:active, &:focus {
 			background-color: $focusDangerColor;
 			border-color: $focusDangerColor;
-		}
-	}
-
-	&--twitch {
-		background-color: $twitchColor;
-		border-color: $twitchColor;
-
-		&:hover, &:active, &:focus {
-			background-color: $focusTwitchColor;
-			border-color: $focusTwitchColor;
 		}
 	}
 }

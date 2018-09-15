@@ -136,7 +136,9 @@ export default class CLICommand extends Command {
 				console.error(e.stats.toString());
 				process.exit(1);
 			} else {
-				throw e;
+				process.stderr.write('\nerror building the documentation:\n');
+				console.error(e);
+				process.exit(1);
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 {
   "name": "@d-fischer/documen.ts",
   "version": "0.2.4",
-  "homepage": "https://twitchjs-docs.naimabot.com/",
+  "homepage": "https://github.com/d-fischer/documen.ts",
   "main": "lib/Generator/index.js",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.2",

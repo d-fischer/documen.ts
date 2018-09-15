@@ -37,27 +37,33 @@ export default class HTMLGenerator extends Generator {
 				await fs.copy(path.join(tmpDir, 'static'), path.join(outDir, 'static'));
 
 				const { default: render } = require(path.resolve(tmpDir, 'generator.js'));
-				await Promise.all([
-					['/', this._config.indexTitle, fs.readFile(this._config.indexFile, 'utf-8')],
-					...([] as RenderEntry[]).concat(...((this._config.configDir && this._config.categories) ? this._config.categories.map(cat => cat.articles.map(art => ([
-						`/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(this._config.configDir!, art.file), 'utf-8')
-					] as RenderEntry))) : [])),
-					...filterByMember(data.children, 'kind', ReferenceNodeKind.Class).map(value => `/reference/classes/${value.name}`),
-					...filterByMember(data.children, 'kind', ReferenceNodeKind.Interface).map(value => `/reference/interfaces/${value.name}`),
-					...filterByMember(data.children, 'kind', ReferenceNodeKind.Enum).map(value => `/reference/enums/${value.name}`)
-				].map(async (entry: RenderEntry | string) => {
-					if (Array.isArray(entry)) {
-						const [resourcePath, title, contentPromise] = entry;
-						return this._renderToFile(render, resourcePath, outDir, {
-							content: await contentPromise,
-							title
-						});
-					}
+				try {
+					await Promise.all([
+						['/', this._config.indexTitle, fs.readFile(this._config.indexFile, 'utf-8')],
+						...([] as RenderEntry[]).concat(...((this._config.configDir && this._config.categories) ? this._config.categories.map(cat => cat.articles.map(art => ([
+							`/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(this._config.configDir!, art.file), 'utf-8')
+						] as RenderEntry))) : [])),
+						...filterByMember(data.children, 'kind', ReferenceNodeKind.Class).map(value => `/reference/classes/${value.name}`),
+						...filterByMember(data.children, 'kind', ReferenceNodeKind.Interface).map(value => `/reference/interfaces/${value.name}`),
+						...filterByMember(data.children, 'kind', ReferenceNodeKind.Enum).map(value => `/reference/enums/${value.name}`)
+					].map(async (entry: RenderEntry | string) => {
+						if (Array.isArray(entry)) {
+							const [resourcePath, title, contentPromise] = entry;
+							return this._renderToFile(render, resourcePath, outDir, {
+								content: await contentPromise,
+								title
+							});
+						}
 
-					return this._renderToFile(render, entry, outDir);
-				}));
+						return this._renderToFile(render, entry, outDir);
+					}));
+				} catch (e) {
+					reject(e);
+					return;
+				} finally {
+					cleanup();
+				}
 
-				cleanup();
 				resolve();
 			});
 		});

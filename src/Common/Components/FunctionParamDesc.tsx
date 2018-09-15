@@ -31,7 +31,7 @@ const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | Pro
 
 	let result: React.ReactNode[] = [];
 
-	if (param.type.type === 'reflection') {
+	if (param.type.type === 'reflection' && param.type.declaration.children) {
 		result.push(...param.type.declaration.children.map(
 			(subParam: VariableReferenceNode) => renderParam(subParam, additionalTags, isCallback, expandParams, `${paramName}.`)
 		));
@@ -42,10 +42,22 @@ const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | Pro
 		}
 	}
 
+	let typeDesc: React.ReactNode;
+
+	if (param.type.type === 'reflection') {
+		if (param.type.declaration.signatures && param.type.declaration.signatures.length) {
+			typeDesc = 'function';
+		} else {
+			typeDesc = 'object';
+		}
+	} else {
+		typeDesc = buildType(param.type, param.kind !== ReferenceNodeKind.Parameter);
+	}
+
 	result.unshift(
 		<tr key={paramName}>
 			<td>{paramName}</td>
-			<td>{param.type.type === 'reflection' ? 'object' : buildType(param.type, param.kind !== ReferenceNodeKind.Parameter)}</td>
+			<td>{typeDesc}</td>
 			{isCallback || (
 				<>
 					<td>{param.flags.isOptional || defaultValue || isOptionalType(param.type) ? '' : <Icon className="FunctionParamDesc__check" icon={faCheck}/>}</td>
