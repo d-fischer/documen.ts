@@ -10,18 +10,14 @@ export default abstract class Generator {
 		this._config = { baseDir: process.cwd(), ...config };
 	}
 
-	createReferenceStructure(): ReferenceNode {
-		// TODO get tsconfig from app
+	createReferenceStructure() {
+		const baseDir = this._config.baseDir;
 		const typeDoc = new TypeDoc.Application({
 			mode: 'file',
-			experimentalDecorators: true,
-			module: 'commonjs',
-			target: 'es5',
-			lib: ['lib.es6.d.ts', 'lib.es2017.d.ts', 'lib.dom.d.ts'],
+			tsconfig: path.join(baseDir, 'tsconfig.json'),
 			logger: () => {
 			} // tslint:disable-line:no-empty
 		});
-		const baseDir = this._config.baseDir;
 		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
 		const project = typeDoc.convert(files);
 		const data = typeDoc.serializer.projectToObject(project);
@@ -29,29 +25,33 @@ export default abstract class Generator {
 		return this._filterReferenceStructure(data)!;
 	}
 
-	private _filterReferenceStructure(currentNode: ReferenceNode, parentNode?: ReferenceNode): ReferenceNode | null {
-		if (currentNode.flags.isPrivate) {
-			return null;
+	private _filterReferenceStructure(currentNode: ReferenceNode, parentNode?: ReferenceNode, level: number = 0): ReferenceNode | null {
+		try {
+			if (currentNode.flags.isPrivate) {
+				return null;
+			}
+
+			const parentTags = (parentNode && parentNode.comment && parentNode.comment.tags) || [];
+			const parentTagKeys = parentTags.map(tag => tag.tag);
+
+			if (currentNode.flags.isProtected && parentTagKeys.includes('hideprotected')) {
+				return null;
+			}
+
+			if (currentNode.inheritedFrom && !parentTagKeys.includes('inheritdoc')) {
+				return null;
+			}
+
+			const result = { ...currentNode };
+
+			if (currentNode.children) {
+				result.children = currentNode.children.map(child => this._filterReferenceStructure(child, currentNode, level + 1)!).filter(x => x);
+			}
+
+			return result;
+		} catch (e) {
+			throw new Error(`Error transforming reference structure at id ${currentNode.id}: ${e.message}`);
 		}
-
-		const parentTags = (parentNode && parentNode.comment && parentNode.comment.tags) || [];
-		const parentTagKeys = parentTags.map(tag => tag.tag);
-
-		if (currentNode.flags.isProtected && parentTagKeys.includes('hideprotected')) {
-			return null;
-		}
-
-		if (currentNode.inheritedFrom && !parentTagKeys.includes('inheritdoc')) {
-			return null;
-		}
-
-		const result = { ...currentNode };
-
-		if (currentNode.children) {
-			result.children = currentNode.children.map(child => this._filterReferenceStructure(child, currentNode)!).filter(x => x);
-		}
-
-		return result;
 	}
 
 	abstract async generate(data: ReferenceNode): Promise<void>;
