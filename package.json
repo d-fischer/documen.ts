@@ -86,8 +86,10 @@
   },
   "scripts": {
     "dev": "node $NODE_DEBUG_OPTION node_modules/.bin/webpack-dev-server --progress --config config/webpack.config.dev.js",
+    "lint": "tslint --project .",
     "build": "tsc",
-    "prepare": "npm run build"
+    "rebuild": "rimraf lib && yarn run build",
+    "prepare": "yarn run lint && yarn run rebuild"
   },
   "bin": {
     "documen.ts": "bin/docs.js"
