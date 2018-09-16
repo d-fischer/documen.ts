@@ -28,23 +28,23 @@ export class App extends React.Component {
 					{config.categories && config.categories.map(cat => (
 						<NavMenu.Group key={cat.name} title={cat.title}>
 							{cat.articles.map(article => (
-								<NavMenu.Item key={article.name} path={`/docs/${cat.name}/${article.name}`}>{article.title}</NavMenu.Item>
+								<NavMenu.Item key={article.name} path={`/docs/${cat.name}/${article.name}`} title={article.title}>{article.title}</NavMenu.Item>
 							))}
 						</NavMenu.Group>
 					))}
 					{classes.length ? (
 						<NavMenu.Group title="Classes">
-							{classes.map(value => <NavMenu.Item key={value.id} path={`/reference/classes/${value.name}`}>{value.name}</NavMenu.Item>)}
+							{classes.map(value => <NavMenu.Item key={value.id} path={`/reference/classes/${value.name}`} title={value.name}>{value.name}</NavMenu.Item>)}
 						</NavMenu.Group>
 					) : null}
 					{interfaces.length ? (
 						<NavMenu.Group title="Interfaces">
-							{interfaces.map(value => <NavMenu.Item key={value.id} path={`/reference/interfaces/${value.name}`}>{value.name}</NavMenu.Item>)}
+							{interfaces.map(value => <NavMenu.Item key={value.id} path={`/reference/interfaces/${value.name}`} title={value.name}>{value.name}</NavMenu.Item>)}
 						</NavMenu.Group>
 					) : null}
 					{enums.length ? (
 						<NavMenu.Group title="Enums">
-							{enums.map(value => <NavMenu.Item key={value.id} path={`/reference/enums/${value.name}`}>{value.name}</NavMenu.Item>)}
+							{enums.map(value => <NavMenu.Item key={value.id} path={`/reference/enums/${value.name}`} title={value.name}>{value.name}</NavMenu.Item>)}
 						</NavMenu.Group>
 					) : null}
 				</NavMenu>

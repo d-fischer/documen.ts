@@ -9,6 +9,8 @@
 	color: $invertedTextColor;
 	transition: .3s background-color ease-in-out, .3s border-left-color ease-in-out;
 	border-left: .25em solid transparent;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	&:hover {
 		background-color: $invertedBackgroundColorHover;
