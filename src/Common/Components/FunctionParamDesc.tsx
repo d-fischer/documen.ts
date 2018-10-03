@@ -51,7 +51,7 @@ const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | Pro
 			typeDesc = 'object';
 		}
 	} else {
-		typeDesc = buildType(param.type, param.kind !== ReferenceNodeKind.Parameter);
+		typeDesc = buildType(param.type, param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional);
 	}
 
 	result.unshift(
