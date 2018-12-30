@@ -9,7 +9,7 @@ interface TypeAliasHintProps {
 	type: ReferenceType;
 }
 
-const TypeAliasHint: React.SFC<TypeAliasHintProps> = ({ name, type }) => (
+const TypeAliasHint: React.FunctionComponent<TypeAliasHintProps> = ({ name, type }) => (
 	<div className="TypeAliasHint">
 		<abbr>{name}</abbr>
 		<div className="TypeAliasHint__hint">

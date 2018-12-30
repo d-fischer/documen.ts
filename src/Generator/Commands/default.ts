@@ -97,6 +97,8 @@ export default class CLICommand extends Command {
 			outputDir: options.outDir || getConfigValue(importedConfig, 'outputDir', true),
 			baseUrl: removeSlash(options.baseUrl || getConfigValue(importedConfig, 'baseUrl', true)),
 			baseDir: cwd,
+			repoUser: getConfigValue(importedConfig, 'repoUser'),
+			repoName: getConfigValue(importedConfig, 'repoName'),
 			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
 			indexFile: indexFile,
 			categories: getConfigValue(importedConfig, 'categories') || undefined,

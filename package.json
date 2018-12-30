@@ -15,8 +15,8 @@
     "@types/invariant": "^2.2.29",
     "@types/node": "^9.6.1",
     "@types/query-string": "^5.1.0",
-    "@types/react": "^16.4.18",
-    "@types/react-dom": "^16.0.9",
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
     "@types/react-fontawesome": "^1.6.2",
     "@types/react-hot-loader": "^3.0.6",
     "@types/react-paginate": "^4.3.2",
@@ -81,7 +81,7 @@
     "tslint-react": "^3.5.1"
   },
   "resolutions": {
-    "@types/react": "16.4.18",
+    "@types/react": "16.7.18",
     "@types/tapable": "1.0.0"
   },
   "scripts": {

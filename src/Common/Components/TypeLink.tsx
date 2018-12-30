@@ -8,7 +8,7 @@ interface TypeLinkProps {
 	name: string;
 }
 
-const TypeLink: React.SFC<TypeLinkProps> = ({ name, children }) => {
+const TypeLink: React.FunctionComponent<TypeLinkProps> = ({ name, children }) => {
 	const symbol = findByMember(reference.children, 'name', name);
 
 	if (!symbol) {

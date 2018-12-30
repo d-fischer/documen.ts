@@ -21,6 +21,8 @@ export default interface Config {
 	routerMode: RouterMode;
 	baseDir: string;
 	baseUrl: string;
+	repoUser: string | null;
+	repoName: string | null;
 	indexFile: string;
 	indexTitle: string;
 	categories?: ConfigCategory[];
