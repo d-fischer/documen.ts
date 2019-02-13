@@ -35,7 +35,6 @@ module.exports = {
 		}
 	},
 	entry: [
-		require.resolve('webpack/hot/dev-server'),
 		require.resolve('react-error-overlay'),
 		paths.entryPoints.spa,
 	],

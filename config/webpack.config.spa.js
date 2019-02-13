@@ -5,8 +5,6 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 
@@ -22,7 +20,7 @@ module.exports = {
 	mode: 'production',
 	bail: true,
 	devtool: 'source-map',
-	entry: [paths.entryPoints.spa],
+	entry: paths.entryPoints.spa,
 	output: {
 		path: paths.appBuild,
 		filename: 'static/js/bundle.js',
@@ -180,23 +178,6 @@ module.exports = {
 			},
 		}),
 		new webpack.DefinePlugin(env.stringified),
-		new ManifestPlugin({fileName: 'asset-manifest.json'}),
-		new SWPrecacheWebpackPlugin({
-			dontCacheBustUrlsMatching: /\.\w{8}\./,
-			filename: 'service-worker.js',
-			logger(message) {
-				if (message.indexOf('Total precache size is') === 0) {
-					return;
-				}
-				if (message.indexOf('Skipping static resource') === 0) {
-					return;
-				}
-				console.log(message);
-			},
-			minify: false,
-			navigateFallback: publicUrl + '/index.html',
-			staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
-		}),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		new MiniCssExtractPlugin({
 			filename: 'static/css/[name].css'

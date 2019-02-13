@@ -70,10 +70,10 @@ const ClassPage: React.FC<RouteComponentProps<ClassPageRouteProps>> = ({ match: 
 						<h2>Properties</h2>
 						{propertiesWithoutEvents.map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
 						{accessors.map(acc => {
-							if (!acc.getSignature) {
+							if (!acc.getSignature || !acc.getSignature.length) {
 								return null;
 							}
-							return <PropertyCard key={acc.id} name={acc.name} definition={acc.getSignature}/>;
+							return <PropertyCard key={acc.id} name={acc.name} definition={acc.getSignature[0]}/>;
 						})}
 					</>
 				) : null}

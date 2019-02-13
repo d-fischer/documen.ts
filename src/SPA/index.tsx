@@ -4,13 +4,13 @@ import * as ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 
 import App from '../Common/Containers/App';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
+import { BrowserRouter, BrowserRouterProps, HashRouter, HashRouterProps } from 'react-router-dom';
 
 import { registerLanguage } from 'react-syntax-highlighter/light';
 import js from 'react-syntax-highlighter/languages/hljs/javascript';
 import ts from 'react-syntax-highlighter/languages/hljs/typescript';
 
-const Router = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
+const Router: React.ComponentType<BrowserRouterProps | HashRouterProps> = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
 
 registerLanguage('javascript', js);
 registerLanguage('js', js);

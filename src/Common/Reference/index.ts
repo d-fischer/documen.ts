@@ -111,7 +111,7 @@ export interface ConstructorReferenceNode extends AbstractReferenceNode {
 
 export interface AccessorReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.Accessor;
-	getSignature?: GetSignatureReferenceNode;
+	getSignature?: GetSignatureReferenceNode[];
 }
 
 export interface EnumReferenceNode extends AbstractReferenceNode {
@@ -160,5 +160,6 @@ export type ReferenceNode =
 declare global {
 	const __DOCTS_REFERENCE: ReferenceNode;
 }
+// noinspection UnnecessaryLocalVariableJS
 const reference = __DOCTS_REFERENCE;
 export default reference;

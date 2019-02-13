@@ -20,6 +20,9 @@ export default abstract class Generator {
 		});
 		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
 		const project = typeDoc.convert(files);
+		if (!project) {
+			throw new Error('Error parsing the project structure');
+		}
 		const data = typeDoc.serializer.projectToObject(project);
 
 		return this._filterReferenceStructure(data)!;
