@@ -15,7 +15,7 @@ interface EnumPageRouteProps {
 	name: string;
 }
 
-const EnumPage: React.SFC<RouteComponentProps<EnumPageRouteProps>> = ({ match: { params: { name } } }) => {
+const EnumPage: React.FC<RouteComponentProps<EnumPageRouteProps>> = ({ match: { params: { name } } }) => {
 	const symbol = findByMember(reference.children, 'name', name);
 
 	if (!symbol) {

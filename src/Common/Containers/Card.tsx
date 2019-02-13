@@ -7,7 +7,7 @@ interface CardProps {
 	id?: string;
 }
 
-const Card: React.SFC<CardProps> = ({ className, id, children }) => (
+const Card: React.FC<CardProps> = ({ className, id, children }) => (
 	<div id={id} className={`Card${className ? (` ${className}`) : ''}`}>
 		{children}
 	</div>

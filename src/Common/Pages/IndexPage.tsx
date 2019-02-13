@@ -5,7 +5,7 @@ import PageContent from '../Containers/PageContent';
 import config from '../Config';
 import PageArticle from '../Components/PageArticle';
 
-const IndexPage: React.SFC = () => (
+const IndexPage: React.FC = () => (
 	<>
 		<PageHeader>
 			<h1>{config.indexTitle}</h1>

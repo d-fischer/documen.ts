@@ -14,7 +14,7 @@ interface ClassPageRouteProps {
 	name: string;
 }
 
-const InterfacePage: React.SFC<RouteComponentProps<ClassPageRouteProps>> = ({ match: { params: { name } } }) => {
+const InterfacePage: React.FC<RouteComponentProps<ClassPageRouteProps>> = ({ match: { params: { name } } }) => {
 	const symbol = findByMember(reference.children, 'name', name);
 
 	if (!symbol) {

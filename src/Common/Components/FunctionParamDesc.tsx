@@ -71,7 +71,7 @@ const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | Pro
 	return result;
 };
 
-const FunctionParamDesc: React.SFC<FunctionParamDescProps> = ({ signature, additionalTags, isCallback }) => signature.parameters ? (
+const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ signature, additionalTags, isCallback }) => signature.parameters ? (
 	<table className="FunctionParamDesc">
 		<thead>
 		<tr>

@@ -9,7 +9,7 @@ interface PropertyCardProps {
 	definition: PropertyReferenceNode | GetSignatureReferenceNode;
 }
 
-const PropertyCard: React.SFC<PropertyCardProps> = ({ name, definition }) => (
+const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => (
 	<Card id={`symbol__${name || definition.name}`} key={definition.id}>
 		<h3>{name || definition.name}</h3>
 		{definition.type ? <h4>{isStringLiteral(definition.type) ? 'Value' : 'Type'}: {buildType(definition.type)}</h4> : null}

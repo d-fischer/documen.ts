@@ -8,7 +8,7 @@ interface SymbolHeaderProps {
 	symbol: ReferenceNode;
 }
 
-const SymbolHeader: React.SFC<SymbolHeaderProps> = ({ symbol }) => (
+const SymbolHeader: React.FC<SymbolHeaderProps> = ({ symbol }) => (
 	<PageHeader>
 		<h1>
 			{symbol.name}

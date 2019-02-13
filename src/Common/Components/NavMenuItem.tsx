@@ -9,7 +9,7 @@ interface NavMenuItemProps {
 	title?: string;
 }
 
-const NavMenuItem: React.SFC<NavMenuItemProps> = ({ path, exact, title, children }) => (
+const NavMenuItem: React.FC<NavMenuItemProps> = ({ path, exact, title, children }) => (
 	<NavLink to={path} exact={exact} className="NavMenuItem" activeClassName="NavMenuItem--active" title={title}>
 		{children}
 	</NavLink>

@@ -50,7 +50,7 @@ const getDefinedTags = (prop: PropertyReferenceNode) => {
 	return undefined;
 };
 
-const EventCard: React.SFC<EventCardProps> = ({ name, definition }) => {
+const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 	let handlerDefinition: SignatureReferenceNode | undefined;
 	let handlerParamDefinition: SignatureReferenceNode | undefined;
 	if (definition.type.type === 'reflection' && definition.type.declaration.signatures && definition.type.declaration.signatures.length) {

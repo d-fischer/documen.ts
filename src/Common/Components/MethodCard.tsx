@@ -13,7 +13,7 @@ interface MethodCardProps {
 	isConstructor?: boolean;
 }
 
-const MethodCard: React.SFC<MethodCardProps> = ({ sig, isConstructor }) => (
+const MethodCard: React.FC<MethodCardProps> = ({ sig, isConstructor }) => (
 	<Card id={`symbol__${sig.name}`} key={sig.id} className="MethodCard">
 		<FunctionSignature signature={sig} isConstructor={isConstructor}/>
 		{hasTag(sig, 'deprecated') && (

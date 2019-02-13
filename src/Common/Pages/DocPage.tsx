@@ -11,7 +11,7 @@ interface DocPageRouteProps {
 	articleName: string;
 }
 
-const DocPage: React.SFC<RouteComponentProps<DocPageRouteProps>> = ({ match: { params: { categoryName, articleName } } }) => {
+const DocPage: React.FC<RouteComponentProps<DocPageRouteProps>> = ({ match: { params: { categoryName, articleName } } }) => {
 	if (!config.categories) {
 		return null;
 	}

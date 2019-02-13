@@ -11,7 +11,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const Button: React.SFC<ButtonProps> = ({ className, type, small, ...props }) => {
+const Button: React.FC<ButtonProps> = ({ className, type, small, ...props }) => {
 	const classes = ['Button'];
 
 	if (small) {

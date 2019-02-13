@@ -9,7 +9,7 @@ interface FunctionSignatureProps {
 	isConstructor?: boolean;
 }
 
-const FunctionSignature: React.SFC<FunctionSignatureProps> = ({ signature }) => (
+const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => (
 	<h3 className="FunctionSignature">
 		{signature.name}({signature.parameters && signature.parameters.map((param, idx) => (
 			<React.Fragment key={param.name}>
