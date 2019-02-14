@@ -73,27 +73,33 @@ export default function parseMarkdown(source: string) {
 		renderers: {
 			// tslint:disable-next-line:no-any
 			link: function MdLink(mdProps: any) {
-				// tslint:disable-next-line:no-any
-				const props: any = {
+				const props = {
 					key: mdProps.nodeKey,
 					className: mdProps.className
 				};
-				let type: string | React.ComponentClass;
 
 				if (mdProps.href.startsWith('/')) {
-					type = HashLink;
-					props.to = mdProps.href;
+					return (
+						<HashLink {...props} to={mdProps.href}>
+							{mdProps.children}
+						</HashLink>
+					);
 				} else {
-					type = 'a';
-					props.href = mdProps.href;
+					return (
+						<a href={mdProps.href}>
+							{mdProps.children}
+						</a>
+					);
 				}
-
-				return React.createElement(type, props, mdProps.children);
 			},
 
 			// tslint:disable-next-line:no-any
 			code_block: function MdCodeBlock(mdProps: any) {
-				return React.createElement(SyntaxHighlighter, { key: mdProps.nodeKey, language: mdProps.language, style: darcula }, mdProps.literal);
+				return (
+					<SyntaxHighlighter key={mdProps.nodeKey} language={mdProps.language} style={darcula}>
+						{mdProps.literal}
+					</SyntaxHighlighter>
+				);
 			}
 		}
 	});

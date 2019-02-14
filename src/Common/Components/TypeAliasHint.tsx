@@ -10,7 +10,7 @@ interface TypeAliasHintProps {
 }
 
 const TypeAliasHint: React.FunctionComponent<TypeAliasHintProps> = ({ name, type }) => (
-	<div className="TypeAliasHint">
+	<div className="TypeAliasHint" style={{ display: 'inline-block' }}>
 		<abbr>{name}</abbr>
 		<div className="TypeAliasHint__hint">
 			<div className="TypeAliasHint__toolTip">
