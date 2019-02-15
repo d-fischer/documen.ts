@@ -8,7 +8,7 @@ export interface ArticleContent {
 
 const { Provider, Consumer } = React.createContext<ArticleContent | undefined>({ title: '', content: '' });
 
-const PageArticle: React.FunctionComponent = () => (
+const PageArticle: React.FC = () => (
 	<Consumer>
 		{article => article && parseMarkdown(article.content)}
 	</Consumer>

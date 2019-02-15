@@ -7,14 +7,8 @@ $invertedTextColor: #b9b9b9;
 $invertedBorderColor: #444;
 $borderColor: #ccc;
 
-$greyAccentColor: #f0f0f0;
 $accentColor: #647d0f;
 $focusAccentColor: lighten($accentColor, 10);
-
-$dangerColor: #ff0000;
-$focusDangerColor: darken($dangerColor, 10);
-
-$successColor: #00cc00;
 
 $codeFonts: Monaco, Menlo, "Lucida Console", monospace;
 
