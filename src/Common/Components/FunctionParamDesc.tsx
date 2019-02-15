@@ -16,7 +16,13 @@ interface FunctionParamDescProps {
 	isCallback?: boolean;
 }
 
-const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode, additionalTags?: ReferenceCommentTag[], isCallback?: boolean, expandParams?: boolean, paramNamePrefix: string = '') => {
+const renderParam = (
+	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode,
+	additionalTags?: ReferenceCommentTag[],
+	isCallback?: boolean,
+	expandParams?: boolean,
+	paramNamePrefix: string = ''
+) => {
 	let desc = param.comment && (param.comment.text || param.comment.shortText);
 
 	if (!desc && additionalTags) {
@@ -29,7 +35,7 @@ const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | Pro
 	const paramName = paramNamePrefix + (param.name === '__namedParameters' ? 'params' : param.name);
 	const defaultValue = param.kind === ReferenceNodeKind.Property ? undefined : param.defaultValue;
 
-	let result: React.ReactNode[] = [];
+	const result: React.ReactNode[] = [];
 
 	if (param.type.type === 'reflection' && param.type.declaration.children) {
 		result.push(...param.type.declaration.children.map(
@@ -38,21 +44,15 @@ const renderParam = (param: ParameterReferenceNode | VariableReferenceNode | Pro
 	} else if (param.type.type === 'reference' && param.type.id && expandParams) {
 		const ref = findByMember(reference.children, 'id', param.type.id);
 		if (ref && ref.kind === ReferenceNodeKind.Interface) {
-			result.push(...ref.children.map((subParam: PropertyReferenceNode) => renderParam(subParam, additionalTags, isCallback, expandParams, `${paramName}.`)))
+			result.push(...ref.children.map((subParam: PropertyReferenceNode) => renderParam(subParam, additionalTags, isCallback, expandParams, `${paramName}.`)));
 		}
 	}
 
 	let typeDesc: React.ReactNode;
 
-	if (param.type.type === 'reflection') {
-		if (param.type.declaration.signatures && param.type.declaration.signatures.length) {
-			typeDesc = 'function';
-		} else {
-			typeDesc = 'object';
-		}
-	} else {
-		typeDesc = buildType(param.type, param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional);
-	}
+	typeDesc = param.type.type === 'reflection'
+		? param.type.declaration.signatures && param.type.declaration.signatures.length ? 'function' : 'object'
+		: buildType(param.type, param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional);
 
 	result.unshift(
 		<tr key={paramName}>

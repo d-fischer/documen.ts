@@ -2,6 +2,8 @@
 
 .TypeAliasHint {
 	position: relative;
+	display: inline-block;
+	font-weight: normal;
 
 	> abbr {
 		border-bottom: 1px dashed;
