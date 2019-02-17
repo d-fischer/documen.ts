@@ -1,16 +1,21 @@
 import * as React from 'react';
-
 import { SignatureReferenceNode } from '../Reference';
-
-import './FunctionSignature.scss';
+import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 
 interface FunctionSignatureProps {
 	signature: SignatureReferenceNode;
 	isConstructor?: boolean;
 }
 
-const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => (
-	<h3 className="FunctionSignature">
+const styles = createStyles(theme => ({
+	root: {
+		fontFamily: theme.fonts.code,
+		margin: '0 0 .5em'
+	}
+}));
+
+const FunctionSignature: React.FC<FunctionSignatureProps & WithSheet<typeof styles>> = ({ signature, classes }) => (
+	<h3 className={classes.root}>
 		{signature.name}({signature.parameters && signature.parameters.map((param, idx) => (
 			<React.Fragment key={param.name}>
 				{idx !== 0 ? ', ' : ''}
@@ -20,4 +25,4 @@ const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => (
 	</h3>
 );
 
-export default FunctionSignature;
+export default withStyles(styles)(FunctionSignature);

@@ -114,29 +114,6 @@ module.exports = {
 						},
 					},
 				],
-			},
-			{
-				test: /\.s[ac]ss$/,
-				loader: [
-					MiniCssExtractPlugin.loader,
-					{
-						loader: 'css-loader',
-						options: {
-							importLoaders: 1,
-							minimize: true,
-							sourceMap: true
-						}
-					},
-					{
-						loader: 'sass-loader',
-						options: {
-							sourceMap: true,
-							includePaths: [
-								path.dirname(require.resolve('compass-mixins'))
-							]
-						}
-					}
-				]
 			}
 		]
 	},

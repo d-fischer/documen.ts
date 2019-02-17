@@ -11,6 +11,9 @@ const theme = {
 			default: '#647d0f',
 			focus: '#88ab14'
 		}
+	},
+	fonts: {
+		code: 'Monaco, Menlo, "Lucida Console", monospace'
 	}
 };
 

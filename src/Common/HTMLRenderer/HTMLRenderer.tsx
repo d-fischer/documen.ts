@@ -8,9 +8,11 @@ import RouterMode from './RouterMode';
 import { StaticRouter } from 'react-router';
 import config from '../Config';
 import { ArticleProvider, ArticleContent } from '../Components/PageArticle';
+import { ThemeProvider } from 'react-jss';
+import theme from '../Theme';
 
-const insertIntoSkeleton = (html: string) => {
-	return `<!doctype html>
+const insertIntoSkeleton = (html: string) =>
+	`<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -22,19 +24,20 @@ const insertIntoSkeleton = (html: string) => {
 <div id="root">${html}</div>
 </body>
 </html>`;
-};
 
 const render = (url: string, article?: ArticleContent) => {
-	let elem: React.ReactElement<any>;
+	let elem: React.ReactElement;
 	const baseUrl = config.baseUrl || '';
 	const routerMode: RouterMode = config.routerMode || 'server';
 	switch (routerMode) {
 		case 'htmlSuffix': {
 			elem = (
 				<ArticleProvider value={article}>
-					<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
-						<App/>
-					</StaticRouterWithSuffix>
+					<ThemeProvider theme={theme}>
+						<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
+							<App/>
+						</StaticRouterWithSuffix>
+					</ThemeProvider>
 				</ArticleProvider>
 			);
 			break;
@@ -44,14 +47,17 @@ const render = (url: string, article?: ArticleContent) => {
 		case 'server': {
 			elem = (
 				<ArticleProvider value={article}>
-					<StaticRouter basename={baseUrl} context={{}} location={url}>
-						<App/>
-					</StaticRouter>
+					<ThemeProvider theme={theme}>
+						<StaticRouter basename={baseUrl} context={{}} location={url}>
+							<App/>
+						</StaticRouter>
+					</ThemeProvider>
 				</ArticleProvider>
 			);
 			break;
 		}
-		default: elem = <></>;
+		default:
+			elem = <></>;
 	}
 	return insertIntoSkeleton(renderToString(elem));
 };

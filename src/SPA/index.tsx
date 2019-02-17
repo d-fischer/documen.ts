@@ -9,6 +9,8 @@ import { BrowserRouter, BrowserRouterProps, HashRouter, HashRouterProps } from '
 import { registerLanguage } from 'react-syntax-highlighter/light';
 import js from 'react-syntax-highlighter/languages/hljs/javascript';
 import ts from 'react-syntax-highlighter/languages/hljs/typescript';
+import { ThemeProvider } from 'react-jss';
+import theme from '../Common/Theme';
 
 const Router: React.ComponentType<BrowserRouterProps | HashRouterProps> = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
 
@@ -18,9 +20,11 @@ registerLanguage('typescript', ts);
 registerLanguage('ts', ts);
 
 ReactDOM.render(
-	<Router>
-		<App />
-	</Router>,
+	<ThemeProvider theme={theme}>
+		<Router>
+			<App/>
+		</Router>
+	</ThemeProvider>,
 	document.getElementById('root')
 );
 

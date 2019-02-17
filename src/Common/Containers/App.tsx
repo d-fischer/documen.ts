@@ -12,60 +12,80 @@ import NavMenu from '../Components/NavMenu';
 import reference from '../Reference';
 import { filterByMember } from '../Tools/ArrayTools';
 
-import './App.scss';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 import config from '../Config';
-import { ThemeProvider } from 'react-jss';
-import theme from '../Theme';
+import NavMenuGroup from '../Components/NavMenuGroup';
+import NavMenuItem from '../Components/NavMenuItem';
+import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import * as Color from 'color';
 
-export class App extends React.Component {
-	render() {
-		const classes = filterByMember(reference.children, 'kind', ReferenceNodeKind.Class);
-		const interfaces = filterByMember(reference.children, 'kind', ReferenceNodeKind.Interface);
-		const enums = filterByMember(reference.children, 'kind', ReferenceNodeKind.Enum);
-		return (
-			<ThemeProvider theme={theme}>
-				<div className="App">
-					<NavMenu>
-						<NavMenu.Item path="/" exact={true}>Welcome</NavMenu.Item>
-						{config.categories && config.categories.map(cat => (
-							<NavMenu.Group key={cat.name} title={cat.title}>
-								{cat.articles.map(article => (
-									<NavMenu.Item key={article.name} path={`/docs/${cat.name}/${article.name}`} title={article.title}>{article.title}</NavMenu.Item>
-								))}
-							</NavMenu.Group>
-						))}
-						{classes.length ? (
-							<NavMenu.Group title="Classes">
-								{classes.map(value => <NavMenu.Item key={value.id} path={`/reference/classes/${value.name}`} title={value.name}>{value.name}</NavMenu.Item>)}
-							</NavMenu.Group>
-						) : null}
-						{interfaces.length ? (
-							<NavMenu.Group title="Interfaces">
-								{interfaces.map(value => <NavMenu.Item key={value.id} path={`/reference/interfaces/${value.name}`} title={value.name}>{value.name}</NavMenu.Item>)}
-							</NavMenu.Group>
-						) : null}
-						{enums.length ? (
-							<NavMenu.Group title="Enums">
-								{enums.map(value => <NavMenu.Item key={value.id} path={`/reference/enums/${value.name}`} title={value.name}>{value.name}</NavMenu.Item>)}
-							</NavMenu.Group>
-						) : null}
-					</NavMenu>
-					<div className="App__main">
-						<main className="App__content">
-							<Switch>
-								<Route exact={true} path="/" component={IndexPage}/>
-								<Route exact={true} path="/docs/:categoryName/:articleName" component={DocPage} />
-								<Route exact={true} path="/reference/classes/:name" component={ClassPage}/>
-								<Route exact={true} path="/reference/interfaces/:name" component={InterfacePage}/>
-								<Route exact={true} path="/reference/enums/:name" component={EnumPage}/>
-							</Switch>
-						</main>
-					</div>
-				</div>
-			</ThemeProvider>
-		);
+import '../style.css';
+
+const styles = createStyles(theme => ({
+	root: {
+		display: 'flex',
+		flexDirection: 'row',
+		width: '100%',
+		minHeight: '100%'
+	},
+	nav: {
+		width: 250
+	},
+	main: {
+		flex: 1,
+
+		'& a': {
+			color: Color(theme.colors.text).darken(0.2).rgb().string(),
+			fontWeight: 'bold',
+			textDecoration: 'none'
+		}
 	}
-}
+}));
 
-export default hot(module)(App);
+export const App: React.FC<WithSheet<typeof styles>> = ({ classes }) => {
+	const classNodes = filterByMember(reference.children, 'kind', ReferenceNodeKind.Class);
+	const interfaceNodes = filterByMember(reference.children, 'kind', ReferenceNodeKind.Interface);
+	const enumNodes = filterByMember(reference.children, 'kind', ReferenceNodeKind.Enum);
+	return (
+		<div className={classes.root}>
+			<NavMenu className={classes.nav}>
+				<NavMenuItem path="/" exact={true}>Welcome</NavMenuItem>
+				{config.categories && config.categories.map(cat => (
+					<NavMenuGroup key={cat.name} title={cat.title}>
+						{cat.articles.map(article => (
+							<NavMenuItem key={article.name} path={`/docs/${cat.name}/${article.name}`} title={article.title}>{article.title}</NavMenuItem>
+						))}
+					</NavMenuGroup>
+				))}
+				{classNodes.length ? (
+					<NavMenuGroup title="Classes">
+						{classNodes.map(value => <NavMenuItem key={value.id} path={`/reference/classes/${value.name}`} title={value.name}>{value.name}</NavMenuItem>)}
+					</NavMenuGroup>
+				) : null}
+				{interfaceNodes.length ? (
+					<NavMenuGroup title="Interfaces">
+						{interfaceNodes.map(value => <NavMenuItem key={value.id} path={`/reference/interfaces/${value.name}`} title={value.name}>{value.name}</NavMenuItem>)}
+					</NavMenuGroup>
+				) : null}
+				{enumNodes.length ? (
+					<NavMenuGroup title="Enums">
+						{enumNodes.map(value => <NavMenuItem key={value.id} path={`/reference/enums/${value.name}`} title={value.name}>{value.name}</NavMenuItem>)}
+					</NavMenuGroup>
+				) : null}
+			</NavMenu>
+			<div className={classes.main}>
+				<main>
+					<Switch>
+						<Route exact={true} path="/" component={IndexPage}/>
+						<Route exact={true} path="/docs/:categoryName/:articleName" component={DocPage}/>
+						<Route exact={true} path="/reference/classes/:name" component={ClassPage}/>
+						<Route exact={true} path="/reference/interfaces/:name" component={InterfacePage}/>
+						<Route exact={true} path="/reference/enums/:name" component={EnumPage}/>
+					</Switch>
+				</main>
+			</div>
+		</div>
+	);
+};
+
+export default hot(module)(withStyles(styles)(App));

@@ -3,6 +3,7 @@ import Card from '../Containers/Card';
 import { GetSignatureReferenceNode, PropertyReferenceNode } from '../Reference';
 import { buildType, getTag, hasTag, isStringLiteral } from '../Tools/CodeBuilders';
 import parseMarkdown from '../Tools/MarkdownParser';
+import DeprecationNotice from './DeprecationNotice';
 
 interface PropertyCardProps {
 	name?: string;
@@ -13,11 +14,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => (
 	<Card id={`symbol__${name || definition.name}`} key={definition.id}>
 		<h3>{name || definition.name}</h3>
 		{definition.type ? <h4>{isStringLiteral(definition.type) ? 'Value' : 'Type'}: {buildType(definition.type)}</h4> : null}
-		{hasTag(definition, 'deprecated') && (
-			<div className="Card__deprecationNotice">
-				<strong>Deprecated.</strong> {parseMarkdown(getTag(definition, 'deprecated')!)}
-			</div>
-		)}
+		{hasTag(definition, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(definition, 'deprecated')!)}/>}
 		{definition.comment && definition.comment.shortText ? parseMarkdown(definition.comment.shortText) : null}
 		{definition.comment && definition.comment.text ? parseMarkdown(definition.comment.text) : null}
 	</Card>

@@ -1,14 +1,10 @@
 import * as React from 'react';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
-import { buildType, hasTag, isOptionalType } from '../Tools/CodeBuilders';
-import reference, { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, SignatureReferenceNode, VariableReferenceNode } from '../Reference';
+import { hasTag } from '../Tools/CodeBuilders';
+import { ReferenceCommentTag, SignatureReferenceNode } from '../Reference';
 
-import './FunctionParamDesc.scss';
-import parseMarkdown from '../Tools/MarkdownParser';
-import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
-import { findByMember } from '../Tools/ArrayTools';
+import FunctionParamDescEntry from './FunctionParamDescEntry';
+import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 
 interface FunctionParamDescProps {
 	signature: SignatureReferenceNode;
@@ -16,80 +12,43 @@ interface FunctionParamDescProps {
 	isCallback?: boolean;
 }
 
-const renderParam = (
-	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode,
-	additionalTags?: ReferenceCommentTag[],
-	isCallback?: boolean,
-	expandParams?: boolean,
-	paramNamePrefix: string = ''
-) => {
-	let desc = param.comment && (param.comment.text || param.comment.shortText);
-
-	if (!desc && additionalTags) {
-		const correctTag = additionalTags.find(tag => tag.tag === 'param' && tag.param === param.name);
-		if (correctTag) {
-			desc = correctTag.text;
-		}
+const styles = createStyles(theme => ({
+	root: {
+		border: `1px solid ${theme.colors.border}`,
+		margin: '.5em 0'
+	},
+	heading: {
+		padding: '.5em',
+		backgroundColor: theme.colors.background.active
 	}
+}));
 
-	const paramName = paramNamePrefix + (param.name === '__namedParameters' ? 'params' : param.name);
-	const defaultValue = param.kind === ReferenceNodeKind.Property ? undefined : param.defaultValue;
-
-	const result: React.ReactNode[] = [];
-
-	if (param.type.type === 'reflection' && param.type.declaration.children) {
-		result.push(...param.type.declaration.children.map(
-			(subParam: VariableReferenceNode) => renderParam(subParam, additionalTags, isCallback, expandParams, `${paramName}.`)
-		));
-	} else if (param.type.type === 'reference' && param.type.id && expandParams) {
-		const ref = findByMember(reference.children, 'id', param.type.id);
-		if (ref && ref.kind === ReferenceNodeKind.Interface) {
-			result.push(...ref.children.map((subParam: PropertyReferenceNode) => renderParam(subParam, additionalTags, isCallback, expandParams, `${paramName}.`)));
-		}
-	}
-
-	let typeDesc: React.ReactNode;
-
-	typeDesc = param.type.type === 'reflection'
-		? param.type.declaration.signatures && param.type.declaration.signatures.length ? 'function' : 'object'
-		: buildType(param.type, param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional);
-
-	result.unshift(
-		<tr key={paramName}>
-			<td>{paramName}</td>
-			<td>{typeDesc}</td>
-			{isCallback || (
-				<>
-					<td>{param.flags.isOptional || defaultValue || isOptionalType(param.type) ? '' : <Icon className="FunctionParamDesc__check" icon={faCheck}/>}</td>
-					<td>{defaultValue || <em>none</em>}</td>
-				</>
-			)}
-			<td>{desc ? parseMarkdown(desc) : <em>{result.length ? 'see below' : 'none'}</em>}</td>
-		</tr>
-	);
-
-	return result;
-};
-
-const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ signature, additionalTags, isCallback }) => signature.parameters ? (
-	<table className="FunctionParamDesc">
+const FunctionParamDesc: React.FC<FunctionParamDescProps & WithSheet<typeof styles>> = ({ signature, additionalTags, isCallback, classes }) => signature.parameters ? (
+	<table className={classes.root}>
 		<thead>
 		<tr>
-			<th>Parameter</th>
-			<th>Type</th>
+			<th className={classes.heading}>Parameter</th>
+			<th className={classes.heading}>Type</th>
 			{isCallback || (
 				<>
-					<th>Required</th>
-					<th>Default</th>
+					<th className={classes.heading}>Required</th>
+					<th className={classes.heading}>Default</th>
 				</>
 			)}
-			<th>Description</th>
+			<th className={classes.heading}>Description</th>
 		</tr>
 		</thead>
 		<tbody>
-		{signature.parameters.map(param => renderParam(param, additionalTags, isCallback, hasTag(signature, 'expandParams')))}
+		{signature.parameters.map(param => (
+			<FunctionParamDescEntry
+				param={param}
+				additionalTags={additionalTags}
+				isCallback={isCallback}
+				expandParams={hasTag(signature, 'expandParams')}
+			/>
+		))}
 		</tbody>
 	</table>
 ) : null;
 
-export default FunctionParamDesc;
+export default withStyles(styles)(FunctionParamDesc);

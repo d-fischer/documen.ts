@@ -8,10 +8,11 @@ import reference, {
 import { getTag, hasTag } from '../Tools/CodeBuilders';
 import parseMarkdown from '../Tools/MarkdownParser';
 
-import './EventCard.scss';
 import FunctionParamDesc from './FunctionParamDesc';
 import { findByMember } from '../Tools/ArrayTools';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import DeprecationNotice from './DeprecationNotice';
 
 interface EventCardProps {
 	name?: string;
@@ -50,7 +51,13 @@ const getDefinedTags = (prop: PropertyReferenceNode) => {
 	return undefined;
 };
 
-const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
+const styles = createStyles(theme => ({
+	example: {
+		fontFamily: theme.fonts.code
+	}
+}));
+
+const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, definition, classes }) => {
 	let handlerDefinition: SignatureReferenceNode | undefined;
 	let handlerParamDefinition: SignatureReferenceNode | undefined;
 	if (definition.type.type === 'reflection' && definition.type.declaration.signatures && definition.type.declaration.signatures.length) {
@@ -62,7 +69,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 	return (
 		<Card id={`symbol__${name || definition.name}`} key={definition.id}>
 			{handlerDefinition ? (
-				<h3 className="EventCard__example">
+				<h3 className={classes.example}>
 					{name || definition.name}({handlerDefinition.parameters && handlerDefinition.parameters.map((param, idx) => {
 					let paramDesc: React.ReactNode = param.name === '__namedParameters' ? 'params' : param.name;
 					const paramDef = getParamDefinition(param);
@@ -88,11 +95,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 				</h3>
 			) : null
 			}
-			{hasTag(definition, 'deprecated') && (
-				<div className="Card__deprecationNotice">
-					<strong>Deprecated.</strong> {parseMarkdown(getTag(definition, 'deprecated')!)}
-				</div>
-			)}
+			{hasTag(definition, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(definition, 'deprecated')!)}/>}
 			{definition.comment && definition.comment.shortText ? parseMarkdown(definition.comment.shortText) : null}
 			{definition.comment && definition.comment.text ? parseMarkdown(definition.comment.text) : null}
 			{handlerParamDefinition ? <FunctionParamDesc signature={handlerParamDefinition} isCallback additionalTags={getDefinedTags(definition)}/> : null}
@@ -100,4 +103,4 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 	);
 };
 
-export default EventCard;
+export default withStyles(styles)(EventCard);

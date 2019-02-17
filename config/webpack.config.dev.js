@@ -139,27 +139,6 @@ module.exports = {
 						},
 					},
 				],
-			},
-			{
-				test: /\.s[ac]ss$/,
-				use: [
-					'style-loader',
-					{
-						loader: 'css-loader',
-						options: {
-							sourceMap: true
-						}
-					},
-					{
-						loader: 'sass-loader',
-						options: {
-							sourceMap: true,
-							includePaths: [
-								path.resolve(paths.appNodeModules, './compass-mixins/lib')
-							]
-						}
-					}
-				]
 			}
 		],
 	},
@@ -172,7 +151,7 @@ module.exports = {
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: fs.readFileSync(path.join(process.cwd(), 'docs.json'), 'UTF-8'),
-			__DOCTS_CONFIG: '{}'
+			__DOCTS_CONFIG: '{"repoUser": "d-fischer", "repoName": "twitch"}'
 		}),
 		new webpack.HotModuleReplacementPlugin(),
 		new CaseSensitivePathsPlugin(),

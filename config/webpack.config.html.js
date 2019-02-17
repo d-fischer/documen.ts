@@ -120,34 +120,6 @@ module.exports = outDir => ({
 						},
 					},
 				],
-			},
-			{
-				test: /\.s[ac]ss$/,
-				loader: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							publicPath: '../../'
-						}
-					},
-					{
-						loader: 'css-loader',
-						options: {
-							importLoaders: 1,
-							minimize: true,
-							sourceMap: true
-						}
-					},
-					{
-						loader: 'sass-loader',
-						options: {
-							sourceMap: true,
-							includePaths: [
-								path.dirname(require.resolve('compass-mixins'))
-							]
-						}
-					}
-				]
 			}
 		]
 	},
