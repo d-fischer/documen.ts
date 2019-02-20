@@ -20,7 +20,7 @@ module.exports = outDir => ({
 	bail: true,
 	devtool: 'source-map',
 	entry: [paths.entryPoints.html],
-	context: __dirname,
+	context: paths.appRoot,
 	output: {
 		path: outDir,
 		filename: 'generator.js',

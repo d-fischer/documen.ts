@@ -22,6 +22,7 @@ module.exports = {
 	bail: true,
 	devtool: 'source-map',
 	entry: paths.entryPoints.spa,
+	context: paths.appRoot,
 	output: {
 		path: paths.appBuild,
 		filename: 'static/js/bundle.js',
