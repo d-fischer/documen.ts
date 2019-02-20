@@ -27,7 +27,7 @@ const styles = createStyles(theme => ({
 const CodeLink: React.FC<CodeLinkProps & WithSheet<typeof styles>> = ({ symbol, className, classes }) => config.repoUser && config.repoName && symbol.sources && symbol.sources.length ? (
 	<a
 		className={classNames(classes.root, className)}
-		href={`https://github.com/${config.repoUser}/${config.repoName}/blob/master/src/${symbol.sources[0].fileName}#L${symbol.sources[0].line}`}
+		href={`https://github.com/${config.repoUser}/${config.repoName}/blob/${config.repoBranch}/src/${symbol.sources[0].fileName}#L${symbol.sources[0].line}`}
 		title="Go to the code"
 	>
 		<Icon icon={faCode} size="lg"/>

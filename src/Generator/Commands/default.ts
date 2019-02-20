@@ -30,6 +30,9 @@ export class CLICommandOptions extends Options {
 	@option({ flag: 'b', description: 'base URL', default: '' })
 	baseUrl: string;
 
+	@option({ description: 'Git branch', default: 'master' })
+	repoBranch: string;
+
 	@option({ description: 'index file' })
 	indexFile: string;
 
@@ -99,6 +102,7 @@ export default class CLICommand extends Command {
 			baseDir: cwd,
 			repoUser: getConfigValue(importedConfig, 'repoUser'),
 			repoName: getConfigValue(importedConfig, 'repoName'),
+			repoBranch: options.repoBranch,
 			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
 			indexFile: indexFile,
 			categories: getConfigValue(importedConfig, 'categories') || undefined,

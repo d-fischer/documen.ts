@@ -23,6 +23,7 @@ export default interface Config {
 	baseUrl: string;
 	repoUser: string | null;
 	repoName: string | null;
+	repoBranch: string;
 	indexFile: string;
 	indexTitle: string;
 	categories?: ConfigCategory[];
