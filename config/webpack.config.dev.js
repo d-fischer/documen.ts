@@ -10,6 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const fs = require('fs-extra');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const publicPath = '/';
 const publicUrl = '';
@@ -59,56 +60,12 @@ module.exports = {
 		rules: [
 			{
 				test: /\.tsx?$/,
-				loader: 'tslint-loader',
-				enforce: 'pre',
-				include: paths.appSrc,
+				exclude: /node_modules/,
+				loader: 'ts-loader',
 				options: {
-					typeCheck: true,
-					tsConfigFile: 'tsconfig-spa.json'
+					transpileOnly: true,
+					configFile: 'tsconfig-spa.json'
 				}
-			},
-			{
-				test: /\.js$/,
-				loader: 'source-map-loader',
-				enforce: 'pre',
-				include: paths.appSrc,
-			},
-			{
-				exclude: [
-					/\.html$/,
-					/\.[jt]sx?(\?.*)?$/,
-					/\.css$/,
-					/\.json$/,
-					/\.bmp$/,
-					/\.gif$/,
-					/\.jpe?g$/,
-					/\.png$/,
-					/\.s[ac]ss$/,
-					/Resources\/.+\.svg$/
-				],
-				loader: 'file-loader',
-				options: {
-					name: 'static/media/[name].[hash:8].[ext]',
-				},
-			},
-			{
-				test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-				loader: 'url-loader',
-				options: {
-					limit: 10000,
-					name: 'static/media/[name].[hash:8].[ext]',
-				},
-			},
-			{
-				test: /\.tsx?$/,
-				include: paths.appSrc,
-				use: {
-					loader: 'awesome-typescript-loader',
-					options: {
-						silent: true,
-						configFileName: 'tsconfig-spa.json'
-					}
-				},
 			},
 			{
 				test: /\.css$/,
@@ -148,6 +105,7 @@ module.exports = {
 			template: paths.appHtml,
 		}),
 		new webpack.NamedModulesPlugin(),
+		new ForkTsCheckerWebpackPlugin(),
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: fs.readFileSync(path.join(process.cwd(), 'docs.json'), 'UTF-8'),

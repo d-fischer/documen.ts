@@ -7,6 +7,7 @@ const nodeExternals = require('webpack-node-externals');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const publicPath = paths.servedPath;
 const publicUrl = publicPath.slice(0, -1);
@@ -47,38 +48,14 @@ module.exports = outDir => ({
 				include: paths.appSrc,
 			},
 			{
-				exclude: [
-					/\.html$/,
-					/\.[jt]sx?$/,
-					/\.css$/,
-					/\.s[ac]ss/,
-					/\.json$/,
-					/\.bmp$/,
-					/\.gif$/,
-					/\.jpe?g$/,
-					/\.png$/,
-					/Resources\/.+\.svg$/
-				],
-				loader: 'file-loader',
-				options: {
-					name: 'static/media/[name].[hash:8].[ext]'
-				},
-			},
-			{
-				test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-				loader: 'url-loader',
-				options: {
-					limit: 10000,
-					name: 'static/media/[name].[hash:8].[ext]'
-				},
-			},
-			{
 				test: /\.tsx?$/,
-				include: paths.appSrc,
-				loader: 'awesome-typescript-loader',
+				exclude: /node_modules/,
+				loader: 'ts-loader',
 				options: {
-					silent: true,
-					importHelpers: false
+					transpileOnly: true,
+					compilerOptions: {
+						importHelpers: false
+					}
 				}
 			},
 			{
@@ -131,6 +108,7 @@ module.exports = outDir => ({
 		modules: false
 	},
 	plugins: [
+		new ForkTsCheckerWebpackPlugin(),
 		new webpack.DefinePlugin(env.stringified),
 		new MiniCssExtractPlugin({
 			filename: 'static/css/style.css'
