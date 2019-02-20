@@ -13,6 +13,7 @@ import { findByMember } from '../Tools/ArrayTools';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import DeprecationNotice from './DeprecationNotice';
+import CardToolbar from './CardToolbar';
 
 interface EventCardProps {
 	name?: string;
@@ -52,6 +53,15 @@ const getDefinedTags = (prop: PropertyReferenceNode) => {
 };
 
 const styles = createStyles(theme => ({
+	root: {},
+	toolbar: {
+		opacity: 0,
+		transition: 'opacity .5s ease-in-out',
+
+		'$root:hover &': {
+			opacity: 1
+		}
+	},
 	example: {
 		fontFamily: theme.fonts.code
 	}
@@ -67,7 +77,8 @@ const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, 
 		}
 	}
 	return (
-		<Card id={`symbol__${name || definition.name}`} key={definition.id}>
+		<Card className={classes.root} id={`symbol__${name || definition.name}`} key={definition.id}>
+			<CardToolbar className={classes.toolbar} name={name} definition={definition} />
 			{handlerDefinition ? (
 				<h3 className={classes.example}>
 					{name || definition.name}({handlerDefinition.parameters && handlerDefinition.parameters.map((param, idx) => {

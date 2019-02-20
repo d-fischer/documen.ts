@@ -4,14 +4,29 @@ import { GetSignatureReferenceNode, PropertyReferenceNode } from '../Reference';
 import { buildType, getTag, hasTag, isStringLiteral } from '../Tools/CodeBuilders';
 import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
+import CardToolbar from './CardToolbar';
+import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 
 interface PropertyCardProps {
 	name?: string;
 	definition: PropertyReferenceNode | GetSignatureReferenceNode;
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => (
-	<Card id={`symbol__${name || definition.name}`} key={definition.id}>
+const styles = createStyles({
+	root: {},
+	toolbar: {
+		opacity: 0,
+		transition: 'opacity .5s ease-in-out',
+
+		'$root:hover &': {
+			opacity: 1
+		}
+	}
+});
+
+const PropertyCard: React.FC<PropertyCardProps & WithSheet<typeof styles>> = ({ name, definition, classes }) => (
+	<Card className={classes.root} id={`symbol__${name || definition.name}`} key={definition.id}>
+		<CardToolbar className={classes.toolbar} name={name} definition={definition} />
 		<h3>{name || definition.name}</h3>
 		{definition.type ? <h4>{isStringLiteral(definition.type) ? 'Value' : 'Type'}: {buildType(definition.type)}</h4> : null}
 		{hasTag(definition, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(definition, 'deprecated')!)}/>}
@@ -19,4 +34,5 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => (
 		{definition.comment && definition.comment.text ? parseMarkdown(definition.comment.text) : null}
 	</Card>
 );
-export default PropertyCard;
+
+export default withStyles(styles)(PropertyCard);

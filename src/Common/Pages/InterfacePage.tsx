@@ -39,7 +39,7 @@ const InterfacePage: React.FC<RouteComponentProps<ClassPageRouteProps>> = ({ mat
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
-						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} sig={sig}/>))}
+						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
 					</>
 				) : null}
 				{properties.length ? (

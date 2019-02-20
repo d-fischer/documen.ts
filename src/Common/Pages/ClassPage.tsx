@@ -50,7 +50,7 @@ const ClassPage: React.FC<RouteComponentProps<ClassPageRouteProps>> = ({ match: 
 				{constructorSigs.length ? (
 					<>
 						<h2>{constructorSigs.length === 1 ? 'Constructor' : 'Constructors'}</h2>
-						{constructorSigs.map(sig => <MethodCard key={sig.id} sig={sig} isConstructor={true}/>)}
+						{constructorSigs.map(sig => <MethodCard key={sig.id} definition={constructor!} sig={sig} isConstructor={true}/>)}
 					</>
 				) : null}
 				{events.length ? (
@@ -62,7 +62,7 @@ const ClassPage: React.FC<RouteComponentProps<ClassPageRouteProps>> = ({ match: 
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
-						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} sig={sig}/>))}
+						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
 					</>
 				) : null}
 				{propertiesWithoutEvents.length || accessors.length ? (
