@@ -11,6 +11,9 @@ import { ArticleProvider, ArticleContent } from '../Components/PageArticle';
 import { createGenerateClassName, JssProvider, SheetsRegistry, ThemeProvider } from 'react-jss';
 import theme from '../Theme';
 
+// tslint:disable-next-line:no-import-side-effect
+import '@fortawesome/fontawesome-svg-core/styles.css';
+
 const insertIntoSkeleton = (html: string, css?: string) =>
 	`<!doctype html>
 <html lang="en">
