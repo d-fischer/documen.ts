@@ -9,6 +9,7 @@ import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import CardToolbar from './CardToolbar';
+import Badge from './Badge';
 
 interface MethodCardProps {
 	definition: ConstructorReferenceNode | MethodReferenceNode;
@@ -40,6 +41,7 @@ const MethodCard: React.FC<MethodCardProps & WithSheet<typeof styles>> = ({ defi
 	<Card className={classes.root} id={`symbol__${sig.name}`} key={sig.id}>
 		<CardToolbar className={classes.toolbar} name={name} definition={definition} signature={sig} />
 		<FunctionSignature signature={sig} isConstructor={isConstructor}/>
+		{definition.flags.isStatic && <Badge>static</Badge>}
 		{hasTag(sig, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(sig, 'deprecated')!)}/>}
 		{sig.comment && sig.comment.shortText && <p>{sig.comment.shortText}</p>}
 		{sig.comment && sig.comment.text && parseMarkdown(sig.comment.text)}

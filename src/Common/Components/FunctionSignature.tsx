@@ -10,7 +10,8 @@ interface FunctionSignatureProps {
 const styles = createStyles(theme => ({
 	root: {
 		fontFamily: theme.fonts.code,
-		margin: '0 0 .5em'
+		margin: '0 0 .5em',
+		display: 'inline-block'
 	}
 }));
 

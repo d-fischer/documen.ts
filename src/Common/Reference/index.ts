@@ -1,10 +1,11 @@
 import { ReferenceNodeKind } from './ReferenceNodeKind';
 
 interface ReferenceFlags {
-	isExported: boolean;
-	isOptional: boolean;
-	isProtected: boolean;
-	isPrivate: boolean;
+	isExported?: boolean;
+	isOptional?: boolean;
+	isProtected?: boolean;
+	isPrivate?: boolean;
+	isStatic?: boolean;
 }
 
 interface ReferenceGroup {
