@@ -39,7 +39,7 @@ const styles = createStyles(theme => ({
 
 const MethodCard: React.FC<MethodCardProps & WithSheet<typeof styles>> = ({ definition, sig, isConstructor, classes }) => (
 	<Card className={classes.root} id={`symbol__${sig.name}`} key={sig.id}>
-		<CardToolbar className={classes.toolbar} name={name} definition={definition} signature={sig} />
+		<CardToolbar className={classes.toolbar} definition={definition} signature={sig} />
 		<FunctionSignature signature={sig} isConstructor={isConstructor}/>
 		{definition.flags.isStatic && <Badge>static</Badge>}
 		{hasTag(sig, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(sig, 'deprecated')!)}/>}
