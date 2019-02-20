@@ -8,10 +8,10 @@ import RouterMode from './RouterMode';
 import { StaticRouter } from 'react-router';
 import config from '../Config';
 import { ArticleProvider, ArticleContent } from '../Components/PageArticle';
-import { ThemeProvider } from 'react-jss';
+import { createGenerateClassName, JssProvider, SheetsRegistry, ThemeProvider } from 'react-jss';
 import theme from '../Theme';
 
-const insertIntoSkeleton = (html: string) =>
+const insertIntoSkeleton = (html: string, css?: string) =>
 	`<!doctype html>
 <html lang="en">
 <head>
@@ -19,6 +19,7 @@ const insertIntoSkeleton = (html: string) =>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Twitch.js documentation</title>
     <link rel="stylesheet" href="${path.join(config.baseUrl, '/static/css/style.css')}" />
+    ${css ? `<style id="server-side-styles">${css}</style>` : ''}
 </head>
 <body>
 <div id="root">${html}</div>
@@ -29,16 +30,21 @@ const render = (url: string, article?: ArticleContent) => {
 	let elem: React.ReactElement;
 	const baseUrl = config.baseUrl || '';
 	const routerMode: RouterMode = config.routerMode || 'server';
+	const sheets = new SheetsRegistry();
+	const generateClassName = createGenerateClassName();
+
 	switch (routerMode) {
 		case 'htmlSuffix': {
 			elem = (
-				<ArticleProvider value={article}>
-					<ThemeProvider theme={theme}>
-						<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
-							<App/>
-						</StaticRouterWithSuffix>
-					</ThemeProvider>
-				</ArticleProvider>
+				<JssProvider registry={sheets} generateClassName={generateClassName}>
+					<ArticleProvider value={article}>
+						<ThemeProvider theme={theme}>
+							<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
+								<App/>
+							</StaticRouterWithSuffix>
+						</ThemeProvider>
+					</ArticleProvider>
+				</JssProvider>
 			);
 			break;
 		}
@@ -46,20 +52,22 @@ const render = (url: string, article?: ArticleContent) => {
 		case 'subDirectories':
 		case 'server': {
 			elem = (
-				<ArticleProvider value={article}>
-					<ThemeProvider theme={theme}>
-						<StaticRouter basename={baseUrl} context={{}} location={url}>
-							<App/>
-						</StaticRouter>
-					</ThemeProvider>
-				</ArticleProvider>
+				<JssProvider registry={sheets} generateClassName={generateClassName}>
+					<ArticleProvider value={article}>
+						<ThemeProvider theme={theme}>
+							<StaticRouter basename={baseUrl} context={{}} location={url}>
+								<App/>
+							</StaticRouter>
+						</ThemeProvider>
+					</ArticleProvider>
+				</JssProvider>
 			);
 			break;
 		}
 		default:
 			elem = <></>;
 	}
-	return insertIntoSkeleton(renderToString(elem));
+	return insertIntoSkeleton(renderToString(elem), sheets.toString());
 };
 
 export default render;
