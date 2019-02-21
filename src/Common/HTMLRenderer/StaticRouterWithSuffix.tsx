@@ -4,12 +4,13 @@ import * as PropTypes from 'prop-types';
 import { createLocation, createPath, History, Location, LocationDescriptorObject } from 'history';
 import { Router } from 'react-router';
 
-const addLeadingSlash = (path: string) => {
-	return path.charAt(0) === '/' ? path : '/' + path;
-};
+const addLeadingSlash = (path: string) =>
+	path.charAt(0) === '/' ? path : `/${path}`;
 
 const addBasename = (basename: string, location: Location) => {
-	if (!basename) return location;
+	if (!basename) {
+		return location;
+	}
 
 	return {
 		...location,
@@ -18,11 +19,15 @@ const addBasename = (basename: string, location: Location) => {
 };
 
 const stripBasename = (basename: string, location: Location) => {
-	if (!basename) return location;
+	if (!basename) {
+		return location;
+	}
 
 	const base = addLeadingSlash(basename);
 
-	if (location.pathname.indexOf(base) !== 0) return location;
+	if (location.pathname.indexOf(base) !== 0) {
+		return location;
+	}
 
 	return {
 		...location,
@@ -42,18 +47,19 @@ const stripSuffix = (suffix: string, location: Location) => {
 };
 
 const createURL = (location: LocationDescriptorObject | string, suffix?: string) => {
-	let result = (typeof location === 'string' ? location : createPath(location));
-	if (!result.endsWith('/') && suffix) {
-		result += suffix;
+	const loc = createLocation(location);
+	if (!loc.pathname.endsWith('/') && suffix) {
+		loc.pathname += suffix;
 	}
 
-	return result;
+	return createPath(loc);
 };
 
 const staticHandler = (methodName: string) => () => {
 	invariant(false, 'You cannot %s with a static router', methodName);
 };
 
+// tslint:disable-next-line:no-empty
 const noop = () => {
 };
 
