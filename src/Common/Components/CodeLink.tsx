@@ -28,6 +28,7 @@ const CodeLink: React.FC<CodeLinkProps & WithSheet<typeof styles>> = ({ symbol, 
 	<a
 		className={classNames(classes.root, className)}
 		href={`https://github.com/${config.repoUser}/${config.repoName}/blob/${config.repoBranch}/src/${symbol.sources[0].fileName}#L${symbol.sources[0].line}`}
+		target="_blank"
 		title="Go to the code"
 	>
 		<Icon icon={faCode} size="lg"/>
