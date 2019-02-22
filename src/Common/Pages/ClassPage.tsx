@@ -73,7 +73,7 @@ const ClassPage: React.FC<RouteComponentProps<ClassPageRouteProps>> = ({ match: 
 							if (!acc.getSignature || !acc.getSignature.length) {
 								return null;
 							}
-							return <PropertyCard key={acc.id} name={acc.name} definition={acc.getSignature[0]}/>;
+							return <PropertyCard key={acc.id} name={acc.name} definition={acc}/>;
 						})}
 					</>
 				) : null}
