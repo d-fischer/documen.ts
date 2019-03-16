@@ -1,4 +1,4 @@
-import * as invariant from 'invariant';
+import * as invariant from 'tiny-invariant';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { createLocation, createPath, History, Location, LocationDescriptorObject } from 'history';
