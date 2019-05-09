@@ -102,6 +102,7 @@ export default class CLICommand extends Command {
 			baseDir: cwd,
 			repoUser: getConfigValue(importedConfig, 'repoUser'),
 			repoName: getConfigValue(importedConfig, 'repoName'),
+			repoBaseFolder: getConfigValue(importedConfig, 'repoBaseFolder'),
 			repoBranch: options.repoBranch,
 			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
 			indexFile: indexFile,
