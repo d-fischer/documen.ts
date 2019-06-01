@@ -64,7 +64,6 @@ module.exports = {
 						loader: 'css-loader',
 						options: {
 							importLoaders: 1,
-							minimize: true,
 							sourceMap: true,
 						},
 					},
@@ -86,6 +85,7 @@ module.exports = {
 									],
 									flexbox: 'no-2009',
 								}),
+								require('cssnano')
 							],
 						},
 					},
