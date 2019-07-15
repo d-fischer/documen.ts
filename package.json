@@ -65,7 +65,7 @@
     "tmp": "^0.0.33",
     "ts-loader": "^5.3.3",
     "tslib": "^1.9.3",
-    "typedoc": "TypeStrong/typedoc",
+    "typedoc": "^0.14.2",
     "typescript": "~3.4.1",
     "untildify": "^3.0.3",
     "url-loader": "^1.0.1",
@@ -89,7 +89,7 @@
     "lint": "tslint --project .",
     "build": "tsc",
     "rebuild": "rimraf lib && yarn run build",
-    "prepare": "cd node_modules/typedoc && npm install && cd ../.. && yarn run lint && yarn run rebuild"
+    "prepare": "yarn run lint && yarn run rebuild"
   },
   "bin": {
     "documen.ts": "bin/docs.js"
