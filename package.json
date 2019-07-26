@@ -65,7 +65,7 @@
     "tmp": "^0.0.33",
     "ts-loader": "^5.3.3",
     "tslib": "^1.9.3",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.15.0",
     "typescript": "~3.4.1",
     "untildify": "^3.0.3",
     "url-loader": "^1.0.1",
