@@ -154,13 +154,18 @@ export interface VariableReferenceNode extends AbstractReferenceNode {
 	defaultValue?: string;
 }
 
+export interface PackageReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Package;
+}
+
 export type ReferenceNode =
 	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
-	EnumMemberReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode | VariableReferenceNode;
+	EnumMemberReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode | VariableReferenceNode | PackageReferenceNode;
 
 declare global {
 	const __DOCTS_REFERENCE: ReferenceNode;
 }
+
 // noinspection UnnecessaryLocalVariableJS
 const reference = __DOCTS_REFERENCE;
 export default reference;

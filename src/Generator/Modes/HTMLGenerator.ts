@@ -1,9 +1,5 @@
 import Generator from './Generator';
 import * as path from 'path';
-import resolveHome = require('untildify');
-import webpack = require('webpack');
-import tmp = require('tmp');
-import fs = require('fs-extra');
 
 import { ReferenceNode } from '../../Common/Reference';
 import WebpackError from '../Errors/WebpackError';
@@ -11,14 +7,26 @@ import WebpackBuildError from '../Errors/WebpackBuildError';
 import { filterByMember } from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/Reference/ReferenceNodeKind';
 import { ArticleContent } from '../../Common/Components/PageArticle';
+import { getPackagePath } from '../../Common/Tools/StringTools';
+import resolveHome = require('untildify');
+import webpack = require('webpack');
+import tmp = require('tmp');
+import fs = require('fs-extra');
 
 type RenderEntry = [string, string, Promise<string>];
 
 export default class HTMLGenerator extends Generator {
 	async generate(data: ReferenceNode) {
 		const outDir = path.resolve(this._config.baseDir, resolveHome(this._config.outputDir));
+		const pre = getPackagePath(this._config.subPackage);
 
-		await fs.emptyDir(outDir);
+		const fullDir = path.join(outDir, pre);
+
+		if (await fs.pathExists(fullDir)) {
+			await fs.emptyDir(fullDir);
+		} else {
+			await fs.mkdirp(fullDir);
+		}
 
 		return new Promise<void>((resolve, reject) => {
 			tmp.dir({ unsafeCleanup: true }, async (err, tmpDir, cleanup) => {
@@ -34,18 +42,19 @@ export default class HTMLGenerator extends Generator {
 					return;
 				}
 
-				await fs.copy(path.join(tmpDir, 'static'), path.join(outDir, 'static'));
-
 				const { default: render } = require(path.resolve(tmpDir, 'generator.js'));
+
+				const packageData = data.children.find(pkg => pkg.name === this._config.subPackage)!;
+
 				try {
 					await Promise.all([
-						['/', this._config.indexTitle, fs.readFile(this._config.indexFile, 'utf-8')],
+						...(this._config.configDir ? [[`${pre}/`, this._config.indexTitle, fs.readFile(path.resolve(this._config.configDir, this._config.indexFile), 'utf-8')]] : []),
 						...([] as RenderEntry[]).concat(...((this._config.configDir && this._config.categories) ? this._config.categories.map(cat => cat.articles.map(art => ([
-							`/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(this._config.configDir!, art.file), 'utf-8')
+							`${pre}/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(this._config.configDir!, art.file), 'utf-8')
 						] as RenderEntry))) : [])),
-						...filterByMember(data.children, 'kind', ReferenceNodeKind.Class).map(value => `/reference/classes/${value.name}`),
-						...filterByMember(data.children, 'kind', ReferenceNodeKind.Interface).map(value => `/reference/interfaces/${value.name}`),
-						...filterByMember(data.children, 'kind', ReferenceNodeKind.Enum).map(value => `/reference/enums/${value.name}`)
+						...filterByMember(packageData.children, 'kind', ReferenceNodeKind.Class).map(value => `${pre}/reference/classes/${value.name}`),
+						...filterByMember(packageData.children, 'kind', ReferenceNodeKind.Interface).map(value => `${pre}/reference/interfaces/${value.name}`),
+						...filterByMember(packageData.children, 'kind', ReferenceNodeKind.Enum).map(value => `${pre}/reference/enums/${value.name}`)
 					].map(async (entry: RenderEntry | string) => {
 						if (Array.isArray(entry)) {
 							const [resourcePath, title, contentPromise] = entry;

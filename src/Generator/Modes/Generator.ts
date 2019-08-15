@@ -16,7 +16,8 @@ export default abstract class Generator {
 			mode: 'file',
 			tsconfig: path.join(baseDir, 'tsconfig.json'),
 			logger: () => {
-			} // tslint:disable-line:no-empty
+			}, // tslint:disable-line:no-empty
+			...this._overrideTypeDocConfig()
 		});
 		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
 		const project = typeDoc.convert(files);
@@ -25,10 +26,18 @@ export default abstract class Generator {
 		}
 		const data = typeDoc.serializer.projectToObject(project);
 
-		return this._filterReferenceStructure(data)!;
+		return this._startFilterReferenceStructure(data);
 	}
 
-	private _filterReferenceStructure(currentNode: ReferenceNode, parentNode?: ReferenceNode, level: number = 0): ReferenceNode | null {
+	protected _overrideTypeDocConfig(): Object {
+		return {};
+	}
+
+	protected _startFilterReferenceStructure(node: ReferenceNode): ReferenceNode {
+		return this._filterReferenceStructure(node)!;
+	}
+
+	protected _filterReferenceStructure(currentNode: ReferenceNode, parentNode?: ReferenceNode, level: number = 0): ReferenceNode | null {
 		try {
 			if (currentNode.flags.isPrivate) {
 				return null;

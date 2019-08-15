@@ -1,31 +1,33 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
-import reference, {
-	EnumMemberReferenceNode
-} from '../Reference';
-import { filterByMember, findByMember } from '../Tools/ArrayTools';
+import { EnumMemberReferenceNode } from '../Reference';
+import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
 import { getPageType } from '../Tools/CodeBuilders';
 import SymbolHeader from '../Components/SymbolHeader';
 import parseMarkdown from '../Tools/MarkdownParser';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { findSymbolByMember } from '../Tools/ReferenceTools';
+import { getPackagePath } from '../Tools/StringTools';
 
 interface EnumPageRouteProps {
 	name: string;
 }
 
 const EnumPage: React.FC<RouteComponentProps<EnumPageRouteProps>> = ({ match: { params: { name } } }) => {
-	const symbol = findByMember(reference.children, 'name', name);
+	const symbolDef = findSymbolByMember('name', name);
 
-	if (!symbol) {
+	if (!symbolDef) {
 		// TODO
 		return null;
 	}
 
+	const { symbol, packageName } = symbolDef;
+
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'enums') {
-		return <Redirect to={`/${correctPageType}/${name}`}/>;
+		return <Redirect to={`${(getPackagePath(packageName))}/${correctPageType}/${name}`}/>;
 	}
 
 	const members: EnumMemberReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.EnumMember);

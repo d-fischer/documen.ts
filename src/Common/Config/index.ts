@@ -6,3 +6,5 @@ declare global {
 
 const config = __DOCTS_CONFIG;
 export default config;
+
+export const isMono = !!config.monorepoRoot;

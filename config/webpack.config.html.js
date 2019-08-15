@@ -1,10 +1,8 @@
 'use strict';
 
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -16,7 +14,7 @@ const env = getClientEnvironment(publicUrl);
 module.exports = outDir => ({
 	mode: 'production',
 	target: 'node',
-	externals: nodeExternals({whitelist: [/\.css$/]}),
+	externals: nodeExternals(),
 	bail: true,
 	devtool: 'source-map',
 	entry: [paths.entryPoints.html],
@@ -36,7 +34,7 @@ module.exports = outDir => ({
 			// It is guaranteed to exist because we tweak it in `env.js`
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
-		extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
+		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 	},
 	module: {
 		strictExportPresence: true,
@@ -56,46 +54,6 @@ module.exports = outDir => ({
 						importHelpers: false
 					}
 				}
-			},
-			{
-				test: /\.css$/,
-				loader: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-						options: {
-							publicPath: '../../'
-						}
-					},
-					{
-						loader: 'css-loader',
-						options: {
-							importLoaders: 1,
-							sourceMap: true,
-						},
-					},
-					{
-						loader: 'postcss-loader',
-						options: {
-							// Necessary for external CSS imports to work
-							// https://github.com/facebookincubator/create-react-app/issues/2677
-							ident: 'postcss',
-							sourceMap: true,
-							plugins: () => [
-								require('postcss-flexbugs-fixes'),
-								autoprefixer({
-									browsers: [
-										'>1%',
-										'last 4 versions',
-										'Firefox ESR',
-										'not ie < 9', // React doesn't support IE8 anyway
-									],
-									flexbox: 'no-2009',
-								}),
-								require('cssnano')
-							],
-						},
-					},
-				],
 			}
 		]
 	},
@@ -108,10 +66,7 @@ module.exports = outDir => ({
 	},
 	plugins: [
 		new ForkTsCheckerWebpackPlugin(),
-		new webpack.DefinePlugin(env.stringified),
-		new MiniCssExtractPlugin({
-			filename: 'static/css/style.css'
-		})
+		new webpack.DefinePlugin(env.stringified)
 	],
 	node: {
 		__dirname: false

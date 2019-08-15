@@ -8,8 +8,8 @@ import SyntaxHighlighter from 'react-syntax-highlighter/light';
 import darcula from 'react-syntax-highlighter/styles/hljs/darcula';
 
 import { getPageType } from './CodeBuilders';
-import { findByMember } from './ArrayTools';
-import reference from '../Reference';
+import { findSymbolByMember } from './ReferenceTools';
+import { getPackagePath } from './StringTools';
 
 export default function parseMarkdown(source: string) {
 	const parser = new commonmark.Parser();
@@ -20,7 +20,7 @@ export default function parseMarkdown(source: string) {
 	let node;
 
 	// tslint:disable-next-line:no-conditional-assignment
-	while (event = walker.next()) {
+	while ((event = walker.next())) {
 		node = event.node;
 
 		// transform linked type names
@@ -31,10 +31,11 @@ export default function parseMarkdown(source: string) {
 			while (node.literal && (match = re.exec(node.literal))) {
 				const [fullMatch, fullSymbolName, symbolName, memberName] = match;
 
-				const entry = findByMember(reference.children, 'name', symbolName);
-				if (!entry) {
+				const symbolDef = findSymbolByMember('name', symbolName);
+				if (!symbolDef) {
 					continue;
 				}
+				const { symbol: entry, packageName } = symbolDef;
 				const pageType = getPageType(entry);
 				if (!pageType) {
 					continue;
@@ -47,7 +48,7 @@ export default function parseMarkdown(source: string) {
 				}
 
 				const link = new commonmark.Node('link');
-				link.destination = `/reference/${pageType}/${symbolName}`;
+				link.destination = `${getPackagePath(packageName)}/reference/${pageType}/${symbolName}`;
 
 				if (memberName) {
 					link.destination += `#symbol__${memberName}`;
@@ -59,6 +60,7 @@ export default function parseMarkdown(source: string) {
 				node.insertBefore(link);
 
 				node.literal = node.literal.substr(match.index + fullMatch.length);
+				re.lastIndex = 0;
 
 				if (!node.literal) {
 					node.unlink();
@@ -69,39 +71,41 @@ export default function parseMarkdown(source: string) {
 	}
 
 	// noinspection JSUnusedGlobalSymbols
-	const renderer = new ReactRenderer({
-		renderers: {
-			// tslint:disable-next-line:no-any
-			link: function MdLink(mdProps: any) {
-				const props = {
-					key: mdProps.nodeKey,
-					className: mdProps.className
-				};
+	const renderer = new ReactRenderer(
+		{
+			renderers: {
+				// tslint:disable-next-line:no-any
+				link: function MdLink(mdProps: any) {
+					const props = {
+						key: mdProps.nodeKey,
+						className: mdProps.className
+					};
 
-				if (mdProps.href.startsWith('/')) {
+					if (mdProps.href.startsWith('/')) {
+						return (
+							<HashLink {...props} to={mdProps.href}>
+								{mdProps.children}
+							</HashLink>
+						);
+					} else {
+						return (
+							<a href={mdProps.href}>
+								{mdProps.children}
+							</a>
+						);
+					}
+				},
+
+				// tslint:disable-next-line:no-any
+				code_block: function MdCodeBlock(mdProps: any) {
 					return (
-						<HashLink {...props} to={mdProps.href}>
-							{mdProps.children}
-						</HashLink>
-					);
-				} else {
-					return (
-						<a href={mdProps.href}>
-							{mdProps.children}
-						</a>
+						<SyntaxHighlighter key={mdProps.nodeKey} language={mdProps.language} style={darcula}>
+							{mdProps.literal}
+						</SyntaxHighlighter>
 					);
 				}
-			},
-
-			// tslint:disable-next-line:no-any
-			code_block: function MdCodeBlock(mdProps: any) {
-				return (
-					<SyntaxHighlighter key={mdProps.nodeKey} language={mdProps.language} style={darcula}>
-						{mdProps.literal}
-					</SyntaxHighlighter>
-				);
 			}
 		}
-	});
+	);
 	return renderer.render(intermediate);
 }

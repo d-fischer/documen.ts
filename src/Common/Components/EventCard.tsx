@@ -1,19 +1,15 @@
 import * as React from 'react';
 import Card from '../Containers/Card';
-import reference, {
-	ParameterReferenceNode,
-	PropertyReferenceNode,
-	SignatureReferenceNode
-} from '../Reference';
+import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../Reference';
 import { getTag, hasTag } from '../Tools/CodeBuilders';
 import parseMarkdown from '../Tools/MarkdownParser';
 
 import FunctionParamDesc from './FunctionParamDesc';
-import { findByMember } from '../Tools/ArrayTools';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
+import { findSymbolByMember } from '../Tools/ReferenceTools';
 
 interface EventCardProps {
 	name?: string;
@@ -24,9 +20,12 @@ const getParamDefinition = (param: ParameterReferenceNode) => {
 	if (param.type.type === 'reflection' && param.type.declaration.signatures && param.type.declaration.signatures.length) {
 		return param.type.declaration.signatures[0];
 	} else if (param.type.type === 'reference' && param.type.id) {
-		const ref = findByMember(reference.children, 'id', param.type.id);
-		if (ref && ref.kind === ReferenceNodeKind.TypeAlias && ref.type.type === 'reflection' && ref.type.declaration.signatures && ref.type.declaration.signatures.length) {
-			return ref.type.declaration.signatures[0];
+		const ref = findSymbolByMember('id', param.type.id);
+		if (ref) {
+			const { symbol } = ref;
+			if (symbol && symbol.kind === ReferenceNodeKind.TypeAlias && symbol.type.type === 'reflection' && symbol.type.declaration.signatures && symbol.type.declaration.signatures.length) {
+				return symbol.type.declaration.signatures[0];
+			}
 		}
 	}
 
@@ -41,9 +40,12 @@ const getDefinedTags = (prop: PropertyReferenceNode) => {
 			if (paramDefinition.type.type === 'reflection') {
 				return prop.comment && prop.comment.tags;
 			} else if (paramDefinition.type.type === 'reference' && paramDefinition.type.id) {
-				const ref = findByMember(reference.children, 'id', paramDefinition.type.id);
-				if (ref && ref.kind === ReferenceNodeKind.TypeAlias && ref.type.type === 'reflection') {
-					return ref.comment && ref.comment.tags;
+				const ref = findSymbolByMember('id', paramDefinition.type.id);
+				if (ref) {
+					const { symbol } = ref;
+					if (symbol && symbol.kind === ReferenceNodeKind.TypeAlias && symbol.type.type === 'reflection') {
+						return symbol.comment && symbol.comment.tags;
+					}
 				}
 			}
 		}
@@ -78,7 +80,7 @@ const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, 
 	}
 	return (
 		<Card className={classes.root} id={`symbol__${name || definition.name}`} key={definition.id}>
-			<CardToolbar className={classes.toolbar} name={name} definition={definition} />
+			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
 			{handlerDefinition ? (
 				<h3 className={classes.example}>
 					{name || definition.name}({handlerDefinition.parameters && handlerDefinition.parameters.map((param, idx) => {
@@ -88,11 +90,11 @@ const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, 
 						paramDesc = (
 							<>
 								({paramDef.parameters && paramDef.parameters.map((handlerParam, handlerParamIndex) => (
-									<React.Fragment key={handlerParam.name}>
-										{handlerParamIndex !== 0 ? ', ' : ''}
-										{handlerParam.name}
-									</React.Fragment>
-								))}) => {'{\n\t/* ... */\n}'}
+								<React.Fragment key={handlerParam.name}>
+									{handlerParamIndex !== 0 ? ', ' : ''}
+									{handlerParam.name}
+								</React.Fragment>
+							))}) => {'{\n\t/* ... */\n}'}
 							</>
 						);
 					}

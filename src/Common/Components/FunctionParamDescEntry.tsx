@@ -1,12 +1,12 @@
-import reference, { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../Reference';
+import { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../Reference';
 import * as React from 'react';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
-import { findByMember } from '../Tools/ArrayTools';
 import { buildType, isOptionalType } from '../Tools/CodeBuilders';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import parseMarkdown from '../Tools/MarkdownParser';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import { findSymbolByMember } from '../Tools/ReferenceTools';
 
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;
@@ -63,17 +63,20 @@ const PureFunctionParamDescEntry: React.FC<FunctionParamDescEntryProps & WithShe
 			)
 		));
 	} else if (param.type.type === 'reference' && param.type.id && expandParams) {
-		const ref = findByMember(reference.children, 'id', param.type.id);
-		if (ref && ref.kind === ReferenceNodeKind.Interface) {
-			result.push(...ref.children.map((subParam: PropertyReferenceNode) => (
-				<FunctionParamDescEntry
-					param={subParam}
-					additionalTags={additionalTags}
-					isCallback={isCallback}
-					expandParams={expandParams}
-					paramNamePrefix={`${paramName}.`}
-				/>
-			)));
+		const refDesc = findSymbolByMember('id', param.type.id);
+		if (refDesc) {
+			const { symbol: ref } = refDesc;
+			if (ref.kind === ReferenceNodeKind.Interface) {
+				result.push(...ref.children.map((subParam: PropertyReferenceNode) => (
+					<FunctionParamDescEntry
+						param={subParam}
+						additionalTags={additionalTags}
+						isCallback={isCallback}
+						expandParams={expandParams}
+						paramNamePrefix={`${paramName}.`}
+					/>
+				)));
+			}
 		}
 	}
 

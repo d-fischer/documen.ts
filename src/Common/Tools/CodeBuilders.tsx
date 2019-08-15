@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { default as reference, ReferenceNode, ReferenceType, TypeAliasReferenceNode } from '../Reference';
+import { ReferenceNode, ReferenceType } from '../Reference';
 import TypeLink from '../Components/TypeLink';
-import { findByMember } from './ArrayTools';
 import TypeAliasHint from '../Components/TypeAliasHint';
 import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { findSymbolByMember } from './ReferenceTools';
 
 export const isOptionalType = (def?: ReferenceType) => {
 	if (!def) {
@@ -62,14 +62,17 @@ export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false)
 		}
 		default: {
 			if (def.type === 'reference' && def.id) {
-				const referencedType: TypeAliasReferenceNode | undefined = findByMember(reference.children, 'id', def.id);
-				if (referencedType && referencedType.kind === ReferenceNodeKind.TypeAlias) {
-					return <TypeAliasHint name={referencedType.name} type={referencedType.type} />;
+				const referencedDesc = findSymbolByMember('id', def.id);
+				if (referencedDesc) {
+					const { symbol: referencedType } = referencedDesc;
+					if (referencedType.kind === ReferenceNodeKind.TypeAlias) {
+						return <TypeAliasHint name={referencedType.name} type={referencedType.type}/>;
+					}
 				}
 			}
 			return (
 				<>
-					{def.type === 'reference' && def.id ? <TypeLink name={def.name}>{def.name}</TypeLink> : def.name}{def.type === 'reference' && def.typeArguments ? (
+					{def.type === 'reference' ? <TypeLink name={def.name} id={def.id}>{def.name}</TypeLink> : def.name}{def.type === 'reference' && def.typeArguments ? (
 					<>
 						&lt;
 						{def.typeArguments.map((param, idx) => (

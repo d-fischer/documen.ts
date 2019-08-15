@@ -28,7 +28,14 @@ const styles = createStyles(theme => ({
 const CodeLink: React.FC<CodeLinkProps & WithSheet<typeof styles>> = ({ symbol, className, classes }) => config.repoUser && config.repoName && symbol.sources && symbol.sources.length ? (
 	<a
 		className={classNames(classes.root, className)}
-		href={`https://github.com/${path.join(config.repoUser, config.repoName, 'blob', config.repoBranch, config.repoBaseFolder || 'src', `${symbol.sources[0].fileName}#L${symbol.sources[0].line}`)}`}
+		href={`https://github.com/${path.join(
+			config.repoUser,
+			config.repoName,
+			'blob',
+			config.repoBranch,
+			config.monorepoRoot || config.repoBaseFolder || 'src',
+			`${symbol.sources[0].fileName}#L${symbol.sources[0].line}`
+		)}`}
 		target="_blank"
 		title="Go to the code"
 	>

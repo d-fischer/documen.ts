@@ -2,7 +2,6 @@
 
 const PORT = process.env.PORT || 3000;
 
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -11,10 +10,16 @@ const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const fs = require('fs-extra');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const MonorepoGenerator = require('../lib/Generator/Modes/MonorepoGenerator').default;
 
 const publicPath = '/';
 const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
+
+const monoRefJson = fs.readJSONSync(path.join(process.cwd(), 'docs-mono.json'));
+const gen = new MonorepoGenerator({});
+
+const monoRef = gen._startFilterReferenceStructure(monoRefJson);
 
 module.exports = {
 	mode: 'development',
@@ -65,36 +70,6 @@ module.exports = {
 					transpileOnly: true,
 					configFile: 'tsconfig-spa.json'
 				}
-			},
-			{
-				test: /\.css$/,
-				use: [
-					'style-loader',
-					{
-						loader: 'css-loader',
-						options: {
-							importLoaders: 1,
-						},
-					},
-					{
-						loader: 'postcss-loader',
-						options: {
-							ident: 'postcss',
-							plugins: () => [
-								require('postcss-flexbugs-fixes'),
-								autoprefixer({
-									browsers: [
-										'>1%',
-										'last 4 versions',
-										'Firefox ESR',
-										'not ie < 9', // React doesn't support IE8 anyway
-									],
-									flexbox: 'no-2009',
-								})
-							],
-						},
-					},
-				],
 			}
 		],
 	},
@@ -107,8 +82,8 @@ module.exports = {
 		new ForkTsCheckerWebpackPlugin(),
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
-			__DOCTS_REFERENCE: fs.readFileSync(path.join(process.cwd(), 'docs.json'), 'UTF-8'),
-			__DOCTS_CONFIG: '{"repoUser": "d-fischer", "repoName": "twitch", "repoBranch": "master"}'
+			__DOCTS_REFERENCE: JSON.stringify(monoRef),
+			__DOCTS_CONFIG: JSON.stringify({ repoUser: 'd-fischer', repoName: 'twitch', repoBranch: 'master', monorepoRoot: 'packages' })
 		}),
 		new webpack.HotModuleReplacementPlugin(),
 		new CaseSensitivePathsPlugin(),

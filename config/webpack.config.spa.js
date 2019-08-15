@@ -1,9 +1,7 @@
 'use strict';
 
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
@@ -55,56 +53,11 @@ module.exports = {
 					transpileOnly: true,
 					configFile: 'tsconfig-spa.json'
 				}
-			},
-			{
-				test: /\.css$/,
-				loader: [
-					MiniCssExtractPlugin.loader,
-					{
-						loader: 'css-loader',
-						options: {
-							importLoaders: 1,
-							sourceMap: true,
-						},
-					},
-					{
-						loader: 'postcss-loader',
-						options: {
-							// Necessary for external CSS imports to work
-							// https://github.com/facebookincubator/create-react-app/issues/2677
-							ident: 'postcss',
-							sourceMap: true,
-							plugins: () => [
-								require('postcss-flexbugs-fixes'),
-								autoprefixer({
-									browsers: [
-										'>1%',
-										'last 4 versions',
-										'Firefox ESR',
-										'not ie < 9', // React doesn't support IE8 anyway
-									],
-									flexbox: 'no-2009',
-								}),
-								require('cssnano')
-							],
-						},
-					},
-				],
 			}
 		]
 	},
 	optimization: {
-		minimize: true,
-		splitChunks: {
-			cacheGroups: {
-				style: {
-					name: 'style',
-					test: /\.s?css$/,
-					chunks: 'all',
-					enforce: true
-				}
-			}
-		}
+		minimize: true
 	},
 	performance: {
 		hints: false
@@ -126,16 +79,12 @@ module.exports = {
 				removeStyleLinkTypeAttributes: true,
 				keepClosingSlash: true,
 				minifyJS: true,
-				minifyCSS: true,
 				minifyURLs: true,
 			},
 		}),
 		new ForkTsCheckerWebpackPlugin(),
 		new webpack.DefinePlugin(env.stringified),
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-		new MiniCssExtractPlugin({
-			filename: 'static/css/[name].css'
-		})
+		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
 	],
 	node: {
 		dgram: 'empty',

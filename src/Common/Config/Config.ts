@@ -21,6 +21,9 @@ export default interface Config {
 	routerMode: RouterMode;
 	baseDir: string;
 	baseUrl: string;
+	monorepoRoot?: string;
+	ignoredPackages: string[];
+	subPackage?: string;
 	repoUser: string | null;
 	repoName: string | null;
 	repoBaseFolder: string | null;
@@ -28,5 +31,6 @@ export default interface Config {
 	indexFile: string;
 	indexTitle: string;
 	categories?: ConfigCategory[];
+	packages?: Record<string, Config>;
 	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
 }

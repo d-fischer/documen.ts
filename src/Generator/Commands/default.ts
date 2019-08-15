@@ -13,6 +13,8 @@ import RouterMode from '../../Common/HTMLRenderer/RouterMode';
 import Config from '../../Common/Config/Config';
 import { removeSlash } from '../../Common/Tools/StringTools';
 import { getConfigValue } from '../../Common/Config/Util';
+import MonorepoGenerator from '../Modes/MonorepoGenerator';
+import cartesianProduct = require('cartesian-product');
 
 export class CLICommandOptions extends Options {
 	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => fs.pathExistsSync(path.resolve(process.cwd(), value)) })
@@ -30,7 +32,16 @@ export class CLICommandOptions extends Options {
 	@option({ flag: 'b', description: 'base URL', default: '' })
 	baseUrl: string;
 
-	@option({ description: 'Git branch', default: 'master' })
+	@option({ description: 'set monorepo package root', default: '' })
+	mono: string;
+
+	@option({ description: 'repo user name', default: '' })
+	repoUser: string;
+
+	@option({ description: 'repo name', default: '' })
+	repoName: string;
+
+	@option({ description: 'git branch', default: 'master' })
 	repoBranch: string;
 
 	@option({ description: 'index file' })
@@ -92,21 +103,39 @@ export default class CLICommand extends Command {
 
 		let generator: Generator;
 
+		let inputDirs = inputFolders;
+		const monorepoRoot = options.mono || getConfigValue(importedConfig, 'monorepoRoot') || undefined;
+		const ignoredPackages = getConfigValue(importedConfig, 'ignoredPackages') || [];
+
+		if (!inputFolders.length) {
+			const configInputDirs = getConfigValue(importedConfig, 'inputDirs', true);
+
+			if (monorepoRoot) {
+				const monorepoPackages = (await fs.readdir(monorepoRoot)).filter(pkg => !ignoredPackages.includes(pkg));
+				inputDirs = cartesianProduct([monorepoPackages, configInputDirs]).map(([pkg, dir]) => path.join(monorepoRoot, pkg, dir)).filter(inputDir => fs.pathExistsSync(inputDir));
+			} else {
+				inputDirs = configInputDirs;
+			}
+		}
+
 		const generatorConfig: Config = {
 			configDir,
 			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
 			routerMode: options.routerMode || getConfigValue(importedConfig, 'routerMode') || 'htmlSuffix',
-			inputDirs: inputFolders.length ? inputFolders : getConfigValue(importedConfig, 'inputDirs', true),
+			inputDirs,
 			outputDir: options.outDir || getConfigValue(importedConfig, 'outputDir', true),
-			baseUrl: removeSlash(options.baseUrl || getConfigValue(importedConfig, 'baseUrl', true)),
+			baseUrl: removeSlash(options.baseUrl || getConfigValue(importedConfig, 'baseUrl', true) || '/'),
 			baseDir: cwd,
-			repoUser: getConfigValue(importedConfig, 'repoUser'),
-			repoName: getConfigValue(importedConfig, 'repoName'),
+			monorepoRoot,
+			ignoredPackages,
+			repoUser: options.repoUser || getConfigValue(importedConfig, 'repoUser'),
+			repoName: options.repoName || getConfigValue(importedConfig, 'repoName'),
 			repoBaseFolder: getConfigValue(importedConfig, 'repoBaseFolder'),
 			repoBranch: options.repoBranch,
 			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
 			indexFile: indexFile,
 			categories: getConfigValue(importedConfig, 'categories') || undefined,
+			packages: getConfigValue(importedConfig, 'packages') || undefined,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
 				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);
 				if (moduleProgress) {
@@ -115,19 +144,24 @@ export default class CLICommand extends Command {
 			}
 		};
 
-		switch (options.mode) {
-			case 'spa': {
-				generator = new SPAGenerator(generatorConfig);
-				break;
-			}
-			case 'html': {
-				generator = new HTMLGenerator(generatorConfig);
-				break;
-			}
-			default: {
-				throw new Error(`Generator '${options.mode}' not found`);
+		if (generatorConfig.monorepoRoot) {
+			generator = new MonorepoGenerator(generatorConfig);
+		} else {
+			switch (generatorConfig.mode) {
+				case 'spa': {
+					generator = new SPAGenerator(generatorConfig);
+					break;
+				}
+				case 'html': {
+					generator = new HTMLGenerator(generatorConfig);
+					break;
+				}
+				default: {
+					throw new Error(`Generator '${options.mode}' not found`);
+				}
 			}
 		}
+
 		const data = generator.createReferenceStructure();
 
 		try {

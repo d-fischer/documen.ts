@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as path from 'path';
 import { renderToString } from 'react-dom/server';
 
 import StaticRouterWithSuffix from './StaticRouterWithSuffix';
@@ -10,9 +9,7 @@ import config from '../Config';
 import { ArticleProvider, ArticleContent } from '../Components/PageArticle';
 import { createGenerateClassName, JssProvider, SheetsRegistry, ThemeProvider } from 'react-jss';
 import theme from '../Theme';
-
-// tslint:disable-next-line:no-import-side-effect
-import '@fortawesome/fontawesome-svg-core/styles.css';
+import { dom } from '@fortawesome/fontawesome-svg-core';
 
 const insertIntoSkeleton = (html: string, css?: string) =>
 	`<!doctype html>
@@ -21,7 +18,26 @@ const insertIntoSkeleton = (html: string, css?: string) =>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Twitch.js documentation</title>
-    <link rel="stylesheet" href="${path.join(config.baseUrl, '/static/css/style.css')}" />
+    <style>
+    	@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+
+		html, body, #root {
+			width: 100%;
+			min-height: 100%;
+		}
+		
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-size: 14px;
+			background: #141414;
+			color: #b9b9b9;
+		}
+		
+		${dom.css()}
+
+	</style>
     ${css ? `<style id="server-side-styles">${css}</style>` : ''}
 </head>
 <body>
