@@ -164,6 +164,11 @@ export default class CLICommand extends Command {
 
 		const data = generator.createReferenceStructure();
 
+		if (process.env.DOCTS_WRITE_JSON) {
+			const jsonPath = path.join(generatorConfig.baseDir, 'data.json');
+			await fs.writeJSON(jsonPath, data);
+		}
+
 		try {
 			await generator.generate(data);
 			process.exit(0);
