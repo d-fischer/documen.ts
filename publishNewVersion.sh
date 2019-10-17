@@ -1,5 +1,11 @@
 #!/bin/sh
-pushd $(dirname $0)
+
+set -e
+
+CWD="$(pwd)"
+cd "$(dirname $0)"
+
 npm version ${1:-patch} -m "release version %s"
 npm publish --access=public
-popd
+
+cd "$CWD"
