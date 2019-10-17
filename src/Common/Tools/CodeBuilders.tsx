@@ -57,8 +57,34 @@ export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false)
 			return <>"{def.value}"</>;
 		}
 		case 'reflection': {
-			// TODO
-			return '';
+			const { signatures } = def.declaration;
+			if (signatures) {
+				const [signature] = signatures;
+				if (signature) {
+					switch (signature.kind) {
+						case ReferenceNodeKind.CallSignature: {
+							return (
+								<>
+									(
+									{signature.parameters ? signature.parameters.map((param, i) => (
+										<React.Fragment key={param.name}>
+											{i === 0 ? null : ', '}{param.name}: {buildType(param.type)}
+										</React.Fragment>
+									)) : null}
+									) => {buildType(signature.type)}
+								</>
+							);
+						}
+						default: {
+							// tslint:disable-next-line:no-console
+							console.log(`unknown reflection signature type: ${signature.kindString} (${signature.kind})`);
+							return '';
+						}
+					}
+				}
+			}
+			// if it doesn't have a signature, it's an anonymous object (as far as we know)
+			return 'object';
 		}
 		default: {
 			if (def.type === 'reference' && def.id) {

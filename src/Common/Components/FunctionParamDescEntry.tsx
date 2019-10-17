@@ -80,11 +80,7 @@ const PureFunctionParamDescEntry: React.FC<FunctionParamDescEntryProps & WithShe
 		}
 	}
 
-	let typeDesc: React.ReactNode;
-
-	typeDesc = param.type.type === 'reflection'
-		? param.type.declaration.signatures && param.type.declaration.signatures.length ? 'function' : 'object'
-		: buildType(param.type, param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional);
+	const typeDesc = buildType(param.type, param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional);
 
 	result.unshift(
 		<tr key={paramName}>

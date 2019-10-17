@@ -41,6 +41,7 @@ const FunctionParamDesc: React.FC<FunctionParamDescProps & WithSheet<typeof styl
 		<tbody>
 		{signature.parameters.map(param => (
 			<FunctionParamDescEntry
+				key={param.name}
 				param={param}
 				additionalTags={additionalTags}
 				isCallback={isCallback}
