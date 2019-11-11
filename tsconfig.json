@@ -22,6 +22,7 @@
 	},
 	"include": [
 		"types",
+	  	"src/Common",
 		"src/Generator",
 		"node_modules/clime"
 	],

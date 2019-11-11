@@ -9,7 +9,6 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const fs = require('fs-extra');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MonorepoGenerator = require('../lib/Generator/Modes/MonorepoGenerator').default;
 
 const publicPath = '/';
@@ -67,7 +66,6 @@ module.exports = {
 				test: /\.tsx?$/,
 				loader: 'ts-loader',
 				options: {
-					transpileOnly: true,
 					configFile: 'tsconfig-spa.json'
 				}
 			}
@@ -79,7 +77,6 @@ module.exports = {
 			template: paths.appHtml,
 		}),
 		new webpack.NamedModulesPlugin(),
-		new ForkTsCheckerWebpackPlugin(),
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),

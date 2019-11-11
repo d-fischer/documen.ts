@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const publicPath = paths.servedPath;
 const publicUrl = publicPath.slice(0, -1);
@@ -49,7 +48,6 @@ module.exports = outDir => ({
 				test: /\.tsx?$/,
 				loader: 'ts-loader',
 				options: {
-					transpileOnly: true,
 					compilerOptions: {
 						importHelpers: false
 					}
@@ -65,7 +63,6 @@ module.exports = outDir => ({
 		modules: false
 	},
 	plugins: [
-		new ForkTsCheckerWebpackPlugin(),
 		new webpack.DefinePlugin(env.stringified)
 	],
 	node: {

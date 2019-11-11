@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const publicPath = paths.servedPath;
 const publicUrl = publicPath.slice(0, -1);
@@ -50,7 +49,6 @@ module.exports = {
 				test: /\.tsx?$/,
 				loader: 'ts-loader',
 				options: {
-					transpileOnly: true,
 					configFile: 'tsconfig-spa.json'
 				}
 			}
@@ -82,7 +80,6 @@ module.exports = {
 				minifyURLs: true,
 			},
 		}),
-		new ForkTsCheckerWebpackPlugin(),
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
 	],
