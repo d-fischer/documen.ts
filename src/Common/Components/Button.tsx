@@ -1,13 +1,14 @@
 import * as React from 'react';
 
 import { createStyles, WithSheet } from '../Tools/InjectStyle';
-import classNames = require('classnames');
+import * as classNames from 'classnames';
 
 type ButtonStyle = 'primary';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
 	className?: string;
 	type?: ButtonStyle;
+	htmlType?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
 	small?: boolean;
 	onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }

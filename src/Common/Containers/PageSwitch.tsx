@@ -5,7 +5,7 @@ import DocPage from '../Pages/DocPage';
 import ClassPage from '../Pages/ClassPage';
 import InterfacePage from '../Pages/InterfacePage';
 import EnumPage from '../Pages/EnumPage';
-import { isMono } from '../Config';
+import { isMono } from '../config';
 
 const PageSwitch: React.FunctionComponent = () => isMono ? (
 	<Switch>

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { ReferenceNode, SignatureReferenceNode } from '../Reference';
+import { ReferenceNode, SignatureReferenceNode } from '../reference';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import CodeLink from './CodeLink';
 import { HashLink } from 'react-router-hash-link';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
-import classNames = require('classnames');
+import * as classNames from 'classnames';
 
 interface CardToolbarProps {
 	name?: string;

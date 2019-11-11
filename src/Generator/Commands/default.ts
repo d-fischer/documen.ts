@@ -1,5 +1,4 @@
-// tslint:disable:no-console max-classes-per-file
-
+/* eslint-disable no-console,filenames/match-exported,max-classes-per-file */
 import * as ansi from 'ansi-escapes';
 import { Command, Options, command, option, params, ExpectedError } from 'clime';
 import * as fs from 'fs-extra';
@@ -10,11 +9,11 @@ import WebpackBuildError from '../Errors/WebpackBuildError';
 import SPAGenerator from '../Modes/SPAGenerator';
 import HTMLGenerator from '../Modes/HTMLGenerator';
 import RouterMode from '../../Common/HTMLRenderer/RouterMode';
-import Config from '../../Common/Config/Config';
+import Config from '../../Common/config/Config';
 import { removeSlash } from '../../Common/Tools/StringTools';
-import { getConfigValue } from '../../Common/Config/Util';
+import { getConfigValue } from '../../Common/config/Util';
 import MonorepoGenerator from '../Modes/MonorepoGenerator';
-import cartesianProduct = require('cartesian-product');
+import * as cartesianProduct from 'cartesian-product';
 
 export class CLICommandOptions extends Options {
 	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => fs.pathExistsSync(path.resolve(process.cwd(), value)) })

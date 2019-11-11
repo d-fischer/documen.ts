@@ -1,12 +1,12 @@
 import * as React from 'react';
-// tslint:disable-next-line:no-duplicate-imports
+// eslint-disable-next-line no-duplicate-imports
 import { useMemo } from 'react';
 import { hot } from 'react-hot-loader';
 
 import NavMenu from '../Components/NavMenu';
 
-import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
-import config from '../Config';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
+import config from '../config';
 import NavMenuGroup from '../Components/NavMenuGroup';
 import NavMenuItem from '../Components/NavMenuItem';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';

@@ -1,10 +1,10 @@
+// eslint-disable-next-line filenames/match-exported
 import * as React from 'react';
 import * as commonmark from 'commonmark';
 import * as ReactRenderer from 'commonmark-react-renderer';
 import { HashLink } from 'react-router-hash-link';
 
 import SyntaxHighlighter from 'react-syntax-highlighter/light';
-// tslint:disable-next-line:match-default-export-name
 import darcula from 'react-syntax-highlighter/styles/hljs/darcula';
 
 import { getPageType } from './CodeBuilders';
@@ -19,7 +19,6 @@ export default function parseMarkdown(source: string) {
 	let event;
 	let node;
 
-	// tslint:disable-next-line:no-conditional-assignment
 	while ((event = walker.next())) {
 		node = event.node;
 
@@ -27,7 +26,6 @@ export default function parseMarkdown(source: string) {
 		if (node.type === 'text') {
 			const re = /{@((\w+)(?:#(\w+))?)}/g;
 			let match;
-			// tslint:disable-next-line:no-conditional-assignment
 			while (node.literal && (match = re.exec(node.literal))) {
 				const [fullMatch, fullSymbolName, symbolName, memberName] = match;
 
@@ -74,7 +72,7 @@ export default function parseMarkdown(source: string) {
 	const renderer = new ReactRenderer(
 		{
 			renderers: {
-				// tslint:disable-next-line:no-any
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				link: function MdLink(mdProps: any) {
 					const props = {
 						key: mdProps.nodeKey,
@@ -96,7 +94,7 @@ export default function parseMarkdown(source: string) {
 					}
 				},
 
-				// tslint:disable-next-line:no-any
+				// eslint-disable-next-line @typescript-eslint/camelcase,@typescript-eslint/no-explicit-any
 				code_block: function MdCodeBlock(mdProps: any) {
 					return (
 						<SyntaxHighlighter key={mdProps.nodeKey} language={mdProps.language} style={darcula}>

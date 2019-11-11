@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Card from '../Containers/Card';
-import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../Reference';
+import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
 import { getTag, hasTag } from '../Tools/CodeBuilders';
 import parseMarkdown from '../Tools/MarkdownParser';
 
 import FunctionParamDesc from './FunctionParamDesc';
-import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
@@ -91,7 +91,7 @@ const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, 
 							<>
 								({paramDef.parameters && paramDef.parameters.map((handlerParam, handlerParamIndex) => (
 								<React.Fragment key={handlerParam.name}>
-									{handlerParamIndex !== 0 ? ', ' : ''}
+									{handlerParamIndex === 0 ? '' : ', '}
 									{handlerParam.name}
 								</React.Fragment>
 							))}) => {'{\n\t/* ... */\n}'}
@@ -100,7 +100,7 @@ const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, 
 					}
 					return (
 						<React.Fragment key={param.name}>
-							{idx !== 0 ? ', ' : ''}
+							{idx === 0 ? '' : ', '}
 							{paramDesc}
 						</React.Fragment>
 					);

@@ -2,7 +2,7 @@ import * as React from 'react';
 import PackageContainer from './PackageContainer';
 import { Route, Switch } from 'react-router';
 import MonoIndexPage from '../Pages/MonoIndexPage';
-import { isMono } from '../Config';
+import { isMono } from '../config';
 
 const App: React.FunctionComponent = isMono ? () => (
 	<Switch>

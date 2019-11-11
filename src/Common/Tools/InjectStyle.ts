@@ -1,5 +1,5 @@
 import injectSheet, { StyleCreator, Styles, WithSheet as OrigWithSheet } from 'react-jss';
-import { Theme } from '../Theme';
+import { Theme } from '../theme';
 
 type WithSheet<S extends string | Styles | StyleCreator<keyof S>> = OrigWithSheet<S, Theme>;
 

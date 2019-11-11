@@ -1,7 +1,7 @@
 import * as TypeDoc from 'typedoc';
 import * as path from 'path';
-import { ReferenceNode } from '../../Common/Reference';
-import Config from '../../Common/Config/Config';
+import { ReferenceNode } from '../../Common/reference';
+import Config from '../../Common/config/Config';
 
 export default abstract class Generator {
 	protected _config: Config;
@@ -16,7 +16,7 @@ export default abstract class Generator {
 			mode: 'file',
 			tsconfig: path.join(baseDir, 'tsconfig.json'),
 			logger: () => {
-			}, // tslint:disable-line:no-empty
+			},
 			...this._overrideTypeDocConfig()
 		});
 		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
@@ -28,6 +28,8 @@ export default abstract class Generator {
 
 		return this._startFilterReferenceStructure(data);
 	}
+
+	abstract async generate(data: ReferenceNode): Promise<void>;
 
 	protected _overrideTypeDocConfig(): Object {
 		return {};
@@ -65,6 +67,4 @@ export default abstract class Generator {
 			throw new Error(`Error transforming reference structure at id ${currentNode.id}: ${e.message}`);
 		}
 	}
-
-	abstract async generate(data: ReferenceNode): Promise<void>;
 }

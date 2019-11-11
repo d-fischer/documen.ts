@@ -1,5 +1,5 @@
 import CustomError from '../../Common/CustomError';
-import webpack = require('webpack');
+import * as webpack from 'webpack';
 
 export default class WebpackBuildError extends CustomError {
 	constructor(private readonly _stats: webpack.Stats) {

@@ -31,7 +31,7 @@ const stripBasename = (basename: string, location: Location) => {
 
 	return {
 		...location,
-		pathname: location.pathname!.substr(base.length)
+		pathname: location.pathname.substr(base.length)
 	};
 };
 
@@ -59,7 +59,6 @@ const staticHandler = (methodName: string) => () => {
 	invariant(false, 'You cannot %s with a static router', methodName);
 };
 
-// tslint:disable-next-line:no-empty
 const noop = () => {
 };
 

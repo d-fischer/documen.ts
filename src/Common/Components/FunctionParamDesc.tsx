@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { hasTag } from '../Tools/CodeBuilders';
-import { ReferenceCommentTag, SignatureReferenceNode } from '../Reference';
+import { ReferenceCommentTag, SignatureReferenceNode } from '../reference';
 
 import FunctionParamDescEntry from './FunctionParamDescEntry';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';

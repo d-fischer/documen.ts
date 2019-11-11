@@ -10,7 +10,7 @@ import { registerLanguage } from 'react-syntax-highlighter/light';
 import js from 'react-syntax-highlighter/languages/hljs/javascript';
 import ts from 'react-syntax-highlighter/languages/hljs/typescript';
 import { ThemeProvider } from 'react-jss';
-import theme from '../Common/Theme';
+import theme from '../Common/theme';
 
 const Router: React.ComponentType<BrowserRouterProps | HashRouterProps> = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
 
@@ -28,5 +28,5 @@ ReactDOM.render(
 	document.getElementById('root')
 );
 
-// tslint:disable-next-line:no-console
+// eslint-disable-next-line no-console
 registerServiceWorker().catch(e => console.log('error registering service worker', e));

@@ -1,17 +1,17 @@
 import Generator from './Generator';
 import * as path from 'path';
 
-import { ReferenceNode } from '../../Common/Reference';
+import { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 import { filterByMember } from '../../Common/Tools/ArrayTools';
-import { ReferenceNodeKind } from '../../Common/Reference/ReferenceNodeKind';
+import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { ArticleContent } from '../../Common/Components/PageArticle';
 import { getPackagePath } from '../../Common/Tools/StringTools';
-import resolveHome = require('untildify');
-import webpack = require('webpack');
-import tmp = require('tmp');
-import fs = require('fs-extra');
+import * as resolveHome from 'untildify';
+import * as webpack from 'webpack';
+import * as tmp from 'tmp';
+import * as fs from 'fs-extra';
 
 type RenderEntry = [string, string, Promise<string>];
 
@@ -42,6 +42,7 @@ export default class HTMLGenerator extends Generator {
 					return;
 				}
 
+				// eslint-disable-next-line @typescript-eslint/no-require-imports
 				const { default: render } = require(path.resolve(tmpDir, 'generator.js'));
 
 				const packageData = data.children.find(pkg => pkg.name === this._config.subPackage)!;
@@ -78,6 +79,37 @@ export default class HTMLGenerator extends Generator {
 		});
 	}
 
+	async _buildWebpack(data: ReferenceNode, outputDirectory: string) {
+		return new Promise<void>((resolve, reject) => {
+			process.chdir(path.join(__dirname, '../../..'));
+
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			const webpackConfig = require('../../../config/webpack.config.html')(outputDirectory);
+			const webpackCompiler = webpack(webpackConfig);
+
+			const { webpackProgressCallback, ...configWithoutCallback } = this._config;
+
+			if (webpackProgressCallback) {
+				(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
+			}
+
+			(new webpack.DefinePlugin({
+										  __DOCTS_REFERENCE: JSON.stringify(data),
+										  __DOCTS_CONFIG: JSON.stringify(configWithoutCallback)
+									  })).apply(webpackCompiler);
+
+			webpackCompiler.run((err, stats) => {
+				if (err) {
+					reject(new WebpackError(err));
+				} else if (stats.hasErrors()) {
+					reject(new WebpackBuildError(stats));
+				} else {
+					resolve();
+				}
+			});
+		});
+	}
+
 	private async _renderToFile(render: (path: string, article?: ArticleContent) => string, resourcePath: string, outDir: string, content?: ArticleContent) {
 		let relativeOutFile = resourcePath;
 		if (resourcePath.endsWith('/')) {
@@ -92,36 +124,5 @@ export default class HTMLGenerator extends Generator {
 		const str = render(resourcePath, content);
 
 		await fs.writeFile(outFile, str);
-	}
-
-	async _buildWebpack(data: ReferenceNode, outputDirectory: string) {
-		return new Promise<void>((resolve, reject) => {
-			process.chdir(path.join(__dirname, '../../..'));
-
-			// tslint:disable-next-line:no-var-requires
-			const webpackConfig = require('../../../config/webpack.config.html')(outputDirectory);
-			const webpackCompiler = webpack(webpackConfig);
-
-			const { webpackProgressCallback, ...configWithoutCallback } = this._config;
-
-			if (webpackProgressCallback) {
-				(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
-			}
-
-			(new webpack.DefinePlugin({
-				__DOCTS_REFERENCE: JSON.stringify(data),
-				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback)
-			})).apply(webpackCompiler);
-
-			webpackCompiler.run((err, stats) => {
-				if (err) {
-					reject(new WebpackError(err));
-				} else if (stats.hasErrors()) {
-					reject(new WebpackBuildError(stats));
-				} else {
-					resolve();
-				}
-			});
-		});
 	}
 }

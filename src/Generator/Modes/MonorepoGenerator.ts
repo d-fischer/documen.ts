@@ -1,9 +1,9 @@
 import Generator from './Generator';
-import { ReferenceNode } from '../../Common/Reference';
+import { ReferenceNode } from '../../Common/reference';
 import SPAGenerator from './SPAGenerator';
 import HTMLGenerator from './HTMLGenerator';
 import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
-import { ReferenceNodeKind } from '../../Common/Reference/ReferenceNodeKind';
+import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 
 export default class MonorepoGenerator extends Generator {
 	async generate(data: ReferenceNode) {

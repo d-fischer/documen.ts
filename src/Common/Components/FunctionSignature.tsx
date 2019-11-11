@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SignatureReferenceNode } from '../Reference';
+import { SignatureReferenceNode } from '../reference';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 
 interface FunctionSignatureProps {
@@ -19,7 +19,7 @@ const FunctionSignature: React.FC<FunctionSignatureProps & WithSheet<typeof styl
 	<h3 className={classes.root}>
 		{signature.name}({signature.parameters && signature.parameters.map((param, idx) => (
 			<React.Fragment key={param.name}>
-				{idx !== 0 ? ', ' : ''}
+				{idx === 0 ? '' : ', '}
 				{param.name === '__namedParameters' ? 'params' : param.name}
 			</React.Fragment>
 		))})

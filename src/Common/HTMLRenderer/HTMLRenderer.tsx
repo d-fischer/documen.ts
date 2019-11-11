@@ -1,3 +1,4 @@
+// eslint-disable-next-line filenames/match-exported
 import * as React from 'react';
 import { renderToString } from 'react-dom/server';
 
@@ -5,10 +6,10 @@ import StaticRouterWithSuffix from './StaticRouterWithSuffix';
 import App from '../Containers/App';
 import RouterMode from './RouterMode';
 import { StaticRouter } from 'react-router';
-import config from '../Config';
+import config from '../config';
 import { ArticleProvider, ArticleContent } from '../Components/PageArticle';
 import { createGenerateClassName, JssProvider, SheetsRegistry, ThemeProvider } from 'react-jss';
-import theme from '../Theme';
+import theme from '../theme';
 import { dom } from '@fortawesome/fontawesome-svg-core';
 
 const insertIntoSkeleton = (html: string, css?: string) =>

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
-import config from '../Config';
+import config from '../config';
 import PageArticle from '../Components/PageArticle';
 import { RouteComponentProps } from 'react-router';
 

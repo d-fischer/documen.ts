@@ -1,13 +1,13 @@
 import * as React from 'react';
 import Card from '../Containers/Card';
-import { AccessorReferenceNode, PropertyReferenceNode } from '../Reference';
+import { AccessorReferenceNode, PropertyReferenceNode } from '../reference';
 import { buildType, getTag, hasTag, isStringLiteral } from '../Tools/CodeBuilders';
 import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import Badge from './Badge';
-import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 
 interface PropertyCardProps {
 	name?: string;

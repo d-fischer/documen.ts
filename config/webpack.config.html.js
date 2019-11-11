@@ -48,9 +48,7 @@ module.exports = outDir => ({
 				test: /\.tsx?$/,
 				loader: 'ts-loader',
 				options: {
-					compilerOptions: {
-						importHelpers: false
-					}
+					configFile: 'tsconfig-html.json'
 				}
 			}
 		]

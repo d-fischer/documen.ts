@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReferenceType } from '../Reference';
+import { ReferenceType } from '../reference';
 import { buildType } from '../Tools/CodeBuilders';
 
 import { createStyles, withStyles, WithSheet } from '../Tools/InjectStyle';

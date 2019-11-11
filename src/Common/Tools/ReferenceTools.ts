@@ -1,6 +1,6 @@
-import reference, { ReferenceNode } from '../Reference';
+import reference, { ReferenceNode } from '../reference';
 import { findByMember } from './ArrayTools';
-import { isMono } from '../Config';
+import { isMono } from '../config';
 
 interface SymbolDefinition<T extends ReferenceNode> {
 	symbol: T;

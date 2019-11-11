@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
-import { EnumMemberReferenceNode } from '../Reference';
+import { EnumMemberReferenceNode } from '../reference';
 import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
 import { getPageType } from '../Tools/CodeBuilders';
 import SymbolHeader from '../Components/SymbolHeader';
 import parseMarkdown from '../Tools/MarkdownParser';
-import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
 

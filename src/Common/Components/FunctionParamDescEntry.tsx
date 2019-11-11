@@ -1,6 +1,6 @@
-import { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../Reference';
+import { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
 import * as React from 'react';
-import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { buildType, isOptionalType } from '../Tools/CodeBuilders';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import Card from '../Containers/Card';
 import FunctionSignature from './FunctionSignature';
 import FunctionParamDesc from './FunctionParamDesc';
-import { ConstructorReferenceNode, MethodReferenceNode, SignatureReferenceNode } from '../Reference';
+import { ConstructorReferenceNode, MethodReferenceNode, SignatureReferenceNode } from '../reference';
 import { buildType, getTag, hasTag } from '../Tools/CodeBuilders';
 
 import parseMarkdown from '../Tools/MarkdownParser';

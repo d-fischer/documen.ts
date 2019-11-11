@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReferenceNode } from '../Reference';
+import { ReferenceNode } from '../reference';
 import { Link } from 'react-router-dom';
 import { getPageType } from '../Tools/CodeBuilders';
 import { findSymbolByMember } from '../Tools/ReferenceTools';

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ReferenceNode } from '../Reference';
+import { ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
-import config from '../Config';
+import config from '../config';
 import * as path from 'path';
 
 import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
-import classNames = require('classnames');
+import * as classNames from 'classnames';
 
 interface CodeLinkProps {
 	symbol: ReferenceNode;

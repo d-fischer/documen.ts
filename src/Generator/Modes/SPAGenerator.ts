@@ -1,8 +1,8 @@
 import Generator from './Generator';
 import * as path from 'path';
-import resolveHome = require('untildify');
-import webpack = require('webpack');
-import { ReferenceNode } from '../../Common/Reference';
+import * as resolveHome from 'untildify';
+import * as webpack from 'webpack';
+import { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 
@@ -11,7 +11,7 @@ export default class SPAGenerator extends Generator {
 		return new Promise<void>((resolve, reject) => {
 			process.chdir(path.join(__dirname, '../../..'));
 
-			// tslint:disable-next-line:no-var-requires
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const webpackConfig = require('../../../config/webpack.config.spa');
 
 			webpackConfig.output.path = path.resolve(this._config.baseDir, resolveHome(this._config.outputDir));

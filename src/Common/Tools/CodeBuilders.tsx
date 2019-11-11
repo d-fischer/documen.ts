@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ReferenceNode, ReferenceType } from '../Reference';
+import { ReferenceNode, ReferenceType } from '../reference';
 import TypeLink from '../Components/TypeLink';
 import TypeAliasHint from '../Components/TypeAliasHint';
-import { ReferenceNodeKind } from '../Reference/ReferenceNodeKind';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from './ReferenceTools';
 
 export const isOptionalType = (def?: ReferenceType) => {
@@ -43,7 +43,7 @@ export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false)
 				<>
 					{def.types.map((type, idx) => (
 						<React.Fragment key={idx}>
-							{idx !== 0 ? ' | ' : ''}
+							{idx === 0 ? '' : ' | '}
 							{buildType(type)}
 						</React.Fragment>
 					))}
@@ -76,7 +76,7 @@ export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false)
 							);
 						}
 						default: {
-							// tslint:disable-next-line:no-console
+							// eslint-disable-next-line no-console
 							console.log(`unknown reflection signature type: ${signature.kindString} (${signature.kind})`);
 							return '';
 						}
@@ -103,7 +103,7 @@ export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false)
 						&lt;
 						{def.typeArguments.map((param, idx) => (
 							<React.Fragment key={idx}>
-								{idx !== 0 ? ', ' : ''}
+								{idx === 0 ? '' : ', '}
 								{buildType(param)}
 							</React.Fragment>
 						))}
