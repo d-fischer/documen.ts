@@ -1,4 +1,4 @@
-/* eslint-disable no-console,filenames/match-exported,max-classes-per-file */
+/* eslint-disable no-console,max-classes-per-file */
 import * as ansi from 'ansi-escapes';
 import { Command, Options, command, option, params, ExpectedError } from 'clime';
 import * as fs from 'fs-extra';

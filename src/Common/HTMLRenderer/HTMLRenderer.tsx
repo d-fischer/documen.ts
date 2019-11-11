@@ -1,4 +1,3 @@
-// eslint-disable-next-line filenames/match-exported
 import * as React from 'react';
 import { renderToString } from 'react-dom/server';
 

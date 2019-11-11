@@ -1,4 +1,3 @@
-// eslint-disable-next-line filenames/match-exported
 import * as React from 'react';
 import * as commonmark from 'commonmark';
 import * as ReactRenderer from 'commonmark-react-renderer';
