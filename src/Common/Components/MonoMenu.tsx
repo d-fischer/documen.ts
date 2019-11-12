@@ -35,7 +35,7 @@ const MonoMenu: React.FC = () => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
-			{getPackageList().map(pkg => <NavLink to={`/${pkg.name}`} className={classes.entry} activeClassName={classes.entryActive} key={pkg.name}>{pkg.name}</NavLink>)}
+			{getPackageList().map(pkg => <NavLink to={`/${pkg.name}/`} className={classes.entry} activeClassName={classes.entryActive} key={pkg.name}>{pkg.name}</NavLink>)}
 		</div>
 	);
 };
