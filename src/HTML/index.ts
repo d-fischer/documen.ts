@@ -1,11 +1,11 @@
-import { registerLanguage } from 'react-syntax-highlighter/light';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/languages/hljs/javascript';
 import ts from 'react-syntax-highlighter/languages/hljs/typescript';
 
-registerLanguage('javascript', js);
-registerLanguage('js', js);
-registerLanguage('typescript', ts);
-registerLanguage('ts', ts);
+SyntaxHighlighter.registerLanguage('javascript', js);
+SyntaxHighlighter.registerLanguage('js', js);
+SyntaxHighlighter.registerLanguage('typescript', ts);
+SyntaxHighlighter.registerLanguage('ts', ts);
 
 import renderReferencePage from '../Common/HTMLRenderer/HTMLRenderer';
 export default renderReferencePage;
