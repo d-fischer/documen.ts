@@ -1,4 +1,4 @@
-import TypeDoc from 'typedoc';
+import { Application } from 'typedoc';
 import path from 'path';
 import { ReferenceNode } from '../../Common/reference';
 import Config from '../../Common/config/Config';
@@ -12,7 +12,7 @@ export default abstract class Generator {
 
 	createReferenceStructure() {
 		const baseDir = this._config.baseDir;
-		const typeDoc = new TypeDoc.Application({
+		const typeDoc = new Application({
 			mode: 'file',
 			tsconfig: path.join(baseDir, 'tsconfig.json'),
 			logger: () => {
