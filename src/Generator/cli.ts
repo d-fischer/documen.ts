@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { CLI, Shim } from 'clime';
-import * as path from 'path';
+import path from 'path';
 
 const cli = new CLI('documen.ts', path.join(__dirname, 'Commands'));
 const shim = new Shim(cli);

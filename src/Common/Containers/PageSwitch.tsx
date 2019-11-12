@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router';
 import IndexPage from '../Pages/IndexPage';
 import DocPage from '../Pages/DocPage';

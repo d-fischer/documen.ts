@@ -1,12 +1,12 @@
 import { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
-import * as React from 'react';
+import React from 'react';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { buildType, isOptionalType } from '../Tools/CodeBuilders';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import parseMarkdown from '../Tools/MarkdownParser';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
+import { makeStyles } from '@material-ui/styles';
 
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;
@@ -16,7 +16,7 @@ interface FunctionParamDescEntryProps {
 	paramNamePrefix?: string;
 }
 
-const styles = createStyles({
+const useStyles = makeStyles({
 	row: {
 		padding: '.5em',
 		textAlign: 'center',
@@ -32,11 +32,10 @@ const styles = createStyles({
 	checkMark: {
 		width: '1em'
 	}
-});
+}, { name: 'FunctionParamDescEntry' });
 
-let FunctionParamDescEntry: React.ComponentType<FunctionParamDescEntryProps>;
-
-const PureFunctionParamDescEntry: React.FC<FunctionParamDescEntryProps & WithSheet<typeof styles>> = ({ param, additionalTags, isCallback, expandParams, paramNamePrefix = '', classes }) => {
+const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, additionalTags, isCallback, expandParams, paramNamePrefix = '' }) => {
+	const classes = useStyles();
 	let desc = param.comment && (param.comment.text || param.comment.shortText);
 
 	if (!desc && additionalTags) {
@@ -46,7 +45,7 @@ const PureFunctionParamDescEntry: React.FC<FunctionParamDescEntryProps & WithShe
 		}
 	}
 
-	const paramName = paramNamePrefix + (param.name === '__namedParameters' ? 'params' : param.name);
+	const paramName = `${paramNamePrefix}${param.name === '__namedParameters' ? 'params' : param.name}`;
 	const defaultValue = param.kind === ReferenceNodeKind.Property ? undefined : param.defaultValue;
 
 	const result: React.ReactNode[] = [];
@@ -54,6 +53,7 @@ const PureFunctionParamDescEntry: React.FC<FunctionParamDescEntryProps & WithShe
 	if (param.type.type === 'reflection' && param.type.declaration.children) {
 		result.push(...param.type.declaration.children.map((subParam: VariableReferenceNode) => (
 				<FunctionParamDescEntry
+					key={`${paramName}.${subParam.name}`}
 					param={subParam}
 					additionalTags={additionalTags}
 					isCallback={isCallback}
@@ -69,6 +69,7 @@ const PureFunctionParamDescEntry: React.FC<FunctionParamDescEntryProps & WithShe
 			if (ref.kind === ReferenceNodeKind.Interface) {
 				result.push(...ref.children.map((subParam: PropertyReferenceNode) => (
 					<FunctionParamDescEntry
+						key={`${paramName}.${subParam.name}`}
 						param={subParam}
 						additionalTags={additionalTags}
 						isCallback={isCallback}
@@ -103,5 +104,4 @@ const PureFunctionParamDescEntry: React.FC<FunctionParamDescEntryProps & WithShe
 	return <React.Fragment key={`${paramNamePrefix}root`}>{result}</React.Fragment>;
 };
 
-FunctionParamDescEntry = withStyles(styles)(PureFunctionParamDescEntry);
 export default FunctionParamDescEntry;

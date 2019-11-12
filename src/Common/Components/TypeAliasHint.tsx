@@ -1,15 +1,14 @@
-import * as React from 'react';
+import React from 'react';
 import { ReferenceType } from '../reference';
 import { buildType } from '../Tools/CodeBuilders';
-
-import { createStyles, withStyles, WithSheet } from '../Tools/InjectStyle';
+import { makeStyles } from '@material-ui/styles';
 
 interface TypeAliasHintProps {
 	name: string;
 	type: ReferenceType;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		position: 'relative',
 		display: 'inline-block',
@@ -61,17 +60,20 @@ const styles = createStyles(theme => ({
 			borderColor: `transparent transparent ${theme.colors.background.active}`
 		}
 	}
-}));
+}), { name: 'TypeAliasHint' });
 
-const TypeAliasHint: React.FC<TypeAliasHintProps & WithSheet<typeof styles>> = ({ name, type, classes }) => (
-	<div className={classes.root}>
-		<abbr className={classes.alias}>{name}</abbr>
-		<div className={classes.hint}>
-			<div className={classes.toolTip}>
-				{buildType(type)}
+const TypeAliasHint: React.FC<TypeAliasHintProps> = ({ name, type }) => {
+	const classes = useStyles();
+	return (
+		<div className={classes.root}>
+			<abbr className={classes.alias}>{name}</abbr>
+			<div className={classes.hint}>
+				<div className={classes.toolTip}>
+					{buildType(type)}
+				</div>
 			</div>
 		</div>
-	</div>
-);
+	);
+};
 
-export default withStyles(styles)(TypeAliasHint);
+export default TypeAliasHint;

@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import React from 'react';
+import { makeStyles } from '@material-ui/styles';
 
 interface DeprecationNoticeProps {
 	reason?: React.ReactNode;
 }
 
-const styles = createStyles({
+const useStyles = makeStyles({
 	root: {
 		color: '#a00',
 
@@ -16,12 +16,15 @@ const styles = createStyles({
 	label: {
 		textTransform: 'uppercase'
 	}
-});
+}, { name: 'DeprecationNotice' });
 
-const DeprecationNotice: React.FC<DeprecationNoticeProps & WithSheet<typeof styles>> = ({ reason, classes }) => (
-	<div className={classes.root}>
-		<strong className={classes.label}>Deprecated.</strong> {reason}
-	</div>
-);
+const DeprecationNotice: React.FC<DeprecationNoticeProps> = ({ reason }) => {
+	const classes = useStyles();
+	return (
+		<div className={classes.root}>
+			<strong className={classes.label}>Deprecated.</strong> {reason}
+		</div>
+	);
+};
 
-export default withStyles(styles)(DeprecationNotice);
+export default DeprecationNotice;

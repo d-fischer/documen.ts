@@ -1,7 +1,7 @@
 import Generator from './Generator';
-import * as path from 'path';
-import * as resolveHome from 'untildify';
-import * as webpack from 'webpack';
+import path from 'path';
+import resolveHome from 'untildify';
+import webpack from 'webpack';
 import { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';

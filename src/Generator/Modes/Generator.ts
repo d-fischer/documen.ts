@@ -1,5 +1,5 @@
-import * as TypeDoc from 'typedoc';
-import * as path from 'path';
+import TypeDoc from 'typedoc';
+import path from 'path';
 import { ReferenceNode } from '../../Common/reference';
 import Config from '../../Common/config/Config';
 

@@ -1,6 +1,6 @@
-import * as path from 'path';
-import * as express from 'express';
-import * as compression from 'compression';
+import path from 'path';
+import express from 'express';
+import compression from 'compression';
 import render from '../Common/HTMLRenderer/HTMLRenderer';
 
 const app = express();

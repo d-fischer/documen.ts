@@ -57,6 +57,9 @@ module.exports = {
 			// It is guaranteed to exist because we tweak it in `env.js`
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
+		alias: {
+			'react-dom': '@hot-loader/react-dom'
+		},
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 	},
 	module: {

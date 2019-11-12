@@ -1,20 +1,20 @@
-import * as React from 'react';
+import React from 'react';
 import Card from '../Containers/Card';
 import { AccessorReferenceNode, PropertyReferenceNode } from '../reference';
 import { buildType, getTag, hasTag, isStringLiteral } from '../Tools/CodeBuilders';
 import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import Badge from './Badge';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
+import { makeStyles } from '@material-ui/styles';
 
 interface PropertyCardProps {
 	name?: string;
 	definition: PropertyReferenceNode | AccessorReferenceNode;
 }
 
-const styles = createStyles({
+const useStyles = makeStyles({
 	root: {},
 	name: {
 		display: 'inline-block'
@@ -27,9 +27,11 @@ const styles = createStyles({
 			opacity: 1
 		}
 	}
-});
+}, { name: 'PropertyCard' });
 
-const PropertyCard: React.FC<PropertyCardProps & WithSheet<typeof styles>> = ({ name, definition, classes }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition}) => {
+	const classes = useStyles();
+
 	const sig = definition.kind === ReferenceNodeKind.Accessor ? (definition.getSignature && definition.getSignature[0]) : definition;
 	const type = sig && sig.type;
 	return (
@@ -45,4 +47,4 @@ const PropertyCard: React.FC<PropertyCardProps & WithSheet<typeof styles>> = ({ 
 	);
 };
 
-export default withStyles(styles)(PropertyCard);
+export default PropertyCard;

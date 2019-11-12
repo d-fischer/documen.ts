@@ -1,7 +1,6 @@
-import * as React from 'react';
-
-import { createStyles, WithSheet } from '../Tools/InjectStyle';
-import * as classNames from 'classnames';
+import React from 'react';
+import classNames from 'classnames';
+import { makeStyles } from '@material-ui/styles';
 
 type ButtonStyle = 'primary';
 
@@ -13,7 +12,7 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
 	onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'inline-block',
 		padding: '.4em .8em',
@@ -36,20 +35,23 @@ const styles = createStyles(theme => ({
 			borderColor: theme.colors.accent.focus
 		}
 	}
-}));
+}), { name: 'Button' });
 
-const Button: React.FC<ButtonProps & WithSheet<typeof styles>> = ({ className, classes, type, small, ...props }) => (
-	<button
-		className={classNames(
-			classes.root,
-			{
-				[classes.rootSmall]: small,
-				[classes.rootPrimary]: type === 'primary'
-			},
-			className
-		)}
-		{...props}
-	/>
-);
+const Button: React.FC<ButtonProps> = ({ className, type, small, ...props }) => {
+	const classes = useStyles();
+	return (
+		<button
+			className={classNames(
+				classes.root,
+				{
+					[classes.rootSmall]: small,
+					[classes.rootPrimary]: type === 'primary'
+				},
+				className
+			)}
+			{...props}
+		/>
+	);
+};
 
 export default Button;

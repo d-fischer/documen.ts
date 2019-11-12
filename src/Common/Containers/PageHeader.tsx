@@ -1,8 +1,7 @@
-import * as React from 'react';
+import React from 'react';
+import { makeStyles } from '@material-ui/styles';
 
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
-
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		borderBottom: `1px solid ${theme.colors.border}`,
 		padding: '1em',
@@ -21,12 +20,15 @@ const styles = createStyles(theme => ({
 			margin: 0
 		}
 	}
-}));
+}), { name: 'PageHeader' });
 
-const PageHeader: React.FC<WithSheet<typeof styles>> = ({ children, classes }) => (
-	<div className={classes.root}>
-		{children}
-	</div>
-);
+const PageHeader: React.FC = ({ children }) => {
+	const classes = useStyles();
+	return (
+		<div className={classes.root}>
+			{children}
+		</div>
+	);
+};
 
-export default withStyles(styles)(PageHeader);
+export default PageHeader;

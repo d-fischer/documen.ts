@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Redirect, RouteComponentProps } from 'react-router';
+import React from 'react';
+import { Redirect, useParams } from 'react-router';
 import { MethodReferenceNode, PropertyReferenceNode } from '../reference';
 import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
@@ -12,11 +12,13 @@ import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
 
-interface ClassPageRouteProps {
+interface InterfacePageRouteParams {
 	name: string;
 }
 
-const InterfacePage: React.FC<RouteComponentProps<ClassPageRouteProps>> = ({ match: { params: { name } } }) => {
+const InterfacePage: React.FC = () => {
+	const { name } = useParams<InterfacePageRouteParams>();
+
 	const symbolDef = findSymbolByMember('name', name);
 
 	if (!symbolDef) {

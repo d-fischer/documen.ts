@@ -1,12 +1,11 @@
-import * as React from 'react';
-
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import React from 'react';
+import { makeStyles } from '@material-ui/styles';
 
 interface NavMenuGroupProps {
 	title: string;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'block',
 		color: theme.colors.text,
@@ -29,15 +28,18 @@ const styles = createStyles(theme => ({
 			paddingLeft: '1.25em'
 		}
 	}
-}));
+}), { name: 'NavMenuGroup' });
 
-const NavMenuGroup: React.FC<NavMenuGroupProps & WithSheet<typeof styles>> = ({ title, children, classes }) => (
-	<div className={classes.root}>
-		<h2 className={classes.title}>{title}</h2>
-		<div className={classes.items}>
-			{children}
+const NavMenuGroup: React.FC<NavMenuGroupProps> = ({ title, children }) => {
+	const classes = useStyles();
+	return (
+		<div className={classes.root}>
+			<h2 className={classes.title}>{title}</h2>
+			<div className={classes.items}>
+				{children}
+			</div>
 		</div>
-	</div>
-);
+	);
+};
 
-export default withStyles(styles)(NavMenuGroup);
+export default NavMenuGroup;

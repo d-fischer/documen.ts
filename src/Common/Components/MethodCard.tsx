@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Card from '../Containers/Card';
 import FunctionSignature from './FunctionSignature';
 import FunctionParamDesc from './FunctionParamDesc';
@@ -7,9 +7,9 @@ import { buildType, getTag, hasTag } from '../Tools/CodeBuilders';
 
 import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import CardToolbar from './CardToolbar';
 import Badge from './Badge';
+import { makeStyles } from '@material-ui/styles';
 
 interface MethodCardProps {
 	definition: ConstructorReferenceNode | MethodReferenceNode;
@@ -17,7 +17,7 @@ interface MethodCardProps {
 	isConstructor?: boolean;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {},
 	toolbar: {
 		opacity: 0,
@@ -35,23 +35,26 @@ const styles = createStyles(theme => ({
 		fontWeight: 'normal',
 		fontFamily: theme.fonts.code
 	}
-}));
+}), { name: 'MethodCard' });
 
-const MethodCard: React.FC<MethodCardProps & WithSheet<typeof styles>> = ({ definition, sig, isConstructor, classes }) => (
-	<Card className={classes.root} id={`symbol__${sig.name}`} key={sig.id}>
-		<CardToolbar className={classes.toolbar} definition={definition} signature={sig} />
-		<FunctionSignature signature={sig} isConstructor={isConstructor}/>
-		{definition.flags.isStatic && <Badge>static</Badge>}
-		{hasTag(sig, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(sig, 'deprecated')!)}/>}
-		{sig.comment && sig.comment.shortText && <p>{sig.comment.shortText}</p>}
-		{sig.comment && sig.comment.text && parseMarkdown(sig.comment.text)}
-		<FunctionParamDesc signature={sig}/>
-		{!isConstructor && (
-			<div className={classes.returnTypeWrapper}>
-				Return type: <span className={classes.returnType}>{buildType(sig.type)}</span>
-			</div>
-		)}
-	</Card>
-);
+const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor }) => {
+	const classes = useStyles();
+	return (
+		<Card className={classes.root} id={`symbol__${sig.name}`} key={sig.id}>
+			<CardToolbar className={classes.toolbar} definition={definition} signature={sig}/>
+			<FunctionSignature signature={sig} isConstructor={isConstructor}/>
+			{definition.flags.isStatic && <Badge>static</Badge>}
+			{hasTag(sig, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(sig, 'deprecated')!)}/>}
+			{sig.comment && sig.comment.shortText && <p>{sig.comment.shortText}</p>}
+			{sig.comment && sig.comment.text && parseMarkdown(sig.comment.text)}
+			<FunctionParamDesc signature={sig}/>
+			{!isConstructor && (
+				<div className={classes.returnTypeWrapper}>
+					Return type: <span className={classes.returnType}>{buildType(sig.type)}</span>
+				</div>
+			)}
+		</Card>
+	);
+};
 
-export default withStyles(styles)(MethodCard);
+export default MethodCard;

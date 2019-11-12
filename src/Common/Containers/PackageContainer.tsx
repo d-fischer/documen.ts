@@ -1,6 +1,4 @@
-import * as React from 'react';
-// eslint-disable-next-line no-duplicate-imports
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { hot } from 'react-hot-loader';
 
 import NavMenu from '../Components/NavMenu';
@@ -9,15 +7,15 @@ import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import config from '../config';
 import NavMenuGroup from '../Components/NavMenuGroup';
 import NavMenuItem from '../Components/NavMenuItem';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
-import * as Color from 'color';
+import Color from 'color';
 import PageSwitch from './PageSwitch';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router';
 import { getPackageRoot } from '../Tools/ReferenceTools';
 import { filterByMember } from '../Tools/ArrayTools';
 import { getPackagePath } from '../Tools/StringTools';
+import { makeStyles } from '@material-ui/styles';
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'flex',
 		flexDirection: 'row',
@@ -36,14 +34,16 @@ const styles = createStyles(theme => ({
 			textDecoration: 'none'
 		}
 	}
-}));
+}), { name: 'PackageContainer' });
 
 interface PackageContainerRouteParams {
 	packageName?: string;
 }
 
-export const PackageContainer: React.FC<RouteComponentProps<PackageContainerRouteParams> & WithSheet<typeof styles>> = ({ match, classes }) => {
-	const { packageName } = match.params;
+export const PackageContainer: React.FC = () => {
+	const { packageName } = useParams<PackageContainerRouteParams>();
+	const classes = useStyles();
+
 	const pre = getPackagePath(packageName);
 
 	const root = useMemo(() => getPackageRoot(packageName), [packageName]);
@@ -98,4 +98,4 @@ export const PackageContainer: React.FC<RouteComponentProps<PackageContainerRout
 	);
 };
 
-export default hot(module)(withStyles(styles)(PackageContainer));
+export default hot(module)(PackageContainer);

@@ -1,6 +1,7 @@
 import reference, { ReferenceNode } from '../reference';
 import { findByMember } from './ArrayTools';
 import { isMono } from '../config';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 
 interface SymbolDefinition<T extends ReferenceNode> {
 	symbol: T;
@@ -44,4 +45,8 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 
 export function getPackageRoot(packageName?: string) {
 	return packageName ? reference.children.find(pkg => pkg.name === packageName) : reference;
+}
+
+export function getPackageList() {
+	return reference.children.filter(child => child.kind === ReferenceNodeKind.Package).sort((a, b) => a.name.localeCompare(b.name));
 }

@@ -1,6 +1,6 @@
-import * as invariant from 'tiny-invariant';
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import invariant from 'tiny-invariant';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { createLocation, createPath, History, Location, LocationDescriptorObject } from 'history';
 import { Router } from 'react-router';
 
@@ -93,7 +93,7 @@ class StaticRouterWithSuffix extends React.Component<StaticRouterWithSuffixProps
 		};
 	}
 
-	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(this.props.basename + createURL(path, this.props.suffix));
+	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${this.props.basename}${createURL(path, this.props.suffix)}`);
 
 	handlePush = (location: LocationDescriptorObject | string) => {
 		const { basename, context, suffix } = this.props;

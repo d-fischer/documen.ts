@@ -1,19 +1,19 @@
-import * as React from 'react';
+import React from 'react';
 import { ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
 import config from '../config';
-import * as path from 'path';
+import path from 'path';
 
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
+import { makeStyles } from '@material-ui/styles';
 
 interface CodeLinkProps {
 	symbol: ReferenceNode;
 	className?: string;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		color: theme.colors.accent.default,
 		transition: 'color .3s ease-in-out',
@@ -23,10 +23,16 @@ const styles = createStyles(theme => ({
 			color: theme.colors.accent.focus
 		}
 	}
-}));
+}), { name: 'CodeLink' });
 
-const CodeLink: React.FC<CodeLinkProps & WithSheet<typeof styles>> = ({ symbol, className, classes }) => config.repoUser && config.repoName && symbol.sources && symbol.sources.length ? (
-	<a
+const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
+	const classes = useStyles();
+
+	if (!(config.repoUser && config.repoName && symbol.sources && symbol.sources.length)) {
+		return null;
+	}
+
+	return <a
 		className={classNames(classes.root, className)}
 		href={`https://github.com/${path.join(
 			config.repoUser,
@@ -37,10 +43,11 @@ const CodeLink: React.FC<CodeLinkProps & WithSheet<typeof styles>> = ({ symbol, 
 			`${symbol.sources[0].fileName}#L${symbol.sources[0].line}`
 		)}`}
 		target="_blank"
+		rel="noopener noreferrer"
 		title="Go to the code"
 	>
 		<Icon icon={faCode} size="lg"/>
-	</a>
-) : null;
+	</a>;
+};
 
-export default withStyles(styles)(CodeLink);
+export default CodeLink;

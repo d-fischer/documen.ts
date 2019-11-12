@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderToString } from 'react-dom/server';
 
 import StaticRouterWithSuffix from './StaticRouterWithSuffix';
@@ -7,7 +7,7 @@ import RouterMode from './RouterMode';
 import { StaticRouter } from 'react-router';
 import config from '../config';
 import { ArticleProvider, ArticleContent } from '../Components/PageArticle';
-import { createGenerateClassName, JssProvider, SheetsRegistry, ThemeProvider } from 'react-jss';
+import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
 import theme from '../theme';
 import { dom } from '@fortawesome/fontawesome-svg-core';
 
@@ -49,21 +49,18 @@ const render = (url: string, article?: ArticleContent) => {
 	let elem: React.ReactElement;
 	const baseUrl = config.baseUrl || '';
 	const routerMode: RouterMode = config.routerMode || 'server';
-	const sheets = new SheetsRegistry();
-	const generateClassName = createGenerateClassName();
+	const sheets = new ServerStyleSheets();
 
 	switch (routerMode) {
 		case 'htmlSuffix': {
 			elem = (
-				<JssProvider registry={sheets} generateClassName={generateClassName}>
-					<ArticleProvider value={article}>
-						<ThemeProvider theme={theme}>
-							<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
-								<App/>
-							</StaticRouterWithSuffix>
-						</ThemeProvider>
-					</ArticleProvider>
-				</JssProvider>
+				<ArticleProvider value={article}>
+					<ThemeProvider theme={theme}>
+						<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
+							<App/>
+						</StaticRouterWithSuffix>
+					</ThemeProvider>
+				</ArticleProvider>
 			);
 			break;
 		}
@@ -71,22 +68,20 @@ const render = (url: string, article?: ArticleContent) => {
 		case 'subDirectories':
 		case 'server': {
 			elem = (
-				<JssProvider registry={sheets} generateClassName={generateClassName}>
-					<ArticleProvider value={article}>
-						<ThemeProvider theme={theme}>
-							<StaticRouter basename={baseUrl} context={{}} location={url}>
-								<App/>
-							</StaticRouter>
-						</ThemeProvider>
-					</ArticleProvider>
-				</JssProvider>
+				<ArticleProvider value={article}>
+					<ThemeProvider theme={theme}>
+						<StaticRouter basename={baseUrl} context={{}} location={url}>
+							<App/>
+						</StaticRouter>
+					</ThemeProvider>
+				</ArticleProvider>
 			);
 			break;
 		}
 		default:
 			elem = <></>;
 	}
-	return insertIntoSkeleton(renderToString(elem), sheets.toString());
+	return insertIntoSkeleton(renderToString(sheets.collect(elem)), sheets.toString());
 };
 
 export default render;

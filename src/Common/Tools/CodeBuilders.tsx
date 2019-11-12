@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { ReferenceNode, ReferenceType } from '../reference';
 import TypeLink from '../Components/TypeLink';
 import TypeAliasHint from '../Components/TypeAliasHint';
@@ -54,7 +54,7 @@ export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false)
 			return <>{buildType(def.elementType)}[]</>;
 		}
 		case 'stringLiteral': {
-			return <>"{def.value}"</>;
+			return <>&quot;{def.value}&quot;</>;
 		}
 		case 'reflection': {
 			const { signatures } = def.declaration;
@@ -71,7 +71,7 @@ export const buildType = (def?: ReferenceType, ignoreUndefined: boolean = false)
 											{i === 0 ? null : ', '}{param.name}: {buildType(param.type)}
 										</React.Fragment>
 									)) : null}
-									) => {buildType(signature.type)}
+									) =&gt; {buildType(signature.type)}
 								</>
 							);
 						}

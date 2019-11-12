@@ -1,8 +1,7 @@
-import * as React from 'react';
+import React from 'react';
+import { makeStyles } from '@material-ui/styles';
 
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
-
-const styles = createStyles({
+const useStyles = makeStyles({
 	root: {
 		padding: '1em',
 
@@ -12,10 +11,13 @@ const styles = createStyles({
 	}
 });
 
-const PageContent: React.FC<WithSheet<typeof styles>> = ({ classes, children }) => (
-	<div className={classes.root}>
-		{children}
-	</div>
-);
+const PageContent: React.FC = ({ children }) => {
+	const classes = useStyles();
+	return (
+		<div className={classes.root}>
+			{children}
+		</div>
+	);
+};
 
-export default withStyles(styles)(PageContent);
+export default PageContent;

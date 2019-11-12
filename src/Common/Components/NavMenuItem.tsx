@@ -1,7 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
-
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import { makeStyles } from '@material-ui/styles';
 
 interface NavMenuItemProps {
 	path: string;
@@ -9,7 +8,7 @@ interface NavMenuItemProps {
 	title?: string;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		height: '1em',
 		padding: '.5em',
@@ -34,12 +33,15 @@ const styles = createStyles(theme => ({
 			borderLeftColor: theme.colors.accent.focus
 		}
 	}
-}));
+}), { name: 'NavMenuItem' });
 
-const NavMenuItem: React.FC<NavMenuItemProps & WithSheet<typeof styles>> = ({ path, exact, title, children, classes }) => (
-	<NavLink to={path} exact={exact} className={classes.root} activeClassName={classes.rootActive} title={title}>
-		{children}
-	</NavLink>
-);
+const NavMenuItem: React.FC<NavMenuItemProps> = ({ path, exact, title, children }) => {
+	const classes = useStyles();
+	return (
+		<NavLink to={path} exact={exact} className={classes.root} activeClassName={classes.rootActive} title={title}>
+			{children}
+		</NavLink>
+	);
+};
 
-export default withStyles(styles)(NavMenuItem);
+export default NavMenuItem;

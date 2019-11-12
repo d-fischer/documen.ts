@@ -1,10 +1,10 @@
-import * as React from 'react';
-import * as commonmark from 'commonmark';
-import * as ReactRenderer from 'commonmark-react-renderer';
+import React from 'react';
+import commonmark from 'commonmark';
+import ReactRenderer from 'commonmark-react-renderer';
 import { HashLink } from 'react-router-hash-link';
 
-import SyntaxHighlighter from 'react-syntax-highlighter/light';
-import darcula from 'react-syntax-highlighter/styles/hljs/darcula';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import darcula from 'react-syntax-highlighter/dist/esm/styles/hljs/darcula';
 
 import { getPageType } from './CodeBuilders';
 import { findSymbolByMember } from './ReferenceTools';

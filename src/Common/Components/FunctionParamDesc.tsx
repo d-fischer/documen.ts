@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 
 import { hasTag } from '../Tools/CodeBuilders';
 import { ReferenceCommentTag, SignatureReferenceNode } from '../reference';
 
 import FunctionParamDescEntry from './FunctionParamDescEntry';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import { makeStyles } from '@material-ui/styles';
 
 interface FunctionParamDescProps {
 	signature: SignatureReferenceNode;
@@ -12,7 +12,7 @@ interface FunctionParamDescProps {
 	isCallback?: boolean;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		border: `1px solid ${theme.colors.border}`,
 		margin: '.5em 0'
@@ -21,10 +21,14 @@ const styles = createStyles(theme => ({
 		padding: '.5em',
 		backgroundColor: theme.colors.background.active
 	}
-}));
+}), { name: 'FunctionParamDesc' });
 
-const FunctionParamDesc: React.FC<FunctionParamDescProps & WithSheet<typeof styles>> = ({ signature, additionalTags, isCallback, classes }) => signature.parameters ? (
-	<table className={classes.root}>
+const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ signature, additionalTags, isCallback }) => {
+	const classes = useStyles();
+	if (!signature.parameters) {
+		return null;
+	}
+	return <table className={classes.root}>
 		<thead>
 		<tr>
 			<th className={classes.heading}>Parameter</th>
@@ -49,7 +53,7 @@ const FunctionParamDesc: React.FC<FunctionParamDescProps & WithSheet<typeof styl
 			/>
 		))}
 		</tbody>
-	</table>
-) : null;
+	</table>;
+};
 
-export default withStyles(styles)(FunctionParamDesc);
+export default FunctionParamDesc;

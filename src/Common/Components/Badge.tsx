@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
+import React from 'react';
+import { makeStyles } from '@material-ui/styles';
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'inline-block',
 		color: theme.colors.background.default,
@@ -10,10 +10,13 @@ const styles = createStyles(theme => ({
 		padding: '2px 5px',
 		borderRadius: 5
 	}
-}));
+}), { name: 'Badge' });
 
-const Badge: React.FC<WithSheet<typeof styles>> = ({ classes, children }) => (
-	<span className={classes.root}>{children}</span>
-);
+const Badge: React.FC = ({ children }) => {
+	const classes = useStyles();
+	return (
+		<span className={classes.root}>{children}</span>
+	);
+};
 
-export default withStyles(styles)(Badge);
+export default Badge;

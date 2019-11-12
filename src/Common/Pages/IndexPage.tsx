@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';

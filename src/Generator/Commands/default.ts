@@ -1,8 +1,8 @@
 /* eslint-disable no-console,max-classes-per-file */
-import * as ansi from 'ansi-escapes';
+import ansi from 'ansi-escapes';
 import { Command, Options, command, option, params, ExpectedError } from 'clime';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import fs from 'fs-extra';
+import path from 'path';
 import Generator from '../Modes/Generator';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
@@ -13,7 +13,7 @@ import Config from '../../Common/config/Config';
 import { removeSlash } from '../../Common/Tools/StringTools';
 import { getConfigValue } from '../../Common/config/Util';
 import MonorepoGenerator from '../Modes/MonorepoGenerator';
-import * as cartesianProduct from 'cartesian-product';
+import cartesianProduct from 'cartesian-product';
 
 export class CLICommandOptions extends Options {
 	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => fs.pathExistsSync(path.resolve(process.cwd(), value)) })

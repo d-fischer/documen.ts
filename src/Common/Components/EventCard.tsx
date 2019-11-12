@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Card from '../Containers/Card';
 import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
 import { getTag, hasTag } from '../Tools/CodeBuilders';
@@ -6,10 +6,10 @@ import parseMarkdown from '../Tools/MarkdownParser';
 
 import FunctionParamDesc from './FunctionParamDesc';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
+import { makeStyles } from '@material-ui/styles';
 
 interface EventCardProps {
 	name?: string;
@@ -54,7 +54,7 @@ const getDefinedTags = (prop: PropertyReferenceNode) => {
 	return undefined;
 };
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {},
 	toolbar: {
 		opacity: 0,
@@ -67,9 +67,10 @@ const styles = createStyles(theme => ({
 	example: {
 		fontFamily: theme.fonts.code
 	}
-}));
+}), { name: 'EventCard' });
 
-const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, definition, classes }) => {
+const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
+	const classes = useStyles();
 	let handlerDefinition: SignatureReferenceNode | undefined;
 	let handlerParamDefinition: SignatureReferenceNode | undefined;
 	if (definition.type.type === 'reflection' && definition.type.declaration.signatures && definition.type.declaration.signatures.length) {
@@ -94,7 +95,7 @@ const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, 
 									{handlerParamIndex === 0 ? '' : ', '}
 									{handlerParam.name}
 								</React.Fragment>
-							))}) => {'{\n\t/* ... */\n}'}
+							))}) =&gt; {'{\n\t/* ... */\n}'}
 							</>
 						);
 					}
@@ -116,4 +117,4 @@ const EventCard: React.FC<EventCardProps & WithSheet<typeof styles>> = ({ name, 
 	);
 };
 
-export default withStyles(styles)(EventCard);
+export default EventCard;

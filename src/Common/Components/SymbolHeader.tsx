@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import parseMarkdown from '../Tools/MarkdownParser';
 import CodeLink from './CodeLink';
 import PageHeader from '../Containers/PageHeader';

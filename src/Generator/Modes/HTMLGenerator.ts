@@ -1,5 +1,5 @@
 import Generator from './Generator';
-import * as path from 'path';
+import path from 'path';
 
 import { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
@@ -8,10 +8,10 @@ import { filterByMember } from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { ArticleContent } from '../../Common/Components/PageArticle';
 import { getPackagePath } from '../../Common/Tools/StringTools';
-import * as resolveHome from 'untildify';
-import * as webpack from 'webpack';
-import * as tmp from 'tmp';
-import * as fs from 'fs-extra';
+import resolveHome from 'untildify';
+import webpack from 'webpack';
+import tmp from 'tmp';
+import fs from 'fs-extra';
 
 type RenderEntry = [string, string, Promise<string>];
 

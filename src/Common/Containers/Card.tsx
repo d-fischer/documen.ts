@@ -1,14 +1,14 @@
-import * as React from 'react';
+import React from 'react';
 
-import { createStyles, WithSheet, withStyles } from '../Tools/InjectStyle';
-import classNames = require('classnames');
+import classNames from 'classnames';
+import { makeStyles } from '@material-ui/styles';
 
 interface CardProps {
 	className?: string;
 	id?: string;
 }
 
-const styles = createStyles(theme => ({
+const useStyles = makeStyles(theme => ({
 	root: {
 		margin: '1em',
 		padding: '1em',
@@ -18,12 +18,15 @@ const styles = createStyles(theme => ({
 			margin: 0
 		}
 	}
-}));
+}), { name: 'Card' });
 
-const Card: React.FC<CardProps & WithSheet<typeof styles>> = ({ classes, className, id, children }) => (
-	<div id={id} className={classNames(classes.root, className)}>
-		{children}
-	</div>
-);
+const Card: React.FC<CardProps> = ({ className, id, children }) => {
+	const classes = useStyles();
+	return (
+		<div id={id} className={classNames(classes.root, className)}>
+			{children}
+		</div>
+	);
+};
 
-export default withStyles(styles)(Card);
+export default Card;

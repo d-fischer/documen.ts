@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Redirect, RouteComponentProps } from 'react-router';
+import React from 'react';
+import { Redirect, useParams } from 'react-router';
 import { EnumMemberReferenceNode } from '../reference';
 import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
@@ -11,11 +11,13 @@ import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
 
-interface EnumPageRouteProps {
+interface EnumPageRouteParams {
 	name: string;
 }
 
-const EnumPage: React.FC<RouteComponentProps<EnumPageRouteProps>> = ({ match: { params: { name } } }) => {
+const EnumPage: React.FC = () => {
+	const { name } = useParams<EnumPageRouteParams>();
+
 	const symbolDef = findSymbolByMember('name', name);
 
 	if (!symbolDef) {
