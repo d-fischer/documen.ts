@@ -16,6 +16,9 @@ import MonorepoGenerator from '../Modes/MonorepoGenerator';
 import cartesianProduct from 'cartesian-product';
 
 export class CLICommandOptions extends Options {
+	@option({ description: 'base directory' })
+	baseDir: string;
+
 	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => fs.pathExistsSync(path.resolve(process.cwd(), value)) })
 	configDir: string;
 
@@ -55,14 +58,14 @@ export default class CLICommand extends Command {
 	async execute(@params({ type: String, description: 'input directories' }) inputFolders: string[], options: CLICommandOptions) {
 		process.env.NODE_ENV = 'production';
 
-		const cwd = process.cwd();
+		const baseDir = options.baseDir || process.cwd();
 		let configDir: string | null = null;
 
 		if (options.configDir) {
 			// check already made in validatior
-			configDir = path.resolve(cwd, options.configDir);
+			configDir = path.resolve(baseDir, options.configDir);
 		} else {
-			const defaultConfigDir = path.resolve(cwd, 'docs');
+			const defaultConfigDir = path.resolve(baseDir, 'docs');
 			if (await fs.pathExists(defaultConfigDir)) {
 				configDir = defaultConfigDir;
 			}
@@ -94,7 +97,7 @@ export default class CLICommand extends Command {
 		}
 
 		if (!indexFile) {
-			indexFile = path.join(cwd, 'README.md');
+			indexFile = path.join(baseDir, 'README.md');
 			if (!(await fs.pathExists(indexFile))) {
 				throw new ExpectedError('there was neither a given index file nor a README.md in the root of the project');
 			}
@@ -110,8 +113,8 @@ export default class CLICommand extends Command {
 			const configInputDirs = getConfigValue(importedConfig, 'inputDirs', true);
 
 			if (monorepoRoot) {
-				const monorepoPackages = (await fs.readdir(monorepoRoot)).filter(pkg => !ignoredPackages.includes(pkg));
-				inputDirs = cartesianProduct([monorepoPackages, configInputDirs]).map(([pkg, dir]) => path.join(monorepoRoot, pkg, dir)).filter(inputDir => fs.pathExistsSync(inputDir));
+				const monorepoPackages = (await fs.readdir(path.join(baseDir, monorepoRoot))).filter(pkg => !ignoredPackages.includes(pkg));
+				inputDirs = cartesianProduct([monorepoPackages, configInputDirs]).map(([pkg, dir]) => path.join(baseDir, monorepoRoot, pkg, dir)).filter(inputDir => fs.pathExistsSync(inputDir));
 			} else {
 				inputDirs = configInputDirs;
 			}
@@ -124,7 +127,7 @@ export default class CLICommand extends Command {
 			inputDirs,
 			outputDir: options.outDir || getConfigValue(importedConfig, 'outputDir', true),
 			baseUrl: removeSlash(options.baseUrl || getConfigValue(importedConfig, 'baseUrl', true) || '/'),
-			baseDir: cwd,
+			baseDir: baseDir,
 			monorepoRoot,
 			ignoredPackages,
 			repoUser: options.repoUser || getConfigValue(importedConfig, 'repoUser'),

@@ -2,7 +2,6 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 
@@ -13,7 +12,6 @@ const env = getClientEnvironment(publicUrl);
 module.exports = outDir => ({
 	mode: 'production',
 	target: 'node',
-	externals: nodeExternals(),
 	bail: true,
 	devtool: 'source-map',
 	entry: [paths.entryPoints.html],
