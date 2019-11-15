@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { hasTag } from '../Tools/CodeBuilders';
+import { hasTag } from '../Tools/CodeTools';
 import { ReferenceCommentTag, SignatureReferenceNode } from '../reference';
 
 import FunctionParamDescEntry from './FunctionParamDescEntry';

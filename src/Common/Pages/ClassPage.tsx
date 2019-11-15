@@ -3,7 +3,7 @@ import { Redirect, useParams } from 'react-router';
 import { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
 import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
-import { getPageType, hasTag } from '../Tools/CodeBuilders';
+import { getPageType, hasTag } from '../Tools/CodeTools';
 import PropertyCard from '../Components/PropertyCard';
 import parseMarkdown from '../Tools/MarkdownParser';
 import MethodCard from '../Components/MethodCard';

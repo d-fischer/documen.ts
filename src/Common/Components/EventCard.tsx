@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from '../Containers/Card';
 import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
-import { getTag, hasTag } from '../Tools/CodeBuilders';
+import { getTag, hasTag } from '../Tools/CodeTools';
 import parseMarkdown from '../Tools/MarkdownParser';
 
 import FunctionParamDesc from './FunctionParamDesc';

@@ -3,7 +3,7 @@ import { Redirect, useParams } from 'react-router';
 import { MethodReferenceNode, PropertyReferenceNode } from '../reference';
 import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
-import { getPageType } from '../Tools/CodeBuilders';
+import { getPageType } from '../Tools/CodeTools';
 import PropertyCard from '../Components/PropertyCard';
 import MethodCard from '../Components/MethodCard';
 import SymbolHeader from '../Components/SymbolHeader';

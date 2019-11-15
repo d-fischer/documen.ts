@@ -1,13 +1,14 @@
 import React from 'react';
 import Card from '../Containers/Card';
 import { AccessorReferenceNode, PropertyReferenceNode } from '../reference';
-import { buildType, getTag, hasTag, isStringLiteral } from '../Tools/CodeBuilders';
+import { getTag, hasTag, isStringLiteral } from '../Tools/CodeTools';
 import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
 import Badge from './Badge';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { makeStyles } from '@material-ui/styles';
+import Type from './CodeBuilders/Type';
 
 interface PropertyCardProps {
 	name?: string;
@@ -39,7 +40,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition}) => {
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
 			<h3 className={classes.name}>{name || definition.name}</h3>
 			{definition.flags.isStatic && <Badge>static</Badge>}
-			{type ? <h4>{isStringLiteral(type) ? 'Value' : 'Type'}: {buildType(type)}</h4> : null}
+			{type ? <h4>{isStringLiteral(type) ? 'Value' : 'Type'}: <Type def={type} isOptional={definition?.flags?.isOptional} /></h4> : null}
 			{hasTag(definition, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(definition, 'deprecated')!)}/>}
 			{definition.comment && definition.comment.shortText ? parseMarkdown(definition.comment.shortText) : null}
 			{definition.comment && definition.comment.text ? parseMarkdown(definition.comment.text) : null}

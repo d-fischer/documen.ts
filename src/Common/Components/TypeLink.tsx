@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReferenceNode } from '../reference';
 import { Link } from 'react-router-dom';
-import { getPageType } from '../Tools/CodeBuilders';
+import { getPageType } from '../Tools/CodeTools';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
 

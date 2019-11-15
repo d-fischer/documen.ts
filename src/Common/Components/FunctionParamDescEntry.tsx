@@ -1,12 +1,13 @@
 import { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
 import React from 'react';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
-import { buildType, isOptionalType } from '../Tools/CodeBuilders';
+import { isOptionalType } from '../Tools/CodeTools';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import parseMarkdown from '../Tools/MarkdownParser';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { makeStyles } from '@material-ui/styles';
+import Type from './CodeBuilders/Type';
 
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;
@@ -81,12 +82,12 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 		}
 	}
 
-	const typeDesc = buildType(param.type, param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional);
-
 	result.unshift(
 		<tr key={paramName}>
 			<td className={classes.row}>{paramName}</td>
-			<td className={classes.row}>{typeDesc}</td>
+			<td className={classes.row}>
+				<Type def={param.type} ignoreUndefined={param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional} />
+			</td>
 			{isCallback || (
 				<>
 					<td className={classes.row}>{

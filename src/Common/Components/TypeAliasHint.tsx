@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReferenceType } from '../reference';
-import { buildType } from '../Tools/CodeBuilders';
 import { makeStyles } from '@material-ui/styles';
+import Type from './CodeBuilders/Type';
 
 interface TypeAliasHintProps {
 	name: string;
@@ -69,7 +69,7 @@ const TypeAliasHint: React.FC<TypeAliasHintProps> = ({ name, type }) => {
 			<abbr className={classes.alias}>{name}</abbr>
 			<div className={classes.hint}>
 				<div className={classes.toolTip}>
-					{buildType(type)}
+					<Type def={type}/>
 				</div>
 			</div>
 		</div>

@@ -4,7 +4,7 @@ import { EnumMemberReferenceNode } from '../reference';
 import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
-import { getPageType } from '../Tools/CodeBuilders';
+import { getPageType } from '../Tools/CodeTools';
 import SymbolHeader from '../Components/SymbolHeader';
 import parseMarkdown from '../Tools/MarkdownParser';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';

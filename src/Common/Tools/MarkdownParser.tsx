@@ -6,7 +6,7 @@ import { HashLink } from 'react-router-hash-link';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import darcula from 'react-syntax-highlighter/dist/esm/styles/hljs/darcula';
 
-import { getPageType } from './CodeBuilders';
+import { getPageType } from './CodeTools';
 import { findSymbolByMember } from './ReferenceTools';
 import { getPackagePath } from './StringTools';
 

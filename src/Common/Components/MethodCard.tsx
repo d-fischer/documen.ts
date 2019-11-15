@@ -3,13 +3,14 @@ import Card from '../Containers/Card';
 import FunctionSignature from './FunctionSignature';
 import FunctionParamDesc from './FunctionParamDesc';
 import { ConstructorReferenceNode, MethodReferenceNode, SignatureReferenceNode } from '../reference';
-import { buildType, getTag, hasTag } from '../Tools/CodeBuilders';
+import { getTag, hasTag } from '../Tools/CodeTools';
 
 import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
 import Badge from './Badge';
 import { makeStyles } from '@material-ui/styles';
+import Type from './CodeBuilders/Type';
 
 interface MethodCardProps {
 	definition: ConstructorReferenceNode | MethodReferenceNode;
@@ -50,7 +51,10 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 			<FunctionParamDesc signature={sig}/>
 			{!isConstructor && (
 				<div className={classes.returnTypeWrapper}>
-					Return type: <span className={classes.returnType}>{buildType(sig.type)}</span>
+					Return type:{' '}
+					<span className={classes.returnType}>
+						<Type def={sig.type}/>
+					</span>
 				</div>
 			)}
 		</Card>
