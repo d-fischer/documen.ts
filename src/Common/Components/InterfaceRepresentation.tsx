@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import Type from './CodeBuilders/Type';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import classNames from 'classnames';
+import { HashLink } from 'react-router-hash-link';
 
 interface InterfaceRepresentationProps {
 	symbol: ReferenceNode;
@@ -15,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 		fontFamily: theme.fonts.code,
 	},
 	prop: {
+		display: 'block',
 		marginLeft: '2em',
 		'& + $prop': {
 			marginTop: '.5em'
@@ -30,7 +32,8 @@ const useStyles = makeStyles(theme => ({
 		}
 	},
 	name: {
-		color: '#9876AA'
+		color: '#9876AA',
+		textDecoration: 'none'
 	}
 }), { name: 'InterfaceRepresentation' });
 
@@ -43,14 +46,14 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 			{symbol.children.map(member => {
 				if (member.kind === ReferenceNodeKind.Property) {
 					return (
-						<div className={classes.prop}>
+						<div key={member.name} className={classes.prop}>
 							{member.comment?.shortText ? (
 								<div className={classes.comment}>
-									{member.comment?.shortText}
+									{member.comment.shortText}
 								</div>
 							) : null}
 							<div>
-								<span className={classes.name}>{member.name}</span>
+								<HashLink to={`#${member.name}`} className={classes.name}>{member.name}</HashLink>
 								{member.flags.isOptional ? '?' : ''}
 								: <Type def={member.type} ignoreUndefined/>
 							</div>
@@ -58,15 +61,16 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 					);
 				}
 				if (member.kind === ReferenceNodeKind.Method) {
+					const sig = member.signatures![0];
 					return (
-						<div className={classes.prop}>
-							{member.comment?.shortText ? (
+						<div key={member.name} className={classes.prop}>
+							{sig.comment?.shortText ? (
 								<div className={classes.comment}>
-									{member.comment?.shortText}
+									{sig.comment.shortText}
 								</div>
 							) : null}
 							<div>
-								<span className={classes.name}>{member.name}</span>
+								<HashLink to={`#${member.name}`} className={classes.name}>{member.name}</HashLink>
 								{member.flags.isOptional ? '?' : ''}
 								(): <Type def={member.signatures![0].type}/>
 							</div>

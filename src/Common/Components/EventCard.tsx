@@ -2,7 +2,6 @@ import React from 'react';
 import Card from '../Containers/Card';
 import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
 import { getTag, hasTag } from '../Tools/CodeTools';
-import parseMarkdown from '../Tools/MarkdownParser';
 
 import FunctionParamDesc from './FunctionParamDesc';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
@@ -10,6 +9,7 @@ import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { makeStyles } from '@material-ui/styles';
+import MarkdownParser from '../Tools/MarkdownParser';
 
 interface EventCardProps {
 	name?: string;
@@ -109,9 +109,13 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 				</h3>
 			) : null
 			}
-			{hasTag(definition, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(definition, 'deprecated')!)}/>}
-			{definition.comment && definition.comment.shortText ? parseMarkdown(definition.comment.shortText) : null}
-			{definition.comment && definition.comment.text ? parseMarkdown(definition.comment.text) : null}
+			{hasTag(definition, 'deprecated') && (
+				<DeprecationNotice>
+					<MarkdownParser source={getTag(definition, 'deprecated')!}/>
+				</DeprecationNotice>
+			)}
+			{definition.comment && definition.comment.shortText ? <MarkdownParser source={definition.comment.shortText}/> : null}
+			{definition.comment && definition.comment.text ? <MarkdownParser source={definition.comment.text}/> : null}
 			{handlerParamDefinition ? <FunctionParamDesc signature={handlerParamDefinition} isCallback additionalTags={getDefinedTags(definition)}/> : null}
 		</Card>
 	);

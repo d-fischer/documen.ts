@@ -5,12 +5,12 @@ import FunctionParamDesc from './FunctionParamDesc';
 import { ConstructorReferenceNode, MethodReferenceNode, SignatureReferenceNode } from '../reference';
 import { getTag, hasTag } from '../Tools/CodeTools';
 
-import parseMarkdown from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
 import Badge from './Badge';
 import { makeStyles } from '@material-ui/styles';
 import Type from './CodeBuilders/Type';
+import MarkdownParser from '../Tools/MarkdownParser';
 
 interface MethodCardProps {
 	definition: ConstructorReferenceNode | MethodReferenceNode;
@@ -45,9 +45,13 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 			<CardToolbar className={classes.toolbar} definition={definition} signature={sig}/>
 			<FunctionSignature signature={sig} isConstructor={isConstructor}/>
 			{definition.flags.isStatic && <Badge>static</Badge>}
-			{hasTag(sig, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(sig, 'deprecated')!)}/>}
+			{hasTag(sig, 'deprecated') && (
+				<DeprecationNotice>
+					<MarkdownParser source={getTag(sig, 'deprecated')!}/>
+				</DeprecationNotice>
+			)}
 			{sig.comment && sig.comment.shortText && <p>{sig.comment.shortText}</p>}
-			{sig.comment && sig.comment.text && parseMarkdown(sig.comment.text)}
+			{sig.comment && sig.comment.text && <MarkdownParser source={sig.comment.text}/>}
 			<FunctionParamDesc signature={sig}/>
 			{!isConstructor && (
 				<div className={classes.returnTypeWrapper}>

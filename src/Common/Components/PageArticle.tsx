@@ -1,5 +1,5 @@
 import React from 'react';
-import parseMarkdown from '../Tools/MarkdownParser';
+import MarkdownParser from '../Tools/MarkdownParser';
 
 export interface ArticleContent {
 	title: string;
@@ -10,7 +10,7 @@ const { Provider, Consumer } = React.createContext<ArticleContent | undefined>({
 
 const PageArticle: React.FC = () => (
 	<Consumer>
-		{article => article && parseMarkdown(article.content)}
+		{article => article && <MarkdownParser source={article.content}/>}
 	</Consumer>
 );
 

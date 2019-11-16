@@ -2,7 +2,7 @@ import React from 'react';
 import Card from '../Containers/Card';
 import { AccessorReferenceNode, PropertyReferenceNode } from '../reference';
 import { getTag, hasTag, isStringLiteral } from '../Tools/CodeTools';
-import parseMarkdown from '../Tools/MarkdownParser';
+import MarkdownParser from '../Tools/MarkdownParser';
 import DeprecationNotice from './DeprecationNotice';
 import CardToolbar from './CardToolbar';
 import Badge from './Badge';
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 	}
 }, { name: 'PropertyCard' });
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition}) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => {
 	const classes = useStyles();
 
 	const sig = definition.kind === ReferenceNodeKind.Accessor ? (definition.getSignature && definition.getSignature[0]) : definition;
@@ -40,10 +40,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition}) => {
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
 			<h3 className={classes.name}>{name || definition.name}</h3>
 			{definition.flags.isStatic && <Badge>static</Badge>}
-			{type ? <h4>{isStringLiteral(type) ? 'Value' : 'Type'}: <Type def={type} isOptional={definition?.flags?.isOptional} /></h4> : null}
-			{hasTag(definition, 'deprecated') && <DeprecationNotice reason={parseMarkdown(getTag(definition, 'deprecated')!)}/>}
-			{definition.comment && definition.comment.shortText ? parseMarkdown(definition.comment.shortText) : null}
-			{definition.comment && definition.comment.text ? parseMarkdown(definition.comment.text) : null}
+			{type ? <h4>{isStringLiteral(type) ? 'Value' : 'Type'}: <Type def={type} isOptional={definition?.flags?.isOptional}/></h4> : null}
+			{hasTag(definition, 'deprecated') && (
+				<DeprecationNotice>
+					<MarkdownParser source={getTag(definition, 'deprecated')!}/>
+				</DeprecationNotice>
+			)}
+			{definition.comment && definition.comment.shortText ? <MarkdownParser source={definition.comment.shortText}/> : null}
+			{definition.comment && definition.comment.text ? <MarkdownParser source={definition.comment.text}/> : null}
 		</Card>
 	);
 };

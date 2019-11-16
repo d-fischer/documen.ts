@@ -6,6 +6,7 @@ const theme = {
 			active: '#242424'
 		},
 		text: '#b9b9b9',
+		link: '#949494',
 		border: '#444',
 		accent: {
 			default: '#647d0f',

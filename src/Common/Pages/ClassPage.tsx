@@ -5,7 +5,7 @@ import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import { getPageType, hasTag } from '../Tools/CodeTools';
 import PropertyCard from '../Components/PropertyCard';
-import parseMarkdown from '../Tools/MarkdownParser';
+import MarkdownParser from '../Tools/MarkdownParser';
 import MethodCard from '../Components/MethodCard';
 import SymbolHeader from '../Components/SymbolHeader';
 import EventCard from '../Components/EventCard';
@@ -52,7 +52,7 @@ const ClassPage: React.FC = () => {
 		<>
 			<SymbolHeader symbol={symbol}/>
 			<PageContent>
-				{symbol.comment && symbol.comment.text && parseMarkdown(symbol.comment.text)}
+				{symbol.comment && symbol.comment.text && <MarkdownParser source={symbol.comment.text}/>}
 				{constructorSigs.length ? (
 					<>
 						<h2>{constructorSigs.length === 1 ? 'Constructor' : 'Constructors'}</h2>

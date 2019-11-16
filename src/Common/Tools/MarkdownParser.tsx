@@ -9,8 +9,24 @@ import darcula from 'react-syntax-highlighter/dist/esm/styles/hljs/darcula';
 import { getPageType } from './CodeTools';
 import { findSymbolByMember } from './ReferenceTools';
 import { getPackagePath } from './StringTools';
+import { makeStyles } from '@material-ui/styles';
+import classNames from 'classnames';
 
-export default function parseMarkdown(source: string) {
+interface MarkdownParserProps {
+	source: string;
+}
+
+const useStyles = makeStyles(theme => ({
+	link: {
+		color: theme.colors.link,
+		fontWeight: 'bold',
+		textDecoration: 'none'
+	}
+}), { name: 'MarkdownParser' });
+
+const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
+	const classes = useStyles();
+
 	const parser = new commonmark.Parser();
 	const intermediate = parser.parse(source);
 
@@ -80,13 +96,13 @@ export default function parseMarkdown(source: string) {
 
 					if (mdProps.href.startsWith('/')) {
 						return (
-							<HashLink {...props} to={mdProps.href}>
+							<HashLink {...props} className={classNames(props.className, classes.link)} to={mdProps.href}>
 								{mdProps.children}
 							</HashLink>
 						);
 					} else {
 						return (
-							<a href={mdProps.href}>
+							<a className={classes.link} href={mdProps.href}>
 								{mdProps.children}
 							</a>
 						);
@@ -104,5 +120,7 @@ export default function parseMarkdown(source: string) {
 			}
 		}
 	);
-	return renderer.render(intermediate);
-}
+	return <>{renderer.render(intermediate)}</>;
+};
+
+export default React.memo(MarkdownParser);

@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router';
 import MonoIndexPage from '../Pages/MonoIndexPage';
 import { isMono } from '../config';
 import MonoMenu from '../Components/MonoMenu';
+import { hot } from 'react-hot-loader/root';
 
 const App: React.FunctionComponent = isMono ? () => (
 	<>
@@ -17,4 +18,4 @@ const App: React.FunctionComponent = isMono ? () => (
 	<Route component={PackageContainer}/>
 );
 
-export default App;
+export default hot(App);

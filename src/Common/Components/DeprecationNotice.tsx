@@ -1,10 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 
-interface DeprecationNoticeProps {
-	reason?: React.ReactNode;
-}
-
 const useStyles = makeStyles({
 	root: {
 		color: '#a00',
@@ -18,11 +14,11 @@ const useStyles = makeStyles({
 	}
 }, { name: 'DeprecationNotice' });
 
-const DeprecationNotice: React.FC<DeprecationNoticeProps> = ({ reason }) => {
+const DeprecationNotice: React.FC = ({ children }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
-			<strong className={classes.label}>Deprecated.</strong> {reason}
+			<strong className={classes.label}>Deprecated.</strong> {children}
 		</div>
 	);
 };

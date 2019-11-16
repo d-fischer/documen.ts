@@ -4,7 +4,7 @@ import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { isOptionalType } from '../Tools/CodeTools';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import parseMarkdown from '../Tools/MarkdownParser';
+import MarkdownParser from '../Tools/MarkdownParser';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { makeStyles } from '@material-ui/styles';
 import Type from './CodeBuilders/Type';
@@ -86,7 +86,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 		<tr key={paramName}>
 			<td className={classes.row}>{paramName}</td>
 			<td className={classes.row}>
-				<Type def={param.type} ignoreUndefined={param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional} />
+				<Type def={param.type} ignoreUndefined={param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional}/>
 			</td>
 			{isCallback || (
 				<>
@@ -98,7 +98,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 					<td className={classes.row}>{defaultValue || <em>none</em>}</td>
 				</>
 			)}
-			<td className={classes.row}>{desc ? parseMarkdown(desc) : <em>{result.length ? 'see below' : 'none'}</em>}</td>
+			<td className={classes.row}>{desc ? <MarkdownParser source={desc}/> : <em>{result.length ? 'see below' : 'none'}</em>}</td>
 		</tr>
 	);
 

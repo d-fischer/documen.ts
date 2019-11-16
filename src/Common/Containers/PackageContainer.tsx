@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { hot } from 'react-hot-loader';
 
 import NavMenu from '../Components/NavMenu';
 
@@ -7,7 +6,6 @@ import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import config from '../config';
 import NavMenuGroup from '../Components/NavMenuGroup';
 import NavMenuItem from '../Components/NavMenuItem';
-import Color from 'color';
 import PageSwitch from './PageSwitch';
 import { useParams } from 'react-router';
 import { getPackageRoot } from '../Tools/ReferenceTools';
@@ -15,7 +13,7 @@ import { filterByMember } from '../Tools/ArrayTools';
 import { getPackagePath } from '../Tools/StringTools';
 import { makeStyles } from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
 	root: {
 		display: 'flex',
 		flexDirection: 'row',
@@ -26,15 +24,9 @@ const useStyles = makeStyles(theme => ({
 		width: 250
 	},
 	main: {
-		flex: 1,
-
-		'& a': {
-			color: Color(theme.colors.text).darken(0.2).rgb().string(),
-			fontWeight: 'bold',
-			textDecoration: 'none'
-		}
+		flex: 1
 	}
-}), { name: 'PackageContainer' });
+}, { name: 'PackageContainer' });
 
 interface PackageContainerRouteParams {
 	packageName?: string;
@@ -98,4 +90,4 @@ export const PackageContainer: React.FC = () => {
 	);
 };
 
-export default hot(module)(PackageContainer);
+export default PackageContainer;

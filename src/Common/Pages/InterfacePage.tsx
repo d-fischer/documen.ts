@@ -3,7 +3,7 @@ import { Redirect, useParams } from 'react-router';
 import PageContent from '../Containers/PageContent';
 import { getPageType } from '../Tools/CodeTools';
 import SymbolHeader from '../Components/SymbolHeader';
-import parseMarkdown from '../Tools/MarkdownParser';
+import MarkdownParser from '../Tools/MarkdownParser';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
 import InterfaceDetail from '../Components/InterfaceDetail';
@@ -42,7 +42,7 @@ const InterfacePage: React.FC = () => {
 		<>
 			<SymbolHeader symbol={symbol}/>
 			<PageContent>
-				{symbol.comment && symbol.comment.text && parseMarkdown(symbol.comment.text)}
+				{symbol.comment && symbol.comment.text && <MarkdownParser source={symbol.comment.text}/>}
 				<InterfaceRepresentation symbol={symbol} className={classes.representation}/>
 				<InterfaceDetail symbol={symbol}/>
 			</PageContent>
