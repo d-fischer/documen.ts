@@ -80,7 +80,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 		}
 	}
 	return (
-		<Card className={classes.root} id={`symbol__${name || definition.name}`} key={definition.id}>
+		<Card className={classes.root} id={`${name || definition.name}`} key={definition.id}>
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
 			{handlerDefinition ? (
 				<h3 className={classes.example}>

@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor }) => {
 	const classes = useStyles();
 	return (
-		<Card className={classes.root} id={`symbol__${sig.name}`} key={sig.id}>
+		<Card className={classes.root} id={`${sig.name}`} key={sig.id}>
 			<CardToolbar className={classes.toolbar} definition={definition} signature={sig}/>
 			<FunctionSignature signature={sig} isConstructor={isConstructor}/>
 			{definition.flags.isStatic && <Badge>static</Badge>}

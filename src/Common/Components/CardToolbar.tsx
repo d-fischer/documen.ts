@@ -37,7 +37,7 @@ const CardToolbar: React.FC<CardToolbarProps> = ({ name, definition, signature, 
 	return (
 		<div className={classNames(classes.root, className)}>
 			<CodeLink className={classes.button} symbol={definition}/>
-			<HashLink className={classNames(classes.button, classes.anchor)} to={`#symbol__${name || (signature && signature.name) || definition.name}`} title="Direct link to this symbol">
+			<HashLink className={classNames(classes.button, classes.anchor)} to={`#${name || (signature && signature.name) || definition.name}`} title="Direct link to this symbol">
 				<Icon icon={faLink} size="lg"/>
 			</HashLink>
 		</div>

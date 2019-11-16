@@ -25,7 +25,7 @@ ReactDOM.render(
 			<App/>
 		</Router>
 	</ThemeProvider>,
-	document.getElementById('root')
+	document.getElementById('app-root')
 );
 
 // eslint-disable-next-line no-console

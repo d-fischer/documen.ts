@@ -96,6 +96,7 @@ export interface PropertyReferenceNode extends AbstractReferenceNode {
 }
 
 export interface GetSignatureReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.GetSignature;
 	parameters?: ReferenceNode[];
 	type: ReferenceType;
 }
@@ -160,7 +161,7 @@ export interface PackageReferenceNode extends AbstractReferenceNode {
 
 export type ReferenceNode =
 	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
-	EnumMemberReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode | VariableReferenceNode | PackageReferenceNode;
+	EnumMemberReferenceNode | TypeAliasReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode | VariableReferenceNode | PackageReferenceNode;
 
 declare global {
 	const __DOCTS_REFERENCE: ReferenceNode;

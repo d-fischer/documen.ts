@@ -48,7 +48,7 @@ export default function parseMarkdown(source: string) {
 				link.destination = `${getPackagePath(packageName)}/reference/${pageType}/${symbolName}`;
 
 				if (memberName) {
-					link.destination += `#symbol__${memberName}`;
+					link.destination += `#${memberName}`;
 				}
 
 				const linkText = new commonmark.Node('text');

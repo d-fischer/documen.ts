@@ -41,7 +41,7 @@ const insertIntoSkeleton = (html: string, css?: string) =>
     ${css ? `<style id="server-side-styles">${css}</style>` : ''}
 </head>
 <body>
-<div id="root">${html}</div>
+<div id="app-root">${html}</div>
 </body>
 </html>`;
 

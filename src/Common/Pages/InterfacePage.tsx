@@ -1,22 +1,27 @@
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
-import { MethodReferenceNode, PropertyReferenceNode } from '../reference';
-import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import { getPageType } from '../Tools/CodeTools';
-import PropertyCard from '../Components/PropertyCard';
-import MethodCard from '../Components/MethodCard';
 import SymbolHeader from '../Components/SymbolHeader';
 import parseMarkdown from '../Tools/MarkdownParser';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
+import InterfaceDetail from '../Components/InterfaceDetail';
+import InterfaceRepresentation from '../Components/InterfaceRepresentation';
+import { makeStyles } from '@material-ui/styles';
+
+const useStyles = makeStyles({
+	representation: {
+		marginBottom: '2em'
+	}
+}, { name: 'InterfacePage' });
 
 interface InterfacePageRouteParams {
 	name: string;
 }
 
 const InterfacePage: React.FC = () => {
+	const classes = useStyles();
 	const { name } = useParams<InterfacePageRouteParams>();
 
 	const symbolDef = findSymbolByMember('name', name);
@@ -33,27 +38,13 @@ const InterfacePage: React.FC = () => {
 		return <Redirect to={`${getPackagePath(packageName)}/${correctPageType}/${name}`}/>;
 	}
 
-	const methods: MethodReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Method);
-
-	const properties: PropertyReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Property);
-
 	return (
 		<>
 			<SymbolHeader symbol={symbol}/>
 			<PageContent>
 				{symbol.comment && symbol.comment.text && parseMarkdown(symbol.comment.text)}
-				{methods.length ? (
-					<>
-						<h2>Methods</h2>
-						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
-					</>
-				) : null}
-				{properties.length ? (
-					<>
-						<h2>Properties</h2>
-						{properties.map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
-					</>
-				) : null}
+				<InterfaceRepresentation symbol={symbol} className={classes.representation}/>
+				<InterfaceDetail symbol={symbol}/>
 			</PageContent>
 		</>
 	);

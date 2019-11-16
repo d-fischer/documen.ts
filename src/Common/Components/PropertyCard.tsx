@@ -36,7 +36,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition}) => {
 	const sig = definition.kind === ReferenceNodeKind.Accessor ? (definition.getSignature && definition.getSignature[0]) : definition;
 	const type = sig && sig.type;
 	return (
-		<Card className={classes.root} id={`symbol__${name || definition.name}`} key={definition.id}>
+		<Card className={classes.root} id={`${name || definition.name}`} key={definition.id}>
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
 			<h3 className={classes.name}>{name || definition.name}</h3>
 			{definition.flags.isStatic && <Badge>static</Badge>}
