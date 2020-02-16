@@ -12,6 +12,7 @@ import resolveHome from 'untildify';
 import webpack from 'webpack';
 import tmp from 'tmp';
 import fs from 'fs-extra';
+import { ConfigInternalArticle } from '../../Common/config/Config';
 
 type RenderEntry = [string, string, Promise<string>];
 
@@ -50,7 +51,7 @@ export default class HTMLGenerator extends Generator {
 				try {
 					await Promise.all([
 						...(this._config.configDir ? [[`${pre}/`, this._config.indexTitle, fs.readFile(path.resolve(this._config.configDir, this._config.indexFile), 'utf-8')]] : []),
-						...([] as RenderEntry[]).concat(...((this._config.configDir && this._config.categories) ? this._config.categories.map(cat => cat.articles.map(art => ([
+						...([] as RenderEntry[]).concat(...((this._config.configDir && this._config.categories) ? this._config.categories.map(cat => cat.articles.filter(art => 'file' in art).map((art: ConfigInternalArticle) => ([
 							`${pre}/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(this._config.configDir!, art.file), 'utf-8')
 						] as RenderEntry))) : [])),
 						...filterByMember(packageData.children, 'kind', ReferenceNodeKind.Class).map(value => `${pre}/reference/classes/${value.name}`),

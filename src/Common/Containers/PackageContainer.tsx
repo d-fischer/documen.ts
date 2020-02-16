@@ -54,7 +54,9 @@ export const PackageContainer: React.FC = () => {
 				<NavMenuItem path={`${pre}/`} exact={true}>Welcome</NavMenuItem>
 				{config.categories && config.categories.map(cat => (
 					<NavMenuGroup key={cat.name} title={cat.title}>
-						{cat.articles.map(article => (
+						{cat.articles.map(article => 'externalLink' in article ? (
+							<NavMenuItem key={article.name} external path={article.externalLink} title={article.title}>{article.title}</NavMenuItem>
+						) : (
 							<NavMenuItem key={article.name} path={`${pre}/docs/${cat.name}/${article.name}`} title={article.title}>{article.title}</NavMenuItem>
 						))}
 					</NavMenuGroup>

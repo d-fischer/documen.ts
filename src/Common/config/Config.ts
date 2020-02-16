@@ -1,11 +1,19 @@
 import { GeneratorMode } from '../GeneratorMode';
 import RouterMode from '../HTMLRenderer/RouterMode';
 
-export interface ConfigArticle {
+export interface ConfigInternalArticle {
 	name: string;
 	title: string;
 	file: string;
 }
+
+export interface ConfigExternalArticle {
+	name: string;
+	title: string;
+	externalLink: string;
+}
+
+export type ConfigArticle = ConfigInternalArticle | ConfigExternalArticle;
 
 export interface ConfigCategory {
 	name: string;
