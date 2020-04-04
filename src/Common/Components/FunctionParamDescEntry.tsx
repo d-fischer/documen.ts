@@ -37,7 +37,8 @@ const useStyles = makeStyles({
 
 const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, additionalTags, isCallback, expandParams, paramNamePrefix = '' }) => {
 	const classes = useStyles();
-	let desc = param.comment && (param.comment.text || param.comment.shortText);
+	const shortDesc = param.comment?.shortText;
+	let desc = param.comment?.text;
 
 	if (!desc && additionalTags) {
 		const correctTag = additionalTags.find(tag => tag.tag === 'param' && tag.param === param.name);
@@ -98,7 +99,16 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 					<td className={classes.row}>{defaultValue || <em>none</em>}</td>
 				</>
 			)}
-			<td className={classes.row}>{desc ? <MarkdownParser source={desc}/> : <em>{result.length ? 'see below' : 'none'}</em>}</td>
+			<td className={classes.row}>
+				{
+					(shortDesc || desc) ? (
+						<>
+							{shortDesc ? <MarkdownParser source={shortDesc}/> : null}
+							{desc ? <MarkdownParser source={desc}/> : null}
+						</>
+					) : <em>{result.length ? 'see below' : 'none'}</em>
+				}
+			</td>
 		</tr>
 	);
 
