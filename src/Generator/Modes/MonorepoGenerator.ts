@@ -32,9 +32,11 @@ export default class MonorepoGenerator extends Generator {
 				}
 			}
 
+			process.stdout.write(`Building docs for package ${subPackage}...\n`);
+
 			await generator.generate(data);
 
-			process.stdout.write(`Finished building docs for package ${subPackage}`);
+			process.stdout.write(`\rFinished building docs for package ${subPackage}\n`);
 		}
 	}
 
