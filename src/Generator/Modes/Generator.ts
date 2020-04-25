@@ -1,4 +1,4 @@
-import { Application } from 'typedoc';
+import { Application, TSConfigReader } from 'typedoc';
 import path from 'path';
 import { ReferenceNode } from '../../Common/reference';
 import Config from '../../Common/config/Config';
@@ -12,13 +12,14 @@ export default abstract class Generator {
 
 	createReferenceStructure() {
 		const baseDir = this._config.baseDir;
-		const typeDoc = new Application({
+		const typeDoc = new Application();
+		typeDoc.options.addReader(new TSConfigReader());
+		typeDoc.bootstrap({
 			mode: 'file',
-			tsconfig: path.join(baseDir, 'tsconfig.json'),
 			logger: () => {
 			},
 			...this._overrideTypeDocConfig()
-		});
+		})
 		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
 		const project = typeDoc.convert(files);
 		if (!project) {
@@ -26,7 +27,8 @@ export default abstract class Generator {
 		}
 		const data = typeDoc.serializer.projectToObject(project);
 
-		return this._startFilterReferenceStructure(data);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return this._startFilterReferenceStructure(data as any);
 	}
 
 	abstract async generate(data: ReferenceNode): Promise<void>;
