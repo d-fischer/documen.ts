@@ -110,7 +110,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				if (referencedDesc) {
 					const { symbol: referencedType } = referencedDesc;
 					if (referencedType.kind === ReferenceNodeKind.TypeAlias) {
-						return <TypeAliasHint name={referencedType.name} type={referencedType.type}/>;
+						return <TypeAliasHint symbol={referencedType}/>;
 					}
 				}
 			}

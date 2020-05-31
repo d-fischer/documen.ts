@@ -1,11 +1,11 @@
 import React from 'react';
-import { ReferenceType } from '../reference';
+import { TypeAliasReferenceNode } from '../reference';
 import { makeStyles } from '@material-ui/styles';
 import Type from './CodeBuilders/Type';
+import MarkdownParser from '../Tools/MarkdownParser';
 
 interface TypeAliasHintProps {
-	name: string;
-	type: ReferenceType;
+	symbol: TypeAliasReferenceNode;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -36,8 +36,10 @@ const useStyles = makeStyles(theme => ({
 		borderRadius: 3,
 		padding: '.5em',
 		background: theme.colors.background.active,
-		whiteSpace: 'nowrap',
 		border: `1px solid ${theme.colors.border}`,
+		textAlign: 'left',
+		minWidth: 'min-content',
+		maxWidth: 400,
 
 		'&::before, &::after': {
 			content: '""',
@@ -58,18 +60,27 @@ const useStyles = makeStyles(theme => ({
 			marginLeft: -4,
 			borderWidth: '0 4px 4px',
 			borderColor: `transparent transparent ${theme.colors.background.active}`
+		},
+		'& code': {
+			whiteSpace: 'pre-wrap',
+			wordWrap: 'break-word'
 		}
+	},
+	aliasedType: {
+		whiteSpace: 'nowrap'
 	}
 }), { name: 'TypeAliasHint' });
 
-const TypeAliasHint: React.FC<TypeAliasHintProps> = ({ name, type }) => {
+const TypeAliasHint: React.FC<TypeAliasHintProps> = ({ symbol: { comment, name, type } }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
 			<abbr className={classes.alias}>{name}</abbr>
 			<div className={classes.hint}>
 				<div className={classes.toolTip}>
-					<Type def={type}/>
+					{comment && comment.shortText ? <MarkdownParser source={comment.shortText}/> : null}
+					{comment && comment.text ? <MarkdownParser source={comment.text}/> : null}
+					<p>Aliased type: <span className={classes.aliasedType}><Type def={type}/></span></p>
 				</div>
 			</div>
 		</div>
