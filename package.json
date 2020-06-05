@@ -61,7 +61,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "devDependencies": {
-    "@d-fischer/eslint-config": "^1.0.3",
+    "@d-fischer/eslint-config": "^1.0.7",
     "@hot-loader/react-dom": "^16.13.0",
     "cross-env": "^7.0.2",
     "eslint": "^6.6.0",

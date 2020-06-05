@@ -25,9 +25,11 @@ export default class SPAGenerator extends Generator {
 			}
 
 			(new webpack.DefinePlugin({
+				/* eslint-disable @typescript-eslint/naming-convention */
 				__DOCTS_REFERENCE: JSON.stringify(data),
 				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
 				__DOCTS_PATHS: JSON.stringify({ projectBase, sourceBase })
+				/* eslint-enable @typescript-eslint/naming-convention */
 			})).apply(webpackCompiler);
 
 			webpackCompiler.run((err, stats) => {

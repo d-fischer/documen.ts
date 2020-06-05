@@ -164,6 +164,7 @@ export type ReferenceNode =
 	EnumMemberReferenceNode | TypeAliasReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode | VariableReferenceNode | PackageReferenceNode;
 
 declare global {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const __DOCTS_REFERENCE: ReferenceNode;
 }
 
