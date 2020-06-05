@@ -73,8 +73,7 @@
     "dev": "webpack-dev-server --progress --config config/webpack.config.dev.js",
     "lint": "eslint --ext ts,js src",
     "build": "tsc",
-    "rebuild": "rimraf lib && yarn run build",
-    "prepare": "yarn run lint && yarn run rebuild"
+    "rebuild": "rimraf lib && yarn run build"
   },
   "bin": {
     "documen.ts": "bin/docs.js"
