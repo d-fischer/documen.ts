@@ -83,7 +83,8 @@ module.exports = {
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),
-			__DOCTS_CONFIG: JSON.stringify({ repoUser: 'd-fischer', repoName: 'twitch', repoBranch: 'master', monorepoRoot: 'packages' })
+			__DOCTS_CONFIG: JSON.stringify({ repoUser: 'd-fischer', repoName: 'twitch', repoBranch: 'master', monorepoRoot: 'packages' }),
+			__DOCTS_PATHS: JSON.stringify({ sourceBase: path.resolve('..'), projectBase: path.resolve('../twitch') })
 		}),
 		new webpack.HotModuleReplacementPlugin(),
 		new CaseSensitivePathsPlugin(),

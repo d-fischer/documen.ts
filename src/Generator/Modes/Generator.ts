@@ -27,11 +27,23 @@ export default abstract class Generator {
 		}
 		const data = typeDoc.serializer.projectToObject(project);
 
+		// needs to be ignored because we go through a lot of private stuff
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		return this._startFilterReferenceStructure(data as any);
+		const sourcePlugin: any = typeDoc.converter.getComponent('source');
+		if (sourcePlugin.basePath.basePaths.length !== 1) {
+			throw new Error(`This project does not have exactly one base path (${sourcePlugin.basePath.basePaths.join(', ') || 'none'}), please file an issue`);
+		}
+		const sourceBasePath: string = sourcePlugin.basePath.basePaths[0];
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const reference = this._startFilterReferenceStructure(data as any);
+
+		return {
+			sourceBasePath,
+			reference
+		};
 	}
 
-	abstract async generate(data: ReferenceNode): Promise<void>;
+	abstract async generate(data: ReferenceNode, projectBase: string, sourceBase: string): Promise<void>;
 
 	protected _overrideTypeDocConfig(): Object {
 		return {};

@@ -17,7 +17,7 @@ import { ConfigInternalArticle } from '../../Common/config/Config';
 type RenderEntry = [string, string, Promise<string>];
 
 export default class HTMLGenerator extends Generator {
-	async generate(data: ReferenceNode) {
+	async generate(data: ReferenceNode, projectBase: string, sourceBase: string) {
 		const outDir = path.resolve(this._config.baseDir, resolveHome(this._config.outputDir));
 		const pre = getPackagePath(this._config.subPackage);
 
@@ -37,7 +37,7 @@ export default class HTMLGenerator extends Generator {
 				}
 
 				try {
-					await this._buildWebpack(data, tmpDir);
+					await this._buildWebpack(data, projectBase, sourceBase, tmpDir);
 				} catch (e) {
 					reject(e);
 					return;
@@ -80,7 +80,7 @@ export default class HTMLGenerator extends Generator {
 		});
 	}
 
-	async _buildWebpack(data: ReferenceNode, outputDirectory: string) {
+	async _buildWebpack(data: ReferenceNode, projectBase: string, sourceBase: string, outputDirectory: string) {
 		return new Promise<void>((resolve, reject) => {
 			process.chdir(path.join(__dirname, '../../..'));
 
@@ -95,9 +95,10 @@ export default class HTMLGenerator extends Generator {
 			}
 
 			(new webpack.DefinePlugin({
-										  __DOCTS_REFERENCE: JSON.stringify(data),
-										  __DOCTS_CONFIG: JSON.stringify(configWithoutCallback)
-									  })).apply(webpackCompiler);
+				__DOCTS_REFERENCE: JSON.stringify(data),
+				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
+				__DOCTS_PATHS: JSON.stringify({ projectBase, sourceBase })
+			})).apply(webpackCompiler);
 
 			webpackCompiler.run((err, stats) => {
 				if (err) {

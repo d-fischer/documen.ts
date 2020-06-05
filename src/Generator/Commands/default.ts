@@ -164,15 +164,15 @@ export default class CLICommand extends Command {
 			}
 		}
 
-		const data = generator.createReferenceStructure();
+		const { reference, sourceBasePath } = generator.createReferenceStructure();
 
 		if (process.env.DOCTS_WRITE_JSON) {
 			const jsonPath = path.join(generatorConfig.outputDir, 'data.json');
-			await fs.writeJSON(jsonPath, data);
+			await fs.writeJSON(jsonPath, reference);
 		}
 
 		try {
-			await generator.generate(data);
+			await generator.generate(reference, baseDir, sourceBasePath);
 			process.exit(0);
 		} catch (e) {
 			if (e instanceof WebpackError) {

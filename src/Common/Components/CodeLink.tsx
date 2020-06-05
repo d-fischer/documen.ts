@@ -2,7 +2,7 @@ import React from 'react';
 import { ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
-import config from '../config';
+import config, { projectBase, sourceBase } from '../config';
 import path from 'path';
 
 import classNames from 'classnames';
@@ -32,6 +32,7 @@ const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
 		return null;
 	}
 
+	const fileName = symbol.sources[0].fileName;
 	return <a
 		className={classNames(classes.root, className)}
 		href={`https://github.com/${path.join(
@@ -39,9 +40,8 @@ const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
 			config.repoName,
 			'blob',
 			config.repoBranch,
-			config.monorepoRoot || config.repoBaseFolder || 'src',
-			`${symbol.sources[0].fileName}#L${symbol.sources[0].line}`
-		)}`}
+			path.relative(projectBase, path.join(sourceBase, fileName))
+		)}#L${symbol.sources[0].line}`}
 		target="_blank"
 		rel="noopener noreferrer"
 		title="Go to the code"

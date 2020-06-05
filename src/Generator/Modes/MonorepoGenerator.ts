@@ -6,7 +6,7 @@ import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 
 export default class MonorepoGenerator extends Generator {
-	async generate(data: ReferenceNode) {
+	async generate(data: ReferenceNode, projectBase: string, sourceBase: string) {
 		let generator;
 
 		for (const pkg of data.children) {
@@ -34,7 +34,7 @@ export default class MonorepoGenerator extends Generator {
 
 			process.stdout.write(`Building docs for package ${subPackage}...\n`);
 
-			await generator.generate(data);
+			await generator.generate(data, projectBase, sourceBase);
 
 			process.stdout.write(`\rFinished building docs for package ${subPackage}\n`);
 		}

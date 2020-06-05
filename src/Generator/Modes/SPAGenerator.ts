@@ -7,7 +7,7 @@ import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 
 export default class SPAGenerator extends Generator {
-	async generate(data: ReferenceNode) {
+	async generate(data: ReferenceNode, projectBase: string, sourceBase: string) {
 		return new Promise<void>((resolve, reject) => {
 			process.chdir(path.join(__dirname, '../../..'));
 
@@ -26,7 +26,8 @@ export default class SPAGenerator extends Generator {
 
 			(new webpack.DefinePlugin({
 				__DOCTS_REFERENCE: JSON.stringify(data),
-				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback)
+				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
+				__DOCTS_PATHS: JSON.stringify({ projectBase, sourceBase })
 			})).apply(webpackCompiler);
 
 			webpackCompiler.run((err, stats) => {
