@@ -1,15 +1,16 @@
 import React from 'react';
-import Card from '../Containers/Card';
-import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
-import { getTag, hasTag } from '../Tools/CodeTools';
+import Card from '../../Containers/Card';
+import { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../../reference';
+import { getTag, hasTag } from '../../Tools/CodeTools';
 
-import FunctionParamDesc from './FunctionParamDesc';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
-import DeprecationNotice from './DeprecationNotice';
+import FunctionParamDesc from '../FunctionParamDesc';
+import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
+import DeprecationNotice from '../DeprecationNotice';
 import CardToolbar from './CardToolbar';
-import { findSymbolByMember } from '../Tools/ReferenceTools';
+import { findSymbolByMember } from '../../Tools/ReferenceTools';
 import { makeStyles } from '@material-ui/styles';
-import MarkdownParser from '../Tools/MarkdownParser';
+import MarkdownParser from '../../Tools/MarkdownParser';
+import { getAnchorName } from '../../Tools/NodeTools';
 
 interface EventCardProps {
 	name?: string;
@@ -80,7 +81,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 		}
 	}
 	return (
-		<Card className={classes.root} id={`${name || definition.name}`} key={definition.id}>
+		<Card className={classes.root} id={getAnchorName(definition, name)} key={definition.id}>
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
 			{handlerDefinition ? (
 				<h3 className={classes.example}>

@@ -1,14 +1,15 @@
 import React from 'react';
-import Card from '../Containers/Card';
-import { AccessorReferenceNode, PropertyReferenceNode } from '../reference';
-import { getTag, hasTag, isStringLiteral } from '../Tools/CodeTools';
-import MarkdownParser from '../Tools/MarkdownParser';
-import DeprecationNotice from './DeprecationNotice';
+import Card from '../../Containers/Card';
+import { AccessorReferenceNode, PropertyReferenceNode } from '../../reference';
+import { getTag, hasTag, isStringLiteral } from '../../Tools/CodeTools';
+import MarkdownParser from '../../Tools/MarkdownParser';
+import DeprecationNotice from '../DeprecationNotice';
 import CardToolbar from './CardToolbar';
-import Badge from './Badge';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
+import Badge from '../Badge';
+import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
 import { makeStyles } from '@material-ui/styles';
-import Type from './CodeBuilders/Type';
+import Type from '../CodeBuilders/Type';
+import { getAnchorName } from '../../Tools/NodeTools';
 
 interface PropertyCardProps {
 	name?: string;
@@ -36,7 +37,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => {
 	const sig = definition.kind === ReferenceNodeKind.Accessor ? (definition.getSignature && definition.getSignature[0]) : definition;
 	const type = sig && sig.type;
 	return (
-		<Card className={classes.root} id={`${name || definition.name}`} key={definition.id}>
+		<Card className={classes.root} id={getAnchorName(definition, name)} key={definition.id}>
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
 			<h3 className={classes.name}>{name || definition.name}</h3>
 			{definition.flags.isStatic && <Badge>static</Badge>}

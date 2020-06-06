@@ -42,3 +42,11 @@ export function defaultNodeSort<T extends ReferenceNode>(a: T, b: T) {
 
 	return a.name.localeCompare(b.name);
 }
+
+export function getAnchorName(node: ReferenceNode, name?: string) {
+	const modifiers = [];
+	if (node.flags.isStatic) {
+		modifiers.push('s');
+	}
+	return [...modifiers, name ?? node.name].join('_');
+}

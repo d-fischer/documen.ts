@@ -1,16 +1,17 @@
 import React from 'react';
-import Card from '../Containers/Card';
-import FunctionSignature from './FunctionSignature';
-import FunctionParamDesc from './FunctionParamDesc';
-import { ConstructorReferenceNode, MethodReferenceNode, SignatureReferenceNode } from '../reference';
-import { getTag, hasTag } from '../Tools/CodeTools';
+import Card from '../../Containers/Card';
+import FunctionSignature from '../FunctionSignature';
+import FunctionParamDesc from '../FunctionParamDesc';
+import { ConstructorReferenceNode, MethodReferenceNode, SignatureReferenceNode } from '../../reference';
+import { getTag, hasTag } from '../../Tools/CodeTools';
 
-import DeprecationNotice from './DeprecationNotice';
+import DeprecationNotice from '../DeprecationNotice';
 import CardToolbar from './CardToolbar';
-import Badge from './Badge';
+import Badge from '../Badge';
 import { makeStyles } from '@material-ui/styles';
-import Type from './CodeBuilders/Type';
-import MarkdownParser from '../Tools/MarkdownParser';
+import Type from '../CodeBuilders/Type';
+import MarkdownParser from '../../Tools/MarkdownParser';
+import { getAnchorName } from '../../Tools/NodeTools';
 
 interface MethodCardProps {
 	definition: ConstructorReferenceNode | MethodReferenceNode;
@@ -41,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor }) => {
 	const classes = useStyles();
 	return (
-		<Card className={classes.root} id={`${sig.name}`} key={sig.id}>
+		<Card className={classes.root} id={getAnchorName(definition, sig.name)} key={sig.id}>
 			<CardToolbar className={classes.toolbar} definition={definition} signature={sig}/>
 			<FunctionSignature signature={sig} isConstructor={isConstructor}/>
 			{definition.flags.isStatic && <Badge>static</Badge>}

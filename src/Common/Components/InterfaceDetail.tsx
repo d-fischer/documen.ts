@@ -1,8 +1,8 @@
 import React from 'react';
 import { MethodReferenceNode, PropertyReferenceNode, ReferenceNode } from '../reference';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
-import MethodCard from './MethodCard';
-import PropertyCard from './PropertyCard';
+import MethodCard from './Cards/MethodCard';
+import PropertyCard from './Cards/PropertyCard';
 import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 
 interface InterfaceDetailProps {

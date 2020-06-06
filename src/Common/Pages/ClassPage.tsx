@@ -1,17 +1,17 @@
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
-import { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
-import PageContent from '../Containers/PageContent';
-import { getPageType, hasTag } from '../Tools/CodeTools';
-import PropertyCard from '../Components/PropertyCard';
-import MarkdownParser from '../Tools/MarkdownParser';
-import MethodCard from '../Components/MethodCard';
+import EventCard from '../Components/Cards/EventCard';
+import MethodCard from '../Components/Cards/MethodCard';
+import PropertyCard from '../Components/Cards/PropertyCard';
 import SymbolHeader from '../Components/SymbolHeader';
-import EventCard from '../Components/EventCard';
+import PageContent from '../Containers/PageContent';
+import { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
+import { getPageType, hasTag } from '../Tools/CodeTools';
+import MarkdownParser from '../Tools/MarkdownParser';
+import { defaultNodeSort, filterChildrenByMember, findChildByMember } from '../Tools/NodeTools';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
-import { defaultNodeSort, filterChildrenByMember, findChildByMember } from '../Tools/NodeTools';
 
 interface ClassPageRouteParams {
 	name: string;
