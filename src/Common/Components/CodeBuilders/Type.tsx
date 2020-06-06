@@ -2,8 +2,8 @@ import React from 'react';
 import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../../Tools/ReferenceTools';
 import TypeAliasHint from '../TypeAliasHint';
-import TypeLink from '../TypeLink';
 import { ReferenceType } from '../../reference';
+import ReferenceTypeView from './ReferenceTypeView';
 
 interface TypeProps {
 	def?: ReferenceType;
@@ -112,26 +112,11 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 					if (referencedType.kind === ReferenceNodeKind.TypeAlias) {
 						return <TypeAliasHint symbol={referencedType}/>;
 					}
+					// TODO forward the CORRECT type arguments if this is a superclass
+					return <ReferenceTypeView def={referencedType} typeArguments={def.typeArguments} isOptional={isOptional}/>;
 				}
 			}
-			return (
-				<>
-					{isOptional && '?'}
-					<TypeLink name={def.name} id={def.id}>{def.name}</TypeLink>
-					{def.typeArguments ? (
-						<>
-							&lt;
-							{def.typeArguments.map((param, idx) => (
-								<React.Fragment key={idx}>
-									{idx === 0 ? '' : ', '}
-									<Type def={param}/>
-								</React.Fragment>
-							))}
-							&gt;
-						</>
-					) : null}
-				</>
-			);
+			return <ReferenceTypeView def={def} typeArguments={def.typeArguments} isOptional={isOptional}/>;
 		}
 		default: {
 			return (

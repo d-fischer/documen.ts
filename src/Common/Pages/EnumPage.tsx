@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
 import { EnumMemberReferenceNode } from '../reference';
-import { filterByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
 import { getPageType } from '../Tools/CodeTools';
@@ -10,6 +9,7 @@ import MarkdownParser from '../Tools/MarkdownParser';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
+import { filterChildrenByMember } from '../Tools/NodeTools';
 
 interface EnumPageRouteParams {
 	name: string;
@@ -32,7 +32,7 @@ const EnumPage: React.FC = () => {
 		return <Redirect to={`${(getPackagePath(packageName))}/${correctPageType}/${name}`}/>;
 	}
 
-	const members: EnumMemberReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.EnumMember);
+	const members: EnumMemberReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.EnumMember);
 
 	return (
 		<>

@@ -16,8 +16,6 @@ export default abstract class Generator {
 		typeDoc.options.addReader(new TSConfigReader());
 		typeDoc.bootstrap({
 			mode: 'file',
-			logger: () => {
-			},
 			...this._overrideTypeDocConfig()
 		})
 		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
@@ -25,7 +23,7 @@ export default abstract class Generator {
 		if (!project) {
 			throw new Error('Error parsing the project structure');
 		}
-		const data = typeDoc.serializer.projectToObject(project);
+		const data = typeDoc.serializer.projectToObject(project) as unknown as ReferenceNode;
 
 		// needs to be ignored because we go through a lot of private stuff
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,8 +32,8 @@ export default abstract class Generator {
 			throw new Error(`This project does not have exactly one base path (${sourcePlugin.basePath.basePaths.join(', ') || 'none'}), please file an issue`);
 		}
 		const sourceBasePath: string = sourcePlugin.basePath.basePaths[0];
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const reference = this._startFilterReferenceStructure(data as any);
+
+		const reference = this._transformTopReferenceNode(data);
 
 		return {
 			sourceBasePath,
@@ -49,36 +47,7 @@ export default abstract class Generator {
 		return {};
 	}
 
-	protected _startFilterReferenceStructure(node: ReferenceNode): ReferenceNode {
-		return this._filterReferenceStructure(node)!;
-	}
-
-	protected _filterReferenceStructure(currentNode: ReferenceNode, parentNode?: ReferenceNode, level: number = 0): ReferenceNode | null {
-		try {
-			if (currentNode.flags.isPrivate) {
-				return null;
-			}
-
-			const parentTags = (parentNode && parentNode.comment && parentNode.comment.tags) || [];
-			const parentTagKeys = parentTags.map(tag => tag.tag);
-
-			if (currentNode.flags.isProtected && parentTagKeys.includes('hideprotected')) {
-				return null;
-			}
-
-			if (currentNode.inheritedFrom && !parentTagKeys.includes('inheritdoc')) {
-				return null;
-			}
-
-			const result = { ...currentNode };
-
-			if (currentNode.children) {
-				result.children = currentNode.children.map(child => this._filterReferenceStructure(child, currentNode, level + 1)!).filter(x => x);
-			}
-
-			return result;
-		} catch (e) {
-			throw new Error(`Error transforming reference structure at id ${currentNode.id}: ${e.message}`);
-		}
+	protected _transformTopReferenceNode(node: ReferenceNode): ReferenceNode {
+		return node;
 	}
 }

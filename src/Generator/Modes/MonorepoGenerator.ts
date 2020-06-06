@@ -9,7 +9,7 @@ export default class MonorepoGenerator extends Generator {
 	async generate(data: ReferenceNode, projectBase: string, sourceBase: string) {
 		let generator;
 
-		for (const pkg of data.children) {
+		for (const pkg of data.children!) {
 			const subPackage = pkg.name;
 
 			const config = {
@@ -46,10 +46,10 @@ export default class MonorepoGenerator extends Generator {
 		};
 	}
 
-	protected _startFilterReferenceStructure(node: ReferenceNode): ReferenceNode {
+	protected _transformTopReferenceNode(node: ReferenceNode): ReferenceNode {
 		// top level is project, below it are the modules
 		node.children = Object.entries(partitionedFlatMap(
-			node.children,
+			node.children!,
 			child => {
 				let name = child.name;
 				if (name.charAt(0) === '"') {
@@ -57,9 +57,7 @@ export default class MonorepoGenerator extends Generator {
 				}
 				return name.split('/')[0];
 			},
-			child => child.children ? child.children.map(
-				childOfChild => this._filterReferenceStructure(childOfChild, child, 1)!
-			).filter(x => x) : []
+			child => child.children ?? []
 		)).map(([name, children]) => ({
 			id: -1,
 			name,

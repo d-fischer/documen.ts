@@ -5,9 +5,10 @@ import { isOptionalType } from '../Tools/CodeTools';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import MarkdownParser from '../Tools/MarkdownParser';
-import { findSymbolByMember } from '../Tools/ReferenceTools';
+import { findSymbolByMember} from '../Tools/ReferenceTools';
 import { makeStyles } from '@material-ui/styles';
 import Type from './CodeBuilders/Type';
+import { getChildren } from '../Tools/NodeTools';
 
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;
@@ -52,8 +53,8 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 
 	const result: React.ReactNode[] = [];
 
-	if (param.type.type === 'reflection' && param.type.declaration.children) {
-		result.push(...param.type.declaration.children.map((subParam: VariableReferenceNode) => (
+	if (param.type.type === 'reflection') {
+		result.push(...getChildren(param.type.declaration).map((subParam: VariableReferenceNode) => (
 				<FunctionParamDescEntry
 					key={`${paramName}.${subParam.name}`}
 					param={subParam}
@@ -69,7 +70,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 		if (refDesc) {
 			const { symbol: ref } = refDesc;
 			if (ref.kind === ReferenceNodeKind.Interface) {
-				result.push(...ref.children.map((subParam: PropertyReferenceNode) => (
+				result.push(...getChildren(ref).map((subParam: PropertyReferenceNode) => (
 					<FunctionParamDescEntry
 						key={`${paramName}.${subParam.name}`}
 						param={subParam}

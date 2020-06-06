@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
 import { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
-import { filterByMember, findByMember } from '../Tools/ArrayTools';
 import PageContent from '../Containers/PageContent';
 import { getPageType, hasTag } from '../Tools/CodeTools';
 import PropertyCard from '../Components/PropertyCard';
@@ -12,6 +11,7 @@ import EventCard from '../Components/EventCard';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
+import { filterChildrenByMember, findChildByMember } from '../Tools/NodeTools';
 
 interface ClassPageRouteParams {
 	name: string;
@@ -34,19 +34,19 @@ const ClassPage: React.FC = () => {
 		return <Redirect to={`${getPackagePath(packageName)}/${correctPageType}/${name}`}/>;
 	}
 
-	const constructor: ConstructorReferenceNode | undefined = findByMember(symbol.children, 'kind', ReferenceNodeKind.Constructor);
+	const constructor: ConstructorReferenceNode | undefined = findChildByMember(symbol, 'kind', ReferenceNodeKind.Constructor);
 	let constructorSigs: SignatureReferenceNode[] = [];
 	if (constructor) {
 		constructorSigs = constructor.signatures;
 	}
 
-	const methods: MethodReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Method);
+	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Method);
 
-	const properties: PropertyReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Property);
+	const properties: PropertyReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Property);
 	const propertiesWithoutEvents = properties.filter(prop => !hasTag(prop, 'eventListener'));
 	const events = properties.filter(prop => hasTag(prop, 'eventListener'));
 
-	const accessors: AccessorReferenceNode[] = filterByMember(symbol.children, 'kind', ReferenceNodeKind.Accessor);
+	const accessors: AccessorReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Accessor);
 
 	return (
 		<>

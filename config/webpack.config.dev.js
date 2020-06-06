@@ -18,7 +18,7 @@ const env = getClientEnvironment(publicUrl);
 const monoRefJson = fs.readJSONSync(path.join(process.cwd(), 'docs-mono.json'));
 const gen = new MonorepoGenerator({});
 
-const monoRef = gen._startFilterReferenceStructure(monoRefJson);
+const monoRef = gen._transformTopReferenceNode(monoRefJson);
 
 module.exports = {
 	mode: 'development',

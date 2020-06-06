@@ -9,9 +9,9 @@ import NavMenuItem from '../Components/NavMenuItem';
 import PageSwitch from './PageSwitch';
 import { useParams } from 'react-router';
 import { getPackageRoot } from '../Tools/ReferenceTools';
-import { filterByMember } from '../Tools/ArrayTools';
 import { getPackagePath } from '../Tools/StringTools';
 import { makeStyles } from '@material-ui/styles';
+import { filterChildrenByMember } from '../Tools/NodeTools';
 
 const useStyles = makeStyles({
 	root: {
@@ -44,9 +44,9 @@ export const PackageContainer: React.FC = () => {
 		return null;
 	}
 
-	const classNodes = useMemo(() => filterByMember(root.children, 'kind', ReferenceNodeKind.Class), [root]);
-	const interfaceNodes = useMemo(() => filterByMember(root.children, 'kind', ReferenceNodeKind.Interface), [root]);
-	const enumNodes = useMemo(() => filterByMember(root.children, 'kind', ReferenceNodeKind.Enum), [root]);
+	const classNodes = useMemo(() => filterChildrenByMember(root, 'kind', ReferenceNodeKind.Class), [root]);
+	const interfaceNodes = useMemo(() => filterChildrenByMember(root, 'kind', ReferenceNodeKind.Interface), [root]);
+	const enumNodes = useMemo(() => filterChildrenByMember(root, 'kind', ReferenceNodeKind.Enum), [root]);
 
 	return (
 		<div className={classes.root}>

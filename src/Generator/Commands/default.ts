@@ -168,7 +168,7 @@ export default class CLICommand extends Command {
 
 		if (process.env.DOCTS_WRITE_JSON) {
 			const jsonPath = path.join(generatorConfig.outputDir, 'data.json');
-			await fs.writeJSON(jsonPath, reference);
+			await fs.writeJSON(jsonPath, reference, { spaces: 2 });
 		}
 
 		try {

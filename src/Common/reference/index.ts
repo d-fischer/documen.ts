@@ -74,7 +74,7 @@ export interface AbstractReferenceNode {
 	comment?: ReferenceComment;
 	sources: ReferenceSource[];
 	flags: ReferenceFlags;
-	children: ReferenceNode[];
+	children?: ReferenceNode[];
 	groups: ReferenceGroup[];
 	inheritedFrom?: ReferenceType;
 }
@@ -82,6 +82,7 @@ export interface AbstractReferenceNode {
 export interface ClassReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.Class;
 	typeParameter?: TypeParameterReferenceNode[];
+	extendedTypes?: ReferenceType[];
 }
 
 export interface SignatureReferenceNode extends AbstractReferenceNode {

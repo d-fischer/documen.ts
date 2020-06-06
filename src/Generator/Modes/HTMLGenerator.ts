@@ -4,7 +4,7 @@ import path from 'path';
 import { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
-import { filterByMember } from '../../Common/Tools/ArrayTools';
+import { filterByMember} from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { ArticleContent } from '../../Common/Components/PageArticle';
 import { getPackagePath } from '../../Common/Tools/StringTools';
@@ -13,6 +13,7 @@ import webpack from 'webpack';
 import tmp from 'tmp';
 import fs from 'fs-extra';
 import { ConfigInternalArticle } from '../../Common/config/Config';
+import { getChildren } from '../../Common/Tools/NodeTools';
 
 type RenderEntry = [string, string, Promise<string>];
 
@@ -46,17 +47,18 @@ export default class HTMLGenerator extends Generator {
 				// eslint-disable-next-line @typescript-eslint/no-require-imports
 				const { default: render } = require(path.resolve(tmpDir, 'generator.js'));
 
-				const packageData = data.children.find(pkg => pkg.name === this._config.subPackage)!;
+				const packageData = getChildren(data).find(pkg => pkg.name === this._config.subPackage)!;
 
 				try {
+					const packageChildren = getChildren(packageData);
 					await Promise.all([
 						...(this._config.configDir ? [[`${pre}/`, this._config.indexTitle, fs.readFile(path.resolve(this._config.configDir, this._config.indexFile), 'utf-8')]] : []),
 						...([] as RenderEntry[]).concat(...((this._config.configDir && this._config.categories) ? this._config.categories.map(cat => cat.articles.filter(art => 'file' in art).map((art: ConfigInternalArticle) => ([
 							`${pre}/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(this._config.configDir!, art.file), 'utf-8')
 						] as RenderEntry))) : [])),
-						...filterByMember(packageData.children, 'kind', ReferenceNodeKind.Class).map(value => `${pre}/reference/classes/${value.name}`),
-						...filterByMember(packageData.children, 'kind', ReferenceNodeKind.Interface).map(value => `${pre}/reference/interfaces/${value.name}`),
-						...filterByMember(packageData.children, 'kind', ReferenceNodeKind.Enum).map(value => `${pre}/reference/enums/${value.name}`)
+						...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Class).map(value => `${pre}/reference/classes/${value.name}`),
+						...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Interface).map(value => `${pre}/reference/interfaces/${value.name}`),
+						...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Enum).map(value => `${pre}/reference/enums/${value.name}`)
 					].map(async (entry: RenderEntry | string) => {
 						if (Array.isArray(entry)) {
 							const [resourcePath, title, contentPromise] = entry;
