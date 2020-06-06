@@ -35,10 +35,7 @@ const ClassPage: React.FC = () => {
 	}
 
 	const constructor: ConstructorReferenceNode | undefined = findChildByMember(symbol, 'kind', ReferenceNodeKind.Constructor);
-	let constructorSigs: SignatureReferenceNode[] = [];
-	if (constructor) {
-		constructorSigs = constructor.signatures;
-	}
+	const constructorSigs: SignatureReferenceNode[] = constructor?.signatures ?? [];
 
 	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Method);
 
