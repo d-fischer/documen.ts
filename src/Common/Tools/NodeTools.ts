@@ -32,3 +32,13 @@ export function findChildByMember<K extends keyof ReferenceNode, R extends Refer
 export function filterChildrenByMember<K extends keyof ReferenceNode, R extends ReferenceNode>(node: ReferenceNode, key: K, value: ReferenceNode[K], withPrivate = false) {
 	return filterByMember<ReferenceNode, K, R>(getChildren(node, withPrivate), key, value);
 }
+
+export function defaultNodeSort<T extends ReferenceNode>(a: T, b: T) {
+	const aStatic = !!a.flags.isStatic;
+	const bStatic = !!b.flags.isStatic;
+	if (aStatic !== bStatic) {
+		return +bStatic - +aStatic;
+	}
+
+	return a.name.localeCompare(b.name);
+}

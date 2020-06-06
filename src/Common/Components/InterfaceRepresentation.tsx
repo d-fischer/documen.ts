@@ -5,7 +5,7 @@ import Type from './CodeBuilders/Type';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import classNames from 'classnames';
 import { HashLink } from 'react-router-hash-link';
-import { getChildren } from '../Tools/NodeTools';
+import { defaultNodeSort, getChildren } from '../Tools/NodeTools';
 
 interface InterfaceRepresentationProps {
 	symbol: ReferenceNode;
@@ -44,7 +44,7 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 	return (
 		<div className={classNames(classes.root, className)}>
 			{'{'}
-			{getChildren(symbol).map(member => {
+			{getChildren(symbol).sort(defaultNodeSort).map(member => {
 				if (member.kind === ReferenceNodeKind.Property) {
 					return (
 						<div key={member.name} className={classes.prop}>

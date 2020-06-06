@@ -11,7 +11,7 @@ import EventCard from '../Components/EventCard';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
-import { filterChildrenByMember, findChildByMember } from '../Tools/NodeTools';
+import { defaultNodeSort, filterChildrenByMember, findChildByMember } from '../Tools/NodeTools';
 
 interface ClassPageRouteParams {
 	name: string;
@@ -62,19 +62,19 @@ const ClassPage: React.FC = () => {
 				{events.length ? (
 					<>
 						<h2>Events</h2>
-						{events.map(prop => <EventCard key={prop.id} definition={prop}/>)}
+						{events.sort(defaultNodeSort).map(prop => <EventCard key={prop.id} definition={prop}/>)}
 					</>
 				) : null}
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
-						{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
+						{methods.sort(defaultNodeSort).map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
 					</>
 				) : null}
 				{propertiesWithoutEvents.length || accessors.length ? (
 					<>
 						<h2>Properties</h2>
-						{propertiesWithoutEvents.map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
+						{propertiesWithoutEvents.sort(defaultNodeSort).map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
 						{accessors.map(acc => {
 							if (!acc.getSignature || !acc.getSignature.length) {
 								return null;

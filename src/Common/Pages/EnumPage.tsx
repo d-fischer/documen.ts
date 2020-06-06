@@ -9,7 +9,7 @@ import MarkdownParser from '../Tools/MarkdownParser';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
-import { filterChildrenByMember } from '../Tools/NodeTools';
+import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 
 interface EnumPageRouteParams {
 	name: string;
@@ -42,7 +42,7 @@ const EnumPage: React.FC = () => {
 				{members.length ? (
 					<>
 						<h2>{members.length === 1 ? 'Member' : 'Members'}</h2>
-						{members.map(member => (
+						{members.sort(defaultNodeSort).map(member => (
 							<Card key={member.id}>
 								<h3>{member.name}</h3>
 								{member.comment && member.comment.shortText ? <p>{member.comment.shortText}</p> : null}

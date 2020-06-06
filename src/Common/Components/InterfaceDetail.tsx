@@ -3,7 +3,7 @@ import { MethodReferenceNode, PropertyReferenceNode, ReferenceNode } from '../re
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import MethodCard from './MethodCard';
 import PropertyCard from './PropertyCard';
-import { filterChildrenByMember } from '../Tools/NodeTools';
+import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 
 interface InterfaceDetailProps {
 	symbol: ReferenceNode;
@@ -19,13 +19,13 @@ const InterfaceDetail: React.FC<InterfaceDetailProps> = ({ symbol }) => {
 			{methods.length ? (
 				<>
 					<h2>Methods</h2>
-					{methods.map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
+					{methods.sort(defaultNodeSort).map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
 				</>
 			) : null}
 			{properties.length ? (
 				<>
 					<h2>Properties</h2>
-					{properties.map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
+					{properties.sort(defaultNodeSort).map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
 				</>
 			) : null}
 		</>
