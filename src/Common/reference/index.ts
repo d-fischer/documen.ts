@@ -89,6 +89,7 @@ export interface SignatureReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.CallSignature;
 	parameters?: ParameterReferenceNode[];
 	type: ReferenceType;
+	typeParameter?: TypeParameterReferenceNode[];
 }
 
 export interface PropertyReferenceNode extends AbstractReferenceNode {

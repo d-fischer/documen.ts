@@ -19,7 +19,20 @@ const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => {
 	const classes = useStyles();
 	return (
 		<h3 className={classes.root}>
-			{signature.name}({signature.parameters && signature.parameters.map((param, idx) => (
+			{signature.name}
+			{signature.typeParameter?.length && (
+				<>
+					&lt;
+					{signature.typeParameter.map((typeParam, idx) => (
+						<React.Fragment key={typeParam.name}>
+							{idx === 0 ? '' : ', '}
+							{typeParam.name}
+						</React.Fragment>
+					))}
+					&gt;
+				</>
+			)}
+			({signature.parameters && signature.parameters.map((param, idx) => (
 			<React.Fragment key={param.name}>
 				{idx === 0 ? '' : ', '}
 				{param.name === '__namedParameters' ? 'params' : param.name}
