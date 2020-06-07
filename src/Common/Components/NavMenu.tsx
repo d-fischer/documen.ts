@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
 		borderRight: `1px solid ${theme.colors.border}`,
 		minHeight: '100%'
 	}
-}));
+}), { name: 'NavMenu' });
 
 interface NavMenuProps {
 	className?: string;

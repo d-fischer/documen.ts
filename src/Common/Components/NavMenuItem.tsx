@@ -12,7 +12,7 @@ interface NavMenuItemProps {
 const useStyles = makeStyles(theme => ({
 	root: {
 		height: '1em',
-		padding: '.5em',
+		padding: theme.spacing.unit,
 		lineHeight: '1em',
 		display: 'block',
 		textDecoration: 'none',

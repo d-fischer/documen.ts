@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	entry: {
 		borderRight: `1px solid ${theme.colors.border}`,
-		padding: 8,
+		padding: theme.spacing.unit,
 		cursor: 'pointer',
 		textDecoration: 'none',
 		color: theme.colors.text,

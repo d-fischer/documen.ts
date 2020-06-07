@@ -15,10 +15,10 @@ interface FunctionParamDescProps {
 const useStyles = makeStyles(theme => ({
 	root: {
 		border: `1px solid ${theme.colors.border}`,
-		margin: '.5em 0'
+		margin: `${theme.spacing.unit}px 0`
 	},
 	heading: {
-		padding: '.5em',
+		padding: theme.spacing.unit,
 		backgroundColor: theme.colors.background.active
 	}
 }), { name: 'FunctionParamDesc' });

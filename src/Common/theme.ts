@@ -15,6 +15,9 @@ const theme = {
 	},
 	fonts: {
 		code: 'Monaco, Menlo, "Lucida Console", monospace'
+	},
+	spacing: {
+		unit: 8
 	}
 };
 

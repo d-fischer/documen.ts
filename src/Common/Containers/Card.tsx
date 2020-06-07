@@ -10,8 +10,8 @@ interface CardProps {
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		margin: '1em',
-		padding: '1em',
+		margin: theme.spacing.unit * 2,
+		padding: theme.spacing.unit * 2,
 		border: `1px solid ${theme.colors.border}`,
 
 		'& h3, & h4': {

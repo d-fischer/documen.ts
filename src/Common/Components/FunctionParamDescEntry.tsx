@@ -18,23 +18,23 @@ interface FunctionParamDescEntryProps {
 	paramNamePrefix?: string;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
 	row: {
-		padding: '.5em',
+		padding: theme.spacing.unit,
 		textAlign: 'center',
 
 		'& p': {
 			margin: 0,
 
 			'& + p': {
-				marginTop: '.5em'
+				marginTop: theme.spacing.unit
 			}
 		}
 	},
 	checkMark: {
 		width: '1em'
 	}
-}, { name: 'FunctionParamDescEntry' });
+}), { name: 'FunctionParamDescEntry' });
 
 const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, additionalTags, isCallback, expandParams, paramNamePrefix = '' }) => {
 	const classes = useStyles();

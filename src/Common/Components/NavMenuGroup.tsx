@@ -5,18 +5,18 @@ interface NavMenuGroupProps {
 	title: string;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({ colors: { text: textColor }, spacing: { unit: space } }) => ({
 	root: {
 		display: 'block',
-		color: theme.colors.text,
+		color: textColor,
 
 		'&:not(:first-child)': {
-			marginTop: '1em'
+			marginTop: space * 2
 		}
 	},
 	title: {
 		margin: 0,
-		padding: '.25em .5em .25em .75em',
+		padding: `${space / 2}px ${space}px ${space / 2}px ${space * 1.5}px`,
 		fontSize: '1.1em',
 		lineHeight: '1em',
 		height: '1em',
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	items: {
 		'& > a': {
-			paddingLeft: '1.25em'
+			paddingLeft: space * 2.5
 		}
 	}
 }), { name: 'NavMenuGroup' });

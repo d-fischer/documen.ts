@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
 		position: 'relative',
 		marginTop: 5,
 		borderRadius: 3,
-		padding: '.5em',
+		padding: theme.spacing.unit,
 		background: theme.colors.background.active,
 		border: `1px solid ${theme.colors.border}`,
 		textAlign: 'left',
