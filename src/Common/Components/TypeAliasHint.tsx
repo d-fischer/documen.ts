@@ -38,7 +38,8 @@ const useStyles = makeStyles(theme => ({
 		background: theme.colors.background.active,
 		border: `1px solid ${theme.colors.border}`,
 		textAlign: 'left',
-		minWidth: 'min-content',
+		width: 'min-content',
+		minWidth: 250,
 		maxWidth: 400,
 
 		'&::before, &::after': {
