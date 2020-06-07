@@ -35,7 +35,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => {
 	const classes = useStyles();
 
 	const sig = definition.kind === ReferenceNodeKind.Accessor ? (definition.getSignature && definition.getSignature[0]) : definition;
-	const type = sig && sig.type;
+	const type = sig?.type;
 	return (
 		<Card className={classes.root} id={getAnchorName(definition, name)} key={definition.id}>
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>

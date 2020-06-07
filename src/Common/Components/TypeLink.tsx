@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 		fontWeight: 'bold',
 		textDecoration: 'none'
 	}
-}), {});
+}), { name: 'TypeLink' });
 
 const TypeLink: React.FC<TypeLinkProps> = ({ id, name, children, symbol, packageName }) => {
 	const classes = useStyles();

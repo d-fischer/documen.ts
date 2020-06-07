@@ -1,5 +1,6 @@
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
+import OverviewTable from '../Components/OverviewTable/OverviewTable';
 import { EnumMemberReferenceNode } from '../reference';
 import PageContent from '../Containers/PageContent';
 import Card from '../Containers/Card';
@@ -41,6 +42,8 @@ const EnumPage: React.FC = () => {
 				{symbol.comment && symbol.comment.text && <MarkdownParser source={symbol.comment.text}/>}
 				{members.length ? (
 					<>
+						<h2>Overview</h2>
+						<OverviewTable members={members} />
 						<h2>{members.length === 1 ? 'Member' : 'Members'}</h2>
 						{members.sort(defaultNodeSort).map(member => (
 							<Card key={member.id}>

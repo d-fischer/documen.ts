@@ -3,6 +3,7 @@ import { Redirect, useParams } from 'react-router';
 import EventCard from '../Components/Cards/EventCard';
 import MethodCard from '../Components/Cards/MethodCard';
 import PropertyCard from '../Components/Cards/PropertyCard';
+import OverviewTable from '../Components/OverviewTable/OverviewTable';
 import SymbolHeader from '../Components/SymbolHeader';
 import PageContent from '../Containers/PageContent';
 import { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
@@ -49,6 +50,15 @@ const ClassPage: React.FC = () => {
 		<>
 			<SymbolHeader symbol={symbol}/>
 			<PageContent>
+				{properties.length || methods.length || accessors.length ? (
+					<>
+						<h2>Overview</h2>
+						<OverviewTable
+							properties={[...propertiesWithoutEvents, ...accessors]}
+							events={events} methods={methods}
+						/>
+					</>
+				) : null}
 				{symbol.comment && symbol.comment.text && <MarkdownParser source={symbol.comment.text}/>}
 				{constructorSigs.length ? (
 					<>
@@ -62,12 +72,6 @@ const ClassPage: React.FC = () => {
 						{events.sort(defaultNodeSort).map(prop => <EventCard key={prop.id} definition={prop}/>)}
 					</>
 				) : null}
-				{methods.length ? (
-					<>
-						<h2>Methods</h2>
-						{methods.sort(defaultNodeSort).map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
-					</>
-				) : null}
 				{propertiesWithoutEvents.length || accessors.length ? (
 					<>
 						<h2>Properties</h2>
@@ -78,6 +82,12 @@ const ClassPage: React.FC = () => {
 							}
 							return <PropertyCard key={acc.id} name={acc.name} definition={acc}/>;
 						})}
+					</>
+				) : null}
+				{methods.length ? (
+					<>
+						<h2>Methods</h2>
+						{methods.sort(defaultNodeSort).map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
 					</>
 				) : null}
 			</PageContent>
