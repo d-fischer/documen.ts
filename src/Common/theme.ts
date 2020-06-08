@@ -11,6 +11,9 @@ const theme = {
 		accent: {
 			default: '#647d0f',
 			focus: '#88ab14'
+		},
+		badges: {
+			async: '#cccc70'
 		}
 	},
 	fonts: {

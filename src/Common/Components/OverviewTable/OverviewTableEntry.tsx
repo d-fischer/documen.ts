@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
 		color: theme.colors.link,
 		textDecoration: 'none',
 		fontSize: 12
+	},
+	asyncBadge: {
+		backgroundColor: theme.colors.badges.async
 	}
 }), { name: 'OverviewTableEntry' });
 
@@ -29,7 +32,7 @@ const OverviewTableEntry: React.FC<OverviewTableEntryProps> = ({ node }) => {
 			<HashLink className={classes.link} to={`#${getAnchorName(node)}`}>{node.name}</HashLink>
 			{node.flags.isStatic ? <Badge small title='static'>s</Badge> : null}
 			{node.kind === ReferenceNodeKind.Method && node.signatures?.some(sig => typeIsAsync(sig.type)) ? (
-				<Badge small title="async">a</Badge>
+				<Badge small className={classes.asyncBadge} title="async">a</Badge>
 			) : null}
 		</li>
 	);

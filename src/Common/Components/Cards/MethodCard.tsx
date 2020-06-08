@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
 			opacity: 1
 		}
 	},
+	asyncBadge: {
+		backgroundColor: theme.colors.badges.async
+	},
 	returnTypeWrapper: {
 		fontWeight: 'bold',
 		margin: '1em 0 0'
@@ -56,6 +59,7 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 			{definition.flags.isStatic && <Badge>static</Badge>}
 			{isAsync && (
 				<Badge
+					className={classes.asyncBadge}
 					title="This method actually returns a Promise object, but the use of await is recommended for easier use. Please click on the badge for further information."
 					href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/await"
 				>

@@ -2,7 +2,11 @@ import classNames from 'classnames';
 import React from 'react';
 import { DefaultTheme, makeStyles } from '@material-ui/styles';
 
-const useStyles = makeStyles<DefaultTheme, { hasLink: boolean }>(theme => ({
+interface BadgeStyleProps {
+	hasLink: boolean;
+}
+
+const useStyles = makeStyles<DefaultTheme, BadgeStyleProps>(theme => ({
 	root: {
 		display: 'inline-block',
 		color: theme.colors.background.default,
@@ -25,14 +29,15 @@ interface BadgeProps {
 	small?: boolean;
 	title?: string;
 	href?: string;
+	className?: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({ small, title, href, children }) => {
+const Badge: React.FC<BadgeProps> = ({ small, title, href, className, children }) => {
 	const hasLink = !!href;
 	const classes = useStyles({ hasLink });
 	const Component = hasLink ? 'a' : 'span';
 	return (
-		<Component href={href} title={title} className={classNames(classes.root, { [classes.rootSmall]: small })}>{children}</Component>
+		<Component href={href} title={title} className={classNames(classes.root, { [classes.rootSmall]: small }, className)}>{children}</Component>
 	);
 };
 
