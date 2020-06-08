@@ -1,4 +1,4 @@
-import { AbstractReferenceNode, ReferenceNode } from '../reference';
+import { AbstractReferenceNode, ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
 import { filterByMember, findByMember } from './ArrayTools';
 
 export function checkVisibility(node: ReferenceNode, parent?: AbstractReferenceNode) {
@@ -49,4 +49,8 @@ export function getAnchorName(node: ReferenceNode, name?: string) {
 		modifiers.push('s');
 	}
 	return [...modifiers, name ?? node.name].join('_');
+}
+
+export function typeIsAsync(type: ReferenceType): type is ReferenceReferenceType {
+	return type.type === 'reference' && type.name === 'Promise' && !type.id;
 }

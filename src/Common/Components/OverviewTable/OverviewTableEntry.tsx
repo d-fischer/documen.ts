@@ -2,7 +2,8 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { HashLink } from 'react-router-hash-link';
 import { ReferenceNode } from '../../reference';
-import { getAnchorName } from '../../Tools/NodeTools';
+import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
+import { getAnchorName, typeIsAsync } from '../../Tools/NodeTools';
 import Badge from '../Badge';
 
 const useStyles = makeStyles(theme => ({
@@ -27,6 +28,9 @@ const OverviewTableEntry: React.FC<OverviewTableEntryProps> = ({ node }) => {
 		<li className={classes.root}>
 			<HashLink className={classes.link} to={`#${getAnchorName(node)}`}>{node.name}</HashLink>
 			{node.flags.isStatic ? <Badge small title='static'>s</Badge> : null}
+			{node.kind === ReferenceNodeKind.Method && node.signatures?.some(sig => typeIsAsync(sig.type)) ? (
+				<Badge small title="async">a</Badge>
+			) : null}
 		</li>
 	);
 };

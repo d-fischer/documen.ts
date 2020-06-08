@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Card from '../../Containers/Card';
 import FunctionSignature from '../FunctionSignature';
 import FunctionParamDesc from '../FunctionParamDesc';
-import { ConstructorReferenceNode, MethodReferenceNode, SignatureReferenceNode } from '../../reference';
+import { ConstructorReferenceNode, MethodReferenceNode, ReferenceType, SignatureReferenceNode } from '../../reference';
 import { getTag, hasTag } from '../../Tools/CodeTools';
 
 import DeprecationNotice from '../DeprecationNotice';
@@ -11,7 +11,7 @@ import Badge from '../Badge';
 import { makeStyles } from '@material-ui/styles';
 import Type from '../CodeBuilders/Type';
 import MarkdownParser from '../../Tools/MarkdownParser';
-import { getAnchorName } from '../../Tools/NodeTools';
+import { getAnchorName, typeIsAsync } from '../../Tools/NodeTools';
 
 interface MethodCardProps {
 	definition: ConstructorReferenceNode | MethodReferenceNode;
@@ -41,11 +41,27 @@ const useStyles = makeStyles(theme => ({
 
 const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor }) => {
 	const classes = useStyles();
+
+	const [isAsync, returnType] = useMemo<[boolean, ReferenceType]>(() => {
+		if (typeIsAsync(sig.type)) {
+			return [true, sig.type.typeArguments?.[0] ?? { type: 'intrinsic', name: 'any' }];
+		}
+		return [false, sig.type];
+	}, [sig.type]);
+
 	return (
 		<Card className={classes.root} id={getAnchorName(definition, sig.name)} key={sig.id}>
 			<CardToolbar className={classes.toolbar} definition={definition} signature={sig}/>
 			<FunctionSignature signature={sig} isConstructor={isConstructor}/>
 			{definition.flags.isStatic && <Badge>static</Badge>}
+			{isAsync && (
+				<Badge
+					title="This method actually returns a Promise object, but the use of await is recommended for easier use. Please click on the badge for further information."
+					href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/await"
+				>
+					async
+				</Badge>
+			)}
 			{hasTag(sig, 'deprecated') && (
 				<DeprecationNotice>
 					<MarkdownParser source={getTag(sig, 'deprecated')!}/>
@@ -58,7 +74,7 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 				<div className={classes.returnTypeWrapper}>
 					Return type:{' '}
 					<span className={classes.returnType}>
-						<Type def={sig.type}/>
+						<Type def={returnType}/>
 					</span>
 				</div>
 			)}

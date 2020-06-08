@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
-import { makeStyles } from '@material-ui/styles';
+import { DefaultTheme, makeStyles } from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<DefaultTheme, { hasLink: boolean }>(theme => ({
 	root: {
 		display: 'inline-block',
 		color: theme.colors.background.default,
@@ -11,7 +11,8 @@ const useStyles = makeStyles(theme => ({
 		padding: '2px 5px',
 		borderRadius: 5,
 		fontSize: 12,
-		cursor: 'default'
+		textDecoration: 'none',
+		cursor: ({ hasLink }) => hasLink ? 'pointer' : 'default'
 	},
 	rootSmall: {
 		padding: '1px 3px',
@@ -23,12 +24,15 @@ const useStyles = makeStyles(theme => ({
 interface BadgeProps {
 	small?: boolean;
 	title?: string;
+	href?: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({ small, title, children }) => {
-	const classes = useStyles();
+const Badge: React.FC<BadgeProps> = ({ small, title, href, children }) => {
+	const hasLink = !!href;
+	const classes = useStyles({ hasLink });
+	const Component = hasLink ? 'a' : 'span';
 	return (
-		<span title={title} className={classNames(classes.root, {[classes.rootSmall]: small})}>{children}</span>
+		<Component href={href} title={title} className={classNames(classes.root, { [classes.rootSmall]: small })}>{children}</Component>
 	);
 };
 
