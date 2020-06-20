@@ -21,9 +21,15 @@ const insertIntoSkeleton = (html: string, css?: string) =>
     <style>
     	@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
 
-		html, body, #root {
+		html {
+			height: 100%;
+		}
+
+		html, body, #app-root {
 			width: 100%;
-			min-height: 100%;
+			display: flex;
+			flex: 1;
+			flex-direction: column;
 		}
 		
 		body {

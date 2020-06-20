@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 		display: 'flex',
 		flexDirection: 'row',
 		width: '100%',
-		minHeight: '100%'
+		flex: 1
 	},
 	nav: {
 		width: 250
