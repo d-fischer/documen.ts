@@ -1,3 +1,5 @@
+import Config from '../../Common/config/Config';
+import Paths from '../../Common/Paths';
 import Generator from './Generator';
 import { ReferenceNode } from '../../Common/reference';
 import SPAGenerator from './SPAGenerator';
@@ -6,35 +8,26 @@ import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 
 export default class MonorepoGenerator extends Generator {
-	async generate(data: ReferenceNode, projectBase: string, sourceBase: string) {
-		let generator;
+	async _generatePackage(data: ReferenceNode, paths: Paths) {
+		// stub
+	}
+
+	async generate(data: ReferenceNode, paths: Paths) {
+		const generator = this._createGenerator(this._config);
+
+		await generator._buildWebpack(data, paths);
 
 		for (const pkg of data.children!) {
 			const subPackage = pkg.name;
 
 			const config = {
-				...this._config,
-				...(this._config.packages && this._config.packages[subPackage] || {}),
+				...(this._config.packages?.[subPackage] ?? {}),
 				subPackage
 			};
 
-			switch (this._config.mode) {
-				case 'spa': {
-					generator = new SPAGenerator(config);
-					break;
-				}
-				case 'html': {
-					generator = new HTMLGenerator(config);
-					break;
-				}
-				default: {
-					throw new Error(`Generator '${this._config.mode}' not found`);
-				}
-			}
-
 			process.stdout.write(`Building docs for package ${subPackage}...\n`);
 
-			await generator.generate(data, projectBase, sourceBase);
+			await generator._generatePackage(data, paths, config);
 
 			process.stdout.write(`\rFinished building docs for package ${subPackage}\n`);
 		}
@@ -70,5 +63,19 @@ export default class MonorepoGenerator extends Generator {
 		}));
 
 		return node;
+	}
+
+	private _createGenerator(config: Config): Generator {
+		switch (this._config.mode) {
+			case 'spa': {
+				return new SPAGenerator(config);
+			}
+			case 'html': {
+				return new HTMLGenerator(config);
+			}
+			default: {
+				throw new Error(`Generator '${this._config.mode}' not found`);
+			}
+		}
 	}
 }

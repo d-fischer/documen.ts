@@ -6,14 +6,14 @@ export interface ArticleContent {
 	content: string;
 }
 
-const { Provider, Consumer } = React.createContext<ArticleContent | undefined>({ title: '', content: '' });
+const PageArticleContext = React.createContext<ArticleContent | undefined>({ title: '', content: '' });
 
 const PageArticle: React.FC = () => (
-	<Consumer>
+	<PageArticleContext.Consumer>
 		{article => article && <MarkdownParser source={article.content}/>}
-	</Consumer>
+	</PageArticleContext.Consumer>
 );
 
 export default PageArticle;
 
-export { Provider as ArticleProvider };
+export { PageArticleContext };

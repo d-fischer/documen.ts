@@ -1,5 +1,6 @@
 import { Application, TSConfigReader } from 'typedoc';
 import path from 'path';
+import Paths from '../../Common/Paths';
 import { ReferenceNode } from '../../Common/reference';
 import Config from '../../Common/config/Config';
 
@@ -17,7 +18,7 @@ export default abstract class Generator {
 		typeDoc.bootstrap({
 			mode: 'file',
 			...this._overrideTypeDocConfig()
-		})
+		});
 		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
 		const project = typeDoc.convert(files);
 		if (!project) {
@@ -41,7 +42,14 @@ export default abstract class Generator {
 		};
 	}
 
-	abstract async generate(data: ReferenceNode, projectBase: string, sourceBase: string): Promise<void>;
+	abstract async generate(data: ReferenceNode, paths: Paths): Promise<void>;
+
+	/** @protected */
+	abstract async _generatePackage(data: ReferenceNode, paths: Paths, overrideConfig?: Partial<Config>): Promise<void>;
+
+	/** @protected */
+	async _buildWebpack(data: ReferenceNode, paths: Paths, overrideConfig: Partial<Config> = {}) {
+	}
 
 	protected _overrideTypeDocConfig(): Object {
 		return {};

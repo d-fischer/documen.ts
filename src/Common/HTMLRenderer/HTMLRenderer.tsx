@@ -6,7 +6,7 @@ import App from '../Containers/App';
 import RouterMode from './RouterMode';
 import { StaticRouter } from 'react-router';
 import config from '../config';
-import { ArticleProvider, ArticleContent } from '../Components/PageArticle';
+import { PageArticleContext, ArticleContent } from '../Components/PageArticle';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
 import theme from '../theme';
 import { dom } from '@fortawesome/fontawesome-svg-core';
@@ -60,13 +60,13 @@ const render = (url: string, article?: ArticleContent) => {
 	switch (routerMode) {
 		case 'htmlSuffix': {
 			elem = (
-				<ArticleProvider value={article}>
+				<PageArticleContext.Provider value={article}>
 					<ThemeProvider theme={theme}>
 						<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
 							<App/>
 						</StaticRouterWithSuffix>
 					</ThemeProvider>
-				</ArticleProvider>
+				</PageArticleContext.Provider>
 			);
 			break;
 		}
@@ -74,13 +74,13 @@ const render = (url: string, article?: ArticleContent) => {
 		case 'subDirectories':
 		case 'server': {
 			elem = (
-				<ArticleProvider value={article}>
+				<PageArticleContext.Provider value={article}>
 					<ThemeProvider theme={theme}>
 						<StaticRouter basename={baseUrl} context={{}} location={url}>
 							<App/>
 						</StaticRouter>
 					</ThemeProvider>
-				</ArticleProvider>
+				</PageArticleContext.Provider>
 			);
 			break;
 		}

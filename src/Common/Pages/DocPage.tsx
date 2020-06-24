@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
 import config from '../config';
-import PageArticle from '../Components/PageArticle';
+import PageArticle, { PageArticleContext } from '../Components/PageArticle';
 import { useParams } from 'react-router';
 
 interface DocPageRouteParams {
@@ -13,24 +13,32 @@ interface DocPageRouteParams {
 
 const DocPage: React.FC = () => {
 	const { categoryName, articleName } = useParams<DocPageRouteParams>();
-	if (!config.categories) {
-		return null;
-	}
+	const article = useContext(PageArticleContext);
 
-	const category = config.categories.find(cat => cat.name === categoryName);
-	if (!category) {
-		return null;
-	}
+	let title = article?.title;
 
-	const article = category.articles.find(art => art.name === articleName);
-	if (!article) {
-		return null;
+	if (!title) {
+		if (!config.categories) {
+			return null;
+		}
+
+		const category = config.categories.find(cat => cat.name === categoryName);
+		if (!category) {
+			return null;
+		}
+
+		const confArticle = category.articles.find(art => art.name === articleName);
+		if (!confArticle) {
+			return null;
+		}
+
+		title = confArticle.title;
 	}
 
 	return (
 		<>
 			<PageHeader>
-				<h1>{article.title}</h1>
+				<h1>{title}</h1>
 			</PageHeader>
 			<PageContent>
 				<PageArticle/>

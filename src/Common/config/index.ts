@@ -1,9 +1,5 @@
 import Config from './Config';
-
-interface Paths {
-	projectBase: string;
-	sourceBase: string;
-}
+import Paths from '../../Common/Paths';
 
 declare global {
 	const __DOCTS_CONFIG: Config;

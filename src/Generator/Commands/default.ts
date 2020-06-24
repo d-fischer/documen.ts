@@ -1,19 +1,20 @@
 /* eslint-disable no-console,max-classes-per-file */
 import ansi from 'ansi-escapes';
-import { Command, Options, command, option, params, ExpectedError } from 'clime';
+import cartesianProduct from 'cartesian-product';
+import { Command, command, ExpectedError, option, Options, params } from 'clime';
 import fs from 'fs-extra';
 import path from 'path';
-import Generator from '../Modes/Generator';
-import WebpackError from '../Errors/WebpackError';
-import WebpackBuildError from '../Errors/WebpackBuildError';
-import SPAGenerator from '../Modes/SPAGenerator';
-import HTMLGenerator from '../Modes/HTMLGenerator';
-import RouterMode from '../../Common/HTMLRenderer/RouterMode';
+import tmp from 'tmp-promise';
 import Config from '../../Common/config/Config';
-import { removeSlash } from '../../Common/Tools/StringTools';
 import { getConfigValue } from '../../Common/config/Util';
+import RouterMode from '../../Common/HTMLRenderer/RouterMode';
+import { removeSlash } from '../../Common/Tools/StringTools';
+import WebpackBuildError from '../Errors/WebpackBuildError';
+import WebpackError from '../Errors/WebpackError';
+import Generator from '../Modes/Generator';
+import HTMLGenerator from '../Modes/HTMLGenerator';
 import MonorepoGenerator from '../Modes/MonorepoGenerator';
-import cartesianProduct from 'cartesian-product';
+import SPAGenerator from '../Modes/SPAGenerator';
 
 export class CLICommandOptions extends Options {
 	@option({ description: 'base directory' })
@@ -135,7 +136,7 @@ export default class CLICommand extends Command {
 			repoBaseFolder: getConfigValue(importedConfig, 'repoBaseFolder'),
 			repoBranch: options.repoBranch,
 			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
-			indexFile: indexFile,
+			indexFile,
 			categories: getConfigValue(importedConfig, 'categories') || undefined,
 			packages: getConfigValue(importedConfig, 'packages') || undefined,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
@@ -171,8 +172,13 @@ export default class CLICommand extends Command {
 			await fs.writeJSON(jsonPath, reference, { spaces: 2 });
 		}
 
+		const tmpResult = await tmp.dir({ unsafeCleanup: true });
 		try {
-			await generator.generate(reference, baseDir, sourceBasePath);
+			await generator.generate(reference, {
+				projectBase: baseDir,
+				sourceBase: sourceBasePath,
+				tmpDir: tmpResult.path
+			});
 			process.exit(0);
 		} catch (e) {
 			if (e instanceof WebpackError) {
@@ -188,6 +194,8 @@ export default class CLICommand extends Command {
 				console.error(e);
 				process.exit(1);
 			}
+		} finally {
+			await tmpResult.cleanup();
 		}
 	}
 }
