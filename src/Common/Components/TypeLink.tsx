@@ -10,7 +10,6 @@ interface TypeLinkProps {
 	id?: number;
 	name: string;
 	symbol?: ReferenceNode;
-	packageName?: string;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -21,11 +20,13 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'TypeLink' });
 
-const TypeLink: React.FC<TypeLinkProps> = ({ id, name, children, symbol, packageName }) => {
+const TypeLink: React.FC<TypeLinkProps> = ({ id, name, children, symbol }) => {
 	const classes = useStyles();
 
+	let packageName: string | undefined = undefined;
+
 	if (!symbol) {
-		const symbolDef = id ? findSymbolByMember('id', id, undefined, packageName) : findSymbolByMember('name', name, undefined, packageName);
+		const symbolDef = id ? findSymbolByMember('id', id) : findSymbolByMember('name', name);
 		if (symbolDef) {
 			symbol = symbolDef.symbol;
 			packageName = symbolDef.packageName;

@@ -5,7 +5,7 @@ import path from 'path';
 import { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
-import { filterByMember} from '../../Common/Tools/ArrayTools';
+import { filterByMember } from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { ArticleContent } from '../../Common/Components/PageArticle';
 import { getPackagePath } from '../../Common/Tools/StringTools';
@@ -63,13 +63,13 @@ export default class HTMLGenerator extends Generator {
 		].map(async (entry: RenderEntry | string) => {
 			if (Array.isArray(entry)) {
 				const [resourcePath, title, contentPromise] = entry;
-				return this._renderToFile(render, resourcePath, outDir, {
+				return this._renderToFile(render, resourcePath, outDir, config, {
 					content: await contentPromise,
 					title
 				});
 			}
 
-			return this._renderToFile(render, entry, outDir);
+			return this._renderToFile(render, entry, outDir, config);
 		}));
 	}
 
@@ -114,7 +114,7 @@ export default class HTMLGenerator extends Generator {
 		});
 	}
 
-	private async _renderToFile(render: (path: string, article?: ArticleContent) => string, resourcePath: string, outDir: string, content?: ArticleContent) {
+	private async _renderToFile(render: (path: string, config: Config, article?: ArticleContent) => string, resourcePath: string, outDir: string, config: Config, content?: ArticleContent) {
 		let relativeOutFile = resourcePath;
 		if (resourcePath.endsWith('/')) {
 			relativeOutFile += 'index.html';
@@ -125,7 +125,7 @@ export default class HTMLGenerator extends Generator {
 		}
 		const outFile = path.join(outDir, relativeOutFile);
 		await fs.mkdirp(path.dirname(outFile));
-		const str = render(resourcePath, content);
+		const str = render(resourcePath, config, content);
 
 		await fs.writeFile(outFile, str);
 	}

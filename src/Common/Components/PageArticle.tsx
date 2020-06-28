@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import MarkdownParser from '../Tools/MarkdownParser';
 
 export interface ArticleContent {
@@ -6,7 +6,7 @@ export interface ArticleContent {
 	content: string;
 }
 
-const PageArticleContext = React.createContext<ArticleContent | undefined>({ title: '', content: '' });
+const PageArticleContext = createContext<ArticleContent | undefined>({ title: '', content: '' });
 
 const PageArticle: React.FC = () => (
 	<PageArticleContext.Consumer>

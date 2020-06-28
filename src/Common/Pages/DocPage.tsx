@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
+import { ConfigContext } from '../config';
 
 import PageHeader from '../Containers/PageHeader';
 import PageContent from '../Containers/PageContent';
-import config from '../config';
 import PageArticle, { PageArticleContext } from '../Components/PageArticle';
 import { useParams } from 'react-router';
 
@@ -14,6 +14,7 @@ interface DocPageRouteParams {
 const DocPage: React.FC = () => {
 	const { categoryName, articleName } = useParams<DocPageRouteParams>();
 	const article = useContext(PageArticleContext);
+	const config = useContext(ConfigContext);
 
 	let title = article?.title;
 

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
-import config, { projectBase, sourceBase } from '../config';
+import { ConfigContext, projectBase, sourceBase } from '../config';
 import path from 'path';
 
 import classNames from 'classnames';
@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
 	const classes = useStyles();
+	const config = useContext(ConfigContext);
 
 	if (!(config.repoUser && config.repoName && symbol.sources && symbol.sources.length)) {
 		return null;

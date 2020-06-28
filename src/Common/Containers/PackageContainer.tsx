@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import NavMenu from '../Components/NavMenu';
+import { ConfigContext } from '../config';
 
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
-import config from '../config';
 import NavMenuGroup from '../Components/NavMenuGroup';
 import NavMenuItem from '../Components/NavMenuItem';
 import PageSwitch from './PageSwitch';
@@ -35,6 +35,7 @@ interface PackageContainerRouteParams {
 export const PackageContainer: React.FC = () => {
 	const { packageName } = useParams<PackageContainerRouteParams>();
 	const classes = useStyles();
+	const config = useContext(ConfigContext);
 
 	const pre = getPackagePath(packageName);
 
