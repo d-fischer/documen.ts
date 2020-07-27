@@ -1,5 +1,6 @@
 /build
 /src/Generator
+/src/ProgressiveEnhancement
 
 /.idea
 .DS_Store

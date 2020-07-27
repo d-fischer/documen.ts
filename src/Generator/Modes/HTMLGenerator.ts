@@ -1,19 +1,20 @@
-import Paths from '../../Common/Paths';
-import Generator from './Generator';
+import * as ts from 'typescript';
+import * as vfs from '@typescript/vfs';
+import fs from 'fs-extra';
 import path from 'path';
-
-import { ReferenceNode } from '../../Common/reference';
-import WebpackError from '../Errors/WebpackError';
-import WebpackBuildError from '../Errors/WebpackBuildError';
-import { filterByMember } from '../../Common/Tools/ArrayTools';
-import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
-import { ArticleContent } from '../../Common/Components/PageArticle';
-import { getPackagePath } from '../../Common/Tools/StringTools';
 import resolveHome from 'untildify';
 import webpack from 'webpack';
-import fs from 'fs-extra';
+import { ArticleContent } from '../../Common/Components/PageArticle';
 import Config, { ConfigInternalArticle } from '../../Common/config/Config';
+import Paths from '../../Common/Paths';
+import { ReferenceNode } from '../../Common/reference';
+import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
+import { filterByMember } from '../../Common/Tools/ArrayTools';
 import { getChildren } from '../../Common/Tools/NodeTools';
+import { getPackagePath } from '../../Common/Tools/StringTools';
+import WebpackBuildError from '../Errors/WebpackBuildError';
+import WebpackError from '../Errors/WebpackError';
+import Generator from './Generator';
 
 type RenderEntry = [string, string, Promise<string>];
 
@@ -41,6 +42,10 @@ export default class HTMLGenerator extends Generator {
 
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const { default: render } = require(path.join(paths.tmpDir, 'generator.js'));
+
+		if (config.shouldEnhance) {
+			await fs.copyFile(path.join(paths.tmpDir, 'pe.js'), path.join(outDir, 'pe.js'));
+		}
 
 		const packageData = getChildren(data).find(pkg => pkg.name === config.subPackage)!;
 
@@ -74,44 +79,62 @@ export default class HTMLGenerator extends Generator {
 	}
 
 	/** @protected */
-	async _buildWebpack(data: ReferenceNode, paths: Paths, overrideConfig: Partial<Config> = {}) {
-		return new Promise<void>((resolve, reject) => {
-			process.chdir(path.join(__dirname, '../../..'));
+	async _buildWebpack(data: ReferenceNode, paths: Paths, fsMap: Map<string, string>, overrideConfig: Partial<Config> = {}) {
+		process.chdir(path.join(__dirname, '../../..'));
 
-			const config = {
-				...this._config,
-				...overrideConfig
-			};
+		const config = {
+			...this._config,
+			...overrideConfig
+		};
 
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const webpackConfig = require('../../../config/webpack.config.html')(paths.tmpDir);
-			const webpackCompiler = webpack(webpackConfig);
+		const fsMapEntries = config.shouldEnhance ? [...fsMap.entries()] : [];
 
-			const { webpackProgressCallback, ...configWithoutCallback } = config;
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir);
+		if (!Array.isArray(webpackConfigs)) {
+			webpackConfigs = [webpackConfigs];
+		}
+		for (const webpackConfig of webpackConfigs) {
+			await new Promise<void>((resolve, reject) => {
+				const webpackCompiler = webpack(webpackConfig);
 
-			if (webpackProgressCallback) {
-				(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
-			}
+				const { webpackProgressCallback, ...configWithoutCallback } = config;
 
-			(new webpack.DefinePlugin({
-				/* eslint-disable @typescript-eslint/naming-convention */
-				__DOCTS_REFERENCE: JSON.stringify(data),
-				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
-				__DOCTS_PATHS: JSON.stringify(paths)
-				/* eslint-enable @typescript-eslint/naming-convention */
-			})).apply(webpackCompiler);
-
-			webpackCompiler.run((err, stats) => {
-				if (err) {
-					reject(new WebpackError(err));
-				} else if (stats.hasErrors()) {
-					reject(new WebpackBuildError(stats));
-				} else {
-					process.stdout.write('\n\n');
-					resolve();
+				if (webpackProgressCallback) {
+					(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
 				}
+
+				/* eslint-disable @typescript-eslint/naming-convention */
+				const definitions: Record<string, string> = {
+					__DOCTS_REFERENCE: JSON.stringify(data),
+					__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
+					__DOCTS_PATHS: JSON.stringify(paths)
+				};
+				if (config.shouldEnhance && webpackConfig.output.filename === 'pe.js') {
+					definitions.__DOCTS_FSMAP = JSON.stringify(fsMapEntries);
+				}
+				/* eslint-enable @typescript-eslint/naming-convention */
+
+				(new webpack.DefinePlugin(definitions)).apply(webpackCompiler);
+
+				webpackCompiler.run((err, stats) => {
+					if (err) {
+						reject(new WebpackError(err));
+					} else if (stats.hasErrors()) {
+						reject(new WebpackBuildError(stats));
+					} else {
+						process.stdout.write('\n\n');
+						resolve();
+					}
+				});
 			});
-		});
+		}
+	}
+
+	protected async _generateFsMap() {
+		const fsMap = vfs.createDefaultMapFromNodeModules({ target: ts.ScriptTarget.ES2015 });
+		vfs.addAllFilesFromFolder(fsMap, path.join(this._config.baseDir, 'node_modules'));
+		return fsMap;
 	}
 
 	private async _renderToFile(render: (path: string, config: Config, article?: ArticleContent) => string, resourcePath: string, outDir: string, config: Config, content?: ArticleContent) {

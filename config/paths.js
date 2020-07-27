@@ -46,6 +46,7 @@ module.exports = {
 	servedPath: getServedPath(resolveApp('package.json')),
 	entryPoints: {
 		spa: resolveApp('src/SPA/index.tsx'),
+		enhance: resolveApp('src/ProgressiveEnhancement/index.tsx'),
 		html: resolveApp('src/HTML/index.ts')
 	}
 };

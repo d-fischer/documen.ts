@@ -12,7 +12,7 @@ import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
 import theme from '../theme';
 import { dom } from '@fortawesome/fontawesome-svg-core';
 
-const insertIntoSkeleton = (html: string, css?: string) =>
+const insertIntoSkeleton = (html: string, css: string, baseUrl: string, shouldEnhance: boolean) =>
 	`<!doctype html>
 <html lang="en">
 <head>
@@ -49,6 +49,7 @@ const insertIntoSkeleton = (html: string, css?: string) =>
 </head>
 <body>
 <div id="app-root">${html}</div>
+${shouldEnhance ? `<script src="${baseUrl}/pe.js"></script>` : ''}
 </body>
 </html>`;
 
@@ -92,7 +93,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 		default:
 			elem = <></>;
 	}
-	return insertIntoSkeleton(renderToString(sheets.collect(elem)), sheets.toString());
+	return insertIntoSkeleton(renderToString(sheets.collect(elem)), sheets.toString(), baseUrl, config.shouldEnhance);
 };
 
 export default render;

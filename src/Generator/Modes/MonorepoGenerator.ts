@@ -1,11 +1,14 @@
+import path from 'path';
+import { OutputChunk, rollup } from 'rollup';
+import dts from 'rollup-plugin-dts';
 import Config from '../../Common/config/Config';
 import Paths from '../../Common/Paths';
-import Generator from './Generator';
 import { ReferenceNode } from '../../Common/reference';
-import SPAGenerator from './SPAGenerator';
-import HTMLGenerator from './HTMLGenerator';
-import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
+import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
+import Generator from './Generator';
+import HTMLGenerator from './HTMLGenerator';
+import SPAGenerator from './SPAGenerator';
 
 export default class MonorepoGenerator extends Generator {
 	async _generatePackage(data: ReferenceNode, paths: Paths) {
@@ -15,7 +18,8 @@ export default class MonorepoGenerator extends Generator {
 	async generate(data: ReferenceNode, paths: Paths) {
 		const generator = this._createGenerator(this._config);
 
-		await generator._buildWebpack(data, paths);
+		const fsMap = await this._generateFsMap(data, paths);
+		await generator._buildWebpack(data, paths, fsMap);
 
 		for (const pkg of data.children!) {
 			const subPackage = pkg.name;
@@ -63,6 +67,16 @@ export default class MonorepoGenerator extends Generator {
 		}));
 
 		return node;
+	}
+
+	protected async _generateFsMap(data: ReferenceNode, paths: Paths): Promise<Map<string, string>> {
+		const bundle = await rollup({
+			input: Object.fromEntries(data.children!.map(pkg => [pkg.name, path.join(paths.projectBase, this._config.monorepoRoot!, pkg.name, 'lib', 'index.d.ts')])),
+			plugins: [dts()]
+		});
+		const { output } = await bundle.generate({ format: 'es' });
+
+		return new Map(output.filter((out): out is OutputChunk => out.type === 'chunk').map(chunk => [`/node_modules/@types/${chunk.name}/index.d.ts`, chunk.code]));
 	}
 
 	private _createGenerator(config: Config): Generator {

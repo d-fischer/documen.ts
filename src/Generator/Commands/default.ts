@@ -139,6 +139,7 @@ export default class CLICommand extends Command {
 			indexFile,
 			categories: getConfigValue(importedConfig, 'categories') || undefined,
 			packages: getConfigValue(importedConfig, 'packages') || undefined,
+			shouldEnhance: true,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
 				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);
 				if (moduleProgress) {

@@ -48,7 +48,7 @@ export default abstract class Generator {
 	abstract async _generatePackage(data: ReferenceNode, paths: Paths, overrideConfig?: Partial<Config>): Promise<void>;
 
 	/** @protected */
-	async _buildWebpack(data: ReferenceNode, paths: Paths, overrideConfig: Partial<Config> = {}) {
+	async _buildWebpack(data: ReferenceNode, paths: Paths, fsMap: Map<string, string>, overrideConfig: Partial<Config> = {}) {
 	}
 
 	protected _overrideTypeDocConfig(): Object {
@@ -57,5 +57,9 @@ export default abstract class Generator {
 
 	protected _transformTopReferenceNode(node: ReferenceNode): ReferenceNode {
 		return node;
+	}
+
+	protected async _generateFsMap(data: ReferenceNode, paths: Paths): Promise<Map<string, string>> {
+		return new Map();
 	}
 }

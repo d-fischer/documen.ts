@@ -40,5 +40,6 @@ export default interface Config {
 	indexTitle: string;
 	categories?: ConfigCategory[];
 	packages?: Record<string, Config>;
+	shouldEnhance: boolean;
 	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
 }

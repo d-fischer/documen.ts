@@ -3,8 +3,7 @@ import commonmark from 'commonmark';
 import ReactRenderer from 'commonmark-react-renderer';
 import { HashLink } from 'react-router-hash-link';
 
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import darcula from 'react-syntax-highlighter/dist/esm/styles/hljs/darcula';
+import { CodeBlock } from '../Components/CodeBlock';
 
 import { getPageType } from './CodeTools';
 import { findSymbolByMember } from './ReferenceTools';
@@ -109,13 +108,9 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 					}
 				},
 
-				// eslint-disable-next-line @typescript-eslint/camelcase,@typescript-eslint/no-explicit-any
+				// eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/no-explicit-any
 				code_block: function MdCodeBlock(mdProps: any) {
-					return (
-						<SyntaxHighlighter key={mdProps.nodeKey} language={mdProps.language} style={darcula}>
-							{mdProps.literal}
-						</SyntaxHighlighter>
-					);
+					return <CodeBlock key={mdProps.nodeKey} codeInfo={mdProps.codeinfo} text={mdProps.literal}/>;
 				}
 			}
 		}
