@@ -114,7 +114,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		);
 	}
 ) : (
-	({ codeInfo: [language] = [], text }) => {
+	({ codeInfo: [language, languageMode] = [], text }) => {
+		const isTwoslash = languageMode === 'twoslash';
 		const classes = useStyles();
 		const [idSuffix] = useState(() => randomstring.generate({ length: 8, charset: 'alphabetic' }));
 		const [mode, setMode] = useState('ts');
@@ -123,14 +124,23 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		const changeMode = useCallback<React.EventHandler<React.FormEvent<HTMLInputElement>>>((e) => {
 			setMode(e.currentTarget.value);
 		}, []);
-		const twoslashed = useMemo(() => twoslasher(text, 'ts', {
+		const twoslashed = useMemo(() => isTwoslash ? twoslasher(text, 'ts', {
 			defaultOptions: { showEmit: transpile },
 			tsModule: ts,
 			lzstringModule: lzString,
 			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			fsMap: require('../../ProgressiveEnhancement/fsMap').fsMap,
 			customTransformers: showCjs ? { after: [friendlyCjsTransform()] } : undefined
-		}), [text, transpile, showCjs]);
+		}) : undefined, [text, transpile, showCjs]);
+
+		if (!isTwoslash) {
+			return (
+				<SyntaxHighlighter language={language} style={darcula}>
+					{text}
+				</SyntaxHighlighter>
+			)
+		}
+
 		return (
 			<div className={classes.wrapper}>
 				<form className={classes.modeSwitcher}>

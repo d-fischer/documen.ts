@@ -30,6 +30,10 @@ export default interface Config {
 	baseDir: string;
 	baseUrl: string;
 	monorepoRoot?: string;
+	mainBranchName: string;
+	version?: string;
+	versionBranchPrefix?: string;
+	versionFolder?: string;
 	ignoredPackages: string[];
 	subPackage?: string;
 	repoUser: string | null;
@@ -42,4 +46,6 @@ export default interface Config {
 	packages?: Record<string, Config>;
 	shouldEnhance: boolean;
 	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
+	/** @private */
+	__devManifest?: any;
 }

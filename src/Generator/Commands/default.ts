@@ -2,12 +2,14 @@
 import ansi from 'ansi-escapes';
 import cartesianProduct from 'cartesian-product';
 import { Command, command, ExpectedError, option, Options, params } from 'clime';
-import fs from 'fs-extra';
+import { promises as fs, existsSync } from 'fs';
 import path from 'path';
 import tmp from 'tmp-promise';
 import Config from '../../Common/config/Config';
 import { getConfigValue } from '../../Common/config/Util';
 import RouterMode from '../../Common/HTMLRenderer/RouterMode';
+import Paths from '../../Common/Paths';
+import { fileExists } from '../../Common/Tools/FileTools';
 import { removeSlash } from '../../Common/Tools/StringTools';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 import WebpackError from '../Errors/WebpackError';
@@ -20,7 +22,7 @@ export class CLICommandOptions extends Options {
 	@option({ description: 'base directory' })
 	baseDir: string;
 
-	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => fs.pathExistsSync(path.resolve(process.cwd(), value)) })
+	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => existsSync(path.resolve(process.cwd(), value)) })
 	configDir: string;
 
 	@option({ flag: 'o', description: 'output directory' })
@@ -44,7 +46,7 @@ export class CLICommandOptions extends Options {
 	@option({ description: 'repo name', default: '' })
 	repoName: string;
 
-	@option({ description: 'git branch', default: 'master' })
+	@option({ description: 'git branch' })
 	repoBranch: string;
 
 	@option({ description: 'index file' })
@@ -67,7 +69,7 @@ export default class CLICommand extends Command {
 			configDir = path.resolve(baseDir, options.configDir);
 		} else {
 			const defaultConfigDir = path.resolve(baseDir, 'docs');
-			if (await fs.pathExists(defaultConfigDir)) {
+			if (await fileExists(defaultConfigDir)) {
 				configDir = defaultConfigDir;
 			}
 		}
@@ -78,12 +80,13 @@ export default class CLICommand extends Command {
 		if (configDir) {
 			const configFile = path.join(configDir, 'config.json');
 
-			if (!(await fs.pathExists(configFile))) {
+			if (!(await fileExists(configFile))) {
 				throw new ExpectedError('configuration directory was found but there is no config.json file in it');
 			}
 
 			try {
-				importedConfig = await fs.readJSON(configFile) as Config;
+				const fileContents = await fs.readFile(configFile, 'utf-8');
+				importedConfig = JSON.parse(fileContents) as Config;
 			} catch (e) {
 				throw new ExpectedError(`error reading ${configFile} as JSON: ${e.message}`);
 			}
@@ -91,7 +94,7 @@ export default class CLICommand extends Command {
 			indexFile = options.indexFile || getConfigValue(importedConfig, 'indexFile');
 			if (indexFile) {
 				indexFile = path.join(configDir, indexFile);
-				if (!(await fs.pathExists(indexFile))) {
+				if (!(await fileExists(indexFile))) {
 					throw new ExpectedError('given index file does not exist in configuration directory');
 				}
 			}
@@ -99,7 +102,7 @@ export default class CLICommand extends Command {
 
 		if (!indexFile) {
 			indexFile = path.join(baseDir, 'README.md');
-			if (!(await fs.pathExists(indexFile))) {
+			if (!(await fileExists(indexFile))) {
 				throw new ExpectedError('there was neither a given index file nor a README.md in the root of the project');
 			}
 		}
@@ -115,10 +118,44 @@ export default class CLICommand extends Command {
 
 			if (monorepoRoot) {
 				const monorepoPackages = (await fs.readdir(path.join(baseDir, monorepoRoot))).filter(pkg => !ignoredPackages.includes(pkg));
-				inputDirs = cartesianProduct([monorepoPackages, configInputDirs]).map(([pkg, dir]) => path.join(baseDir, monorepoRoot, pkg, dir)).filter(inputDir => fs.pathExistsSync(inputDir));
+				inputDirs = cartesianProduct([monorepoPackages, configInputDirs]).map(([pkg, dir]) => path.join(baseDir, monorepoRoot, pkg, dir)).filter(inputDir => existsSync(inputDir));
 			} else {
 				inputDirs = configInputDirs;
 			}
+		}
+
+		let needsManifest = false;
+		let versionAware = false;
+
+		const rootOutputDir = options.outDir || getConfigValue(importedConfig, 'outputDir', true);
+		const mainBranchName = getConfigValue(importedConfig, 'mainBranchName') ?? 'master';
+		const versionBranchPrefix = getConfigValue(importedConfig, 'versionBranchPrefix') ?? undefined;
+		const versionFolder = getConfigValue(importedConfig, 'versionFolder') ?? undefined;
+
+		let outputDir = rootOutputDir;
+		let version: string | undefined;
+		const rootUrl = removeSlash(options.baseUrl || getConfigValue(importedConfig, 'baseUrl', true) || '/');
+		let baseUrl = rootUrl;
+
+		if (versionBranchPrefix && versionFolder) {
+			if (!options.repoBranch) {
+				console.error('This project is version aware; please supply the branch name using the CLI option `--repo-branch`.');
+				process.exit(1);
+			}
+
+			if (options.repoBranch.startsWith(versionBranchPrefix)) {
+				version = options.repoBranch.substr(versionBranchPrefix.length);
+				outputDir = path.join(rootOutputDir, versionFolder, version);
+				baseUrl = path.posix.join(baseUrl, versionFolder, version);
+			} else if (options.repoBranch !== mainBranchName) {
+				console.error(`This project is version aware and can only build docs for the branch "${mainBranchName}" and branches starting with "${versionBranchPrefix}."`);
+				process.exit(1);
+			}
+			needsManifest = true;
+			versionAware = true;
+		} else if (versionBranchPrefix || versionFolder) {
+			console.error('Please either specify both the "versionBranchPrefix" and "versionFolder" options, or neither. Specifying only one of them is not supported.');
+			process.exit(1);
 		}
 
 		const generatorConfig: Config = {
@@ -126,15 +163,19 @@ export default class CLICommand extends Command {
 			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
 			routerMode: options.routerMode || getConfigValue(importedConfig, 'routerMode') || 'htmlSuffix',
 			inputDirs,
-			outputDir: options.outDir || getConfigValue(importedConfig, 'outputDir', true),
-			baseUrl: removeSlash(options.baseUrl || getConfigValue(importedConfig, 'baseUrl', true) || '/'),
-			baseDir: baseDir,
+			outputDir,
+			baseUrl,
+			baseDir,
 			monorepoRoot,
+			mainBranchName,
+			versionBranchPrefix,
+			versionFolder,
+			version,
 			ignoredPackages,
 			repoUser: options.repoUser || getConfigValue(importedConfig, 'repoUser'),
 			repoName: options.repoName || getConfigValue(importedConfig, 'repoName'),
 			repoBaseFolder: getConfigValue(importedConfig, 'repoBaseFolder'),
-			repoBranch: options.repoBranch,
+			repoBranch: options.repoBranch ?? 'master',
 			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
 			indexFile,
 			categories: getConfigValue(importedConfig, 'categories') || undefined,
@@ -168,19 +209,46 @@ export default class CLICommand extends Command {
 
 		const { reference, sourceBasePath } = generator.createReferenceStructure();
 
-		if (process.env.DOCTS_WRITE_JSON) {
-			const jsonPath = path.join(generatorConfig.outputDir, 'data.json');
-			await fs.writeJSON(jsonPath, reference, { spaces: 2 });
+		const tmpResult = await tmp.dir({ unsafeCleanup: true });
+		const paths: Paths = {
+			projectBase: baseDir,
+			sourceBase: sourceBasePath,
+			tmpDir: tmpResult.path,
+			rootUrl
+		};
+
+		if (versionAware) {
+			if (version) {
+				console.log(`Cleaning up generated files for version ${version}`);
+				await fs.rmdir(outputDir, { recursive: true });
+			} else {
+				console.log(`Cleaning up generated files for branch ${mainBranchName}`);
+				const [versionsRoot] = versionFolder!.split('/');
+				const rootFolderContents = await fs.readdir(rootOutputDir);
+				await Promise.all(
+					rootFolderContents
+						.filter(f => f !== versionsRoot && f !== 'manifest.json')
+						.map(async f => {
+							const filePath = path.join(rootOutputDir, f);
+							if ((await fs.lstat(filePath)).isDirectory()) {
+								await fs.rmdir(filePath, { recursive: true });
+							} else {
+								await fs.unlink(filePath);
+							}
+						})
+				);
+			}
 		}
 
-		const tmpResult = await tmp.dir({ unsafeCleanup: true });
+		if (process.env.DOCTS_WRITE_JSON) {
+			const jsonPath = path.join(baseDir, outputDir, 'data.json');
+			const json = JSON.stringify(reference, null, 2);
+			console.log(`Writing raw data to ${jsonPath}`);
+			await fs.writeFile(jsonPath, json);
+		}
+
 		try {
-			await generator.generate(reference, {
-				projectBase: baseDir,
-				sourceBase: sourceBasePath,
-				tmpDir: tmpResult.path
-			});
-			process.exit(0);
+			await generator.generate(reference, paths);
 		} catch (e) {
 			if (e instanceof WebpackError) {
 				process.stderr.write('\nerror building with webpack:\n');
@@ -197,6 +265,29 @@ export default class CLICommand extends Command {
 			}
 		} finally {
 			await tmpResult.cleanup();
+		}
+
+		if (needsManifest) {
+			const manifestPath = path.join(baseDir, rootOutputDir, 'manifest.json');
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			let manifest: any;
+			try {
+				const manifestJson = await fs.readFile(manifestPath, 'utf-8');
+				console.log(`Read existing manifest from ${manifestPath}`);
+				manifest = JSON.parse(manifestJson);
+			} catch {
+				console.log(`Manifest not found, creating new one at ${manifestPath}`)
+				manifest = {};
+			}
+			const versionsSet = new Set<string>(manifest.versions ?? []);
+			if (version) {
+				versionsSet.add(version!);
+			}
+			manifest.versions = [...versionsSet].sort();
+			manifest.rootUrl = rootUrl;
+
+			console.log(`Writing manifest to ${manifestPath}`);
+			await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
 		}
 	}
 }

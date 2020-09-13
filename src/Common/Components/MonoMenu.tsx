@@ -1,7 +1,9 @@
-import React from 'react';
-import { getPackageList } from '../Tools/ReferenceTools';
 import { makeStyles } from '@material-ui/styles';
+import React, { useContext, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
+import { ConfigContext } from '../config';
+import { getPackageList } from '../Tools/ReferenceTools';
+import VersionMenu from './VersionMenu';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -28,14 +30,25 @@ const useStyles = makeStyles(theme => ({
 		'&:hover': {
 			borderBottomColor: theme.colors.accent.focus
 		}
+	},
+	spacer: {
+		flex: 1
 	}
 }), { name: 'MonoMenu' });
 
 const MonoMenu: React.FC = () => {
 	const classes = useStyles();
+	const config = useContext(ConfigContext);
+	const packageNames = useMemo(() => getPackageList().map(pkg => pkg.name), []);
 	return (
 		<div className={classes.root}>
-			{getPackageList().map(pkg => <NavLink to={`/${pkg.name}/`} className={classes.entry} activeClassName={classes.entryActive} key={pkg.name}>{pkg.name}</NavLink>)}
+			{packageNames.map(pkg => <NavLink to={`/${pkg}/`} className={classes.entry} activeClassName={classes.entryActive} key={pkg}>{pkg}</NavLink>)}
+			{config.versionBranchPrefix ? (
+				<>
+					<div className={classes.spacer}/>
+					<VersionMenu/>
+				</>
+			) : null}
 		</div>
 	);
 };

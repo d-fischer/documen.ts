@@ -2,10 +2,12 @@ import { createGenerateClassName, StylesProvider, ThemeProvider } from '@materia
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { CodeBlock } from '../Common/Components/CodeBlock';
+import VersionMenu from '../Common/Components/VersionMenu';
 import theme from '../Common/theme';
 
 const registeredComponents = {
-	CodeBlock
+	CodeBlock,
+	VersionMenu,
 };
 
 const generateClassName = createGenerateClassName({

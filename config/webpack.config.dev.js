@@ -8,17 +8,18 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
-const fs = require('fs-extra');
+const fs = require('fs');
 const MonorepoGenerator = require('../lib/Generator/Modes/MonorepoGenerator').default;
 
 const publicPath = '/';
 const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
 
-const monoRefJson = fs.readJSONSync(path.join(process.cwd(), 'docs-mono.json'));
+const monoRefJson = fs.readFileSync(path.join(process.cwd(), 'docs-mono.json'), 'utf-8');
+const monoRefObj = JSON.parse(monoRefJson);
 const gen = new MonorepoGenerator({});
 
-const monoRef = gen._transformTopReferenceNode(monoRefJson);
+const monoRef = gen._transformTopReferenceNode(monoRefObj);
 
 module.exports = {
 	mode: 'development',
@@ -83,7 +84,19 @@ module.exports = {
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),
-			__DOCTS_CONFIG: JSON.stringify({ repoUser: 'd-fischer', repoName: 'twitch', repoBranch: 'master', monorepoRoot: 'packages' }),
+			__DOCTS_CONFIG: JSON.stringify({
+				repoUser: 'd-fischer',
+				repoName: 'twitch',
+				repoBranch: 'master',
+				monorepoRoot: 'packages',
+				mainBranchName: 'master',
+				versionBranchPrefix: 'support/',
+				versionFolder: 'versions',
+				__devManifest: {
+					versions: ['4.2'],
+					rootUrl: ''
+				}
+			}),
 			__DOCTS_PATHS: JSON.stringify({ sourceBase: path.resolve('..'), projectBase: path.resolve('../twitch') }),
 			__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic')
 		}),
