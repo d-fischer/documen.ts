@@ -6,7 +6,7 @@ module.exports = {
 		'react/prop-types': 'off'
 	},
 	parserOptions: {
-		project: ['tsconfig.json', 'tsconfig-html.json', 'tsconfig-spa.json']
+		project: ['tsconfig.json', 'tsconfig-html.json', 'tsconfig-spa.json', 'tsconfig-enhance.json']
 	},
 	settings: {
 		react: {
