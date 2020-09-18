@@ -19,7 +19,7 @@ const isLocalhost = Boolean(
 	)
 );
 
-async function registerValidSW(swUrl: string) {
+async function registerValidServiceWorker(swUrl: string) {
 	return navigator.serviceWorker
 		.register(swUrl)
 		.then(registration => {
@@ -65,7 +65,7 @@ async function checkValidServiceWorker(swUrl: string) {
 			window.location.reload();
 		} else {
 			// Service worker found. Proceed as normal.
-			return registerValidSW(swUrl);
+			return registerValidServiceWorker(swUrl);
 		}
 	} catch (e) {
 		console.log(
@@ -98,7 +98,7 @@ export default async function registerServiceWorker() {
 						await checkValidServiceWorker(swUrl);
 					} else {
 						// Is not local host. Just register service worker
-						await registerValidSW(swUrl);
+						await registerValidServiceWorker(swUrl);
 					}
 					resolve();
 				} catch (e) {

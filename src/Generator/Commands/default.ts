@@ -14,10 +14,11 @@ import { removeSlash } from '../../Common/Tools/StringTools';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 import WebpackError from '../Errors/WebpackError';
 import Generator from '../Modes/Generator';
-import HTMLGenerator from '../Modes/HTMLGenerator';
+import HtmlGenerator from '../Modes/HtmlGenerator';
 import MonorepoGenerator from '../Modes/MonorepoGenerator';
-import SPAGenerator from '../Modes/SPAGenerator';
+import SpaGenerator from '../Modes/SpaGenerator';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class CLICommandOptions extends Options {
 	@option({ description: 'base directory' })
 	baseDir: string;
@@ -57,6 +58,7 @@ export class CLICommandOptions extends Options {
 }
 
 @command()
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export default class CLICommand extends Command {
 	async execute(@params({ type: String, description: 'input directories' }) inputFolders: string[], options: CLICommandOptions) {
 		process.env.NODE_ENV = 'production';
@@ -194,11 +196,11 @@ export default class CLICommand extends Command {
 		} else {
 			switch (generatorConfig.mode) {
 				case 'spa': {
-					generator = new SPAGenerator(generatorConfig);
+					generator = new SpaGenerator(generatorConfig);
 					break;
 				}
 				case 'html': {
-					generator = new HTMLGenerator(generatorConfig);
+					generator = new HtmlGenerator(generatorConfig);
 					break;
 				}
 				default: {

@@ -18,7 +18,7 @@ import Generator from './Generator';
 
 type RenderEntry = [string, string, Promise<string>];
 
-export default class HTMLGenerator extends Generator {
+export default class HtmlGenerator extends Generator {
 	async generate(data: ReferenceNode, paths: Paths) {
 		return this._generatePackage(data, paths);
 	}
@@ -137,7 +137,7 @@ export default class HTMLGenerator extends Generator {
 		return fsMap;
 	}
 
-	private async _renderToFile(render: (path: string, config: Config, article?: ArticleContent) => string, resourcePath: string, outDir: string, config: Config, content?: ArticleContent) {
+	private async _renderToFile(render: (filePath: string, config: Config, article?: ArticleContent) => string, resourcePath: string, outDir: string, config: Config, content?: ArticleContent) {
 		let relativeOutFile = resourcePath;
 		if (resourcePath.endsWith('/')) {
 			relativeOutFile += 'index.html';

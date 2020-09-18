@@ -7,8 +7,8 @@ import { ReferenceNode } from '../../Common/reference';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
 import Generator from './Generator';
-import HTMLGenerator from './HTMLGenerator';
-import SPAGenerator from './SPAGenerator';
+import HtmlGenerator from './HtmlGenerator';
+import SpaGenerator from './SpaGenerator';
 
 export default class MonorepoGenerator extends Generator {
 	async _generatePackage(data: ReferenceNode, paths: Paths) {
@@ -82,10 +82,10 @@ export default class MonorepoGenerator extends Generator {
 	private _createGenerator(config: Config): Generator {
 		switch (this._config.mode) {
 			case 'spa': {
-				return new SPAGenerator(config);
+				return new SpaGenerator(config);
 			}
 			case 'html': {
-				return new HTMLGenerator(config);
+				return new HtmlGenerator(config);
 			}
 			default: {
 				throw new Error(`Generator '${this._config.mode}' not found`);

@@ -8,7 +8,7 @@ import { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 
-export default class SPAGenerator extends Generator {
+export default class SpaGenerator extends Generator {
 	async generate(data: ReferenceNode, paths: Paths) {
 		return this._generatePackage(data, paths);
 	}
