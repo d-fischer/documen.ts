@@ -8,7 +8,7 @@ export default abstract class Generator {
 	protected _config: Config;
 
 	constructor(config: Config) {
-		this._config = { baseDir: process.cwd(), ...config };
+		this._config = { ...config };
 	}
 
 	createReferenceStructure() {

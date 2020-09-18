@@ -109,8 +109,6 @@ export default class CLICommand extends Command {
 			}
 		}
 
-		let generator: Generator;
-
 		let inputDirs = inputFolders;
 		const monorepoRoot = options.mono || getConfigValue(importedConfig, 'monorepoRoot') || undefined;
 		const ignoredPackages = getConfigValue(importedConfig, 'ignoredPackages') || [];
@@ -190,6 +188,8 @@ export default class CLICommand extends Command {
 				}
 			}
 		};
+
+		let generator: Generator;
 
 		if (generatorConfig.monorepoRoot) {
 			generator = new MonorepoGenerator(generatorConfig);
