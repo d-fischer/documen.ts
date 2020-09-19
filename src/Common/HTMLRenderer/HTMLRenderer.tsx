@@ -1,3 +1,4 @@
+import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { ConfigContext } from '../config';
@@ -49,13 +50,13 @@ const insertIntoSkeleton = (html: string, css: string, baseUrl: string, shouldEn
 </head>
 <body>
 <div id="app-root">${html}</div>
-${shouldEnhance ? `<script src="${baseUrl}/pe.js"></script>` : ''}
+${shouldEnhance ? `<script src="${path.posix.join(baseUrl, 'pe.js')}"></script>` : ''}
 </body>
 </html>`;
 
 const render = (url: string, config: Config, article?: ArticleContent) => {
 	let elem: React.ReactElement;
-	const baseUrl = config.baseUrl || '';
+	const baseUrl = path.posix.join('/', config.baseUrl || '');
 	const routerMode: RouterMode = config.routerMode || 'server';
 	const sheets = new ServerStyleSheets();
 

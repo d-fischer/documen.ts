@@ -25,7 +25,7 @@ const stripBasename = (basename: string, location: Location) => {
 
 	const base = addLeadingSlash(basename);
 
-	if (location.pathname.indexOf(base) !== 0) {
+	if (base === '/' || location.pathname.indexOf(base) !== 0) {
 		return location;
 	}
 
@@ -46,7 +46,7 @@ const stripSuffix = (suffix: string, location: Location) => {
 	return location;
 };
 
-const createURL = (location: LocationDescriptorObject | string, suffix?: string) => {
+const createUrl = (location: LocationDescriptorObject | string, suffix?: string) => {
 	const loc = createLocation(location);
 	if (!loc.pathname.endsWith('/') && suffix) {
 		loc.pathname += suffix;
@@ -93,20 +93,20 @@ class StaticRouterWithSuffix extends React.Component<StaticRouterWithSuffixProps
 		};
 	}
 
-	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${this.props.basename}${createURL(path, this.props.suffix)}`);
+	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${this.props.basename}${createUrl(path, this.props.suffix).replace(/^\//, '')}`);
 
 	handlePush = (location: LocationDescriptorObject | string) => {
 		const { basename, context, suffix } = this.props;
 		context.action = 'PUSH';
 		context.location = addBasename(basename, createLocation(location));
-		context.url = createURL(context.location, suffix);
+		context.url = createUrl(context.location, suffix);
 	};
 
 	handleReplace = (location: LocationDescriptorObject | string) => {
 		const { basename, context, suffix } = this.props;
 		context.action = 'REPLACE';
 		context.location = addBasename(basename, createLocation(location));
-		context.url = createURL(context.location, suffix);
+		context.url = createUrl(context.location, suffix);
 	};
 
 	handleListen = () => noop;

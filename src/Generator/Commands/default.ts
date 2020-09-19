@@ -223,6 +223,7 @@ export default class CLICommand extends Command {
 			if (version) {
 				console.log(`Cleaning up generated files for version ${version}`);
 				await fs.rmdir(outputDir, { recursive: true });
+				await fs.mkdir(outputDir, { recursive: true });
 			} else {
 				console.log(`Cleaning up generated files for branch ${mainBranchName}`);
 				const [versionsRoot] = versionFolder!.split('/');
