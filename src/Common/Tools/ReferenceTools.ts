@@ -58,5 +58,5 @@ export function getPackageRoot(packageName?: string) {
 }
 
 export function getPackageList() {
-	return reference.children!.filter(child => child.kind === ReferenceNodeKind.Package).sort((a, b) => a.name.localeCompare(b.name));
+	return reference.children!.filter(child => child.kind === ReferenceNodeKind.Package);
 }

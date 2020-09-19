@@ -30,6 +30,7 @@ export default interface Config {
 	baseDir: string;
 	baseUrl: string;
 	monorepoRoot?: string;
+	mainPackage?: string;
 	mainBranchName: string;
 	version?: string;
 	versionBranchPrefix?: string;

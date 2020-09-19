@@ -17,7 +17,21 @@ const env = getClientEnvironment(publicUrl);
 
 const monoRefJson = fs.readFileSync(path.join(process.cwd(), 'docs-mono.json'), 'utf-8');
 const monoRefObj = JSON.parse(monoRefJson);
-const gen = new MonorepoGenerator({});
+const generatorConfig = {
+	repoUser: 'd-fischer',
+	repoName: 'twitch',
+	repoBranch: 'master',
+	monorepoRoot: 'packages',
+	mainPackage: 'twitch',
+	mainBranchName: 'master',
+	versionBranchPrefix: 'support/',
+	versionFolder: 'versions',
+	__devManifest: {
+		versions: ['4.2'],
+		rootUrl: ''
+	}
+};
+const gen = new MonorepoGenerator(generatorConfig);
 
 const monoRef = gen._transformTopReferenceNode(monoRefObj);
 
@@ -84,19 +98,7 @@ module.exports = {
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),
-			__DOCTS_CONFIG: JSON.stringify({
-				repoUser: 'd-fischer',
-				repoName: 'twitch',
-				repoBranch: 'master',
-				monorepoRoot: 'packages',
-				mainBranchName: 'master',
-				versionBranchPrefix: 'support/',
-				versionFolder: 'versions',
-				__devManifest: {
-					versions: ['4.2'],
-					rootUrl: ''
-				}
-			}),
+			__DOCTS_CONFIG: JSON.stringify(generatorConfig),
 			__DOCTS_PATHS: JSON.stringify({ sourceBase: path.resolve('..'), projectBase: path.resolve('../twitch') }),
 			__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic')
 		}),

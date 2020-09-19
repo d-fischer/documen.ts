@@ -167,6 +167,7 @@ export default class CLICommand extends Command {
 			baseUrl,
 			baseDir,
 			monorepoRoot,
+			mainPackage: getConfigValue(importedConfig, 'mainPackage') ?? undefined,
 			mainBranchName,
 			versionBranchPrefix,
 			versionFolder,
@@ -178,8 +179,8 @@ export default class CLICommand extends Command {
 			repoBranch: options.repoBranch ?? 'master',
 			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
 			indexFile,
-			categories: getConfigValue(importedConfig, 'categories') || undefined,
-			packages: getConfigValue(importedConfig, 'packages') || undefined,
+			categories: getConfigValue(importedConfig, 'categories') ?? undefined,
+			packages: getConfigValue(importedConfig, 'packages') ?? undefined,
 			shouldEnhance: true,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
 				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);

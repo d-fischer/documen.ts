@@ -66,6 +66,18 @@ export default class MonorepoGenerator extends Generator {
 			groups: []
 		}));
 
+		node.children.sort((a, b) => {
+			if (a.name === this._config.mainPackage) {
+				return -1;
+			}
+
+			if (b.name === this._config.mainPackage) {
+				return 1;
+			}
+
+			return a.name.localeCompare(b.name);
+		});
+
 		return node;
 	}
 
