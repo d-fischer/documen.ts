@@ -230,7 +230,7 @@ export default class CLICommand extends Command {
 				const rootFolderContents = await fs.readdir(rootOutputDir);
 				await Promise.all(
 					rootFolderContents
-						.filter(f => f !== versionsRoot && f !== 'manifest.json')
+						.filter(f => !f.startsWith('.') && f !== versionsRoot && f !== 'manifest.json')
 						.map(async f => {
 							const filePath = path.join(rootOutputDir, f);
 							if ((await fs.lstat(filePath)).isDirectory()) {
