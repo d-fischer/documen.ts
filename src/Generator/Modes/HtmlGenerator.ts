@@ -10,7 +10,7 @@ import Paths from '../../Common/Paths';
 import { ReferenceNode } from '../../Common/reference';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { filterByMember } from '../../Common/Tools/ArrayTools';
-import { getChildren } from '../../Common/Tools/NodeTools';
+import { checkVisibility, getChildren } from '../../Common/Tools/NodeTools';
 import { getPackagePath } from '../../Common/Tools/StringTools';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 import WebpackError from '../Errors/WebpackError';
@@ -57,14 +57,15 @@ export default class HtmlGenerator extends Generator {
 				: path.resolve(config.configDir, config.indexFile)
 		) : undefined;
 		const indexPromise = pathToRead && fs.readFile(pathToRead, 'utf-8');
+		const isNodeVisible = (node: ReferenceNode) => checkVisibility(node);
 		await Promise.all([
 			...(indexPromise ? [[`${pre}/`, config.indexTitle, indexPromise]] : []),
 			...([] as RenderEntry[]).concat(...((config.configDir && config.categories) ? config.categories.map(cat => cat.articles.filter(art => 'file' in art).map((art: ConfigInternalArticle) => ([
 				`${pre}/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(config.configDir!, art.file), 'utf-8')
 			] as RenderEntry))) : [])),
-			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Class).map(value => `${pre}/reference/classes/${value.name}`),
-			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Interface).map(value => `${pre}/reference/interfaces/${value.name}`),
-			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Enum).map(value => `${pre}/reference/enums/${value.name}`)
+			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Class).filter(isNodeVisible).map(value => `${pre}/reference/classes/${value.name}`),
+			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Interface).filter(isNodeVisible).map(value => `${pre}/reference/interfaces/${value.name}`),
+			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Enum).filter(isNodeVisible).map(value => `${pre}/reference/enums/${value.name}`)
 		].map(async (entry: RenderEntry | string) => {
 			if (Array.isArray(entry)) {
 				const [resourcePath, title, contentPromise] = entry;

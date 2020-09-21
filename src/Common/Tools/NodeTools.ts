@@ -7,12 +7,12 @@ export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
 		return false;
 	}
 
-	if (node.flags.isProtected && parent && hasTag(parent, 'hideprotected')) {
+	if (node.flags.isProtected && (!parent || hasTag(parent, 'hideprotected'))) {
 		return false;
 	}
 
 	// noinspection RedundantIfStatementJS - to make it clearer, we use only if statements here
-	if (node.inheritedFrom && parent && hasTag(parent, 'inheritdoc')) {
+	if (node.inheritedFrom && !(parent && hasTag(parent, 'inheritdoc'))) {
 		return false;
 	}
 
