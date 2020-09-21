@@ -1,6 +1,6 @@
 import reference, { ReferenceNode } from '../reference';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
-import { findByMember } from './ArrayTools';
+import { filterByMember, findByMember } from './ArrayTools';
 import { checkVisibility } from './NodeTools';
 
 interface SymbolDefinition<T extends ReferenceNode> {
@@ -14,7 +14,7 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 	const isMono = reference.children!.every(child => child.kind === ReferenceNodeKind.Package);
 	if (isMono) {
 		for (const pkg of reference.children!) {
-			const found = findByMember(pkg.children as T[], key, value) as ReferenceNode;
+			const found = (filterByMember(pkg.children as T[], key, value) as ReferenceNode[]).find(f => f.kind !== ReferenceNodeKind.Reference);
 			if (found) {
 				if (checkVisibility(found)) {
 					return {
@@ -24,8 +24,12 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 				}
 				if (found.kind === ReferenceNodeKind.Class) {
 					const extendedType = found.extendedTypes?.[0];
-					if (extendedType?.type === 'reference' && extendedType.id)
-					return findSymbolByMember('id', extendedType.id);
+					if (extendedType?.type === 'reference' && extendedType.id) {
+						const parentClass = findSymbolByMember('id', extendedType.id);
+						if (parentClass?.symbol && checkVisibility(parentClass.symbol)) {
+							return parentClass as SymbolDefinition<R>;
+						}
+					}
 				}
 			}
 		}

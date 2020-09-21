@@ -1,24 +1,25 @@
-import { AbstractReferenceNode, ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
+import { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
 import { filterByMember, findByMember } from './ArrayTools';
+import { hasTag } from './CodeTools';
 
-export function checkVisibility(node: ReferenceNode, parent?: AbstractReferenceNode) {
+export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
 	if (node.flags.isPrivate) {
 		return false;
 	}
 
-	if (node.flags.isProtected && parent?.comment?.tags?.some(tag => tag.tag === 'hideprotected')) {
+	if (node.flags.isProtected && parent && hasTag(parent, 'hideprotected')) {
 		return false;
 	}
 
 	// noinspection RedundantIfStatementJS - to make it clearer, we use only if statements here
-	if (node.inheritedFrom && parent?.comment?.tags?.some(tag => tag.tag === 'inheritdoc')) {
+	if (node.inheritedFrom && parent && hasTag(parent, 'inheritdoc')) {
 		return false;
 	}
 
 	return true;
 }
 
-export function getChildren(node: AbstractReferenceNode, withPrivate = false) {
+export function getChildren(node: ReferenceNode, withPrivate = false) {
 	if (!node.children) {
 		return [];
 	}

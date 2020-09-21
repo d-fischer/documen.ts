@@ -32,7 +32,7 @@ const ClassPage: React.FC = () => {
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'classes') {
-		return <Redirect to={`${getPackagePath(packageName)}/${correctPageType}/${name}`}/>;
+		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
 	}
 
 	const constructor: ConstructorReferenceNode | undefined = findChildByMember(symbol, 'kind', ReferenceNodeKind.Constructor);

@@ -24,5 +24,6 @@ export enum ReferenceNodeKind {
 	ObjectLiteral = 2097152,
 	TypeAlias = 4194304,
 	Event = 8388608,
-	Package = 16777216 // custom!
+	Reference = 16777216,
+	Package = 33554432 // custom!
 }

@@ -35,7 +35,7 @@ const InterfacePage: React.FC = () => {
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'interfaces') {
-		return <Redirect to={`${getPackagePath(packageName)}/${correctPageType}/${name}`}/>;
+		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
 	}
 
 	return (

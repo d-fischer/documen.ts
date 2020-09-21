@@ -157,13 +157,18 @@ export interface VariableReferenceNode extends AbstractReferenceNode {
 	defaultValue?: string;
 }
 
+export interface ReferenceReferenceNode extends AbstractReferenceNode {
+	kind: ReferenceNodeKind.Reference;
+	target: number;
+}
+
 export interface PackageReferenceNode extends AbstractReferenceNode {
 	kind: ReferenceNodeKind.Package;
 }
 
 export type ReferenceNode =
 	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
-	EnumMemberReferenceNode | TypeAliasReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | ParameterReferenceNode | VariableReferenceNode | PackageReferenceNode;
+	EnumMemberReferenceNode | TypeAliasReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | TypeLiteralReferenceNode | ParameterReferenceNode | ReferenceReferenceNode | VariableReferenceNode | PackageReferenceNode;
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/naming-convention

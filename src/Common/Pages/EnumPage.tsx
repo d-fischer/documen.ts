@@ -30,7 +30,7 @@ const EnumPage: React.FC = () => {
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'enums') {
-		return <Redirect to={`${(getPackagePath(packageName))}/${correctPageType}/${name}`}/>;
+		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
 	}
 
 	const members: EnumMemberReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.EnumMember);
