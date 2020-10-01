@@ -13,7 +13,8 @@ const theme = {
 			focus: '#88ab14'
 		},
 		badges: {
-			async: '#cccc70'
+			async: '#cccc70',
+			deprecated: '#cc7070'
 		}
 	},
 	fonts: {

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
 	root: {
-		color: '#a00',
+		color: '#cc7070',
 
 		'& p': {
 			display: 'inline'

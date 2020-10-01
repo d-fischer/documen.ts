@@ -3,6 +3,7 @@ import React from 'react';
 import { HashLink } from 'react-router-hash-link';
 import { ReferenceNode } from '../../reference';
 import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
+import { hasTag } from '../../Tools/CodeTools';
 import { getAnchorName, typeIsAsync } from '../../Tools/NodeTools';
 import Badge from '../Badge';
 
@@ -17,6 +18,9 @@ const useStyles = makeStyles(theme => ({
 	},
 	asyncBadge: {
 		backgroundColor: theme.colors.badges.async
+	},
+	deprecatedBadge: {
+		backgroundColor: theme.colors.badges.deprecated
 	}
 }), { name: 'OverviewTableEntry' });
 
@@ -30,6 +34,9 @@ const OverviewTableEntry: React.FC<OverviewTableEntryProps> = ({ node }) => {
 	return (
 		<li className={classes.root}>
 			<HashLink className={classes.link} to={`#${getAnchorName(node)}`}>{node.name}</HashLink>
+			{hasTag(node, 'deprecated') || (node.kind === ReferenceNodeKind.Method && node.signatures?.some(sig => hasTag(sig, 'deprecated'))) ? (
+				<Badge small className={classes.deprecatedBadge} title="deprecated">d</Badge>
+			) : null}
 			{node.flags.isStatic ? <Badge small title='static'>s</Badge> : null}
 			{node.kind === ReferenceNodeKind.Method && node.signatures?.some(sig => typeIsAsync(sig.type)) ? (
 				<Badge small className={classes.asyncBadge} title="async">a</Badge>
