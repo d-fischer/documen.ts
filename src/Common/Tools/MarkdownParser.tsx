@@ -1,5 +1,5 @@
 import React from 'react';
-import commonmark from 'commonmark';
+import { Node, Parser } from 'commonmark';
 import ReactRenderer from 'commonmark-react-renderer';
 import { HashLink } from 'react-router-hash-link';
 
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 	const classes = useStyles();
 
-	const parser = new commonmark.Parser();
+	const parser = new Parser();
 	const intermediate = parser.parse(source);
 
 	const walker = intermediate.walker();
@@ -54,19 +54,19 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 				}
 
 				if (match.index > 0) {
-					const beforeText = new commonmark.Node('text');
+					const beforeText = new Node('text');
 					beforeText.literal = node.literal.substr(0, match.index);
 					node.insertBefore(beforeText);
 				}
 
-				const link = new commonmark.Node('link');
+				const link = new Node('link');
 				link.destination = `${getPackagePath(packageName)}/reference/${pageType}/${symbolName}`;
 
 				if (memberName) {
 					link.destination += `#${memberName}`;
 				}
 
-				const linkText = new commonmark.Node('text');
+				const linkText = new Node('text');
 				linkText.literal = fullSymbolName;
 				link.appendChild(linkText);
 				node.insertBefore(link);
