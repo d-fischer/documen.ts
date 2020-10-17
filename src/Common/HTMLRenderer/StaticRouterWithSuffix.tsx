@@ -93,7 +93,7 @@ class StaticRouterWithSuffix extends React.Component<StaticRouterWithSuffixProps
 		};
 	}
 
-	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${this.props.basename}${createUrl(path, this.props.suffix).replace(/^\//, '')}`);
+	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${this.props.basename}${createUrl(path, this.props.suffix)}`);
 
 	handlePush = (location: LocationDescriptorObject | string) => {
 		const { basename, context, suffix } = this.props;
