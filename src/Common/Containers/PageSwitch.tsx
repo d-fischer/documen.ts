@@ -13,11 +13,11 @@ const PageSwitch: React.FunctionComponent = () => {
 
 	return isMono ? (
 		<Switch>
-			<Route exact={true} path="/:package" component={IndexPage}/>
-			<Route exact={true} path="/:package/docs/:categoryName/:articleName" component={DocPage}/>
-			<Route exact={true} path="/:package/reference/classes/:name" component={ClassPage}/>
-			<Route exact={true} path="/:package/reference/interfaces/:name" component={InterfacePage}/>
-			<Route exact={true} path="/:package/reference/enums/:name" component={EnumPage}/>
+			<Route exact={true} path="/:pkg" component={IndexPage}/>
+			<Route exact={true} path="/:pkg/docs/:categoryName/:articleName" component={DocPage}/>
+			<Route exact={true} path="/:pkg/reference/classes/:name" component={ClassPage}/>
+			<Route exact={true} path="/:pkg/reference/interfaces/:name" component={InterfacePage}/>
+			<Route exact={true} path="/:pkg/reference/enums/:name" component={EnumPage}/>
 		</Switch>
 	) : (
 		<Switch>

@@ -18,13 +18,14 @@ const useStyles = makeStyles({
 
 interface InterfacePageRouteParams {
 	name: string;
+	pkg?: string;
 }
 
 const InterfacePage: React.FC = () => {
 	const classes = useStyles();
-	const { name } = useParams<InterfacePageRouteParams>();
+	const { name, pkg } = useParams<InterfacePageRouteParams>();
 
-	const symbolDef = findSymbolByMember('name', name);
+	const symbolDef = findSymbolByMember('name', name, pkg);
 
 	if (!symbolDef) {
 		// TODO

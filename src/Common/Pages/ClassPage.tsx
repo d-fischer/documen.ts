@@ -16,12 +16,13 @@ import { getPackagePath } from '../Tools/StringTools';
 
 interface ClassPageRouteParams {
 	name: string;
+	pkg?: string;
 }
 
 const ClassPage: React.FC = () => {
-	const { name } = useParams<ClassPageRouteParams>();
+	const { name, pkg } = useParams<ClassPageRouteParams>();
 
-	const symbolDef = findSymbolByMember('name', name);
+	const symbolDef = findSymbolByMember('name', name, pkg);
 
 	if (!symbolDef) {
 		// TODO

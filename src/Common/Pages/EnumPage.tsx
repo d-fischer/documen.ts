@@ -14,12 +14,13 @@ import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 
 interface EnumPageRouteParams {
 	name: string;
+	pkg?: string;
 }
 
 const EnumPage: React.FC = () => {
-	const { name } = useParams<EnumPageRouteParams>();
+	const { name, pkg } = useParams<EnumPageRouteParams>();
 
-	const symbolDef = findSymbolByMember('name', name);
+	const symbolDef = findSymbolByMember('name', name, pkg);
 
 	if (!symbolDef) {
 		// TODO

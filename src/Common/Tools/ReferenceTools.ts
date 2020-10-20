@@ -8,12 +8,15 @@ interface SymbolDefinition<T extends ReferenceNode> {
 	packageName?: string;
 }
 
-export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R extends T>(key: K, value: T[K]): SymbolDefinition<R> | undefined {
+export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R extends T>(key: K, value: T[K], pkgName?: string): SymbolDefinition<R> | undefined {
 	let parent: ReferenceNode;
 	// check for mono different here because there's no access to the context
 	const isMono = reference.children!.every(child => child.kind === ReferenceNodeKind.Package);
 	if (isMono) {
 		for (const pkg of reference.children!) {
+			if (pkgName && pkg.name !== pkgName) {
+				continue;
+			}
 			const found = (filterByMember(pkg.children as T[], key, value) as ReferenceNode[]).find(f => f.kind !== ReferenceNodeKind.Reference);
 			if (found) {
 				if (checkVisibility(found)) {
