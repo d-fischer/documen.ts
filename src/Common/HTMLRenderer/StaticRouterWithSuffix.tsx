@@ -5,7 +5,10 @@ import { createLocation, createPath, History, Location, LocationDescriptorObject
 import { Router } from 'react-router';
 
 const addLeadingSlash = (path: string) =>
-	path.charAt(0) === '/' ? path : `/${path}`;
+	path.startsWith('/') ? path : `/${path}`;
+
+const removeTrailingSlash = (path: string) =>
+	path.endsWith('/') ? path.slice(0, -1) : path;
 
 const addBasename = (basename: string, location: Location) => {
 	if (!basename) {
@@ -93,7 +96,7 @@ class StaticRouterWithSuffix extends React.Component<StaticRouterWithSuffixProps
 		};
 	}
 
-	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${this.props.basename}${createUrl(path, this.props.suffix)}`);
+	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${removeTrailingSlash(this.props.basename)}${createUrl(path, this.props.suffix)}`);
 
 	handlePush = (location: LocationDescriptorObject | string) => {
 		const { basename, context, suffix } = this.props;
