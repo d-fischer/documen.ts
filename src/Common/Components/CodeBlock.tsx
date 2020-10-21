@@ -97,7 +97,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		const { codeInfo: [language, languageMode] = [], text } = props;
 		if (languageMode === 'twoslash') {
 			// clean up a tiny bit of twoslash specific stuff for the static output
-			const cleanText = text.replace(/[\w\W]*?(?:^|\n)\/\/\/ ---cut---\n/, '').replace(/\/\/ @.*\n/g, '');
+			const cleanText = text.replace(/[\w\W]*?(?:^|\n)\/\/ ---cut---\n/, '').replace(/\/\/ @.*\n/g, '');
 			return (
 				<div data-dynamic-component="CodeBlock" data-component-props={JSON.stringify(props)}>
 					<SyntaxHighlighter language={language} style={darcula}>
