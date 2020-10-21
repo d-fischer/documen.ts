@@ -7,6 +7,7 @@ const theme = {
 		},
 		text: '#b9b9b9',
 		link: '#949494',
+		warning: '#ab9120',
 		border: '#444',
 		accent: {
 			default: '#647d0f',
