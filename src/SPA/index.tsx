@@ -8,6 +8,7 @@ import { BrowserRouter, BrowserRouterProps, HashRouter, HashRouterProps } from '
 
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
+import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import ts from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from '../Common/theme';
@@ -16,6 +17,7 @@ const Router: React.ComponentType<BrowserRouterProps | HashRouterProps> = proces
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 SyntaxHighlighter.registerLanguage('js', js);
+SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('typescript', ts);
 SyntaxHighlighter.registerLanguage('ts', ts);
 
