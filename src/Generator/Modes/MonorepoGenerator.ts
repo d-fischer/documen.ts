@@ -54,7 +54,7 @@ export default class MonorepoGenerator extends Generator {
 				}
 				return name.split('/')[0];
 			},
-			child => child.children ?? []
+			child => this._config.ignoredPackages.includes(child.name) ? [] : child.children ?? []
 		)).map(([name, children]) => ({
 			id: -1,
 			name,

@@ -117,7 +117,7 @@ export default class CLICommand extends Command {
 			const configInputDirs = getConfigValue(importedConfig, 'inputDirs', true);
 
 			if (monorepoRoot) {
-				const monorepoPackages = (await fs.readdir(path.join(baseDir, monorepoRoot))).filter(pkg => !ignoredPackages.includes(pkg));
+				const monorepoPackages = (await fs.readdir(path.join(baseDir, monorepoRoot)));
 				inputDirs = cartesianProduct([monorepoPackages, configInputDirs]).map(([pkg, dir]) => path.join(baseDir, monorepoRoot, pkg, dir)).filter(inputDir => existsSync(inputDir));
 			} else {
 				inputDirs = configInputDirs;
