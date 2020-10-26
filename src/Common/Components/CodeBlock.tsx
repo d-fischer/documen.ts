@@ -5,12 +5,14 @@ import * as randomstring from 'randomstring';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import jsHighlight from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
+import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import tsHighlight from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import darcula from 'react-syntax-highlighter/dist/esm/styles/hljs/darcula';
 import * as ts from 'typescript';
 
 SyntaxHighlighter.registerLanguage('javascript', jsHighlight);
 SyntaxHighlighter.registerLanguage('js', jsHighlight);
+SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('typescript', tsHighlight);
 SyntaxHighlighter.registerLanguage('ts', tsHighlight);
 
@@ -21,25 +23,27 @@ interface CodeBlockProps {
 
 export function friendlyCjsTransform(): ts.TransformerFactory<ts.SourceFile> {
 	return (ctx: ts.TransformationContext) => {
+		const { factory } = ctx;
 		const visitor: ts.Visitor = node => {
 			if (
 				ts.isImportDeclaration(node) &&
 				node.importClause?.namedBindings &&
 				ts.isNamedImports(node.importClause.namedBindings)
 			) {
-				return ts.createVariableStatement(
+				return factory.createVariableStatement(
 					undefined,
-					ts.createVariableDeclarationList(
+					factory.createVariableDeclarationList(
 						[
-							ts.createVariableDeclaration(
-								ts.createObjectBindingPattern(node.importClause.namedBindings.elements.map(elem => ts.createBindingElement(
+							factory.createVariableDeclaration(
+								factory.createObjectBindingPattern(node.importClause.namedBindings.elements.map(elem => factory.createBindingElement(
 									undefined,
-									undefined,
+									elem.propertyName,
 									elem.name
 								))),
 								undefined,
-								ts.createCall(
-									ts.createIdentifier('require'),
+								undefined,
+								factory.createCallExpression(
+									factory.createIdentifier('require'),
 									undefined,
 									[
 										node.moduleSpecifier
@@ -138,17 +142,17 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 				<SyntaxHighlighter language={language} style={darcula}>
 					{text}
 				</SyntaxHighlighter>
-			)
+			);
 		}
 
 		return (
 			<div className={classes.wrapper}>
 				<form className={classes.modeSwitcher}>
-					<input className={classes.modeInput} type="radio" name="mode" id={`mode-ts-${idSuffix}`} value="ts" checked={mode === 'ts'} onClick={changeMode} />
+					<input className={classes.modeInput} type="radio" name="mode" id={`mode-ts-${idSuffix}`} value="ts" checked={mode === 'ts'} onClick={changeMode}/>
 					<label className={classes.mode} htmlFor={`mode-ts-${idSuffix}`} title="TypeScript">TS</label>
-					<input className={classes.modeInput} type="radio" name="mode" id={`mode-esm-${idSuffix}`} value="esm" checked={mode === 'esm'} onClick={changeMode} />
+					<input className={classes.modeInput} type="radio" name="mode" id={`mode-esm-${idSuffix}`} value="esm" checked={mode === 'esm'} onClick={changeMode}/>
 					<label className={classes.mode} htmlFor={`mode-esm-${idSuffix}`} title="ES Modules">ESM</label>
-					<input className={classes.modeInput} type="radio" name="mode" id={`mode-cjs-${idSuffix}`} value="cjs" checked={mode === 'cjs'} onClick={changeMode} />
+					<input className={classes.modeInput} type="radio" name="mode" id={`mode-cjs-${idSuffix}`} value="cjs" checked={mode === 'cjs'} onClick={changeMode}/>
 					<label className={classes.mode} htmlFor={`mode-cjs-${idSuffix}`} title="CommonJS">CJS</label>
 				</form>
 				<SyntaxHighlighter language={language} style={darcula}>
