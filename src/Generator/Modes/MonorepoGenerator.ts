@@ -21,8 +21,14 @@ export default class MonorepoGenerator extends Generator {
 		const fsMap = await this._generateFsMap(data, paths);
 		await generator._buildWebpack(data, paths, fsMap);
 
+		process.stdout.write(`Not building docs for package(s): ${this._config.ignoredPackages.join(', ')}\n`);
+
 		for (const pkg of data.children!) {
 			const subPackage = pkg.name;
+
+			if (this._config.ignoredPackages.includes(subPackage)) {
+				continue;
+			}
 
 			const config = {
 				...(this._config.packages?.[subPackage] ?? {}),
@@ -54,7 +60,7 @@ export default class MonorepoGenerator extends Generator {
 				}
 				return name.split('/')[0];
 			},
-			child => this._config.ignoredPackages.includes(child.name) ? [] : child.children ?? []
+			child => child.children ?? []
 		)).map(([name, children]) => ({
 			id: -1,
 			name,
