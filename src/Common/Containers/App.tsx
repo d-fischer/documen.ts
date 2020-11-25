@@ -4,7 +4,6 @@ import { Route, Switch } from 'react-router';
 import MonoIndexPage from '../Pages/MonoIndexPage';
 import { ConfigContext } from '../config';
 import MonoMenu from '../Components/MonoMenu';
-import { hot } from 'react-hot-loader/root';
 
 const App: React.FunctionComponent = () => {
 	const config = useContext(ConfigContext);
@@ -26,4 +25,4 @@ const App: React.FunctionComponent = () => {
 	);
 };
 
-export default hot(App);
+export default App;

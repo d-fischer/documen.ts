@@ -2,7 +2,7 @@ import CustomError from '../../Common/CustomError';
 import webpack from 'webpack';
 
 export default class WebpackBuildError extends CustomError {
-	constructor(private readonly _stats: webpack.Stats) {
+	constructor(private readonly _stats?: webpack.Stats) {
 		super('Build errors occured in webpack');
 	}
 

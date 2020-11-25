@@ -46,10 +46,10 @@ export default class SpaGenerator extends Generator {
 			webpackCompiler.run((err, stats) => {
 				if (err) {
 					reject(new WebpackError(err));
-				} else if (stats.hasErrors()) {
+				} else if (stats?.hasErrors()) {
 					reject(new WebpackBuildError(stats));
 				} else {
-					resolve();
+					webpackCompiler.close(() => resolve());
 				}
 			});
 		});

@@ -102,7 +102,7 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 				setManifestLoading(false);
 			}
 		}, [manifest, manifestLoading, config]);
-		const packages = useMemo(() => getPackageList().filter(pkg => !config.ignoredPackages.includes(pkg.name)), []);
+		const packages = useMemo(() => getPackageList().filter(pkg => !config.ignoredPackages?.includes(pkg.name)), []);
 		const [menuOpen, setMenuOpen] = useState(false);
 		const [warningHidden, setWarningHidden] = useState(!!localStorage.getItem('documents.masterWarning.hidden'));
 		const dismissWarning = useCallback(() => {

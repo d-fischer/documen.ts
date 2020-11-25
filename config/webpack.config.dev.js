@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3000;
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
@@ -72,9 +73,6 @@ module.exports = {
 			// It is guaranteed to exist because we tweak it in `env.js`
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
-		alias: {
-			'react-dom': '@hot-loader/react-dom'
-		},
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 	},
 	module: {
@@ -82,19 +80,30 @@ module.exports = {
 		rules: [
 			{
 				test: /\.tsx?$/,
-				loader: 'ts-loader',
-				options: {
-					configFile: 'tsconfig-spa.json'
-				}
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'babel-loader',
+						options: {
+							plugins: ['react-refresh/babel']
+						}
+					},
+					{
+						loader: 'ts-loader',
+						options: {
+							configFile: 'tsconfig-spa.json'
+						}
+					}
+				]
 			}
 		],
 	},
 	plugins: [
+		new ReactRefreshPlugin(),
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: paths.appHtml,
 		}),
-		new webpack.NamedModulesPlugin(),
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),
@@ -102,17 +111,16 @@ module.exports = {
 			__DOCTS_PATHS: JSON.stringify({ sourceBase: path.resolve('..'), projectBase: path.resolve('../twitch') }),
 			__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic')
 		}),
-		new webpack.HotModuleReplacementPlugin(),
 		new CaseSensitivePathsPlugin(),
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+		new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
 	],
+	performance: {
+		hints: false,
+	},
 	node: {
 		dgram: 'empty',
 		fs: 'empty',
 		net: 'empty',
 		tls: 'empty',
-	},
-	performance: {
-		hints: false,
-	},
+	}
 };

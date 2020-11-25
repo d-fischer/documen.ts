@@ -35,7 +35,7 @@ export default interface Config {
 	version?: string;
 	versionBranchPrefix?: string;
 	versionFolder?: string;
-	ignoredPackages: string[];
+	ignoredPackages?: string[];
 	subPackage?: string;
 	repoUser: string | null;
 	repoName: string | null;

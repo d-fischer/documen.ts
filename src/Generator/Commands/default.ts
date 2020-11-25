@@ -111,7 +111,7 @@ export default class CLICommand extends Command {
 
 		let inputDirs = inputFolders;
 		const monorepoRoot = options.mono || getConfigValue(importedConfig, 'monorepoRoot') || undefined;
-		const ignoredPackages = getConfigValue(importedConfig, 'ignoredPackages') || [];
+		const ignoredPackages = getConfigValue(importedConfig, 'ignoredPackages') ?? undefined;
 
 		if (!inputFolders.length) {
 			const configInputDirs = getConfigValue(importedConfig, 'inputDirs', true);

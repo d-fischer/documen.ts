@@ -34,6 +34,7 @@ const baseConfig = {
 				test: /\.tsx?$/,
 				loader: 'ts-loader',
 				options: {
+					transpileOnly: true,
 					configFile: 'tsconfig-html.json'
 				}
 			}

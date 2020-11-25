@@ -21,12 +21,14 @@ export default class MonorepoGenerator extends Generator {
 		const fsMap = await this._generateFsMap(data, paths);
 		await generator._buildWebpack(data, paths, fsMap);
 
-		process.stdout.write(`Not building docs for package(s): ${this._config.ignoredPackages.join(', ')}\n`);
+		if (this._config.ignoredPackages) {
+			process.stdout.write(`Not building docs for package(s): ${this._config.ignoredPackages.join(', ')}\n`);
+		}
 
 		for (const pkg of data.children!) {
 			const subPackage = pkg.name;
 
-			if (this._config.ignoredPackages.includes(subPackage)) {
+			if (this._config.ignoredPackages?.includes(subPackage)) {
 				continue;
 			}
 
