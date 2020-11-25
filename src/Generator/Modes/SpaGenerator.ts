@@ -49,7 +49,7 @@ export default class SpaGenerator extends Generator {
 				} else if (stats?.hasErrors()) {
 					reject(new WebpackBuildError(stats));
 				} else {
-					webpackCompiler.close(() => resolve());
+					resolve();
 				}
 			});
 		});

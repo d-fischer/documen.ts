@@ -260,7 +260,7 @@ export default class CLICommand extends Command {
 				process.exit(1);
 			} else if (e instanceof WebpackBuildError) {
 				process.stderr.write('\nerror building with webpack:\n');
-				console.error(e.stats.toString());
+				console.error(e.stats?.toString());
 				process.exit(1);
 			} else {
 				process.stderr.write('\nerror building the documentation:\n');

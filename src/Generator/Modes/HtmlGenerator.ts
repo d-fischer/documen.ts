@@ -125,7 +125,7 @@ export default class HtmlGenerator extends Generator {
 						reject(new WebpackBuildError(stats));
 					} else {
 						process.stdout.write('\n\n');
-						webpackCompiler.close(() => resolve());
+						resolve();
 					}
 				});
 			});
