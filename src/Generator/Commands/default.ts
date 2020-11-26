@@ -210,16 +210,6 @@ export default class CLICommand extends Command {
 			}
 		}
 
-		const { reference, sourceBasePath } = generator.createReferenceStructure();
-
-		const tmpResult = await tmp.dir({ unsafeCleanup: true });
-		const paths: Paths = {
-			projectBase: baseDir,
-			sourceBase: sourceBasePath,
-			tmpDir: tmpResult.path,
-			rootUrl
-		};
-
 		if (versionAware) {
 			if (version) {
 				console.log(`Cleaning up generated files for version ${version}`);
@@ -244,6 +234,8 @@ export default class CLICommand extends Command {
 			}
 		}
 
+		const { reference, sourceBasePath } = generator.createReferenceStructure();
+
 		if (process.env.DOCTS_WRITE_JSON) {
 			const jsonPath = path.join(baseDir, outputDir, 'data.json');
 			const json = JSON.stringify(reference, null, 2);
@@ -254,6 +246,14 @@ export default class CLICommand extends Command {
 				return;
 			}
 		}
+
+		const tmpResult = await tmp.dir({ unsafeCleanup: true });
+		const paths: Paths = {
+			projectBase: baseDir,
+			sourceBase: sourceBasePath,
+			tmpDir: tmpResult.path,
+			rootUrl
+		};
 
 		try {
 			await generator.generate(reference, paths);
