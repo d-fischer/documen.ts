@@ -249,6 +249,10 @@ export default class CLICommand extends Command {
 			const json = JSON.stringify(reference, null, 2);
 			console.log(`Writing raw data to ${jsonPath}`);
 			await fs.writeFile(jsonPath, json);
+
+			if (process.env.DOCTS_WRITE_JSON === 'only') {
+				return;
+			}
 		}
 
 		try {
