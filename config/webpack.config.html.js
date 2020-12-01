@@ -52,11 +52,11 @@ const baseConfig = {
 	},
 };
 
-module.exports = outDir => [
+module.exports = (outDir, { dev }) => [
 	{
 		...baseConfig,
 		target: 'node',
-		devtool: 'source-map',
+		devtool: dev ? 'source-map' : false,
 		entry: [paths.entryPoints.html],
 		output: {
 			path: outDir,
@@ -86,11 +86,15 @@ module.exports = outDir => [
 				__DOCTS_COMPONENT_MODE: JSON.stringify('static')
 			}),
 			new CaseSensitivePathsPlugin(),
-		]
+		],
+		optimization: {
+			minimize: false
+		}
 	},
 	{
 		...baseConfig,
 		entry: [paths.entryPoints.enhance],
+		devtool: dev ? 'source-map' : false,
 		output: {
 			path: outDir,
 			pathinfo: true,
@@ -105,7 +109,7 @@ module.exports = outDir => [
 			new CaseSensitivePathsPlugin(),
 		],
 		optimization: {
-			minimize: true
+			minimize: !dev
 		}
 	}
 ];

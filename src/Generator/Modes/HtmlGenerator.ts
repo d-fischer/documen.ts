@@ -91,7 +91,7 @@ export default class HtmlGenerator extends Generator {
 		const fsMapEntries = config.shouldEnhance ? [...fsMap.entries()] : [];
 
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
-		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir);
+		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir, config);
 		if (!Array.isArray(webpackConfigs)) {
 			webpackConfigs = [webpackConfigs];
 		}

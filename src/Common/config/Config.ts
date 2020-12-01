@@ -22,6 +22,7 @@ export interface ConfigCategory {
 }
 
 export default interface Config {
+	dev: boolean;
 	configDir: string | null;
 	inputDirs: string[];
 	outputDir: string;

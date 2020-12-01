@@ -1,6 +1,8 @@
+import * as vfs from '@typescript/vfs';
 import path from 'path';
 import { OutputChunk, rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
+import * as ts from 'typescript';
 import Config from '../../Common/config/Config';
 import Paths from '../../Common/Paths';
 import { ReferenceNode } from '../../Common/reference';
@@ -96,7 +98,9 @@ export default class MonorepoGenerator extends Generator {
 		});
 		const { output } = await bundle.generate({ format: 'es' });
 
-		return new Map(output.filter((out): out is OutputChunk => out.type === 'chunk').map(chunk => [`/node_modules/@types/${chunk.name}/index.d.ts`, chunk.code]));
+		const libMap = vfs.createDefaultMapFromNodeModules({ target: ts.ScriptTarget.ES2015 });
+		const generatedMap = new Map<string, string>(output.filter((out): out is OutputChunk => out.type === 'chunk').map<[string, string]>(chunk => [`/node_modules/@types/${chunk.name}/index.d.ts`, chunk.code]));
+		return new Map<string, string>([...libMap, ...generatedMap]);
 	}
 
 	private _createGenerator(config: Config): Generator {

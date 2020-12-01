@@ -20,6 +20,9 @@ import SpaGenerator from '../Modes/SpaGenerator';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class CLICommandOptions extends Options {
+	@option({ description: 'development mode; disable some optimizations in favor of speed' })
+	dev: boolean;
+
 	@option({ description: 'base directory' })
 	baseDir: string;
 
@@ -159,6 +162,7 @@ export default class CLICommand extends Command {
 		}
 
 		const generatorConfig: Config = {
+			dev: options.dev,
 			configDir,
 			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
 			routerMode: options.routerMode || getConfigValue(importedConfig, 'routerMode') || 'htmlSuffix',
