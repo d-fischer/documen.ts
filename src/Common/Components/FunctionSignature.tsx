@@ -1,5 +1,5 @@
 import React from 'react';
-import { SignatureReferenceNode } from '../reference';
+import type { SignatureReferenceNode } from '../reference';
 import { makeStyles } from '@material-ui/styles';
 
 interface FunctionSignatureProps {
@@ -32,7 +32,7 @@ const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => {
 					&gt;
 				</>
 			)}
-			({signature.parameters && signature.parameters.map((param, idx) => (
+			({signature.parameters?.map((param, idx) => (
 			<React.Fragment key={param.name}>
 				{idx === 0 ? '' : ', '}
 				{param.name === '__namedParameters' ? 'params' : param.name}

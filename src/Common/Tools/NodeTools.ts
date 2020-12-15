@@ -1,4 +1,4 @@
-import { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
+import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
 import { filterByMember, findByMember } from './ArrayTools';
 import { hasTag } from './CodeTools';
 
@@ -27,7 +27,7 @@ export function getChildren(node: ReferenceNode, withPrivate = false) {
 }
 
 export function findChildByMember<K extends keyof ReferenceNode, R extends ReferenceNode>(node: ReferenceNode, key: K, value: ReferenceNode[K], withPrivate = false) {
-	return findByMember<ReferenceNode, K, R>(getChildren(node, withPrivate), key, value) as R | undefined;
+	return findByMember<ReferenceNode, K, R>(getChildren(node, withPrivate), key, value);
 }
 
 export function filterChildrenByMember<K extends keyof ReferenceNode, R extends ReferenceNode>(node: ReferenceNode, key: K, value: ReferenceNode[K], withPrivate = false) {

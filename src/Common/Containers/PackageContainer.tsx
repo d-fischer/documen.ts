@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 
 import NavMenu from '../Components/NavMenu';
 import { ConfigContext } from '../config';
-import { ReferenceNode } from '../reference';
+import type { ReferenceNode } from '../reference';
 
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import NavMenuGroup from '../Components/NavMenuGroup';
@@ -56,7 +56,7 @@ export const PackageContainer: React.FC = () => {
 		<div className={classes.root}>
 			<NavMenu className={classes.nav}>
 				<NavMenuItem path={`${pre}/`} exact={true}>Welcome</NavMenuItem>
-				{config.categories && config.categories.map(cat => (
+				{config.categories?.map(cat => (
 					<NavMenuGroup key={cat.name} title={cat.title}>
 						{cat.articles.map(article => 'externalLink' in article ? (
 							<NavMenuItem key={article.name} external path={article.externalLink} title={article.title}>{article.title}</NavMenuItem>

@@ -6,8 +6,10 @@ import VersionMenu from '../Common/Components/VersionMenu';
 import theme from '../Common/theme';
 
 const registeredComponents = {
+	/* eslint-disable @typescript-eslint/naming-convention */
 	CodeBlock,
 	VersionMenu,
+	/* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const generateClassName = createGenerateClassName({
@@ -15,9 +17,9 @@ const generateClassName = createGenerateClassName({
 });
 
 for (const elem of document.querySelectorAll<HTMLElement>('[data-dynamic-component]')) {
-	const Component = registeredComponents[elem.dataset.dynamicComponent!];
+	const Component = registeredComponents[elem.dataset.dynamicComponent!] as React.ComponentType | undefined;
 	if (Component) {
-		const props = JSON.parse(elem.dataset.componentProps ?? '{}');
+		const props = JSON.parse(elem.dataset.componentProps ?? '{}') as JSX.IntrinsicAttributes;
 		ReactDOM.render(
 			(
 				<StylesProvider generateClassName={generateClassName}>

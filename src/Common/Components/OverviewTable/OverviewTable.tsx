@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
-import { AccessorReferenceNode, EnumMemberReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../../reference';
+import type { AccessorReferenceNode, EnumMemberReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../../reference';
 import OverviewTableEntry from './OverviewTableEntry';
 
 const useStyles = makeStyles(theme => ({

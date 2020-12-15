@@ -1,4 +1,4 @@
-declare module "*.json" {
-	const data: any;
+declare module '*.json' {
+	const data: unknown;
 	export = data;
 }

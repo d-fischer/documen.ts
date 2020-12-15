@@ -1,9 +1,9 @@
 declare module 'react-syntax-highlighter/languages/hljs/javascript' {
-	const js: any;
+	const js: unknown;
 	export default js;
 }
 
 declare module 'react-syntax-highlighter/languages/hljs/typescript' {
-	const ts: any;
+	const ts: unknown;
 	export default ts;
 }

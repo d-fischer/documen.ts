@@ -6,7 +6,7 @@ import PropertyCard from '../Components/Cards/PropertyCard';
 import OverviewTable from '../Components/OverviewTable/OverviewTable';
 import SymbolHeader from '../Components/SymbolHeader';
 import PageContent from '../Containers/PageContent';
-import { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
+import type { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { getPageType, hasTag } from '../Tools/CodeTools';
 import MarkdownParser from '../Tools/MarkdownParser';
@@ -60,7 +60,7 @@ const ClassPage: React.FC = () => {
 						/>
 					</>
 				) : null}
-				{symbol.comment && symbol.comment.text && <MarkdownParser source={symbol.comment.text}/>}
+				{symbol.comment?.text && <MarkdownParser source={symbol.comment.text}/>}
 				{constructorSigs.length ? (
 					<>
 						<h2>{constructorSigs.length === 1 ? 'Constructor' : 'Constructors'}</h2>
@@ -88,7 +88,7 @@ const ClassPage: React.FC = () => {
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
-						{methods.sort(defaultNodeSort).map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
+						{methods.sort(defaultNodeSort).map(method => method.signatures?.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
 					</>
 				) : null}
 			</PageContent>

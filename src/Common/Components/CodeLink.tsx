@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ReferenceNode } from '../reference';
+import type { ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
 import { ConfigContext, projectBase, sourceBase } from '../config';

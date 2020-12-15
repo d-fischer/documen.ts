@@ -21,7 +21,12 @@ export interface ConfigCategory {
 	articles: ConfigArticle[];
 }
 
-export default interface Config {
+export interface Manifest {
+	versions?: string[];
+	rootUrl: string;
+}
+
+export interface Config {
 	dev: boolean;
 	configDir: string | null;
 	inputDirs: string[];
@@ -49,5 +54,5 @@ export default interface Config {
 	shouldEnhance: boolean;
 	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
 	/** @private */
-	__devManifest?: any;
+	__devManifest?: Manifest;
 }

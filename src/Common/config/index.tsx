@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import Config from './Config';
+import { Config } from './Config';
 import Paths from '../../Common/Paths';
 
 declare global {

@@ -1,11 +1,13 @@
 import * as vfs from '@typescript/vfs';
 import path from 'path';
-import { OutputChunk, rollup } from 'rollup';
+import type { OutputChunk } from 'rollup';
+import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
+import type { TypeDocAndTSOptions } from 'typedoc';
 import * as ts from 'typescript';
-import Config from '../../Common/config/Config';
-import Paths from '../../Common/Paths';
-import { ReferenceNode } from '../../Common/reference';
+import type { Config } from '../../Common/config/Config';
+import type Paths from '../../Common/Paths';
+import type { ReferenceNode } from '../../Common/reference';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
 import Generator from './Generator';
@@ -13,6 +15,7 @@ import HtmlGenerator from './HtmlGenerator';
 import SpaGenerator from './SpaGenerator';
 
 export default class MonorepoGenerator extends Generator {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async _generatePackage(data: ReferenceNode, paths: Paths) {
 		// stub
 	}
@@ -47,7 +50,7 @@ export default class MonorepoGenerator extends Generator {
 		}
 	}
 
-	protected _overrideTypeDocConfig(): Object {
+	protected _overrideTypeDocConfig(): Partial<TypeDocAndTSOptions> {
 		return {
 			mode: 'modules'
 		};
@@ -59,8 +62,8 @@ export default class MonorepoGenerator extends Generator {
 			node.children!,
 			child => {
 				let name = child.name;
-				if (name.charAt(0) === '"') {
-					name = JSON.parse(name);
+				if (name.startsWith('"')) {
+					name = JSON.parse(name) as string;
 				}
 				return name.split('/')[0];
 			},
@@ -112,7 +115,7 @@ export default class MonorepoGenerator extends Generator {
 				return new HtmlGenerator(config);
 			}
 			default: {
-				throw new Error(`Generator '${this._config.mode}' not found`);
+				throw new Error(`Generator '${this._config.mode as string}' not found`);
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { HashLink } from 'react-router-hash-link';
-import { ReferenceNode } from '../../reference';
+import type { ReferenceNode } from '../../reference';
 import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
 import { hasTag } from '../../Tools/CodeTools';
 import { getAnchorName, typeIsAsync } from '../../Tools/NodeTools';

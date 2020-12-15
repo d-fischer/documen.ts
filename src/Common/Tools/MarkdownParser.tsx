@@ -1,4 +1,5 @@
 import React from 'react';
+import type { NodeWalkingStep } from 'commonmark';
 import { Node, Parser } from 'commonmark';
 import ReactRenderer from 'commonmark-react-renderer';
 import { HashLink } from 'react-router-hash-link';
@@ -33,7 +34,7 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 	let event;
 	let node;
 
-	while ((event = walker.next())) {
+	while ((event = walker.next() as NodeWalkingStep | null)) {
 		node = event.node;
 
 		// transform linked type names
@@ -86,7 +87,8 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 	const renderer = new ReactRenderer(
 		{
 			renderers: {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				/* eslint-disable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/naming-convention
 				link: function MdLink(mdProps: any) {
 					const props = {
 						key: mdProps.nodeKey,
@@ -112,6 +114,7 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 				code_block: function MdCodeBlock(mdProps: any) {
 					return <CodeBlock key={mdProps.nodeKey} codeInfo={mdProps.codeinfo} text={mdProps.literal}/>;
 				}
+				/* eslint-enable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
 			}
 		}
 	);

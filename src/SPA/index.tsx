@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 
 import App from '../Common/Containers/App';
-import { BrowserRouter, BrowserRouterProps, HashRouter, HashRouterProps } from 'react-router-dom';
+import type { BrowserRouterProps, HashRouterProps } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';

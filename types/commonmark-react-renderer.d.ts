@@ -1,7 +1,8 @@
 declare module 'commonmark-react-renderer' {
-	import { Node } from 'commonmark';
+	import type { Node } from 'commonmark';
 
 	class CommonmarkReactRenderer {
+		// eslint-disable-next-line @typescript-eslint/ban-types
 		constructor(options?: {})
 
 		render(root: Node): string;

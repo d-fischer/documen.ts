@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { hasTag } from '../Tools/CodeTools';
-import { ReferenceCommentTag, SignatureReferenceNode } from '../reference';
+import type { ReferenceCommentTag, SignatureReferenceNode } from '../reference';
 
 import FunctionParamDescEntry from './FunctionParamDescEntry';
 import { makeStyles } from '@material-ui/styles';
@@ -33,12 +33,12 @@ const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ signature, additi
 		<tr>
 			<th className={classes.heading}>Parameter</th>
 			<th className={classes.heading}>Type</th>
-			{isCallback || (
+			{isCallback ? (
 				<>
 					<th className={classes.heading}>Required</th>
 					<th className={classes.heading}>Default</th>
 				</>
-			)}
+			) : null}
 			<th className={classes.heading}>Description</th>
 		</tr>
 		</thead>

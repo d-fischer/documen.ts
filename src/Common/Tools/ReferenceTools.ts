@@ -1,4 +1,5 @@
-import reference, { ReferenceNode } from '../reference';
+import type { ClassReferenceNode, ReferenceNode } from '../reference';
+import reference from '../reference';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { filterByMember, findByMember } from './ArrayTools';
 import { checkVisibility } from './NodeTools';
@@ -41,17 +42,17 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 		parent = reference;
 	}
 
-	const foundInParent = findByMember(parent.children as T[], key, value) as ReferenceNode;
+	const foundInParent = findByMember(parent.children as T[], key, value);
 
 	if (foundInParent) {
 		if (checkVisibility(foundInParent, parent)) {
 			return {
 				symbol: foundInParent as R,
-				packageName: isMono ? parent.name : undefined
+				packageName: undefined
 			};
 		}
 		if (foundInParent.kind === ReferenceNodeKind.Class) {
-			const extendedType = foundInParent.extendedTypes?.[0];
+			const extendedType = (foundInParent as ClassReferenceNode).extendedTypes?.[0];
 			if (extendedType?.type === 'reference' && extendedType.id)
 				return findSymbolByMember('id', extendedType.id);
 		}

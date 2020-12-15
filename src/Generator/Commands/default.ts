@@ -5,15 +5,15 @@ import { Command, command, ExpectedError, option, Options, params } from 'clime'
 import { promises as fs, existsSync } from 'fs';
 import path from 'path';
 import tmp from 'tmp-promise';
-import Config from '../../Common/config/Config';
+import type { Config, Manifest } from '../../Common/config/Config';
 import { getConfigValue } from '../../Common/config/Util';
-import RouterMode from '../../Common/HTMLRenderer/RouterMode';
-import Paths from '../../Common/Paths';
+import type RouterMode from '../../Common/HTMLRenderer/RouterMode';
+import type Paths from '../../Common/Paths';
 import { fileExists } from '../../Common/Tools/FileTools';
 import { removeSlash } from '../../Common/Tools/StringTools';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 import WebpackError from '../Errors/WebpackError';
-import Generator from '../Modes/Generator';
+import type Generator from '../Modes/Generator';
 import HtmlGenerator from '../Modes/HtmlGenerator';
 import MonorepoGenerator from '../Modes/MonorepoGenerator';
 import SpaGenerator from '../Modes/SpaGenerator';
@@ -70,7 +70,7 @@ export default class CLICommand extends Command {
 		let configDir: string | null = null;
 
 		if (options.configDir) {
-			// check already made in validatior
+			// check already made in validator
 			configDir = path.resolve(baseDir, options.configDir);
 		} else {
 			const defaultConfigDir = path.resolve(baseDir, 'docs');
@@ -92,8 +92,8 @@ export default class CLICommand extends Command {
 			try {
 				const fileContents = await fs.readFile(configFile, 'utf-8');
 				importedConfig = JSON.parse(fileContents) as Config;
-			} catch (e) {
-				throw new ExpectedError(`error reading ${configFile} as JSON: ${e.message}`);
+			} catch (e: unknown) {
+				throw new ExpectedError(`error reading ${configFile} as JSON: ${(e as Error).message}`);
 			}
 
 			indexFile = options.indexFile || getConfigValue(importedConfig, 'indexFile');
@@ -113,7 +113,7 @@ export default class CLICommand extends Command {
 		}
 
 		let inputDirs = inputFolders;
-		const monorepoRoot = options.mono || getConfigValue(importedConfig, 'monorepoRoot') || undefined;
+		const monorepoRoot = (options.mono || getConfigValue(importedConfig, 'monorepoRoot')) ?? undefined;
 		const ignoredPackages = getConfigValue(importedConfig, 'ignoredPackages') ?? undefined;
 
 		if (!inputFolders.length) {
@@ -161,10 +161,13 @@ export default class CLICommand extends Command {
 			process.exit(1);
 		}
 
+		// TODO investigate the CLI defaults
 		const generatorConfig: Config = {
 			dev: options.dev,
 			configDir,
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			routerMode: options.routerMode || getConfigValue(importedConfig, 'routerMode') || 'htmlSuffix',
 			inputDirs,
 			outputDir,
@@ -180,8 +183,8 @@ export default class CLICommand extends Command {
 			repoUser: options.repoUser || getConfigValue(importedConfig, 'repoUser'),
 			repoName: options.repoName || getConfigValue(importedConfig, 'repoName'),
 			repoBaseFolder: getConfigValue(importedConfig, 'repoBaseFolder'),
-			repoBranch: options.repoBranch ?? 'master',
-			indexTitle: options.indexTitle || getConfigValue(importedConfig, 'indexTitle') || 'Welcome',
+			repoBranch: options.repoBranch || 'master',
+			indexTitle: (options.indexTitle || getConfigValue(importedConfig, 'indexTitle')) ?? 'Welcome',
 			indexFile,
 			categories: getConfigValue(importedConfig, 'categories') ?? undefined,
 			packages: getConfigValue(importedConfig, 'packages') ?? undefined,
@@ -282,19 +285,20 @@ export default class CLICommand extends Command {
 		if (needsManifest) {
 			const manifestPath = path.join(baseDir, rootOutputDir, 'manifest.json');
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			let manifest: any;
+			let manifest: Partial<Manifest>;
 			try {
 				const manifestJson = await fs.readFile(manifestPath, 'utf-8');
 				console.log(`Read existing manifest from ${manifestPath}`);
-				manifest = JSON.parse(manifestJson);
+				manifest = JSON.parse(manifestJson) as Manifest;
 			} catch {
 				console.log(`Manifest not found, creating new one at ${manifestPath}`)
 				manifest = {};
 			}
 			const versionsSet = new Set<string>(manifest.versions ?? []);
 			if (version) {
-				versionsSet.add(version!);
+				versionsSet.add(version);
 			}
+			// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 			manifest.versions = [...versionsSet].sort();
 			manifest.rootUrl = rootUrl;
 

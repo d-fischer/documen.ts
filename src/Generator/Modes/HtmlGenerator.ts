@@ -4,10 +4,10 @@ import fs from 'fs-extra';
 import path from 'path';
 import resolveHome from 'untildify';
 import webpack from 'webpack';
-import { ArticleContent } from '../../Common/Components/PageArticle';
-import Config, { ConfigInternalArticle } from '../../Common/config/Config';
-import Paths from '../../Common/Paths';
-import { ReferenceNode } from '../../Common/reference';
+import type { ArticleContent } from '../../Common/Components/PageArticle';
+import type { Config, ConfigInternalArticle } from '../../Common/config/Config';
+import type Paths from '../../Common/Paths';
+import type { ReferenceNode } from '../../Common/reference';
 import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { filterByMember } from '../../Common/Tools/ArrayTools';
 import { checkVisibility, getChildren } from '../../Common/Tools/NodeTools';
@@ -40,7 +40,7 @@ export default class HtmlGenerator extends Generator {
 			await fs.mkdirp(fullDir);
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
 		const { default: render } = require(path.join(paths.tmpDir, 'generator.js'));
 
 		if (config.shouldEnhance) {
@@ -90,12 +90,13 @@ export default class HtmlGenerator extends Generator {
 
 		const fsMapEntries = config.shouldEnhance ? [...fsMap.entries()] : [];
 
-		// eslint-disable-next-line @typescript-eslint/no-require-imports
-		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir, config);
+		// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-var-requires
+		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir, config) as webpack.Configuration | webpack.Configuration[];
 		if (!Array.isArray(webpackConfigs)) {
 			webpackConfigs = [webpackConfigs];
 		}
 		for (const webpackConfig of webpackConfigs) {
+			// eslint-disable-next-line @typescript-eslint/no-loop-func
 			await new Promise<void>((resolve, reject) => {
 				const webpackCompiler = webpack(webpackConfig);
 
@@ -111,7 +112,7 @@ export default class HtmlGenerator extends Generator {
 					__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
 					__DOCTS_PATHS: JSON.stringify(paths)
 				};
-				if (config.shouldEnhance && webpackConfig.output.filename === 'pe.js') {
+				if (config.shouldEnhance && webpackConfig.output?.filename === 'pe.js') {
 					definitions.__DOCTS_FSMAP = JSON.stringify(fsMapEntries);
 				}
 				/* eslint-enable @typescript-eslint/naming-convention */
@@ -119,9 +120,10 @@ export default class HtmlGenerator extends Generator {
 				(new webpack.DefinePlugin(definitions)).apply(webpackCompiler);
 
 				webpackCompiler.run((err, stats) => {
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (err) {
 						reject(new WebpackError(err));
-					} else if (stats?.hasErrors()) {
+					} else if (stats.hasErrors()) {
 						reject(new WebpackBuildError(stats));
 					} else {
 						process.stdout.write('\n\n');

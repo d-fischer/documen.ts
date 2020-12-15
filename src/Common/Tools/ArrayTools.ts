@@ -17,10 +17,12 @@ export function partitionedFlatMap<T, R>(arr: T[], keyMapper: (val: T) => string
 	return result;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function findByMember<T extends object, K extends keyof T, R extends T>(arr: T[], key: K, value: T[K]): R | undefined {
 	return arr.find(obj => obj[key] === value) as R | undefined;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function filterByMember<T extends object, K extends keyof T, R extends T>(arr: T[], key: K, value: T[K]): R[] {
 	return arr.filter(obj => obj[key] === value) as R[];
 }

@@ -104,7 +104,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 			const cleanText = text.replace(/[\w\W]*?(?:^|\n)\/\/ ---cut---\n/, '').replace(/\/\/ @.*\n/g, '');
 			return (
 				<div data-dynamic-component="CodeBlock" data-component-props={JSON.stringify(props)}>
-					<SyntaxHighlighter language={language} style={darcula}>
+					<SyntaxHighlighter language={language} style={darcula as unknown}>
 						{cleanText}
 					</SyntaxHighlighter>
 				</div>
@@ -112,7 +112,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		}
 
 		return (
-			<SyntaxHighlighter language={language} style={darcula}>
+			<SyntaxHighlighter language={language} style={darcula as unknown}>
 				{text}
 			</SyntaxHighlighter>
 		);
@@ -132,14 +132,14 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 			defaultOptions: { showEmit: transpile },
 			tsModule: ts,
 			lzstringModule: lzString,
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
 			fsMap: require('../../ProgressiveEnhancement/fsMap').fsMap,
 			customTransformers: showCjs ? { after: [friendlyCjsTransform()] } : undefined
 		}) : undefined, [text, transpile, showCjs]);
 
 		if (!isTwoslash) {
 			return (
-				<SyntaxHighlighter language={language} style={darcula}>
+				<SyntaxHighlighter language={language} style={darcula as unknown}>
 					{text}
 				</SyntaxHighlighter>
 			);
@@ -155,7 +155,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 					<input className={classes.modeInput} type="radio" name="mode" id={`mode-cjs-${idSuffix}`} value="cjs" checked={mode === 'cjs'} onClick={changeMode}/>
 					<label className={classes.mode} htmlFor={`mode-cjs-${idSuffix}`} title="CommonJS">CJS</label>
 				</form>
-				<SyntaxHighlighter language={language} style={darcula}>
+				<SyntaxHighlighter language={language} style={darcula as unknown}>
 					{twoslashed!.code}
 				</SyntaxHighlighter>
 			</div>

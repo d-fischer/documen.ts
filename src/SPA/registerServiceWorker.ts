@@ -14,9 +14,7 @@ const isLocalhost = Boolean(
 	// [::1] is the IPv6 localhost address.
 	window.location.hostname === '[::1]' ||
 	// 127.0.0.1/8 is considered localhost for IPv4.
-	window.location.hostname.match(
-		/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-	)
+	/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/.exec(window.location.hostname)
 );
 
 async function registerValidServiceWorker(swUrl: string) {
@@ -57,7 +55,7 @@ async function checkValidServiceWorker(swUrl: string) {
 		// Ensure service worker exists, and that we really are getting a JS file.
 		if (
 			response.status === 404 ||
-			response.headers.get('content-type')!.indexOf('javascript') === -1
+			!response.headers.get('content-type')!.includes('javascript')
 		) {
 			// No service worker found. Probably a different app. Reload the page.
 			const registration = await navigator.serviceWorker.ready;
@@ -65,7 +63,7 @@ async function checkValidServiceWorker(swUrl: string) {
 			window.location.reload();
 		} else {
 			// Service worker found. Proceed as normal.
-			return registerValidServiceWorker(swUrl);
+			await registerValidServiceWorker(swUrl);
 		}
 	} catch (e) {
 		console.log(
@@ -90,7 +88,7 @@ export default async function registerServiceWorker() {
 			}
 
 			window.addEventListener('load', async () => {
-				const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+				const swUrl = `${process.env.PUBLIC_URL!}/service-worker.js`;
 
 				try {
 					if (isLocalhost) {

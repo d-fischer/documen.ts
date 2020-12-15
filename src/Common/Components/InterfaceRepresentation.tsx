@@ -1,4 +1,4 @@
-import { ReferenceNode } from '../reference';
+import type { ReferenceNode } from '../reference';
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Type from './CodeBuilders/Type';

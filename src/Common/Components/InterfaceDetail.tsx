@@ -1,5 +1,5 @@
 import React from 'react';
-import { MethodReferenceNode, PropertyReferenceNode, ReferenceNode } from '../reference';
+import type { MethodReferenceNode, PropertyReferenceNode, ReferenceNode } from '../reference';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import MethodCard from './Cards/MethodCard';
 import PropertyCard from './Cards/PropertyCard';
@@ -19,7 +19,7 @@ const InterfaceDetail: React.FC<InterfaceDetailProps> = ({ symbol }) => {
 			{methods.length ? (
 				<>
 					<h2>Methods</h2>
-					{methods.sort(defaultNodeSort).map(method => method.signatures && method.signatures.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
+					{methods.sort(defaultNodeSort).map(method => method.signatures?.map(sig => <MethodCard key={sig.id} definition={method} sig={sig}/>))}
 				</>
 			) : null}
 			{properties.length ? (

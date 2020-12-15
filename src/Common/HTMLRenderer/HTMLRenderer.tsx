@@ -2,13 +2,13 @@ import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { ConfigContext } from '../config';
-import Config from '../config/Config';
-
+import type { Config } from '../config/Config';
 import StaticRouterWithSuffix from './StaticRouterWithSuffix';
 import App from '../Containers/App';
-import RouterMode from './RouterMode';
+import type RouterMode from './RouterMode';
 import { StaticRouter } from 'react-router';
-import { PageArticleContext, ArticleContent } from '../Components/PageArticle';
+import type { ArticleContent } from '../Components/PageArticle';
+import { PageArticleContext } from '../Components/PageArticle';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
 import theme from '../theme';
 import { dom } from '@fortawesome/fontawesome-svg-core';
@@ -57,6 +57,7 @@ ${shouldEnhance ? `<script src="${path.posix.join(baseUrl, 'pe.js')}"></script>`
 const render = (url: string, config: Config, article?: ArticleContent) => {
 	let elem: React.ReactElement;
 	const baseUrl = path.posix.join('/', config.baseUrl || '');
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	const routerMode: RouterMode = config.routerMode || 'server';
 	const sheets = new ServerStyleSheets();
 

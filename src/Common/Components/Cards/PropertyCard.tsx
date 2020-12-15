@@ -1,6 +1,6 @@
 import React from 'react';
 import Card from '../../Containers/Card';
-import { AccessorReferenceNode, PropertyReferenceNode } from '../../reference';
+import type { AccessorReferenceNode, PropertyReferenceNode } from '../../reference';
 import { getTag, hasTag, isStringLiteral } from '../../Tools/CodeTools';
 import MarkdownParser from '../../Tools/MarkdownParser';
 import DeprecationNotice from '../DeprecationNotice';
@@ -34,21 +34,21 @@ const useStyles = makeStyles({
 const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => {
 	const classes = useStyles();
 
-	const sig = definition.kind === ReferenceNodeKind.Accessor ? (definition.getSignature && definition.getSignature[0]) : definition;
+	const sig = definition.kind === ReferenceNodeKind.Accessor ? definition.getSignature?.[0] : definition;
 	const type = sig?.type;
 	return (
 		<Card className={classes.root} id={getAnchorName(definition, name)} key={definition.id}>
 			<CardToolbar className={classes.toolbar} name={name} definition={definition}/>
-			<h3 className={classes.name}>{name || definition.name}</h3>
+			<h3 className={classes.name}>{name ?? definition.name}</h3>
 			{definition.flags.isStatic && <Badge>static</Badge>}
-			{type ? <h4>{isStringLiteral(type) ? 'Value' : 'Type'}: <Type def={type} isOptional={definition?.flags?.isOptional}/></h4> : null}
+			{type ? <h4>{isStringLiteral(type) ? 'Value' : 'Type'}: <Type def={type} isOptional={definition.flags.isOptional}/></h4> : null}
 			{hasTag(definition, 'deprecated') && (
 				<DeprecationNotice>
 					<MarkdownParser source={getTag(definition, 'deprecated')!}/>
 				</DeprecationNotice>
 			)}
-			{definition.comment && definition.comment.shortText ? <MarkdownParser source={definition.comment.shortText}/> : null}
-			{definition.comment && definition.comment.text ? <MarkdownParser source={definition.comment.text}/> : null}
+			{definition.comment?.shortText ? <MarkdownParser source={definition.comment.shortText}/> : null}
+			{definition.comment?.text ? <MarkdownParser source={definition.comment.text}/> : null}
 		</Card>
 	);
 };

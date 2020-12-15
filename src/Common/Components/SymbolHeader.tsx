@@ -2,7 +2,7 @@ import React from 'react';
 import MarkdownParser from '../Tools/MarkdownParser';
 import CodeLink from './CodeLink';
 import PageHeader from '../Containers/PageHeader';
-import { ReferenceNode } from '../reference';
+import type { ReferenceNode } from '../reference';
 
 interface SymbolHeaderProps {
 	symbol: ReferenceNode;
@@ -19,7 +19,7 @@ const SymbolHeader: React.FC<SymbolHeaderProps> = ({ symbol }) => (
 			)}
 		</h1>
 		<CodeLink symbol={symbol}/>
-		{symbol.comment && symbol.comment.shortText && <MarkdownParser source={symbol.comment.shortText}/>}
+		{symbol.comment?.shortText && <MarkdownParser source={symbol.comment.shortText}/>}
 	</PageHeader>
 );
 

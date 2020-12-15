@@ -43,7 +43,7 @@ const InterfacePage: React.FC = () => {
 		<>
 			<SymbolHeader symbol={symbol}/>
 			<PageContent>
-				{symbol.comment && symbol.comment.text && <MarkdownParser source={symbol.comment.text}/>}
+				{symbol.comment?.text && <MarkdownParser source={symbol.comment.text}/>}
 				<InterfaceRepresentation symbol={symbol} className={classes.representation}/>
 				<InterfaceDetail symbol={symbol}/>
 			</PageContent>

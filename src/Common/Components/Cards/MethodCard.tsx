@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import Card from '../../Containers/Card';
 import FunctionSignature from '../FunctionSignature';
 import FunctionParamDesc from '../FunctionParamDesc';
-import { ConstructorReferenceNode, MethodReferenceNode, ReferenceType, SignatureReferenceNode } from '../../reference';
+import type { ConstructorReferenceNode, MethodReferenceNode, ReferenceType, SignatureReferenceNode } from '../../reference';
 import { getTag, hasTag } from '../../Tools/CodeTools';
 
 import DeprecationNotice from '../DeprecationNotice';
@@ -71,8 +71,8 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 					<MarkdownParser source={getTag(sig, 'deprecated')!}/>
 				</DeprecationNotice>
 			)}
-			{sig.comment && sig.comment.shortText && <p>{sig.comment.shortText}</p>}
-			{sig.comment && sig.comment.text && <MarkdownParser source={sig.comment.text}/>}
+			{sig.comment?.shortText && <p>{sig.comment.shortText}</p>}
+			{sig.comment?.text && <MarkdownParser source={sig.comment.text}/>}
 			<FunctionParamDesc signature={sig}/>
 			{!isConstructor && (
 				<div className={classes.returnTypeWrapper}>

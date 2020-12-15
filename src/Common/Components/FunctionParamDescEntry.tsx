@@ -1,4 +1,4 @@
-import { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
+import type { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
 import React from 'react';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { isOptionalType } from '../Tools/CodeTools';
@@ -49,7 +49,8 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 	}
 
 	const paramName = `${paramNamePrefix}${param.name === '__namedParameters' ? 'params' : param.name}`;
-	const defaultValue = param.kind === ReferenceNodeKind.Property ? undefined : param.defaultValue;
+	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+	const defaultValue = param.kind === ReferenceNodeKind.Property ? undefined : (param.defaultValue || undefined);
 
 	const result: React.ReactNode[] = [];
 
@@ -90,16 +91,16 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 			<td className={classes.row}>
 				<Type def={param.type} ignoreUndefined={param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional}/>
 			</td>
-			{isCallback || (
+			{isCallback ? (
 				<>
 					<td className={classes.row}>{
 						param.flags.isOptional || defaultValue || isOptionalType(param.type)
 							? ''
 							: <Icon className={classes.checkMark} icon={faCheck}/>
 					}</td>
-					<td className={classes.row}>{defaultValue || <em>none</em>}</td>
+					<td className={classes.row}>{defaultValue ?? <em>none</em>}</td>
 				</>
-			)}
+			) : null}
 			<td className={classes.row}>
 				{
 					(shortDesc || desc) ? (

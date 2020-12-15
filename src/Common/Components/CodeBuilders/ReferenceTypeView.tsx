@@ -1,7 +1,7 @@
 import TypeLink from '../TypeLink';
 import React from 'react';
 import Type from './Type';
-import { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../../reference';
+import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../../reference';
 
 interface ReferenceTypeProps {
 	isOptional: boolean;

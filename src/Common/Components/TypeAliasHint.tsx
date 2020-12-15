@@ -1,5 +1,5 @@
 import React from 'react';
-import { TypeAliasReferenceNode } from '../reference';
+import type { TypeAliasReferenceNode } from '../reference';
 import { makeStyles } from '@material-ui/styles';
 import Type from './CodeBuilders/Type';
 import MarkdownParser from '../Tools/MarkdownParser';
@@ -79,8 +79,8 @@ const TypeAliasHint: React.FC<TypeAliasHintProps> = ({ symbol: { comment, name, 
 			<abbr className={classes.alias}>{name}</abbr>
 			<div className={classes.hint}>
 				<div className={classes.toolTip}>
-					{comment && comment.shortText ? <MarkdownParser source={comment.shortText}/> : null}
-					{comment && comment.text ? <MarkdownParser source={comment.text}/> : null}
+					{comment?.shortText ? <MarkdownParser source={comment.shortText}/> : null}
+					{comment?.text ? <MarkdownParser source={comment.text}/> : null}
 					<p>Aliased type: <span className={classes.aliasedType}><Type def={type}/></span></p>
 				</div>
 			</div>

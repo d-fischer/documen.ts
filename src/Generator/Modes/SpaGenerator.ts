@@ -1,10 +1,10 @@
-import Config from '../../Common/config/Config';
-import Paths from '../../Common/Paths';
+import type { Config } from '../../Common/config/Config';
+import type Paths from '../../Common/Paths';
 import Generator from './Generator';
 import path from 'path';
 import resolveHome from 'untildify';
 import webpack from 'webpack';
-import { ReferenceNode } from '../../Common/reference';
+import type { ReferenceNode } from '../../Common/reference';
 import WebpackError from '../Errors/WebpackError';
 import WebpackBuildError from '../Errors/WebpackBuildError';
 
@@ -22,10 +22,10 @@ export default class SpaGenerator extends Generator {
 				...overrideConfig
 			};
 
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const webpackConfig = require('../../../config/webpack.config.spa');
+			// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires
+			const webpackConfig = require('../../../config/webpack.config.spa') as webpack.Configuration;
 
-			webpackConfig.output.path = path.resolve(this._config.baseDir, resolveHome(config.outputDir));
+			webpackConfig.output!.path = path.resolve(this._config.baseDir, resolveHome(config.outputDir));
 
 			const webpackCompiler = webpack(webpackConfig);
 
@@ -44,9 +44,10 @@ export default class SpaGenerator extends Generator {
 			})).apply(webpackCompiler);
 
 			webpackCompiler.run((err, stats) => {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (err) {
 					reject(new WebpackError(err));
-				} else if (stats?.hasErrors()) {
+				} else if (stats.hasErrors()) {
 					reject(new WebpackBuildError(stats));
 				} else {
 					resolve();

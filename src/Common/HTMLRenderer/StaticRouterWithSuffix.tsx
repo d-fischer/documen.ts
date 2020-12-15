@@ -1,7 +1,8 @@
 import invariant from 'tiny-invariant';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createLocation, createPath, History, Location, LocationDescriptorObject } from 'history';
+import type { History, Location, LocationDescriptorObject } from 'history';
+import { createLocation, createPath } from 'history';
 import { Router } from 'react-router';
 
 const addLeadingSlash = (path: string) =>
@@ -28,7 +29,7 @@ const stripBasename = (basename: string, location: Location) => {
 
 	const base = addLeadingSlash(basename);
 
-	if (base === '/' || location.pathname.indexOf(base) !== 0) {
+	if (base === '/' || !location.pathname.startsWith(base)) {
 		return location;
 	}
 
@@ -62,6 +63,7 @@ const staticHandler = (methodName: string) => () => {
 	invariant(false, 'You cannot %s with a static router', methodName);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {
 };
 

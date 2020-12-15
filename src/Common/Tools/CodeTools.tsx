@@ -1,4 +1,4 @@
-import { ReferenceNode, ReferenceType } from '../reference';
+import type { ReferenceNode, ReferenceType } from '../reference';
 import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 
 export const isOptionalType = (def?: ReferenceType) => {
@@ -20,12 +20,9 @@ export const isOptionalType = (def?: ReferenceType) => {
 
 export const getTag = (node: ReferenceNode, name: string): string | null => {
 	name = name.toLowerCase();
-	if (!node || !node.comment || !node.comment.tags) {
-		return null;
-	}
 
-	const foundTag = node.comment.tags.find(tag => tag.tag === name);
-	return foundTag ? foundTag.text : null;
+	const foundTag = node.comment?.tags?.find(tag => tag.tag === name);
+	return foundTag?.text ?? null;
 };
 
 export const hasTag = (node: ReferenceNode, name: string): boolean => getTag(node, name) !== null;

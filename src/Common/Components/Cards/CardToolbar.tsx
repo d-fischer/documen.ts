@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReferenceNode, SignatureReferenceNode } from '../../reference';
+import type { ReferenceNode, SignatureReferenceNode } from '../../reference';
 import CodeLink from '../CodeLink';
 import { HashLink } from 'react-router-hash-link';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -38,7 +38,7 @@ const CardToolbar: React.FC<CardToolbarProps> = ({ name, definition, signature, 
 	return (
 		<div className={classNames(classes.root, className)}>
 			<CodeLink className={classes.button} symbol={definition}/>
-			<HashLink className={classNames(classes.button, classes.anchor)} to={`#${getAnchorName(definition, name || signature?.name)}`} title="Direct link to this symbol">
+			<HashLink className={classNames(classes.button, classes.anchor)} to={`#${getAnchorName(definition, name ?? signature?.name)}`} title="Direct link to this symbol">
 				<Icon icon={faLink} size="lg"/>
 			</HashLink>
 		</div>

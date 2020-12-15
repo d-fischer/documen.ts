@@ -96,7 +96,7 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 		const [manifest, setManifest] = useState(config.__devManifest);
 		const [manifestLoading, setManifestLoading] = useState(false);
 		useAsyncEffect(async () => {
-			if (!manifest && !manifest && config.versionBranchPrefix) {
+			if (!manifest && config.versionBranchPrefix) {
 				setManifestLoading(true);
 				setManifest(await fetch(`${rootUrl}/manifest.json`).then(async r => r.json()));
 				setManifestLoading(false);
@@ -133,7 +133,7 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 							   href={`${manifest.rootUrl}/${packages[0].name}`}>{config.mainBranchName}</a>
 							{manifest.versions.map((version: string) => (
 								<a className={classNames(classes.entry, classes.menuEntry)} key={version}
-								   href={`${manifest.rootUrl}/${config.versionFolder}/${version}/${packages[0].name}`}>{version}</a>
+								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}/${packages[0].name}`}>{version}</a>
 							))}
 						</div>
 					)}

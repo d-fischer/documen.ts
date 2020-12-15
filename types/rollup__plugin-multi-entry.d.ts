@@ -1,5 +1,5 @@
 declare module '@rollup/plugin-multi-entry' {
-	import { Plugin } from 'rollup';
+	import type { Plugin } from 'rollup';
 
 	function multi(): Plugin;
 
