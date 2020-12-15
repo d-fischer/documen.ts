@@ -2,7 +2,7 @@ import React from 'react';
 import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
 import { findSymbolByMember } from '../../Tools/ReferenceTools';
 import TypeAliasHint from '../TypeAliasHint';
-import { ReferenceType } from '../../reference';
+import type { ReferenceType } from '../../reference';
 import ReferenceTypeView from './ReferenceTypeView';
 
 interface TypeProps {
@@ -76,28 +76,26 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 		}
 		case 'reflection': {
 			const { signatures } = def.declaration;
-			if (signatures) {
+			if (signatures?.length) {
 				const [signature] = signatures;
-				if (signature) {
-					switch (signature.kind) {
-						case ReferenceNodeKind.CallSignature: {
-							return (
-								<>
-									(
-									{signature.parameters ? signature.parameters.map((param, i) => (
-										<React.Fragment key={param.name}>
-											{i === 0 ? null : ', '}{param.name}: <Type def={param.type}/>
-										</React.Fragment>
-									)) : null}
-									) =&gt; <Type def={signature.type}/>
-								</>
-							);
-						}
-						default: {
-							// eslint-disable-next-line no-console
-							console.log(`unknown reflection signature type: ${signature.kindString} (${signature.kind})`);
-							return null;
-						}
+				switch (signature.kind) {
+					case ReferenceNodeKind.CallSignature: {
+						return (
+							<>
+								(
+								{signature.parameters ? signature.parameters.map((param, i) => (
+									<React.Fragment key={param.name}>
+										{i === 0 ? null : ', '}{param.name}: <Type def={param.type}/>
+									</React.Fragment>
+								)) : null}
+								) =&gt; <Type def={signature.type}/>
+							</>
+						);
+					}
+					default: {
+						// eslint-disable-next-line no-console
+						console.log(`unknown reflection signature type: ${signature.kindString} (${signature.kind as number})`);
+						return null;
 					}
 				}
 			}
@@ -117,6 +115,14 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				}
 			}
 			return <ReferenceTypeView def={def} typeArguments={def.typeArguments} isOptional={isOptional}/>;
+		}
+		case 'tuple': {
+			return <>[{def.elements.map((type, idx) => (
+				<React.Fragment key={idx}>
+					{idx === 0 ? '' : ', '}
+					<Type def={type as ReferenceType}/>
+				</React.Fragment>
+			))}]</>
 		}
 		default: {
 			return (

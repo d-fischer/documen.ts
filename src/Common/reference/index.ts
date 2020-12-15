@@ -1,4 +1,4 @@
-import { ReferenceNodeKind } from './ReferenceNodeKind';
+import type { ReferenceNodeKind } from './ReferenceNodeKind';
 
 interface ReferenceFlags {
 	isExported?: boolean;
@@ -64,7 +64,20 @@ export interface ReflectionReferenceType {
 	declaration: TypeLiteralReferenceNode;
 }
 
-export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType | ReflectionReferenceType;
+export interface TupleReferenceType {
+	type: 'tuple';
+	elements: TupleMemberReferenceType[];
+}
+
+export interface NamedTupleMemberReferenceType {
+	type: 'named-tuple-member';
+	name: string;
+	isOptional: boolean;
+	element: ReferenceType;
+}
+
+export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType | ReflectionReferenceType | TupleReferenceType;
+export type TupleMemberReferenceType = NamedTupleMemberReferenceType | ReferenceType;
 
 export interface AbstractReferenceNode {
 	id: number;
@@ -72,10 +85,10 @@ export interface AbstractReferenceNode {
 	kind: ReferenceNodeKind;
 	kindString: string;
 	comment?: ReferenceComment;
-	sources: ReferenceSource[];
+	sources?: ReferenceSource[];
 	flags: ReferenceFlags;
 	children?: ReferenceNode[];
-	groups: ReferenceGroup[];
+	groups?: ReferenceGroup[];
 	inheritedFrom?: ReferenceType;
 }
 
