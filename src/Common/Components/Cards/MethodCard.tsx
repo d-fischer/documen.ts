@@ -71,7 +71,7 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 					<MarkdownParser source={getTag(sig, 'deprecated')!}/>
 				</DeprecationNotice>
 			)}
-			{sig.comment?.shortText && <p>{sig.comment.shortText}</p>}
+			{sig.comment?.shortText && <MarkdownParser source={sig.comment.shortText}/>}
 			{sig.comment?.text && <MarkdownParser source={sig.comment.text}/>}
 			<FunctionParamDesc signature={sig}/>
 			{!isConstructor && (
@@ -84,6 +84,7 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 			)}
 		</Card>
 	);
-};
+}
+;
 
 export default MethodCard;
