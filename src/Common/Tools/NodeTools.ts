@@ -1,4 +1,5 @@
 import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
+import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { filterByMember, findByMember } from './ArrayTools';
 import { hasTag } from './CodeTools';
 
@@ -11,8 +12,12 @@ export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
 		return false;
 	}
 
-	// noinspection RedundantIfStatementJS - to make it clearer, we use only if statements here
 	if (node.inheritedFrom && !(parent && hasTag(parent, 'inheritdoc'))) {
+		return false;
+	}
+
+	// noinspection RedundantIfStatementJS - to make it clearer, we use only if statements here
+	if (parent && parent.kind !== ReferenceNodeKind.Package && node.flags.isExternal && !hasTag(parent, 'inheritdoc')) {
 		return false;
 	}
 

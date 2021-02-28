@@ -1,9 +1,11 @@
-import type { TypeDocAndTSOptions } from 'typedoc';
-import { Application, TSConfigReader } from 'typedoc';
+import fs from 'fs';
 import path from 'path';
+import type { TypeDocOptions } from 'typedoc';
+import { Application, TSConfigReader } from 'typedoc';
+import type { Config } from '../../Common/config/Config';
 import type Paths from '../../Common/Paths';
 import type { ReferenceNode } from '../../Common/reference';
-import type { Config } from '../../Common/config/Config';
+import { parseConfig } from '../../Common/Tools/ConfigTools';
 
 export default abstract class Generator {
 	protected _config: Config;
@@ -13,15 +15,30 @@ export default abstract class Generator {
 	}
 
 	createReferenceStructure() {
-		const baseDir = this._config.baseDir;
 		const typeDoc = new Application();
 		typeDoc.options.addReader(new TSConfigReader());
+		const files = this._config.inputDirs.map(dir => {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+			const tsconfig = parseConfig(path.join(dir, 'tsconfig.json'));
+
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+			let mainJsFile: string = pkg.main;
+			const lastPathPart = mainJsFile.split(path.delimiter).reverse()[0];
+			if (!/\.m?js]$/.test(lastPathPart)) {
+				mainJsFile = path.join(mainJsFile, 'index.js');
+			}
+
+			const fullOutPath = path.join(dir, mainJsFile);
+			const innerOutPath = path.relative(tsconfig.options.outDir!, fullOutPath);
+			return path.join(tsconfig.options.rootDir!, innerOutPath.replace(/\.m?js$/, '.ts'));
+		});
+		// const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
 		typeDoc.bootstrap({
-			mode: 'file',
+			entryPoints: files,
 			...this._overrideTypeDocConfig()
 		});
-		const files = typeDoc.expandInputFiles(this._config.inputDirs.map(dir => path.resolve(baseDir, dir)));
-		const project = typeDoc.convert(files);
+		const project = typeDoc.convert();
 		if (!project) {
 			throw new Error('Error parsing the project structure');
 		}
@@ -30,14 +47,8 @@ export default abstract class Generator {
 		// needs to be ignored because we go through a lot of private stuff
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const sourcePlugin: any = typeDoc.converter.getComponent('source');
-		/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-		if (sourcePlugin.basePath.basePaths.length !== 1) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/restrict-template-expressions
-			throw new Error(`This project does not have exactly one base path (${sourcePlugin.basePath.basePaths.join(', ') || 'none'}), please file an issue`);
-		}
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const sourceBasePath: string = sourcePlugin.basePath.basePaths[0];
-		/* eslint-enable @typescript-eslint/no-unsafe-member-access */
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+		const sourceBasePath: string = sourcePlugin.basePath;
 
 		const reference = this._transformTopReferenceNode(data);
 
@@ -57,7 +68,7 @@ export default abstract class Generator {
 	async _buildWebpack(data: ReferenceNode, paths: Paths, fsMap: Map<string, string>, overrideConfig?: Partial<Config>) {
 	}
 
-	protected _overrideTypeDocConfig(): Partial<TypeDocAndTSOptions> {
+	protected _overrideTypeDocConfig(): Partial<TypeDocOptions> {
 		return {};
 	}
 

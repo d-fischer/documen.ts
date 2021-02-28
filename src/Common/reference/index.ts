@@ -6,6 +6,7 @@ interface ReferenceFlags {
 	isProtected?: boolean;
 	isPrivate?: boolean;
 	isStatic?: boolean;
+	isExternal?: boolean;
 }
 
 interface ReferenceGroup {
@@ -54,9 +55,9 @@ export interface UnionReferenceType {
 	types: ReferenceType[];
 }
 
-export interface StringLiteralReferenceType {
-	type: 'stringLiteral';
-	value: string;
+export interface LiteralReferenceType {
+	type: 'literal';
+	value: string | number | null;
 }
 
 export interface ReflectionReferenceType {
@@ -76,7 +77,7 @@ export interface NamedTupleMemberReferenceType {
 	element: ReferenceType;
 }
 
-export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | StringLiteralReferenceType | ReflectionReferenceType | TupleReferenceType;
+export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | LiteralReferenceType | ReflectionReferenceType | TupleReferenceType;
 export type TupleMemberReferenceType = NamedTupleMemberReferenceType | ReferenceType;
 
 export interface AbstractReferenceNode {

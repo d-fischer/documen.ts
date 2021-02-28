@@ -1,13 +1,12 @@
 /* eslint-disable no-console,max-classes-per-file */
 import ansi from 'ansi-escapes';
-import cartesianProduct from 'cartesian-product';
 import { Command, command, ExpectedError, option, Options, params } from 'clime';
 import { promises as fs, existsSync } from 'fs';
 import path from 'path';
 import tmp from 'tmp-promise';
 import type { Config, Manifest } from '../../Common/config/Config';
 import { getConfigValue } from '../../Common/config/Util';
-import type RouterMode from '../../Common/HTMLRenderer/RouterMode';
+import RouterMode from '../../Common/HTMLRenderer/RouterMode';
 import type Paths from '../../Common/Paths';
 import { fileExists } from '../../Common/Tools/FileTools';
 import { removeSlash } from '../../Common/Tools/StringTools';
@@ -121,7 +120,7 @@ export default class CLICommand extends Command {
 
 			if (monorepoRoot) {
 				const monorepoPackages = (await fs.readdir(path.join(baseDir, monorepoRoot)));
-				inputDirs = cartesianProduct([monorepoPackages, configInputDirs]).map(([pkg, dir]) => path.join(baseDir, monorepoRoot, pkg, dir)).filter(inputDir => existsSync(inputDir));
+				inputDirs = monorepoPackages.map(pkg => path.join(baseDir, monorepoRoot, pkg)).filter(inputDir => existsSync(inputDir));
 			} else {
 				inputDirs = configInputDirs;
 			}
@@ -136,7 +135,7 @@ export default class CLICommand extends Command {
 		const versionFolder = getConfigValue(importedConfig, 'versionFolder') ?? undefined;
 
 		let outputDir = rootOutputDir;
-		let version: string | undefined;
+		let version: string | undefined = undefined;
 		const rootUrl = removeSlash(options.baseUrl || getConfigValue(importedConfig, 'baseUrl', true) || '/');
 		let baseUrl = rootUrl;
 
@@ -197,6 +196,7 @@ export default class CLICommand extends Command {
 			}
 		};
 
+		// eslint-disable-next-line @typescript-eslint/init-declarations
 		let generator: Generator;
 
 		if (generatorConfig.monorepoRoot) {
@@ -285,14 +285,13 @@ export default class CLICommand extends Command {
 		if (needsManifest) {
 			const manifestPath = path.join(baseDir, rootOutputDir, 'manifest.json');
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			let manifest: Partial<Manifest>;
+			let manifest: Partial<Manifest> = {};
 			try {
 				const manifestJson = await fs.readFile(manifestPath, 'utf-8');
 				console.log(`Read existing manifest from ${manifestPath}`);
 				manifest = JSON.parse(manifestJson) as Manifest;
 			} catch {
-				console.log(`Manifest not found, creating new one at ${manifestPath}`)
-				manifest = {};
+				console.log(`Manifest not found, creating new one at ${manifestPath}`);
 			}
 			const versionsSet = new Set<string>(manifest.versions ?? []);
 			if (version) {

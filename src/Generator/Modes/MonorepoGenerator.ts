@@ -3,7 +3,6 @@ import path from 'path';
 import type { OutputChunk } from 'rollup';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
-import type { TypeDocAndTSOptions } from 'typedoc';
 import * as ts from 'typescript';
 import type { Config } from '../../Common/config/Config';
 import type Paths from '../../Common/Paths';
@@ -48,12 +47,6 @@ export default class MonorepoGenerator extends Generator {
 
 			process.stdout.write(`\rFinished building docs for package ${subPackage}\n`);
 		}
-	}
-
-	protected _overrideTypeDocConfig(): Partial<TypeDocAndTSOptions> {
-		return {
-			mode: 'modules'
-		};
 	}
 
 	protected _transformTopReferenceNode(node: ReferenceNode): ReferenceNode {

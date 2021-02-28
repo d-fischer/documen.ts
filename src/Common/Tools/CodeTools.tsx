@@ -33,7 +33,7 @@ export const isStringLiteral = (def?: ReferenceType): boolean => {
 	}
 
 	switch (def.type) {
-		case 'stringLiteral':
+		case 'literal':
 			return true;
 		case 'union':
 			return def.types.every(isStringLiteral);
