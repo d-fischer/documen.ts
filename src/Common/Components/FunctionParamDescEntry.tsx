@@ -91,7 +91,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 			<td className={classes.row}>
 				<Type def={param.type} ignoreUndefined={param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional}/>
 			</td>
-			{isCallback ? (
+			{isCallback ? null : (
 				<>
 					<td className={classes.row}>{
 						param.flags.isOptional || defaultValue || isOptionalType(param.type)
@@ -100,7 +100,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 					}</td>
 					<td className={classes.row}>{defaultValue ?? <em>none</em>}</td>
 				</>
-			) : null}
+			)}
 			<td className={classes.row}>
 				{
 					(shortDesc || desc) ? (
