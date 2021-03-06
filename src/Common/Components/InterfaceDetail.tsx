@@ -1,18 +1,17 @@
 import React from 'react';
 import type { MethodReferenceNode, PropertyReferenceNode, ReferenceNode } from '../reference';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
+import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 import MethodCard from './Cards/MethodCard';
 import PropertyCard from './Cards/PropertyCard';
-import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 
 interface InterfaceDetailProps {
 	symbol: ReferenceNode;
 }
 
 const InterfaceDetail: React.FC<InterfaceDetailProps> = ({ symbol }) => {
-	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Method);
+	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'method');
 
-	const properties: PropertyReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Property);
+	const properties: PropertyReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'property');
 
 	return (
 		<>

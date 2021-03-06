@@ -1,16 +1,15 @@
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
 import OverviewTable from '../Components/OverviewTable/OverviewTable';
-import type { EnumMemberReferenceNode } from '../reference';
-import PageContent from '../Containers/PageContent';
-import Card from '../Containers/Card';
-import { getPageType } from '../Tools/CodeTools';
 import SymbolHeader from '../Components/SymbolHeader';
+import Card from '../Containers/Card';
+import PageContent from '../Containers/PageContent';
+import type { EnumMemberReferenceNode } from '../reference';
+import { getPageType } from '../Tools/CodeTools';
 import MarkdownParser from '../Tools/MarkdownParser';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
+import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 import { findSymbolByMember } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
-import { defaultNodeSort, filterChildrenByMember } from '../Tools/NodeTools';
 
 interface EnumPageRouteParams {
 	name: string;
@@ -34,7 +33,7 @@ const EnumPage: React.FC = () => {
 		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
 	}
 
-	const members: EnumMemberReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.EnumMember);
+	const members: EnumMemberReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'enumMember');
 
 	return (
 		<>

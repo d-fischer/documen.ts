@@ -29,11 +29,11 @@ const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
 	const classes = useStyles();
 	const config = useContext(ConfigContext);
 
-	if (!(config.repoUser && config.repoName && symbol.sources && symbol.sources.length)) {
+	if (!(config.repoUser && config.repoName && symbol.location)) {
 		return null;
 	}
 
-	const fileName = symbol.sources[0].fileName;
+	const { location: { fileName, line } } = symbol;
 	return <a
 		className={classNames(classes.root, className)}
 		href={`https://github.com/${path.join(
@@ -42,7 +42,7 @@ const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
 			'blob',
 			config.repoBranch,
 			path.relative(projectBase, path.join(sourceBase, fileName))
-		)}#L${symbol.sources[0].line}`}
+		)}#L${line}`}
 		target="_blank"
 		rel="noopener noreferrer"
 		title="Go to the code"

@@ -7,7 +7,6 @@ import * as ts from 'typescript';
 import type { Config } from '../../Common/config/Config';
 import type Paths from '../../Common/Paths';
 import type { ReferenceNode } from '../../Common/reference';
-import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { partitionedFlatMap } from '../../Common/Tools/ArrayTools';
 import Generator from './Generator';
 import HtmlGenerator from './HtmlGenerator';
@@ -64,12 +63,9 @@ export default class MonorepoGenerator extends Generator {
 		)).map(([name, children]) => ({
 			id: -1,
 			name,
-			kind: ReferenceNodeKind.Package,
-			kindString: 'Package',
+			kind: 'package',
 			children,
-			sources: [],
-			flags: {},
-			groups: []
+			sources: []
 		}));
 
 		node.children.sort((a, b) => {

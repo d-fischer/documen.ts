@@ -1,14 +1,13 @@
-import type { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
-import React from 'react';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
-import { isOptionalType } from '../Tools/CodeTools';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import MarkdownParser from '../Tools/MarkdownParser';
-import { findSymbolByMember} from '../Tools/ReferenceTools';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { makeStyles } from '@material-ui/styles';
-import Type from './CodeBuilders/Type';
+import React from 'react';
+import type { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
+import { isOptionalType } from '../Tools/CodeTools';
+import MarkdownParser from '../Tools/MarkdownParser';
 import { getChildren } from '../Tools/NodeTools';
+import { findSymbolByMember } from '../Tools/ReferenceTools';
+import Type from './CodeBuilders/Type';
 
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;
@@ -50,28 +49,27 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 
 	const paramName = `${paramNamePrefix}${param.name === '__namedParameters' ? 'params' : param.name}`;
 	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-	const defaultValue = param.kind === ReferenceNodeKind.Property ? undefined : (param.defaultValue || undefined);
+	const defaultValue = param.kind === 'property' ? undefined : (param.defaultValue || undefined);
 
 	const result: React.ReactNode[] = [];
 
 	if (param.type.type === 'reflection') {
-		result.push(...getChildren(param.type.declaration).map((subParam: VariableReferenceNode) => (
-				<FunctionParamDescEntry
-					key={`${paramName}.${subParam.name}`}
-					param={subParam}
-					additionalTags={additionalTags}
-					isCallback={isCallback}
-					expandParams={expandParams}
-					paramNamePrefix={`${paramName}.`}
-				/>
-			)
-		));
+		result.push(...getChildren(param.type.declaration).filter((c): c is VariableReferenceNode => c.kind === 'variable').map(subParam => (
+			<FunctionParamDescEntry
+				key={`${paramName}.${subParam.name}`}
+				param={subParam}
+				additionalTags={additionalTags}
+				isCallback={isCallback}
+				expandParams={expandParams}
+				paramNamePrefix={`${paramName}.`}
+			/>
+		)));
 	} else if (param.type.type === 'reference' && param.type.id && expandParams) {
 		const refDesc = findSymbolByMember('id', param.type.id);
 		if (refDesc) {
 			const { symbol: ref } = refDesc;
-			if (ref.kind === ReferenceNodeKind.Interface) {
-				result.push(...getChildren(ref).map((subParam: PropertyReferenceNode) => (
+			if (ref.kind === 'interface') {
+				result.push(...getChildren(ref).filter((c): c is PropertyReferenceNode => c.kind === 'property').map(subParam => (
 					<FunctionParamDescEntry
 						key={`${paramName}.${subParam.name}`}
 						param={subParam}
@@ -89,12 +87,12 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 		<tr key={paramName}>
 			<td className={classes.row}>{paramName}</td>
 			<td className={classes.row}>
-				<Type def={param.type} ignoreUndefined={param.kind !== ReferenceNodeKind.Parameter || param.flags.isOptional}/>
+				<Type def={param.type} ignoreUndefined={param.kind !== 'parameter' || param.flags?.isOptional}/>
 			</td>
 			{isCallback ? (
 				<>
 					<td className={classes.row}>{
-						param.flags.isOptional || defaultValue || isOptionalType(param.type)
+						param.flags?.isOptional || defaultValue || isOptionalType(param.type)
 							? ''
 							: <Icon className={classes.checkMark} icon={faCheck}/>
 					}</td>

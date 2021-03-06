@@ -7,7 +7,6 @@ import OverviewTable from '../Components/OverviewTable/OverviewTable';
 import SymbolHeader from '../Components/SymbolHeader';
 import PageContent from '../Containers/PageContent';
 import type { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../reference';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { getPageType, hasTag } from '../Tools/CodeTools';
 import MarkdownParser from '../Tools/MarkdownParser';
 import { defaultNodeSort, filterChildrenByMember, findChildByMember } from '../Tools/NodeTools';
@@ -36,16 +35,16 @@ const ClassPage: React.FC = () => {
 		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
 	}
 
-	const constructor: ConstructorReferenceNode | undefined = findChildByMember(symbol, 'kind', ReferenceNodeKind.Constructor);
+	const constructor: ConstructorReferenceNode | undefined = findChildByMember(symbol, 'kind', 'constructor');
 	const constructorSigs: SignatureReferenceNode[] = constructor?.signatures ?? [];
 
-	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Method);
+	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'method');
 
-	const properties: PropertyReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Property);
+	const properties: PropertyReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'property');
 	const propertiesWithoutEvents = properties.filter(prop => !hasTag(prop, 'eventListener'));
 	const events = properties.filter(prop => hasTag(prop, 'eventListener'));
 
-	const accessors: AccessorReferenceNode[] = filterChildrenByMember(symbol, 'kind', ReferenceNodeKind.Accessor);
+	const accessors: AccessorReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'accessor');
 
 	return (
 		<>

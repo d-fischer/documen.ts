@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import Card from '../../Containers/Card';
 import type { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../../reference';
-import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
 import { getTag, hasTag } from '../../Tools/CodeTools';
 import MarkdownParser from '../../Tools/MarkdownParser';
 import { getAnchorName } from '../../Tools/NodeTools';
@@ -24,7 +23,7 @@ const getParamDefinition = (param: ParameterReferenceNode) => {
 		const ref = findSymbolByMember('id', param.type.id);
 		if (ref) {
 			const { symbol } = ref;
-			if (symbol.kind === ReferenceNodeKind.TypeAlias && symbol.type.type === 'reflection' && symbol.type.declaration.signatures && symbol.type.declaration.signatures.length) {
+			if (symbol.kind === 'typeAlias' && symbol.type.type === 'reflection' && symbol.type.declaration.signatures && symbol.type.declaration.signatures.length) {
 				return symbol.type.declaration.signatures[0];
 			}
 		}
@@ -44,7 +43,7 @@ const getDefinedTags = (prop: PropertyReferenceNode) => {
 				const ref = findSymbolByMember('id', paramDefinition.type.id);
 				if (ref) {
 					const { symbol } = ref;
-					if (symbol.kind === ReferenceNodeKind.TypeAlias && symbol.type.type === 'reflection') {
+					if (symbol.kind === 'typeAlias' && symbol.type.type === 'reflection') {
 						return symbol.comment?.tags;
 					}
 				}
@@ -72,8 +71,8 @@ const useStyles = makeStyles(theme => ({
 
 const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 	const classes = useStyles();
-	let handlerDefinition: SignatureReferenceNode | undefined;
-	let handlerParamDefinition: SignatureReferenceNode | undefined;
+	let handlerDefinition: SignatureReferenceNode | undefined = undefined;
+	let handlerParamDefinition: SignatureReferenceNode | undefined = undefined;
 	if (definition.type.type === 'reflection' && definition.type.declaration.signatures && definition.type.declaration.signatures.length) {
 		handlerDefinition = definition.type.declaration.signatures[0];
 		if (handlerDefinition.parameters?.length) {
@@ -85,15 +84,11 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 			handlerParamDefinition = {
 				id: -1,
 				name: '__call',
-				kind: ReferenceNodeKind.CallSignature,
-				kindString: 'Call signature',
-				flags: {},
+				kind: 'callSignature',
 				parameters: binderType.elements.map((type, idx) => ({
 					id: -1,
 					name: type.type === 'named-tuple-member' ? type.name : `_arg${idx}`,
-					kind: ReferenceNodeKind.Parameter,
-					kindString: 'Parameter',
-					flags: {},
+					kind: 'parameter',
 					type: type.type === 'named-tuple-member' ? type.element : type
 				})),
 				type: {

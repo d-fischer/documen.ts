@@ -56,7 +56,7 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 		<Card className={classes.root} id={getAnchorName(definition, sig.name)} key={sig.id}>
 			<CardToolbar className={classes.toolbar} definition={definition} signature={sig}/>
 			<FunctionSignature signature={sig} isConstructor={isConstructor}/>
-			{definition.flags.isStatic && <Badge>static</Badge>}
+			{definition.flags?.isStatic && <Badge>static</Badge>}
 			{isAsync && (
 				<Badge
 					className={classes.asyncBadge}

@@ -1,11 +1,10 @@
-import type { ReferenceNode } from '../reference';
-import React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import Type from './CodeBuilders/Type';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import classNames from 'classnames';
+import React from 'react';
 import { HashLink } from 'react-router-hash-link';
+import type { ReferenceNode } from '../reference';
 import { defaultNodeSort, getChildren } from '../Tools/NodeTools';
+import Type from './CodeBuilders/Type';
 
 interface InterfaceRepresentationProps {
 	symbol: ReferenceNode;
@@ -45,7 +44,7 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 		<div className={classNames(classes.root, className)}>
 			{'{'}
 			{getChildren(symbol).sort(defaultNodeSort).map(member => {
-				if (member.kind === ReferenceNodeKind.Property) {
+				if (member.kind === 'property') {
 					return (
 						<div key={member.name} className={classes.prop}>
 							{member.comment?.shortText ? (
@@ -55,13 +54,13 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 							) : null}
 							<div>
 								<HashLink to={`#${member.name}`} className={classes.name}>{member.name}</HashLink>
-								{member.flags.isOptional ? '?' : ''}
+								{member.flags?.isOptional ? '?' : ''}
 								: <Type def={member.type} ignoreUndefined/>
 							</div>
 						</div>
 					);
 				}
-				if (member.kind === ReferenceNodeKind.Method) {
+				if (member.kind === 'method') {
 					const sig = member.signatures![0];
 					return (
 						<div key={member.name} className={classes.prop}>
@@ -72,7 +71,7 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 							) : null}
 							<div>
 								<HashLink to={`#${member.name}`} className={classes.name}>{member.name}</HashLink>
-								{member.flags.isOptional ? '?' : ''}
+								{member.flags?.isOptional ? '?' : ''}
 								(): <Type def={member.signatures![0].type}/>
 							</div>
 						</div>

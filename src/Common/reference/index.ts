@@ -1,5 +1,3 @@
-import type { ReferenceNodeKind } from './ReferenceNodeKind';
-
 interface ReferenceFlags {
 	isExported?: boolean;
 	isOptional?: boolean;
@@ -7,12 +5,6 @@ interface ReferenceFlags {
 	isPrivate?: boolean;
 	isStatic?: boolean;
 	isExternal?: boolean;
-}
-
-interface ReferenceGroup {
-	title: string;
-	kind: number;
-	children: number[];
 }
 
 export interface ReferenceCommentTag {
@@ -27,7 +19,7 @@ export interface ReferenceComment {
 	tags?: ReferenceCommentTag[];
 }
 
-interface ReferenceSource {
+export interface ReferenceLocation {
 	fileName: string;
 	line: number;
 	character: number;
@@ -83,105 +75,110 @@ export type TupleMemberReferenceType = NamedTupleMemberReferenceType | Reference
 export interface AbstractReferenceNode {
 	id: number;
 	name: string;
-	kind: ReferenceNodeKind;
-	kindString: string;
+	kind: string;
 	comment?: ReferenceComment;
-	sources?: ReferenceSource[];
-	flags: ReferenceFlags;
+	location?: ReferenceLocation;
+	flags?: ReferenceFlags;
 	children?: ReferenceNode[];
-	groups?: ReferenceGroup[];
 	inheritedFrom?: ReferenceType;
 }
 
 export interface ClassReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Class;
+	kind: 'class';
 	typeParameter?: TypeParameterReferenceNode[];
 	extendedTypes?: ReferenceType[];
+	ctor?: ConstructorReferenceNode;
+	members: ReferenceNode[]; // TODO less generic I guess
 }
 
 export interface SignatureReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.CallSignature;
+	kind: 'callSignature';
 	parameters?: ParameterReferenceNode[];
 	type: ReferenceType;
 	typeParameter?: TypeParameterReferenceNode[];
 }
 
 export interface PropertyReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Property;
+	kind: 'property';
 	type: ReferenceType;
 }
 
 export interface GetSignatureReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.GetSignature;
+	kind: 'getSignature';
 	parameters?: ReferenceNode[];
 	type: ReferenceType;
 }
 
+export interface FunctionReferenceNode extends AbstractReferenceNode {
+	kind: 'function';
+	signatures?: SignatureReferenceNode[];
+}
+
 export interface MethodReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Method;
+	kind: 'method';
 	signatures?: SignatureReferenceNode[];
 }
 
 export interface ConstructorReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Constructor;
+	kind: 'constructor';
 	signatures: SignatureReferenceNode[];
 }
 
 export interface AccessorReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Accessor;
+	kind: 'accessor';
 	getSignature?: GetSignatureReferenceNode[];
 }
 
 export interface EnumReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Enum;
+	kind: 'enum';
 }
 
 export interface EnumMemberReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.EnumMember;
+	kind: 'enumMember';
 }
 
 export interface TypeAliasReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.TypeAlias;
+	kind: 'typeAlias';
 	type: ReferenceType;
 }
 
 export interface InterfaceReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Interface;
+	kind: 'interface';
 	typeParameter?: TypeParameterReferenceNode[];
 }
 
 export interface TypeParameterReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.TypeParameter;
+	kind: 'typeParameter';
 }
 
 export interface ParameterReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Parameter;
+	kind: 'parameter';
 	type: ReferenceType;
 	defaultValue?: string;
 }
 
 export interface TypeLiteralReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.TypeLiteral;
+	kind: 'typeLiteral';
 	signatures?: SignatureReferenceNode[];
 }
 
 export interface VariableReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Variable;
+	kind: 'variable';
 	type: ReferenceType;
 	defaultValue?: string;
 }
 
 export interface ReferenceReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Reference;
+	kind: 'reference';
 	target: number;
 }
 
 export interface PackageReferenceNode extends AbstractReferenceNode {
-	kind: ReferenceNodeKind.Package;
+	kind: 'package';
 }
 
 export type ReferenceNode =
-	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
+	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | FunctionReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
 	EnumMemberReferenceNode | TypeAliasReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | TypeLiteralReferenceNode | ParameterReferenceNode | ReferenceReferenceNode | VariableReferenceNode | PackageReferenceNode;
 
 declare global {

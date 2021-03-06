@@ -1,5 +1,4 @@
 import type { ReferenceNode, ReferenceType } from '../reference';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 
 export const isOptionalType = (def?: ReferenceType) => {
 	if (!def) {
@@ -44,11 +43,11 @@ export const isStringLiteral = (def?: ReferenceType): boolean => {
 
 export const getPageType = (node: ReferenceNode): string => {
 	switch (node.kind) {
-		case ReferenceNodeKind.Class:
+		case 'class':
 			return 'classes';
-		case ReferenceNodeKind.Enum:
+		case 'enum':
 			return 'enums';
-		case ReferenceNodeKind.Interface:
+		case 'interface':
 			return 'interfaces';
 		default:
 			return 'unknown';

@@ -1,8 +1,7 @@
 import React from 'react';
-import { ReferenceNodeKind } from '../../reference/ReferenceNodeKind';
+import type { ReferenceType } from '../../reference';
 import { findSymbolByMember } from '../../Tools/ReferenceTools';
 import TypeAliasHint from '../TypeAliasHint';
-import type { ReferenceType } from '../../reference';
 import ReferenceTypeView from './ReferenceTypeView';
 
 interface TypeProps {
@@ -79,7 +78,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 			if (signatures?.length) {
 				const [signature] = signatures;
 				switch (signature.kind) {
-					case ReferenceNodeKind.CallSignature: {
+					case 'callSignature': {
 						return (
 							<>
 								(
@@ -93,8 +92,8 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 						);
 					}
 					default: {
-						// eslint-disable-next-line no-console
-						console.log(`unknown reflection signature type: ${signature.kindString} (${signature.kind as number})`);
+						// eslint-disable-next-line no-console,@typescript-eslint/restrict-template-expressions
+						console.log(`unknown reflection signature type: ${signature.kind}`);
 						return null;
 					}
 				}
@@ -107,7 +106,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				const referencedDesc = findSymbolByMember('id', def.id);
 				if (referencedDesc) {
 					const { symbol: referencedType } = referencedDesc;
-					if (referencedType.kind === ReferenceNodeKind.TypeAlias) {
+					if (referencedType.kind === 'typeAlias') {
 						return <TypeAliasHint symbol={referencedType}/>;
 					}
 					// TODO forward the CORRECT type arguments if this is a superclass

@@ -1,14 +1,13 @@
 import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import { filterByMember, findByMember } from './ArrayTools';
 import { hasTag } from './CodeTools';
 
 export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
-	if (node.flags.isPrivate) {
+	if (node.flags?.isPrivate) {
 		return false;
 	}
 
-	if (node.flags.isProtected && (!parent || hasTag(parent, 'hideprotected'))) {
+	if (node.flags?.isProtected && (!parent || hasTag(parent, 'hideprotected'))) {
 		return false;
 	}
 
@@ -17,7 +16,7 @@ export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
 	}
 
 	// noinspection RedundantIfStatementJS - to make it clearer, we use only if statements here
-	if (parent && parent.kind !== ReferenceNodeKind.Package && node.flags.isExternal && !hasTag(parent, 'inheritdoc')) {
+	if (parent && parent.kind !== 'package' && node.flags?.isExternal && !hasTag(parent, 'inheritdoc')) {
 		return false;
 	}
 
@@ -40,8 +39,8 @@ export function filterChildrenByMember<K extends keyof ReferenceNode, R extends 
 }
 
 export function defaultNodeSort<T extends ReferenceNode>(a: T, b: T) {
-	const aStatic = !!a.flags.isStatic;
-	const bStatic = !!b.flags.isStatic;
+	const aStatic = !!a.flags?.isStatic;
+	const bStatic = !!b.flags?.isStatic;
 	if (aStatic !== bStatic) {
 		return +bStatic - +aStatic;
 	}
@@ -51,7 +50,7 @@ export function defaultNodeSort<T extends ReferenceNode>(a: T, b: T) {
 
 export function getAnchorName(node: ReferenceNode, name?: string) {
 	const modifiers = [];
-	if (node.flags.isStatic) {
+	if (node.flags?.isStatic) {
 		modifiers.push('s');
 	}
 	return [...modifiers, name ?? node.name].join('_');

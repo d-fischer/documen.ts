@@ -1,18 +1,16 @@
+import { makeStyles } from '@material-ui/styles';
 import React, { useContext, useMemo } from 'react';
+import { useParams } from 'react-router';
 
 import NavMenu from '../Components/NavMenu';
-import { ConfigContext } from '../config';
-import type { ReferenceNode } from '../reference';
-
-import { ReferenceNodeKind } from '../reference/ReferenceNodeKind';
 import NavMenuGroup from '../Components/NavMenuGroup';
 import NavMenuItem from '../Components/NavMenuItem';
-import PageSwitch from './PageSwitch';
-import { useParams } from 'react-router';
+import { ConfigContext } from '../config';
+import type { ReferenceNode } from '../reference';
+import { checkVisibility, filterChildrenByMember } from '../Tools/NodeTools';
 import { getPackageRoot } from '../Tools/ReferenceTools';
 import { getPackagePath } from '../Tools/StringTools';
-import { makeStyles } from '@material-ui/styles';
-import { checkVisibility, filterChildrenByMember } from '../Tools/NodeTools';
+import PageSwitch from './PageSwitch';
 
 const useStyles = makeStyles({
 	root: {
@@ -48,9 +46,9 @@ export const PackageContainer: React.FC = () => {
 		return null;
 	}
 
-	const classNodes = useMemo(() => filterChildrenByMember(root, 'kind', ReferenceNodeKind.Class), [root]).filter(isNodeVisible);
-	const interfaceNodes = useMemo(() => filterChildrenByMember(root, 'kind', ReferenceNodeKind.Interface), [root]).filter(isNodeVisible);
-	const enumNodes = useMemo(() => filterChildrenByMember(root, 'kind', ReferenceNodeKind.Enum), [root]).filter(isNodeVisible);
+	const classNodes = useMemo(() => filterChildrenByMember(root, 'kind', 'class'), [root]).filter(isNodeVisible);
+	const interfaceNodes = useMemo(() => filterChildrenByMember(root, 'kind', 'interface'), [root]).filter(isNodeVisible);
+	const enumNodes = useMemo(() => filterChildrenByMember(root, 'kind', 'enum'), [root]).filter(isNodeVisible);
 
 	return (
 		<div className={classes.root}>

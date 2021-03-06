@@ -20,43 +20,43 @@ import SpaGenerator from '../Modes/SpaGenerator';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class CLICommandOptions extends Options {
 	@option({ description: 'development mode; disable some optimizations in favor of speed' })
-	dev: boolean;
+	dev!: boolean;
 
 	@option({ description: 'base directory' })
-	baseDir: string;
+	baseDir!: string;
 
 	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => existsSync(path.resolve(process.cwd(), value)) })
-	configDir: string;
+	configDir!: string;
 
 	@option({ flag: 'o', description: 'output directory' })
-	outDir: string;
+	outDir!: string;
 
 	@option({ flag: 'm', description: 'output mode', default: 'html' })
-	mode: 'spa' | 'html';
+	mode!: 'spa' | 'html';
 
 	@option({ flag: 'r', description: 'render mode', default: 'htmlSuffix', validator: value => ['htmlSuffix', 'subDirectories', 'htaccess'].includes(value) })
-	routerMode: RouterMode;
+	routerMode!: RouterMode;
 
 	@option({ flag: 'b', description: 'base URL', default: '' })
-	baseUrl: string;
+	baseUrl!: string;
 
 	@option({ description: 'set monorepo package root', default: '' })
-	mono: string;
+	mono!: string;
 
 	@option({ description: 'repo user name', default: '' })
-	repoUser: string;
+	repoUser!: string;
 
 	@option({ description: 'repo name', default: '' })
-	repoName: string;
+	repoName!: string;
 
 	@option({ description: 'git branch' })
-	repoBranch: string;
+	repoBranch!: string;
 
 	@option({ description: 'index file' })
-	indexFile: string;
+	indexFile!: string;
 
 	@option({ description: 'index title' })
-	indexTitle: string;
+	indexTitle!: string;
 }
 
 @command()

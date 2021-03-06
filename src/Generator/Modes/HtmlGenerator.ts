@@ -1,14 +1,13 @@
-import * as ts from 'typescript';
 import * as vfs from '@typescript/vfs';
 import fs from 'fs-extra';
 import path from 'path';
+import * as ts from 'typescript';
 import resolveHome from 'untildify';
 import webpack from 'webpack';
 import type { ArticleContent } from '../../Common/Components/PageArticle';
 import type { Config, ConfigInternalArticle } from '../../Common/config/Config';
 import type Paths from '../../Common/Paths';
 import type { ReferenceNode } from '../../Common/reference';
-import { ReferenceNodeKind } from '../../Common/reference/ReferenceNodeKind';
 import { filterByMember } from '../../Common/Tools/ArrayTools';
 import { checkVisibility, getChildren } from '../../Common/Tools/NodeTools';
 import { getPackagePath } from '../../Common/Tools/StringTools';
@@ -59,13 +58,13 @@ export default class HtmlGenerator extends Generator {
 		const indexPromise = pathToRead && fs.readFile(pathToRead, 'utf-8');
 		const isNodeVisible = (node: ReferenceNode) => checkVisibility(node);
 		await Promise.all([
-			...(indexPromise ? [[`${pre}/`, config.indexTitle, indexPromise]] : []),
-			...([] as RenderEntry[]).concat(...((config.configDir && config.categories) ? config.categories.map(cat => cat.articles.filter(art => 'file' in art).map((art: ConfigInternalArticle) => ([
+			...(indexPromise ? [[`${pre}/`, config.indexTitle, indexPromise] as RenderEntry] : []),
+			...((config.configDir && config.categories) ? config.categories.flatMap(cat => cat.articles.filter((art): art is ConfigInternalArticle => 'file' in art).map(art => ([
 				`${pre}/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(config.configDir!, art.file), 'utf-8')
-			] as RenderEntry))) : [])),
-			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Class).filter(isNodeVisible).map(value => `${pre}/reference/classes/${value.name}`),
-			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Interface).filter(isNodeVisible).map(value => `${pre}/reference/interfaces/${value.name}`),
-			...filterByMember(packageChildren, 'kind', ReferenceNodeKind.Enum).filter(isNodeVisible).map(value => `${pre}/reference/enums/${value.name}`)
+			] as RenderEntry))) : []),
+			...filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `${pre}/reference/classes/${value.name}`),
+			...filterByMember(packageChildren, 'kind', 'interface').filter(isNodeVisible).map(value => `${pre}/reference/interfaces/${value.name}`),
+			...filterByMember(packageChildren, 'kind', 'enum').filter(isNodeVisible).map(value => `${pre}/reference/enums/${value.name}`)
 		].map(async (entry: RenderEntry | string) => {
 			if (Array.isArray(entry)) {
 				const [resourcePath, title, contentPromise] = entry;
