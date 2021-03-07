@@ -2,8 +2,8 @@
 	"extends": "./tsconfig.json",
 	"include": [
 		"types",
-		"src/Common",
-		"src/SPA"
+		"src/common",
+		"src/spa"
 	],
 	"compilerOptions": {
 		"importHelpers": false

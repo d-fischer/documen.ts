@@ -10,7 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const fs = require('fs');
-const MonorepoGenerator = require('../lib/Generator/Modes/MonorepoGenerator').default;
+const MonorepoGenerator = require('../lib/generator/modes/MonorepoGenerator').default;
 
 const publicPath = '/';
 const publicUrl = '';

@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('../lib/Generator/cli.js');
+require('../lib/generator/cli.js');

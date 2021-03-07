@@ -2,8 +2,8 @@
 	"extends": "./tsconfig.json",
 	"include": [
 		"types",
-		"src/Common",
-		"src/HTML"
+		"src/common",
+		"src/html"
 	],
 	"compilerOptions": {
 		"importHelpers": false

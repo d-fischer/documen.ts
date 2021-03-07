@@ -65,7 +65,7 @@ module.exports = (outDir, { dev }) => [
 				path
 					.relative(paths.appSrc, info.absoluteResourcePath)
 					.replace(/\\/g, '/'),
-			library: 'DocumenTSHTMLGenerator',
+			library: 'DocumenTsHtmlGenerator',
 			libraryTarget: 'umd'
 		},
 		module: {
