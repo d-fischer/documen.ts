@@ -1,6 +1,13 @@
 /* eslint-disable no-console */
 import ts from 'typescript';
 
+export function exit(exitCode: number): never {
+	if (exitCode) {
+		console.error(`Process exiting with error code '${exitCode}'.`);
+	}
+	process.exit(exitCode);
+}
+
 function formatDiagnostics(diagnostics: readonly ts.Diagnostic[], host: ts.CompilerHost) {
 	const shouldBePretty = !!ts.sys.writeOutputIsTTY?.();
 	const formatHost: ts.FormatDiagnosticsHost = {
@@ -29,20 +36,20 @@ function handleDiagnostics(
 		process.stderr.write('\n\n');
 		console.error(formatDiagnostics(diagnostics, host));
 		console.error(`${errorPrefix}. Exiting.`);
-		process.exit(1);
+		exit(1);
 	}
 }
 
 function handleConfigParsingErrors(parsedCommandLine: ts.ParsedCommandLine | undefined, host: ts.CompilerHost) {
-	if (parsedCommandLine?.errors.length) {
-		process.stderr.write('\n\n');
-		console.error(formatDiagnostics(parsedCommandLine.errors, host));
-		process.exit(1);
-	}
 	if (!parsedCommandLine) {
 		process.stderr.write('\n\n');
 		console.error('Unknown error parsing config.');
-		process.exit(1);
+		exit(1);
+	}
+	if (parsedCommandLine.errors.length) {
+		process.stderr.write('\n\n');
+		console.error(formatDiagnostics(parsedCommandLine.errors, host));
+		exit(1);
 	}
 }
 
