@@ -1,5 +1,6 @@
 import path from 'path';
 import * as ts from 'typescript';
+import { AccessorReflection } from './reflections/AccessorReflection';
 import { ClassReflection } from './reflections/ClassReflection';
 import { FunctionReflection } from './reflections/FunctionReflection';
 import { InterfaceReflection } from './reflections/InterfaceReflection';
@@ -53,6 +54,11 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 	}
 	if (ts.isMethodDeclaration(declaration)) {
 		const rs = new MethodReflection(symbol, parentSymbol);
+		await rs.processChildren(checker);
+		return rs;
+	}
+	if (ts.isAccessor(declaration)) {
+		const rs = new AccessorReflection(symbol);
 		await rs.processChildren(checker);
 		return rs;
 	}

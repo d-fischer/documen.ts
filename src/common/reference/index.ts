@@ -69,7 +69,14 @@ export interface NamedTupleMemberReferenceType {
 	element: ReferenceType;
 }
 
-export type ReferenceType = IntrinsicReferenceType | ReferenceReferenceType | ArrayReferenceType | UnionReferenceType | LiteralReferenceType | ReflectionReferenceType | TupleReferenceType;
+export type ReferenceType =
+	| IntrinsicReferenceType
+	| ReferenceReferenceType
+	| ArrayReferenceType
+	| UnionReferenceType
+	| LiteralReferenceType
+	| ReflectionReferenceType
+	| TupleReferenceType;
 export type TupleMemberReferenceType = NamedTupleMemberReferenceType | ReferenceType;
 
 export interface AbstractReferenceNode {
@@ -109,6 +116,12 @@ export interface GetSignatureReferenceNode extends AbstractReferenceNode {
 	type: ReferenceType;
 }
 
+export interface SetSignatureReferenceNode extends AbstractReferenceNode {
+	kind: 'setSignature';
+	parameters?: ReferenceNode[];
+	type: ReferenceType;
+}
+
 export interface FunctionReferenceNode extends AbstractReferenceNode {
 	kind: 'function';
 	signatures?: SignatureReferenceNode[];
@@ -126,7 +139,8 @@ export interface ConstructorReferenceNode extends AbstractReferenceNode {
 
 export interface AccessorReferenceNode extends AbstractReferenceNode {
 	kind: 'accessor';
-	getSignature?: GetSignatureReferenceNode[];
+	getSignature?: GetSignatureReferenceNode;
+	setSignature?: SetSignatureReferenceNode;
 }
 
 export interface EnumReferenceNode extends AbstractReferenceNode {
@@ -178,8 +192,25 @@ export interface PackageReferenceNode extends AbstractReferenceNode {
 }
 
 export type ReferenceNode =
-	ClassReferenceNode | SignatureReferenceNode | PropertyReferenceNode | GetSignatureReferenceNode | FunctionReferenceNode | MethodReferenceNode | ConstructorReferenceNode | AccessorReferenceNode | EnumReferenceNode |
-	EnumMemberReferenceNode | TypeAliasReferenceNode | InterfaceReferenceNode | TypeParameterReferenceNode | TypeLiteralReferenceNode | ParameterReferenceNode | ReferenceReferenceNode | VariableReferenceNode | PackageReferenceNode;
+	| ClassReferenceNode
+	| SignatureReferenceNode
+	| PropertyReferenceNode
+	| GetSignatureReferenceNode
+	| SetSignatureReferenceNode
+	| FunctionReferenceNode
+	| MethodReferenceNode
+	| ConstructorReferenceNode
+	| AccessorReferenceNode
+	| EnumReferenceNode
+	| EnumMemberReferenceNode
+	| TypeAliasReferenceNode
+	| InterfaceReferenceNode
+	| TypeParameterReferenceNode
+	| TypeLiteralReferenceNode
+	| ParameterReferenceNode
+	| ReferenceReferenceNode
+	| VariableReferenceNode
+	| PackageReferenceNode;
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/naming-convention

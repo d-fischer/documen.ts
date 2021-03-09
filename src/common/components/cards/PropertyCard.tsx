@@ -33,7 +33,7 @@ const useStyles = makeStyles({
 const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => {
 	const classes = useStyles();
 
-	const sig = definition.kind === 'accessor' ? definition.getSignature?.[0] : definition;
+	const sig = definition.kind === 'accessor' ? definition.getSignature : definition;
 	const type = sig?.type;
 	return (
 		<Card className={classes.root} id={getAnchorName(definition, name)} key={definition.id}>

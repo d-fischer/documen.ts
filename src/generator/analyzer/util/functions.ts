@@ -1,7 +1,7 @@
 import assert from 'assert';
 import * as ts from 'typescript';
 import { zip } from '../../../common/tools/ArrayTools';
-import { CallSignatureReflection } from '../reflections/CallSignatureReflection';
+import { SignatureReflection } from '../reflections/SignatureReflection';
 import type { SymbolBasedReflection } from '../reflections/SymbolBasedReflection';
 
 export async function getReflectedCallSignatures(checker: ts.TypeChecker, symbol: ts.Symbol, reflection: SymbolBasedReflection, parentSymbol?: ts.Symbol) {
@@ -17,7 +17,7 @@ export async function getReflectedCallSignatures(checker: ts.TypeChecker, symbol
 	const sigs = type.getCallSignatures()
 	const declarations = symbol.getDeclarations()?.filter(ts.isFunctionLike) ?? [];
 	return Promise.all([...zip(declarations, sigs)].map(async ([decl, sig]) => {
-		const declSym = new CallSignatureReflection(reflection, decl, sig);
+		const declSym = new SignatureReflection(reflection, ts.SyntaxKind.CallSignature, decl, sig);
 		await declSym.processChildren(checker);
 		return declSym;
 	}));

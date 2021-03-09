@@ -1,11 +1,11 @@
 import type * as ts from 'typescript';
-import type { MethodReferenceNode } from '../../../common/reference';
+import type { MethodReferenceNode, SignatureReferenceNode } from '../../../common/reference';
 import { getReflectedCallSignatures } from '../util/functions';
-import type { CallSignatureReflection } from './CallSignatureReflection';
+import type { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
 export class MethodReflection extends SymbolBasedReflection {
-	signatures!: CallSignatureReflection[];
+	signatures!: SignatureReflection[];
 
 	constructor(symbol: ts.Symbol, private readonly _parentSymbol?: ts.Symbol) {
 		super(symbol);
@@ -19,7 +19,7 @@ export class MethodReflection extends SymbolBasedReflection {
 		return {
 			...this._baseSerialize(),
 			kind: 'method',
-			signatures: this.signatures.map(sig => sig.serialize())
+			signatures: this.signatures.map(sig => sig.serialize() as SignatureReferenceNode)
 		};
 	}
 }

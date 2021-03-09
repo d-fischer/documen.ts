@@ -77,7 +77,7 @@ const ClassPage: React.FC = () => {
 						<h2>Properties</h2>
 						{propertiesWithoutEvents.sort(defaultNodeSort).map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
 						{accessors.map(acc => {
-							if (!acc.getSignature || !acc.getSignature.length) {
+							if (!acc.getSignature) {
 								return null;
 							}
 							return <PropertyCard key={acc.id} name={acc.name} definition={acc}/>;
