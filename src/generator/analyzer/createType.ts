@@ -36,10 +36,10 @@ function getReflectorForKind(kind: ts.SyntaxKind): Required<Omit<TypeReflector, 
 	loadTypeReflectors();
 	return {
 		fromNode(checker, node) {
-			return new UnknownType(node.getText(), 'node');
+			return new UnknownType(node.getText(), ts.SyntaxKind[node.kind], 'node');
 		},
-		fromType(checker, type) {
-			return new UnknownType(checker.typeToString(type), 'type');
+		fromType(checker, type, node) {
+			return new UnknownType(checker.typeToString(type), ts.SyntaxKind[node.kind], 'type');
 		},
 		...typeReflectors.get(kind)
 	};

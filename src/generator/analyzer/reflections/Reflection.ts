@@ -1,4 +1,4 @@
-import type * as ts from 'typescript';
+import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
 
 export abstract class Reflection {
@@ -42,7 +42,10 @@ export abstract class Reflection {
 	}
 
 	serialize(): ReferenceNode {
-		return this._baseSerialize() as unknown as ReferenceNode;
+		return {
+			...this._baseSerialize(),
+			debugKind: ts.SyntaxKind[this.declarations[0]?.kind]
+		} as unknown as ReferenceNode;
 	}
 
 	abstract get name(): string;
