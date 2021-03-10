@@ -1,5 +1,6 @@
 import assert from 'assert';
 import ts from 'typescript';
+import { arrayTypeReflector } from './types/ArrayType';
 import { intrinsicTypeReflector } from './types/IntrinsicType';
 import { literalTypeReflector } from './types/LiteralType';
 import { referenceTypeReflector } from './types/ReferenceType';
@@ -24,7 +25,7 @@ function loadTypeReflectors() {
 		return;
 	}
 
-	for (const reflector of [intrinsicTypeReflector, literalTypeReflector, referenceTypeReflector, unionTypeReflector]) {
+	for (const reflector of [arrayTypeReflector, intrinsicTypeReflector, literalTypeReflector, referenceTypeReflector, unionTypeReflector]) {
 		for (const kind of reflector.kinds) {
 			typeReflectors.set(kind, reflector);
 		}

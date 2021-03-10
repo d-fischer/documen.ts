@@ -8,6 +8,7 @@ import { MethodReflection } from './reflections/MethodReflection';
 import { ReferenceReflection } from './reflections/ReferenceReflection';
 import { Reflection } from './reflections/Reflection';
 import { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
+import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
 
 export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbol, parentSymbol?: ts.Symbol): Promise<Reflection> {
@@ -59,6 +60,11 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 	}
 	if (ts.isAccessor(declaration)) {
 		const rs = new AccessorReflection(symbol);
+		await rs.processChildren(checker);
+		return rs;
+	}
+	if (ts.isTypeAliasDeclaration(declaration)) {
+		const rs = new TypeAliasReflection(symbol);
 		await rs.processChildren(checker);
 		return rs;
 	}
