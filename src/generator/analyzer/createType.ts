@@ -4,6 +4,7 @@ import { arrayTypeReflector } from './types/ArrayType';
 import { intrinsicTypeReflector } from './types/IntrinsicType';
 import { literalTypeReflector } from './types/LiteralType';
 import { referenceTypeReflector } from './types/ReferenceType';
+import { tupleTypeReflector } from './types/TupleType';
 import type { Type } from './types/Type';
 import { unionTypeReflector } from './types/UnionType';
 import { UnknownType } from './types/UnknownType';
@@ -25,7 +26,7 @@ function loadTypeReflectors() {
 		return;
 	}
 
-	for (const reflector of [arrayTypeReflector, intrinsicTypeReflector, literalTypeReflector, referenceTypeReflector, unionTypeReflector]) {
+	for (const reflector of [arrayTypeReflector, intrinsicTypeReflector, literalTypeReflector, referenceTypeReflector, tupleTypeReflector, unionTypeReflector]) {
 		for (const kind of reflector.kinds) {
 			typeReflectors.set(kind, reflector);
 		}
