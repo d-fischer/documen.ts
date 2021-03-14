@@ -56,15 +56,7 @@ export abstract class Reflection {
 
 	protected _baseSerialize(): Omit<ReferenceNode, 'kind'> & { kind: '__unhandled' } {
 		const node = this.declarations[0];
-		const sf = node.getSourceFile();
-		const { fileName } = sf;
-		const pos = node.getStart();
-		const { character, line } = sf.getLineAndCharacterOfPosition(pos);
-		const location: ReferenceLocation = {
-			fileName,
-			line: line + 1,
-			character
-		};
+		const location = Reflection._getLocation(node);
 
 		return {
 			id: this.id,
@@ -107,6 +99,23 @@ export abstract class Reflection {
 		if (!!(declaration as any).questionToken) {
 			this._flags.add('isOptional');
 		}
+	}
+
+	private static _getLocation(node?: ts.Node): ReferenceLocation | undefined {
+		if (!node) {
+			return undefined;
+		}
+
+		const sf = node.getSourceFile();
+		const { fileName } = sf;
+		const pos = node.getStart();
+		const { character, line } = sf.getLineAndCharacterOfPosition(pos);
+
+		return {
+			fileName,
+			line: line + 1,
+			character
+		};
 	}
 
 	private _registerReflection(): number {

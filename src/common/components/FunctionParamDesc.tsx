@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { hasTag } from '../tools/CodeTools';
-import type { ReferenceCommentTag, SignatureReferenceNode } from '../reference';
+import type { ReferenceCommentTag, CallSignatureReferenceNode } from '../reference';
 
 import FunctionParamDescEntry from './FunctionParamDescEntry';
 import { makeStyles } from '@material-ui/styles';
 
 interface FunctionParamDescProps {
-	signature: SignatureReferenceNode;
+	signature: CallSignatureReferenceNode;
 	additionalTags?: ReferenceCommentTag[];
 	isCallback?: boolean;
 }

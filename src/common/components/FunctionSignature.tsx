@@ -1,9 +1,9 @@
 import React from 'react';
-import type { SignatureReferenceNode } from '../reference';
+import type { CallSignatureReferenceNode } from '../reference';
 import { makeStyles } from '@material-ui/styles';
 
 interface FunctionSignatureProps {
-	signature: SignatureReferenceNode;
+	signature: CallSignatureReferenceNode;
 	isConstructor?: boolean;
 }
 

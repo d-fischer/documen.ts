@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import Card from '../../containers/Card';
 import FunctionSignature from '../FunctionSignature';
 import FunctionParamDesc from '../FunctionParamDesc';
-import type { ConstructorReferenceNode, MethodReferenceNode, ReferenceType, SignatureReferenceNode } from '../../reference';
+import type { ConstructorReferenceNode, MethodReferenceNode, ReferenceType, CallSignatureReferenceNode } from '../../reference';
 import { getTag, hasTag } from '../../tools/CodeTools';
 
 import DeprecationNotice from '../DeprecationNotice';
@@ -15,7 +15,7 @@ import { getAnchorName, typeIsAsync } from '../../tools/NodeTools';
 
 interface MethodCardProps {
 	definition: ConstructorReferenceNode | MethodReferenceNode;
-	sig: SignatureReferenceNode;
+	sig: CallSignatureReferenceNode;
 	isConstructor?: boolean;
 }
 

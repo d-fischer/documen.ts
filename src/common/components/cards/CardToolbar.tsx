@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ReferenceNode, SignatureReferenceNode } from '../../reference';
+import type { ReferenceNode, CallSignatureReferenceNode } from '../../reference';
 import CodeLink from '../CodeLink';
 import { HashLink } from 'react-router-hash-link';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -11,7 +11,7 @@ import { getAnchorName } from '../../tools/NodeTools';
 interface CardToolbarProps {
 	name?: string;
 	definition: ReferenceNode;
-	signature?: SignatureReferenceNode;
+	signature?: CallSignatureReferenceNode;
 	className?: string;
 }
 

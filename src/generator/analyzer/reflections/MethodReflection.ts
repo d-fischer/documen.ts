@@ -1,5 +1,5 @@
 import type * as ts from 'typescript';
-import type { MethodReferenceNode, SignatureReferenceNode } from '../../../common/reference';
+import type { MethodReferenceNode, CallSignatureReferenceNode } from '../../../common/reference';
 import { getReflectedCallSignatures } from '../util/functions';
 import type { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
@@ -21,7 +21,7 @@ export class MethodReflection extends SymbolBasedReflection {
 		return {
 			...this._baseSerialize(),
 			kind: 'method',
-			signatures: this.signatures.map(sig => sig.serialize() as SignatureReferenceNode)
+			signatures: this.signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
 		};
 	}
 }

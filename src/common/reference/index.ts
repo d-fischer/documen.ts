@@ -98,11 +98,16 @@ export interface ClassReferenceNode extends AbstractReferenceNode {
 	members: ReferenceNode[]; // TODO less generic I guess
 }
 
-export interface SignatureReferenceNode extends AbstractReferenceNode {
+export interface CallSignatureReferenceNode extends AbstractReferenceNode {
 	kind: 'callSignature';
 	parameters?: ParameterReferenceNode[];
 	type: ReferenceType;
 	typeParameter?: TypeParameterReferenceNode[];
+}
+
+export interface ConstructSignatureReferenceNode extends AbstractReferenceNode {
+	kind: 'constructSignature';
+	parameters?: ParameterReferenceNode[];
 }
 
 export interface PropertyReferenceNode extends AbstractReferenceNode {
@@ -124,17 +129,17 @@ export interface SetSignatureReferenceNode extends AbstractReferenceNode {
 
 export interface FunctionReferenceNode extends AbstractReferenceNode {
 	kind: 'function';
-	signatures?: SignatureReferenceNode[];
+	signatures?: CallSignatureReferenceNode[];
 }
 
 export interface MethodReferenceNode extends AbstractReferenceNode {
 	kind: 'method';
-	signatures?: SignatureReferenceNode[];
+	signatures?: CallSignatureReferenceNode[];
 }
 
 export interface ConstructorReferenceNode extends AbstractReferenceNode {
 	kind: 'constructor';
-	signatures: SignatureReferenceNode[];
+	signatures: CallSignatureReferenceNode[];
 }
 
 export interface AccessorReferenceNode extends AbstractReferenceNode {
@@ -173,7 +178,7 @@ export interface ParameterReferenceNode extends AbstractReferenceNode {
 
 export interface TypeLiteralReferenceNode extends AbstractReferenceNode {
 	kind: 'typeLiteral';
-	signatures?: SignatureReferenceNode[];
+	signatures?: CallSignatureReferenceNode[];
 }
 
 export interface VariableReferenceNode extends AbstractReferenceNode {
@@ -193,7 +198,8 @@ export interface PackageReferenceNode extends AbstractReferenceNode {
 
 export type ReferenceNode =
 	| ClassReferenceNode
-	| SignatureReferenceNode
+	| ConstructSignatureReferenceNode
+	| CallSignatureReferenceNode
 	| PropertyReferenceNode
 	| GetSignatureReferenceNode
 	| SetSignatureReferenceNode

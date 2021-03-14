@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import Card from '../../containers/Card';
-import type { ParameterReferenceNode, PropertyReferenceNode, SignatureReferenceNode } from '../../reference';
+import type { ParameterReferenceNode, PropertyReferenceNode, CallSignatureReferenceNode } from '../../reference';
 import { getTag, hasTag } from '../../tools/CodeTools';
 import MarkdownParser from '../../tools/MarkdownParser';
 import { getAnchorName } from '../../tools/NodeTools';
@@ -71,8 +71,8 @@ const useStyles = makeStyles(theme => ({
 
 const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 	const classes = useStyles();
-	let handlerDefinition: SignatureReferenceNode | undefined = undefined;
-	let handlerParamDefinition: SignatureReferenceNode | undefined = undefined;
+	let handlerDefinition: CallSignatureReferenceNode | undefined = undefined;
+	let handlerParamDefinition: CallSignatureReferenceNode | undefined = undefined;
 	if (definition.type.type === 'reflection' && definition.type.declaration.signatures && definition.type.declaration.signatures.length) {
 		handlerDefinition = definition.type.declaration.signatures[0];
 		if (handlerDefinition.parameters?.length) {

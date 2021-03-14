@@ -13,11 +13,13 @@ export class SymbolBasedReflection extends Reflection {
 		return this._reflectionIdsBySymbol.get(symbol);
 	}
 
-	constructor(protected _symbol: ts.Symbol) {
+	constructor(protected _symbol: ts.Symbol, registerReverse = true) {
 		super();
 
 		SymbolBasedReflection._symbolsByReflectionId.set(this.id, _symbol);
-		SymbolBasedReflection._reflectionIdsBySymbol.set(_symbol, this.id);
+		if (registerReverse) {
+			SymbolBasedReflection._reflectionIdsBySymbol.set(_symbol, this.id);
+		}
 	}
 
 	get declarations() {
