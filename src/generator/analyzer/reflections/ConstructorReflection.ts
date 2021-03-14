@@ -10,12 +10,12 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		// class and constructor are the same symbol, so don't register in reverse
 		super(symbol, false);
 
-		this._handleFlags(symbol.declarations[0]);
+		this._handleFlags(symbol.getDeclarations()?.[0]);
 	}
 
 	async processChildren(checker: ts.TypeChecker) {
 		this.signatures = await Promise.all(this._signatures.map(async (sig, i) => {
-			const callSignature = new SignatureReflection('constructor', ts.SyntaxKind.ConstructSignature, sig, this._symbol.declarations[i] as ts.SignatureDeclaration);
+			const callSignature = new SignatureReflection('constructor', ts.SyntaxKind.ConstructSignature, sig, this._symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined);
 			await callSignature.processChildren(checker);
 			return callSignature;
 		}))

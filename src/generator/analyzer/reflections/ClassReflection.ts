@@ -13,7 +13,7 @@ export class ClassReflection extends SymbolBasedReflection {
 	constructor(symbol: ts.Symbol) {
 		super(symbol);
 
-		this._handleFlags(symbol.declarations[0]);
+		this._handleFlags(symbol.getDeclarations()?.[0]);
 	}
 
 	async processChildren(checker: ts.TypeChecker) {

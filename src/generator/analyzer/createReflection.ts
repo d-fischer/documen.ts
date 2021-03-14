@@ -1,3 +1,4 @@
+import assert from 'assert';
 import path from 'path';
 import * as ts from 'typescript';
 import { AccessorReflection } from './reflections/AccessorReflection';
@@ -14,7 +15,8 @@ import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
 
 export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbol, parentSymbol?: ts.Symbol): Promise<Reflection> {
-	const declaration = symbol.declarations[0];
+	const declaration = symbol.getDeclarations()?.[0];
+	assert(declaration);
 	const declSf = declaration.getSourceFile();
 	if (declSf.fileName.endsWith('.d.ts')) {
 		const declFullText = declSf.getFullText();

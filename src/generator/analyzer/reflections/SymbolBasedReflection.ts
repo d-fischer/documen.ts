@@ -23,8 +23,7 @@ export class SymbolBasedReflection extends Reflection {
 	}
 
 	get declarations() {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		return this._symbol.declarations ?? [];
+		return this._symbol.getDeclarations() ?? [];
 	}
 
 	get name() {

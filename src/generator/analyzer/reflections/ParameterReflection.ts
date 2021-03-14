@@ -15,7 +15,7 @@ export class ParameterReflection extends SymbolBasedReflection {
 	constructor(symbol: ts.Symbol, private readonly _declaration?: ts.ParameterDeclaration) {
 		super(symbol);
 
-		this._handleFlags(_declaration ?? symbol.declarations[0]);
+		this._handleFlags(_declaration ?? symbol.getDeclarations()?.[0]);
 	}
 
 	async processChildren(checker: ts.TypeChecker) {
