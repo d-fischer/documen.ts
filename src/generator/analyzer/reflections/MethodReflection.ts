@@ -9,6 +9,8 @@ export class MethodReflection extends SymbolBasedReflection {
 
 	constructor(symbol: ts.Symbol, private readonly _parentSymbol?: ts.Symbol) {
 		super(symbol);
+
+		this._handleFlags(symbol.declarations[0]);
 	}
 
 	async processChildren(checker: ts.TypeChecker) {

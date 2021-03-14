@@ -7,6 +7,12 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class PropertyReflection extends SymbolBasedReflection {
 	type!: Type;
 
+	constructor(symbol: ts.Symbol) {
+		super(symbol);
+
+		this._handleFlags(symbol.declarations[0]);
+	}
+
 	async processChildren(checker: ts.TypeChecker): Promise<void> {
 		const declaration = this._symbol.getDeclarations()?.[0];
 		this.type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type

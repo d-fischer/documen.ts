@@ -7,6 +7,12 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class FunctionReflection extends SymbolBasedReflection {
 	signatures!: SignatureReflection[];
 
+	constructor(symbol: ts.Symbol) {
+		super(symbol);
+
+		this._handleFlags(symbol.declarations[0]);
+	}
+
 	async processChildren(checker: ts.TypeChecker) {
 		this.signatures = await getReflectedCallSignatures(checker, this._symbol, this);
 	}

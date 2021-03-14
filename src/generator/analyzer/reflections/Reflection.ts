@@ -1,10 +1,14 @@
 import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
 
+export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional';
+
 export abstract class Reflection {
 	private static readonly _reflectionsById = new Map<number, Reflection>();
 	private static _nextReflectionId = 1;
 	readonly id: number;
+
+	protected readonly _flags = new Set<ReflectionFlag>();
 
 	static findIdAtPosition(fullPath: string, line: number, column: number): number | undefined {
 		for (const [id, rs] of this._reflectionsById) {
@@ -66,8 +70,43 @@ export abstract class Reflection {
 			id: this.id,
 			kind: '__unhandled',
 			name: this.name,
+			flags: Object.fromEntries([...this._flags].map(f => [f, true])),
 			location
 		};
+	}
+
+	protected _handleFlags(declaration?: ts.Declaration) {
+		if (!declaration) {
+			return;
+		}
+
+		const modifiers = ts.getCombinedModifierFlags(declaration);
+
+		/* eslint-disable no-bitwise */
+		if (modifiers & ts.ModifierFlags.Private) {
+			this._flags.add('isPrivate');
+		}
+		if (modifiers & ts.ModifierFlags.Protected) {
+			this._flags.add('isProtected');
+		}
+		if (modifiers & ts.ModifierFlags.Public) {
+			this._flags.add('isPublic');
+		}
+		if (modifiers & ts.ModifierFlags.Readonly) {
+			this._flags.add('isReadonly');
+		}
+		if (modifiers & ts.ModifierFlags.Abstract) {
+			this._flags.add('isAbstract');
+		}
+		if (modifiers & ts.ModifierFlags.Static) {
+			this._flags.add('isStatic');
+		}
+		/* eslint-enable no-bitwise */
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-member-access
+		if (!!(declaration as any).questionToken) {
+			this._flags.add('isOptional');
+		}
 	}
 
 	private _registerReflection(): number {

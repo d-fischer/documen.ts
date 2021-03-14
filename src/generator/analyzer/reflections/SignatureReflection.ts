@@ -17,6 +17,8 @@ export class SignatureReflection extends DeclarationBasedReflection<ts.Signature
 		private readonly _signature: ts.Signature
 	) {
 		super(declaration);
+
+		this._handleFlags(declaration);
 	}
 
 	async processChildren(checker: ts.TypeChecker) {

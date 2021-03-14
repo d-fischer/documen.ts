@@ -8,10 +8,10 @@ export class AccessorReflection extends SymbolBasedReflection {
 	setSignature?: SignatureReflection;
 
 	async processChildren(checker: ts.TypeChecker) {
-		const signatureDeclarations = this._symbol.getDeclarations();
+		const symbolDeclarations = this._symbol.getDeclarations();
 
-		this.getSignature = await this._findAndConvertSignature(checker, signatureDeclarations, ts.isGetAccessor);
-		this.setSignature = await this._findAndConvertSignature(checker, signatureDeclarations, ts.isSetAccessor);
+		this.getSignature = await this._findAndConvertSignature(checker, symbolDeclarations, ts.isGetAccessor);
+		this.setSignature = await this._findAndConvertSignature(checker, symbolDeclarations, ts.isSetAccessor);
 	}
 
 	serialize(): AccessorReferenceNode {

@@ -10,6 +10,12 @@ export class ClassReflection extends SymbolBasedReflection {
 	ctor?: ConstructorReflection;
 	members!: Reflection[];
 
+	constructor(symbol: ts.Symbol) {
+		super(symbol);
+
+		this._handleFlags(symbol.declarations[0]);
+	}
+
 	async processChildren(checker: ts.TypeChecker) {
 		const instanceType = checker.getDeclaredTypeOfSymbol(this._symbol);
 		assert(instanceType.isClassOrInterface());

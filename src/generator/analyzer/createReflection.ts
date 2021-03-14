@@ -5,6 +5,7 @@ import { ClassReflection } from './reflections/ClassReflection';
 import { FunctionReflection } from './reflections/FunctionReflection';
 import { InterfaceReflection } from './reflections/InterfaceReflection';
 import { MethodReflection } from './reflections/MethodReflection';
+import { ParameterReflection } from './reflections/ParameterReflection';
 import { PropertyReflection } from './reflections/PropertyReflection';
 import { ReferenceReflection } from './reflections/ReferenceReflection';
 import { Reflection } from './reflections/Reflection';
@@ -71,6 +72,11 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 	}
 	if (ts.isPropertyDeclaration(declaration)) {
 		const rs = new PropertyReflection(symbol);
+		await rs.processChildren(checker);
+		return rs;
+	}
+	if (ts.isParameter(declaration)) {
+		const rs = new ParameterReflection(symbol, declaration);
 		await rs.processChildren(checker);
 		return rs;
 	}
