@@ -1,7 +1,7 @@
 import assert from 'assert';
 import ts from 'typescript';
 import { arrayTypeReflector } from './types/ArrayType';
-import { intrinsicTypeReflector } from './types/IntrinsicType';
+import { IntrinsicType, intrinsicTypeReflector } from './types/IntrinsicType';
 import { literalTypeReflector } from './types/LiteralType';
 import { referenceTypeReflector } from './types/ReferenceType';
 import { tupleTypeReflector } from './types/TupleType';
@@ -46,13 +46,21 @@ function getReflectorForKind(kind: ts.SyntaxKind): Required<Omit<TypeReflector, 
 	};
 }
 
-export function createTypeFromNode(checker: ts.TypeChecker, node: ts.TypeNode) {
+export function createTypeFromNode(checker: ts.TypeChecker, node?: ts.TypeNode) {
+	if (!node) {
+		return new IntrinsicType('any');
+	}
+
 	const reflector = getReflectorForKind(node.kind);
 
 	return reflector.fromNode(checker, node);
 }
 
-export function createTypeFromTsType(checker: ts.TypeChecker, type: ts.Type) {
+export function createTypeFromTsType(checker: ts.TypeChecker, type?: ts.Type) {
+	if (!type) {
+		return new IntrinsicType('any');
+	}
+
 	const typeNode = checker.typeToTypeNode(type, undefined, ts.NodeBuilderFlags.IgnoreErrors);
 	assert(typeNode);
 
