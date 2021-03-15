@@ -5,6 +5,7 @@ import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
 import { SymbolBasedReflection } from '../reflections/SymbolBasedReflection';
 import { resolveAliasesForSymbol } from '../util/symbolUtil';
+import { ArrayType } from './ArrayType';
 import { Type } from './Type';
 
 export class ReferenceType extends Type {
@@ -29,7 +30,7 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const isArray = checker.typeToTypeNode(checker.getTypeAtLocation(node.typeName), void 0, ts.NodeBuilderFlags.IgnoreErrors)?.kind === ts.SyntaxKind.ArrayType;
 
 		if (isArray) {
-			// return new ArrayType(convertType(context, node.typeArguments?.[0]));
+			return new ArrayType(createTypeFromNode(checker, node.typeArguments?.[0]));
 		}
 
 		const name = node.typeName.getText();
