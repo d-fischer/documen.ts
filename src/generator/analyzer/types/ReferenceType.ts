@@ -9,7 +9,28 @@ import { ArrayType } from './ArrayType';
 import { Type } from './Type';
 
 export class ReferenceType extends Type {
-	constructor(private readonly _name: string, private readonly _typeArguments: Type[], private readonly _id?: number) {
+	private static readonly _brokenReferences = new Map<ts.Symbol, ReferenceType[]>();
+
+	static registerBrokenReference(symbol: ts.Symbol, type: ReferenceType) {
+		if (this._brokenReferences.has(symbol)) {
+			this._brokenReferences.get(symbol)!.push(type);
+		} else {
+			this._brokenReferences.set(symbol, [type]);
+		}
+	}
+
+	static fixBrokenReferences() {
+		for (const [symbol, types] of this._brokenReferences) {
+			const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(symbol);
+			if (reflectionIdForSymbol !== undefined) {
+				for (const type of types) {
+					type._id = reflectionIdForSymbol;
+				}
+			}
+		}
+	}
+
+	constructor(private readonly _name: string, private readonly _typeArguments: Type[], private _id?: number) {
 		super();
 	}
 
@@ -38,12 +59,26 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const symbol = checker.getSymbolAtLocation(node.typeName)!;
 		const origSymbol = resolveAliasesForSymbol(checker, symbol);
 
-		return new ReferenceType(name, node.typeArguments?.map(typeNode => createTypeFromNode(checker, typeNode)) ?? [], SymbolBasedReflection.getReflectionIdForSymbol(origSymbol));
+		const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(origSymbol);
+		const result = new ReferenceType(name, node.typeArguments?.map(typeNode => createTypeFromNode(checker, typeNode)) ?? [], reflectionIdForSymbol);
+
+		if (reflectionIdForSymbol === undefined) {
+			ReferenceType.registerBrokenReference(origSymbol, result);
+		}
+
+		return result;
 	},
 	fromType(checker, type) {
 		const symbol = type.aliasSymbol ?? type.getSymbol();
 		assert(symbol);
 		const origSymbol = resolveAliasesForSymbol(checker, symbol);
-		return new ReferenceType(symbol.name, type.typeArguments?.map(arg => createTypeFromTsType(checker, arg)) ?? [], SymbolBasedReflection.getReflectionIdForSymbol(origSymbol));
+		const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(origSymbol);
+		const result = new ReferenceType(symbol.name, type.typeArguments?.map(arg => createTypeFromTsType(checker, arg)) ?? [], reflectionIdForSymbol);
+
+		if (reflectionIdForSymbol === undefined) {
+			ReferenceType.registerBrokenReference(origSymbol, result);
+		}
+
+		return result;
 	}
 };

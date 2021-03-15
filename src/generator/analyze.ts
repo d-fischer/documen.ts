@@ -4,6 +4,7 @@ import type { ReferenceNode } from '../common/reference';
 import { parseConfig } from '../common/tools/ConfigTools';
 import { createReflection } from './analyzer/createReflection';
 import type { Reflection } from './analyzer/reflections/Reflection';
+import { ReferenceType } from './analyzer/types/ReferenceType';
 import { nodeToSymbol } from './analyzer/util/symbolUtil';
 
 const rootSymbols = new Map<number, Reflection>();
@@ -44,6 +45,8 @@ async function analyzePackage(name: string) {
 async function main() {
 	await analyzePackage('twitch-common');
 	await analyzePackage('twitch');
+
+	ReferenceType.fixBrokenReferences();
 
 	const entries: ReferenceNode[] = [];
 
