@@ -3,6 +3,7 @@ import path from 'path';
 import * as ts from 'typescript';
 import { AccessorReflection } from './reflections/AccessorReflection';
 import { ClassReflection } from './reflections/ClassReflection';
+import { EnumReflection } from './reflections/EnumReflection';
 import { FunctionReflection } from './reflections/FunctionReflection';
 import { InterfaceReflection } from './reflections/InterfaceReflection';
 import { MethodReflection } from './reflections/MethodReflection';
@@ -79,6 +80,11 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 	}
 	if (ts.isParameter(declaration)) {
 		const rs = new ParameterReflection(symbol, declaration);
+		await rs.processChildren(checker);
+		return rs;
+	}
+	if (ts.isEnumDeclaration(declaration)) {
+		const rs = new EnumReflection(symbol);
 		await rs.processChildren(checker);
 		return rs;
 	}

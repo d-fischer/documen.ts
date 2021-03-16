@@ -150,10 +150,12 @@ export interface AccessorReferenceNode extends AbstractReferenceNode {
 
 export interface EnumReferenceNode extends AbstractReferenceNode {
 	kind: 'enum';
+	members: EnumMemberReferenceNode[];
 }
 
 export interface EnumMemberReferenceNode extends AbstractReferenceNode {
 	kind: 'enumMember';
+	value: string;
 }
 
 export interface TypeAliasReferenceNode extends AbstractReferenceNode {
