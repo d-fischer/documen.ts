@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
 
-export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional';
+export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest';
 
 export abstract class Reflection {
 	private static readonly _reflectionsById = new Map<number, Reflection>();

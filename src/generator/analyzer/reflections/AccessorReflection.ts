@@ -28,9 +28,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 		if (decl) {
 			const sig = checker.getSignatureFromDeclaration(decl);
 			if (sig) {
-				const sr = new SignatureReflection(this.name, decl.kind, sig, decl);
-				await sr.processChildren(checker);
-				return sr;
+				return SignatureReflection.fromTsSignature(checker, this.name, decl.kind, sig, decl);
 			}
 		}
 		return undefined;

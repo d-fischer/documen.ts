@@ -14,11 +14,17 @@ export class ConstructorReflection extends SymbolBasedReflection {
 	}
 
 	async processChildren(checker: ts.TypeChecker) {
-		this.signatures = await Promise.all(this._signatures.map(async (sig, i) => {
-			const callSignature = new SignatureReflection('constructor', ts.SyntaxKind.ConstructSignature, sig, this._symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined);
-			await callSignature.processChildren(checker);
-			return callSignature;
-		}))
+		this.signatures = await Promise.all(
+			this._signatures.map(async (sig, i) =>
+				SignatureReflection.fromTsSignature(
+					checker,
+					'constructor',
+					ts.SyntaxKind.ConstructSignature,
+					sig,
+					this._symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
+				)
+			)
+		);
 	}
 
 	serialize(): ConstructorReferenceNode {

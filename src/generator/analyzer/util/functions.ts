@@ -16,9 +16,5 @@ export async function getReflectedCallSignatures(checker: ts.TypeChecker, symbol
 
 	const sigs = type.getCallSignatures()
 	const declarations = symbol.getDeclarations()?.filter(ts.isFunctionLike) ?? [];
-	return Promise.all([...zip(declarations, sigs)].map(async ([decl, sig]) => {
-		const declSym = new SignatureReflection(reflection.name, ts.SyntaxKind.CallSignature, sig, decl);
-		await declSym.processChildren(checker);
-		return declSym;
-	}));
+	return Promise.all([...zip(declarations, sigs)].map(async ([decl, sig]) => SignatureReflection.fromTsSignature(checker, reflection.name, ts.SyntaxKind.CallSignature, sig, decl)));
 }

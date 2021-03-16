@@ -79,9 +79,7 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 		return rs;
 	}
 	if (ts.isParameter(declaration)) {
-		const rs = new ParameterReflection(symbol, declaration);
-		await rs.processChildren(checker);
-		return rs;
+		return ParameterReflection.fromSymbol(checker, symbol, declaration);
 	}
 	if (ts.isEnumDeclaration(declaration)) {
 		const rs = new EnumReflection(symbol);
