@@ -63,6 +63,12 @@ export interface ReflectionReferenceType {
 	declaration: TypeLiteralReferenceNode;
 }
 
+export interface TypeOperatorReferenceType {
+	type: 'typeOperator';
+	operator: 'keyof' | 'unique' | 'readonly';
+	target: ReferenceType;
+}
+
 export interface TupleReferenceType {
 	type: 'tuple';
 	elements: TupleMemberReferenceType[];
@@ -83,6 +89,7 @@ export type ReferenceType =
 	| LiteralReferenceType
 	| OptionalReferenceType
 	| ReflectionReferenceType
+	| TypeOperatorReferenceType
 	| TupleReferenceType;
 export type TupleMemberReferenceType = NamedTupleMemberReferenceType | ReferenceType;
 

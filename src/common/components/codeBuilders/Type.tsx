@@ -131,6 +131,13 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				</>
 			)
 		}
+		case 'typeOperator': {
+			return (
+				<>
+					{def.operator} <Type def={def.target}/>
+				</>
+			)
+		}
 		default: {
 			return (
 				<>{def.name}</>
