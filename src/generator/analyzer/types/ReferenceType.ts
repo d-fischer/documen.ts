@@ -30,7 +30,7 @@ export class ReferenceType extends Type {
 		}
 	}
 
-	constructor(private readonly _name: string, private readonly _typeArguments: Type[], private _id?: number) {
+	constructor(private readonly _name: string, private readonly _typeArguments: Type[], private _id?: number, private readonly _isTypeParameter?: true) {
 		super();
 	}
 
@@ -39,7 +39,8 @@ export class ReferenceType extends Type {
 			type: 'reference',
 			name: this._name,
 			id: this._id,
-			typeArguments: this._typeArguments.map(arg => arg.serialize())
+			typeArguments: this._typeArguments.map(arg => arg.serialize()),
+			isTypeParameter: this._isTypeParameter
 		};
 	}
 }
@@ -60,7 +61,8 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const origSymbol = resolveAliasesForSymbol(checker, symbol);
 
 		const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(origSymbol);
-		const result = new ReferenceType(name, node.typeArguments?.map(typeNode => createTypeFromNode(checker, typeNode)) ?? [], reflectionIdForSymbol);
+		// eslint-disable-next-line no-bitwise
+		const result = new ReferenceType(name, node.typeArguments?.map(typeNode => createTypeFromNode(checker, typeNode)) ?? [], reflectionIdForSymbol, origSymbol.flags & ts.SymbolFlags.TypeParameter ? true : undefined);
 
 		if (reflectionIdForSymbol === undefined) {
 			ReferenceType.registerBrokenReference(origSymbol, result);
