@@ -42,6 +42,11 @@ export interface ArrayReferenceType {
 	elementType?: ReferenceType;
 }
 
+export interface OptionalReferenceType {
+	type: 'optional';
+	elementType: ReferenceType;
+}
+
 export interface UnionReferenceType {
 	type: 'union';
 	types: ReferenceType[];
@@ -75,6 +80,7 @@ export type ReferenceType =
 	| ArrayReferenceType
 	| UnionReferenceType
 	| LiteralReferenceType
+	| OptionalReferenceType
 	| ReflectionReferenceType
 	| TupleReferenceType;
 export type TupleMemberReferenceType = NamedTupleMemberReferenceType | ReferenceType;

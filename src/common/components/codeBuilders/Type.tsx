@@ -123,6 +123,14 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				</React.Fragment>
 			))}]</>
 		}
+		case 'optional': {
+			return (
+				<>
+					?
+					<Type def={def.elementType}/>
+				</>
+			)
+		}
 		default: {
 			return (
 				<>{def.name}</>
