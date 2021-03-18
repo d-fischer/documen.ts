@@ -58,7 +58,7 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 		await rs.processChildren(checker);
 		return rs;
 	}
-	if (ts.isMethodDeclaration(declaration)) {
+	if (ts.isMethodDeclaration(declaration) || ts.isMethodSignature(declaration)) {
 		const rs = new MethodReflection(symbol, parentSymbol);
 		await rs.processChildren(checker);
 		return rs;
