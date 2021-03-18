@@ -1,4 +1,4 @@
-export function partition<EntryType, TrueEntryType extends EntryType = EntryType>(arr: readonly EntryType[], predicate: (val: EntryType) => val is TrueEntryType): [EntryType[], TrueEntryType[]] {
+export function partition<EntryType, TrueEntryType extends EntryType = EntryType>(arr: Iterable<EntryType>, predicate: (val: EntryType) => val is TrueEntryType): [EntryType[], TrueEntryType[]] {
 	const falseResult: EntryType[] = [];
 	const trueResult: TrueEntryType[] = [];
 	for (const entry of arr) {
