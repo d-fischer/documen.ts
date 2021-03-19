@@ -73,7 +73,7 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 		await rs.processChildren(checker);
 		return rs;
 	}
-	if (ts.isPropertyDeclaration(declaration)) {
+	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) {
 		const rs = new PropertyReflection(symbol);
 		await rs.processChildren(checker);
 		return rs;
