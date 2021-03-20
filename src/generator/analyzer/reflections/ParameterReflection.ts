@@ -1,5 +1,6 @@
 import * as ts from 'typescript';
 import type { ParameterReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
 import type { Type } from '../types/Type';
 import { stringifyExpression } from '../util/expressions';
@@ -7,18 +8,18 @@ import { removeUndefined } from '../util/types';
 import { Reflection } from './Reflection';
 
 export class ParameterReflection extends Reflection {
-	static async fromSymbol(checker: ts.TypeChecker, symbol: ts.Symbol, declaration?: ts.ParameterDeclaration) {
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, declaration?: ts.ParameterDeclaration) {
 		const valueDeclaration = symbol.valueDeclaration as ts.Declaration | undefined;
 		// eslint-disable-next-line @typescript-eslint/init-declarations
 		let type: Type;
 		if (valueDeclaration) {
 			if (ts.isParameter(valueDeclaration) && valueDeclaration.type) {
-				type = await createTypeFromNode(checker, valueDeclaration.type);
+				type = await createTypeFromNode(ctx, valueDeclaration.type);
 			} else {
-				type = await createTypeFromTsType(checker, checker.getTypeOfSymbolAtLocation(symbol, valueDeclaration));
+				type = await createTypeFromTsType(ctx, ctx.checker.getTypeOfSymbolAtLocation(symbol, valueDeclaration));
 			}
 		} else {
-			type = await createTypeFromTsType(checker, (symbol as ts.Symbol & { type: ts.Type }).type);
+			type = await createTypeFromTsType(ctx, (symbol as ts.Symbol & { type: ts.Type }).type);
 		}
 
 		let isOptional = false;
@@ -36,8 +37,8 @@ export class ParameterReflection extends Reflection {
 		return new ParameterReflection(symbol.name, type, isOptional, isRest, defaultValue, declaration ?? symbol.getDeclarations()?.[0] as ts.ParameterDeclaration | undefined);
 	}
 
-	static async fromNode(checker: ts.TypeChecker, declaration: ts.ParameterDeclaration) {
-		let type = await createTypeFromNode(checker, declaration.type);
+	static async fromNode(ctx: AnalyzeContext, declaration: ts.ParameterDeclaration) {
+		let type = await createTypeFromNode(ctx, declaration.type);
 		const isRest = !!declaration.dotDotDotToken;
 		const isOptional = !!declaration.questionToken;
 		if (isOptional) {

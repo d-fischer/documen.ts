@@ -1,5 +1,6 @@
 import * as ts from 'typescript';
 import type { ConstructorReferenceNode, CallSignatureReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
@@ -13,11 +14,11 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		this._handleFlags(symbol.getDeclarations()?.[0]);
 	}
 
-	async processChildren(checker: ts.TypeChecker) {
+	async processChildren(ctx: AnalyzeContext) {
 		this.signatures = await Promise.all(
 			this._signatures.map(async (sig, i) =>
 				SignatureReflection.fromTsSignature(
-					checker,
+					ctx,
 					'constructor',
 					ts.SyntaxKind.ConstructSignature,
 					sig,

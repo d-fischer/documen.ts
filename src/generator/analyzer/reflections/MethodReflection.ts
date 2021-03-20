@@ -1,5 +1,6 @@
 import type * as ts from 'typescript';
 import type { MethodReferenceNode, CallSignatureReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { getReflectedCallSignatures } from '../util/functions';
 import type { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
@@ -13,8 +14,8 @@ export class MethodReflection extends SymbolBasedReflection {
 		this._handleFlags(symbol.getDeclarations()?.[0]);
 	}
 
-	async processChildren(checker: ts.TypeChecker) {
-		this.signatures = await getReflectedCallSignatures(checker, this._symbol, this, this._parentSymbol);
+	async processChildren(ctx: AnalyzeContext) {
+		this.signatures = await getReflectedCallSignatures(ctx, this._symbol, this, this._parentSymbol);
 	}
 
 	serialize(): MethodReferenceNode {

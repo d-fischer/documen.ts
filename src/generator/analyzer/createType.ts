@@ -1,5 +1,6 @@
 import assert from 'assert';
 import ts from 'typescript';
+import type { AnalyzeContext } from './AnalyzeContext';
 import { arrayTypeReflector } from './types/ArrayType';
 import { functionTypeReflector } from './types/FunctionType';
 import { IntrinsicType, intrinsicTypeReflector } from './types/IntrinsicType';
@@ -17,10 +18,10 @@ export interface TypeReflector<NodeType extends ts.TypeNode = ts.TypeNode, TypeT
 	kinds: Array<NodeType['kind']>;
 
 	// eslint-disable-next-line @typescript-eslint/method-signature-style
-	fromNode?(checker: ts.TypeChecker, node: NodeType): Promise<Type>;
+	fromNode?(ctx: AnalyzeContext, node: NodeType): Promise<Type>;
 
 	// eslint-disable-next-line @typescript-eslint/method-signature-style
-	fromType?(checker: ts.TypeChecker, type: TypeType, node: NodeType): Promise<Type>;
+	fromType?(ctx: AnalyzeContext, type: TypeType, node: NodeType): Promise<Type>;
 }
 
 const typeReflectors = new Map<ts.SyntaxKind, TypeReflector>();
@@ -51,35 +52,35 @@ function loadTypeReflectors() {
 function getReflectorForKind(kind: ts.SyntaxKind): Required<Omit<TypeReflector, 'kinds'>> {
 	loadTypeReflectors();
 	return {
-		async fromNode(checker, node) {
+		async fromNode(ctx, node) {
 			return new UnknownType(node.getText(), ts.SyntaxKind[node.kind], 'node');
 		},
-		async fromType(checker, type, node) {
-			return new UnknownType(checker.typeToString(type), ts.SyntaxKind[node.kind], 'type');
+		async fromType(ctx, type, node) {
+			return new UnknownType(ctx.checker.typeToString(type), ts.SyntaxKind[node.kind], 'type');
 		},
 		...typeReflectors.get(kind)
 	};
 }
 
-export async function createTypeFromNode(checker: ts.TypeChecker, node?: ts.TypeNode) {
+export async function createTypeFromNode(ctx: AnalyzeContext, node?: ts.TypeNode) {
 	if (!node) {
 		return new IntrinsicType('any');
 	}
 
 	const reflector = getReflectorForKind(node.kind);
 
-	return reflector.fromNode(checker, node);
+	return reflector.fromNode(ctx, node);
 }
 
-export async function createTypeFromTsType(checker: ts.TypeChecker, type?: ts.Type) {
+export async function createTypeFromTsType(ctx: AnalyzeContext, type?: ts.Type) {
 	if (!type) {
 		return new IntrinsicType('any');
 	}
 
-	const typeNode = checker.typeToTypeNode(type, undefined, ts.NodeBuilderFlags.IgnoreErrors);
+	const typeNode = ctx.checker.typeToTypeNode(type, undefined, ts.NodeBuilderFlags.IgnoreErrors);
 	assert(typeNode);
 
 	const reflector = getReflectorForKind(typeNode.kind);
 
-	return reflector.fromType(checker, type, typeNode);
+	return reflector.fromType(ctx, type, typeNode);
 }

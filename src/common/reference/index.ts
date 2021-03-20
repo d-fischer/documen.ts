@@ -35,6 +35,7 @@ export interface ReferenceReferenceType {
 	name: string;
 	id?: number;
 	isTypeParameter?: true;
+	package?: string;
 	typeArguments?: ReferenceType[];
 }
 

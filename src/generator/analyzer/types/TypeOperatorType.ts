@@ -35,13 +35,13 @@ function isObjectType(type: ts.Type): type is ts.ObjectType {
 
 export const typeOperatorTypeReflector: TypeReflector<ts.TypeOperatorNode> = {
 	kinds: [ts.SyntaxKind.TypeOperator],
-	async fromNode(checker, node) {
-		return new TypeOperatorType(operators[node.operator], await createTypeFromNode(checker, node.type));
+	async fromNode(ctx, node) {
+		return new TypeOperatorType(operators[node.operator], await createTypeFromNode(ctx, node.type));
 	},
-	async fromType(checker, type, node) {
+	async fromType(ctx, type, node) {
 		if (node.operator === ts.SyntaxKind.ReadonlyKeyword) {
 			assert(isObjectType(type));
-			const typeArguments = await resolvePromiseArray(checker.getTypeArguments(type as ts.TypeReference).map(async typeArg => createTypeFromTsType(checker, typeArg)));
+			const typeArguments = await resolvePromiseArray(ctx.checker.getTypeArguments(type as ts.TypeReference).map(async typeArg => createTypeFromTsType(ctx, typeArg)));
 			// eslint-disable-next-line no-bitwise
 			const inner = type.objectFlags & ts.ObjectFlags.Tuple ? new TupleType(typeArguments) : new ArrayType(typeArguments[0]);
 
@@ -50,7 +50,7 @@ export const typeOperatorTypeReflector: TypeReflector<ts.TypeOperatorNode> = {
 
 		if (node.operator === ts.SyntaxKind.KeyOfKeyword) {
 			const targetType = (type as ts.Type & { type: ts.Type }).type;
-			return new TypeOperatorType('keyof', await createTypeFromTsType(checker, targetType));
+			return new TypeOperatorType('keyof', await createTypeFromTsType(ctx, targetType));
 		}
 
 		return new UnknownType(node.getText(), 'TypeOperator');

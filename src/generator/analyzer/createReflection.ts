@@ -1,6 +1,7 @@
 import assert from 'assert';
 import path from 'path';
 import * as ts from 'typescript';
+import type { AnalyzeContext } from './AnalyzeContext';
 import { AccessorReflection } from './reflections/AccessorReflection';
 import { ClassReflection } from './reflections/ClassReflection';
 import { EnumReflection } from './reflections/EnumReflection';
@@ -15,7 +16,7 @@ import { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
 import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
 
-export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbol, parentSymbol?: ts.Symbol): Promise<Reflection> {
+export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, parentSymbol?: ts.Symbol): Promise<Reflection> {
 	const declaration = symbol.getDeclarations()?.[0];
 	assert(declaration);
 	const declSf = declaration.getSourceFile();
@@ -45,49 +46,49 @@ export async function createReflection(checker: ts.TypeChecker, symbol: ts.Symbo
 
 	if (ts.isInterfaceDeclaration(declaration)) {
 		const rs = new InterfaceReflection(symbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 	if (ts.isFunctionDeclaration(declaration)) {
 		const rs = new FunctionReflection(symbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 	if (ts.isClassDeclaration(declaration)) {
 		const rs = new ClassReflection(symbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 	if (ts.isMethodDeclaration(declaration) || ts.isMethodSignature(declaration)) {
 		const rs = new MethodReflection(symbol, parentSymbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 	if (ts.isAccessor(declaration)) {
 		const rs = new AccessorReflection(symbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 	if (ts.isTypeAliasDeclaration(declaration)) {
 		const rs = new TypeAliasReflection(symbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) {
 		const rs = new PropertyReflection(symbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 	if (ts.isParameter(declaration)) {
-		return ParameterReflection.fromSymbol(checker, symbol, declaration);
+		return ParameterReflection.fromSymbol(ctx, symbol, declaration);
 	}
 	if (ts.isEnumDeclaration(declaration)) {
 		const rs = new EnumReflection(symbol);
-		await rs.processChildren(checker);
+		await rs.processChildren(ctx);
 		return rs;
 	}
 
 	const rs = new SymbolBasedReflection(symbol);
-	await rs.processChildren(checker);
+	await rs.processChildren(ctx);
 	return rs;
 }

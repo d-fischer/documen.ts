@@ -1,10 +1,12 @@
 import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 
 export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest';
 
 export abstract class Reflection {
 	private static readonly _reflectionsById = new Map<number, Reflection>();
+	private static readonly _packageNamesByReflectionId = new Map<number, string>();
 	private static _nextReflectionId = 1;
 	readonly id: number;
 
@@ -29,20 +31,25 @@ export abstract class Reflection {
 		return undefined;
 	}
 
+	/** @internal */
+	static getPackageNameForReflectionId(id: number | undefined) {
+		return id ? this._packageNamesByReflectionId.get(id) : undefined;
+	}
+
 	constructor() {
 		this.id = this._registerReflection();
 	}
 
 	/** @internal */
-	static get reflectionsById() {
-		return this._reflectionsById;
+	registerForPackageName(name: string) {
+		Reflection._packageNamesByReflectionId.set(this.id, name);
 	}
 
 	/** @internal */
 	abstract get declarations(): ts.Declaration[];
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-	async processChildren(checker: ts.TypeChecker): Promise<void> {
+	async processChildren(ctx: AnalyzeContext): Promise<void> {
 	}
 
 	serialize(): ReferenceNode {

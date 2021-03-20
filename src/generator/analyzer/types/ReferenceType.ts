@@ -3,6 +3,7 @@ import ts from 'typescript';
 import type { ReferenceReferenceType } from '../../../common/reference';
 import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
+import { Reflection } from '../reflections/Reflection';
 import { SymbolBasedReflection } from '../reflections/SymbolBasedReflection';
 import { resolvePromiseArray } from '../util/promises';
 import { resolveAliasesForSymbol } from '../util/symbolUtil';
@@ -23,15 +24,23 @@ export class ReferenceType extends Type {
 	static fixBrokenReferences() {
 		for (const [symbol, types] of this._brokenReferences) {
 			const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(symbol);
+			const packageForSymbol = Reflection.getPackageNameForReflectionId(reflectionIdForSymbol);
 			if (reflectionIdForSymbol !== undefined) {
 				for (const type of types) {
 					type._id = reflectionIdForSymbol;
+					type._package = packageForSymbol;
 				}
 			}
 		}
 	}
 
-	constructor(private readonly _name: string, private readonly _typeArguments?: Type[], private _id?: number, private readonly _isTypeParameter?: true) {
+	constructor(
+		private readonly _name: string,
+		private readonly _typeArguments?: Type[],
+		private _id?: number,
+		private _package?: string,
+		private readonly _isTypeParameter?: true
+	) {
 		super();
 	}
 
@@ -40,6 +49,7 @@ export class ReferenceType extends Type {
 			type: 'reference',
 			name: this._name,
 			id: this._id,
+			package: this._package,
 			typeArguments: this._typeArguments?.map(arg => arg.serialize()),
 			isTypeParameter: this._isTypeParameter
 		};
@@ -49,36 +59,50 @@ export class ReferenceType extends Type {
 export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.TypeReference> = {
 	kinds: [ts.SyntaxKind.TypeReference],
 
-	async fromNode(checker, node) {
-		const isArray = checker.typeToTypeNode(checker.getTypeAtLocation(node.typeName), void 0, ts.NodeBuilderFlags.IgnoreErrors)?.kind === ts.SyntaxKind.ArrayType;
+	async fromNode(ctx, node) {
+		const isArray =
+			ctx.checker.typeToTypeNode(ctx.checker.getTypeAtLocation(node.typeName), void 0, ts.NodeBuilderFlags.IgnoreErrors)
+				?.kind === ts.SyntaxKind.ArrayType;
 
 		if (isArray) {
-			return new ArrayType(await createTypeFromNode(checker, node.typeArguments?.[0]));
+			return new ArrayType(await createTypeFromNode(ctx, node.typeArguments?.[0]));
 		}
 
 		const name = node.typeName.getText();
 
-		const symbol = checker.getSymbolAtLocation(node.typeName)!;
-		const origSymbol = resolveAliasesForSymbol(checker, symbol);
+		const symbol = ctx.checker.getSymbolAtLocation(node.typeName)!;
+		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
 
 		const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(origSymbol);
-		// eslint-disable-next-line no-bitwise
-		const result = new ReferenceType(name, await resolvePromiseArray(node.typeArguments?.map(async typeNode => createTypeFromNode(checker, typeNode))), reflectionIdForSymbol, origSymbol.flags & ts.SymbolFlags.TypeParameter ? true : undefined);
+		const packageForSymbol = Reflection.getPackageNameForReflectionId(reflectionIdForSymbol);
+		const result = new ReferenceType(
+			name,
+			await resolvePromiseArray(node.typeArguments?.map(async typeNode => createTypeFromNode(ctx, typeNode))),
+			reflectionIdForSymbol,
+			packageForSymbol,
+			// eslint-disable-next-line no-bitwise
+			origSymbol.flags & ts.SymbolFlags.TypeParameter ? true : undefined
+		);
 
-		if (reflectionIdForSymbol === undefined) {
+		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {
 			ReferenceType.registerBrokenReference(origSymbol, result);
 		}
 
 		return result;
 	},
-	async fromType(checker, type) {
+	async fromType(ctx, type) {
 		const symbol = type.aliasSymbol ?? type.getSymbol();
 		assert(symbol);
-		const origSymbol = resolveAliasesForSymbol(checker, symbol);
+		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
 		const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(origSymbol);
-		const result = new ReferenceType(symbol.name, await resolvePromiseArray(type.typeArguments?.map(async arg => createTypeFromTsType(checker, arg))), reflectionIdForSymbol);
+		const packageForSymbol = Reflection.getPackageNameForReflectionId(reflectionIdForSymbol);
+		const result = new ReferenceType(
+			symbol.name,
+			await resolvePromiseArray(type.typeArguments?.map(async arg => createTypeFromTsType(ctx, arg))),
+			reflectionIdForSymbol
+		);
 
-		if (reflectionIdForSymbol === undefined) {
+		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {
 			ReferenceType.registerBrokenReference(origSymbol, result);
 		}
 

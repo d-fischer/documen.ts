@@ -1,6 +1,7 @@
 import assert from 'assert';
 import * as ts from 'typescript';
 import type { InterfaceReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { createReflection } from '../createReflection';
 import { resolvePromiseArray } from '../util/promises';
 import type { Reflection } from './Reflection';
@@ -11,21 +12,21 @@ export class InterfaceReflection extends SymbolBasedReflection {
 	members!: Reflection[];
 	typeParameters?: TypeParameterReflection[];
 
-	async processChildren(checker: ts.TypeChecker) {
-		const type = checker.getDeclaredTypeOfSymbol(this._symbol);
+	async processChildren(ctx: AnalyzeContext) {
+		const type = ctx.checker.getDeclaredTypeOfSymbol(this._symbol);
 		assert(type.isClassOrInterface());
 
 		this.typeParameters = await resolvePromiseArray(type.typeParameters?.map(async (param) => {
 			const declaration = param.symbol.declarations[0];
 			assert(ts.isTypeParameterDeclaration(declaration));
 			const result = new TypeParameterReflection(declaration);
-			await result.processChildren(checker);
+			await result.processChildren(ctx);
 			return result;
 		}));
 
-		const members = checker.getPropertiesOfType(type);
+		const members = ctx.checker.getPropertiesOfType(type);
 		this.members = await Promise.all([
-			...members.map(async mem => createReflection(checker, mem))
+			...members.map(async mem => createReflection(ctx, mem))
 		]);
 	}
 

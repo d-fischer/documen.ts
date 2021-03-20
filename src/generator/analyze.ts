@@ -2,12 +2,11 @@ import * as path from 'path';
 import * as ts from 'typescript';
 import type { ReferenceNode } from '../common/reference';
 import { parseConfig } from '../common/tools/ConfigTools';
+import { AnalyzeContext } from './analyzer/AnalyzeContext';
 import { createReflection } from './analyzer/createReflection';
 import type { Reflection } from './analyzer/reflections/Reflection';
 import { ReferenceType } from './analyzer/types/ReferenceType';
 import { nodeToSymbol } from './analyzer/util/symbolUtil';
-
-const rootSymbols = new Map<number, Reflection>();
 
 async function analyzePackage(name: string) {
 	const parsedConfig = parseConfig(`packages/${name}/tsconfig.json`);
@@ -17,6 +16,7 @@ async function analyzePackage(name: string) {
 		rootNames: fileNames
 	});
 	const checker = prog.getTypeChecker();
+	const ctx = new AnalyzeContext(checker, name);
 	const sf = prog.getSourceFile(path.join(process.cwd(), 'packages', name, 'src', 'index.ts'))!;
 	const children = sf.statements;
 	const fileExports = children
@@ -31,31 +31,40 @@ async function analyzePackage(name: string) {
 		})
 		.map(exp => {
 			const id = exp.name;
-			return nodeToSymbol(checker, id);
+			return nodeToSymbol(ctx, id);
 		});
 
+	const result: Reflection[] = [];
 	for (const sym of fileExports) {
-		const s = await createReflection(checker, sym);
-		rootSymbols.set(s.id, s);
+		const reflection = await createReflection(ctx, sym);
+		reflection.registerForPackageName(name);
+		result.push(reflection);
 	}
 
-	// console.error(fileExports);
+	return result;
+}
+
+interface ReferencePackage {
+	packageName: string;
+	symbols: ReferenceNode[];
 }
 
 async function main() {
-	await analyzePackage('twitch-common');
-	await analyzePackage('twitch');
+	const packageNames = ['twitch-common', 'twitch'];
+	const symbolsByPackage: Record<string, Reflection[]> = {};
+	for (const pkg of packageNames) {
+		symbolsByPackage[pkg] = await analyzePackage(pkg);
+	}
 
 	ReferenceType.fixBrokenReferences();
 
-	const entries: ReferenceNode[] = [];
-
-	for (const [, sym] of rootSymbols) {
-		entries.push(sym.serialize());
-	}
+	const packages: ReferencePackage[] = Object.entries(symbolsByPackage).map(([packageName, packageSymbols]) => ({
+		packageName,
+		symbols: packageSymbols.map(sym => sym.serialize())
+	}));
 
 	// eslint-disable-next-line no-console
-	console.log(JSON.stringify({ entries }, null, 2));
+	console.log(JSON.stringify({ packages }, null, 2));
 }
 
 void main();

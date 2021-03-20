@@ -1,5 +1,6 @@
 import type ts from 'typescript';
 import type { TypeParameterReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
 import type { Type } from '../types/Type';
 import { Reflection } from './Reflection';
@@ -16,28 +17,28 @@ export class TypeParameterReflection extends Reflection {
 		return [];
 	}
 
-	async processChildren(checker: ts.TypeChecker) {
+	async processChildren(ctx: AnalyzeContext) {
 		if ('kind' in this._tsParam) {
 			// is node
 			const constraintNode = this._tsParam.constraint;
 			if (constraintNode) {
-				this.constraint = await createTypeFromNode(checker, constraintNode);
+				this.constraint = await createTypeFromNode(ctx, constraintNode);
 			}
 
 			const defaultNode = this._tsParam.default;
 			if (defaultNode) {
-				this.default = await createTypeFromNode(checker, defaultNode);
+				this.default = await createTypeFromNode(ctx, defaultNode);
 			}
 		} else {
 			// is param
 			const tsConstraint = this._tsParam.getConstraint();
 			if (tsConstraint) {
-				this.constraint = await createTypeFromTsType(checker, tsConstraint);
+				this.constraint = await createTypeFromTsType(ctx, tsConstraint);
 			}
 
 			const tsDefault = this._tsParam.getDefault();
 			if (tsDefault) {
-				this.default = await createTypeFromTsType(checker, tsDefault);
+				this.default = await createTypeFromTsType(ctx, tsDefault);
 			}
 		}
 	}
