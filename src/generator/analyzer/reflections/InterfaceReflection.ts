@@ -1,11 +1,40 @@
+import assert from 'assert';
+import * as ts from 'typescript';
 import type { InterfaceReferenceNode } from '../../../common/reference';
+import { createReflection } from '../createReflection';
+import { resolvePromiseArray } from '../util/promises';
+import type { Reflection } from './Reflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
+import { TypeParameterReflection } from './TypeParameterReflection';
 
 export class InterfaceReflection extends SymbolBasedReflection {
+	members!: Reflection[];
+	typeParameters?: TypeParameterReflection[];
+
+	async processChildren(checker: ts.TypeChecker) {
+		const type = checker.getDeclaredTypeOfSymbol(this._symbol);
+		assert(type.isClassOrInterface());
+
+		this.typeParameters = await resolvePromiseArray(type.typeParameters?.map(async (param) => {
+			const declaration = param.symbol.declarations[0];
+			assert(ts.isTypeParameterDeclaration(declaration));
+			const result = new TypeParameterReflection(declaration);
+			await result.processChildren(checker);
+			return result;
+		}));
+
+		const members = checker.getPropertiesOfType(type);
+		this.members = await Promise.all([
+			...members.map(async mem => createReflection(checker, mem))
+		]);
+	}
+
 	serialize(): InterfaceReferenceNode {
 		return {
 			...this._baseSerialize(),
-			kind: 'interface'
+			kind: 'interface',
+			members: this.members.map(mem => mem.serialize()),
+			typeParameters: this.typeParameters?.map(param => param.serialize())
 		};
 	}
 }
