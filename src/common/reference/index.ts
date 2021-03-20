@@ -198,6 +198,7 @@ export interface ParameterReferenceNode extends AbstractReferenceNode {
 
 export interface TypeLiteralReferenceNode extends AbstractReferenceNode {
 	kind: 'typeLiteral';
+	members?: ReferenceNode[]; // TODO less generic I guess
 	signatures?: CallSignatureReferenceNode[];
 }
 

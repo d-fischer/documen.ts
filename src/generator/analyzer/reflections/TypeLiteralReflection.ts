@@ -5,7 +5,7 @@ import type { SignatureReflection } from './SignatureReflection';
 export class TypeLiteralReflection extends Reflection {
 	readonly name = '__type';
 
-	constructor(private readonly _signatures?: SignatureReflection[]) {
+	constructor(private readonly _members?: Reflection[], private readonly _signatures?: SignatureReflection[]) {
 		super();
 	}
 
@@ -17,6 +17,7 @@ export class TypeLiteralReflection extends Reflection {
 		return {
 			...this._baseSerialize(),
 			kind: 'typeLiteral',
+			members: this._members?.map(mem => mem.serialize()),
 			signatures: this._signatures?.map(sig => sig.serialize() as CallSignatureReferenceNode),
 		};
 	}
