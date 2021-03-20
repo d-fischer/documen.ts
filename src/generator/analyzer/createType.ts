@@ -16,10 +16,10 @@ export interface TypeReflector<NodeType extends ts.TypeNode = ts.TypeNode, TypeT
 	kinds: Array<NodeType['kind']>;
 
 	// eslint-disable-next-line @typescript-eslint/method-signature-style
-	fromNode?(checker: ts.TypeChecker, node: NodeType): Type;
+	fromNode?(checker: ts.TypeChecker, node: NodeType): Promise<Type>;
 
 	// eslint-disable-next-line @typescript-eslint/method-signature-style
-	fromType?(checker: ts.TypeChecker, type: TypeType, node: NodeType): Type;
+	fromType?(checker: ts.TypeChecker, type: TypeType, node: NodeType): Promise<Type>;
 }
 
 const typeReflectors = new Map<ts.SyntaxKind, TypeReflector>();
@@ -49,17 +49,17 @@ function loadTypeReflectors() {
 function getReflectorForKind(kind: ts.SyntaxKind): Required<Omit<TypeReflector, 'kinds'>> {
 	loadTypeReflectors();
 	return {
-		fromNode(checker, node) {
+		async fromNode(checker, node) {
 			return new UnknownType(node.getText(), ts.SyntaxKind[node.kind], 'node');
 		},
-		fromType(checker, type, node) {
+		async fromType(checker, type, node) {
 			return new UnknownType(checker.typeToString(type), ts.SyntaxKind[node.kind], 'type');
 		},
 		...typeReflectors.get(kind)
 	};
 }
 
-export function createTypeFromNode(checker: ts.TypeChecker, node?: ts.TypeNode) {
+export async function createTypeFromNode(checker: ts.TypeChecker, node?: ts.TypeNode) {
 	if (!node) {
 		return new IntrinsicType('any');
 	}
@@ -69,7 +69,7 @@ export function createTypeFromNode(checker: ts.TypeChecker, node?: ts.TypeNode) 
 	return reflector.fromNode(checker, node);
 }
 
-export function createTypeFromTsType(checker: ts.TypeChecker, type?: ts.Type) {
+export async function createTypeFromTsType(checker: ts.TypeChecker, type?: ts.Type) {
 	if (!type) {
 		return new IntrinsicType('any');
 	}

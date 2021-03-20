@@ -3,6 +3,7 @@ import ts from 'typescript';
 import type { TypeOperatorReferenceType } from '../../../common/reference';
 import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
+import { resolvePromiseArray } from '../util/promises';
 import { ArrayType } from './ArrayType';
 import { TupleType } from './TupleType';
 import { Type } from './Type';
@@ -34,13 +35,13 @@ function isObjectType(type: ts.Type): type is ts.ObjectType {
 
 export const typeOperatorTypeReflector: TypeReflector<ts.TypeOperatorNode> = {
 	kinds: [ts.SyntaxKind.TypeOperator],
-	fromNode(checker, node) {
-		return new TypeOperatorType(operators[node.operator], createTypeFromNode(checker, node.type));
+	async fromNode(checker, node) {
+		return new TypeOperatorType(operators[node.operator], await createTypeFromNode(checker, node.type));
 	},
-	fromType(checker, type, node) {
+	async fromType(checker, type, node) {
 		if (node.operator === ts.SyntaxKind.ReadonlyKeyword) {
 			assert(isObjectType(type));
-			const typeArguments = checker.getTypeArguments(type as ts.TypeReference).map(typeArg => createTypeFromTsType(checker, typeArg));
+			const typeArguments = await resolvePromiseArray(checker.getTypeArguments(type as ts.TypeReference).map(async typeArg => createTypeFromTsType(checker, typeArg)));
 			// eslint-disable-next-line no-bitwise
 			const inner = type.objectFlags & ts.ObjectFlags.Tuple ? new TupleType(typeArguments) : new ArrayType(typeArguments[0]);
 
@@ -49,7 +50,7 @@ export const typeOperatorTypeReflector: TypeReflector<ts.TypeOperatorNode> = {
 
 		if (node.operator === ts.SyntaxKind.KeyOfKeyword) {
 			const targetType = (type as ts.Type & { type: ts.Type }).type;
-			return new TypeOperatorType('keyof', createTypeFromTsType(checker, targetType));
+			return new TypeOperatorType('keyof', await createTypeFromTsType(checker, targetType));
 		}
 
 		return new UnknownType(node.getText(), 'TypeOperator');

@@ -2,6 +2,7 @@ import ts from 'typescript';
 import type { UnionReferenceType } from '../../../common/reference';
 import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
+import { resolvePromiseArray } from '../util/promises';
 import { Type } from './Type';
 
 export class UnionType extends Type {
@@ -23,10 +24,10 @@ export class UnionType extends Type {
 
 export const unionTypeReflector: TypeReflector<ts.UnionTypeNode, ts.UnionType> = {
 	kinds: [ts.SyntaxKind.UnionType],
-	fromNode(checker, node) {
-		return new UnionType(node.types.map(subTypeNode => createTypeFromNode(checker, subTypeNode)));
+	async fromNode(checker, node) {
+		return new UnionType(await resolvePromiseArray(node.types.map(async subTypeNode => createTypeFromNode(checker, subTypeNode))));
 	},
-	fromType(checker, type) {
-		return new UnionType(type.types.map((subType) => createTypeFromTsType(checker, subType)));
+	async fromType(checker, type) {
+		return new UnionType(await resolvePromiseArray(type.types.map(async (subType) => createTypeFromTsType(checker, subType))));
 	},
 };

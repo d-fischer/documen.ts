@@ -12,9 +12,9 @@ const SymbolHeader: React.FC<SymbolHeaderProps> = ({ symbol }) => (
 	<PageHeader>
 		<h1>
 			{symbol.name}
-			{'typeParameter' in symbol && symbol.typeParameter && symbol.typeParameter.length && (
+			{'typeParameters' in symbol && symbol.typeParameters?.length && (
 				<>
-					&lt;{symbol.typeParameter.map(param => param.name).join(', ')}&gt;
+					&lt;{symbol.typeParameters.map(param => param.name).join(', ')}&gt;
 				</>
 			)}
 		</h1>

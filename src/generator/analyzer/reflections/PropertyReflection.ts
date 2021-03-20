@@ -16,9 +16,9 @@ export class PropertyReflection extends SymbolBasedReflection {
 	async processChildren(checker: ts.TypeChecker): Promise<void> {
 		const declaration = this._symbol.getDeclarations()?.[0];
 		this.type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type
-			? createTypeFromNode(checker, declaration.type)
+			? await createTypeFromNode(checker, declaration.type)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			: createTypeFromTsType(checker, checker.getTypeOfSymbolAtLocation(this._symbol, {} as any));
+			: await createTypeFromTsType(checker, checker.getTypeOfSymbolAtLocation(this._symbol, {} as any));
 	}
 
 	serialize(): PropertyReferenceNode {

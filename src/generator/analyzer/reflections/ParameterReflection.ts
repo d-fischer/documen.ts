@@ -7,18 +7,18 @@ import { removeUndefined } from '../util/types';
 import { Reflection } from './Reflection';
 
 export class ParameterReflection extends Reflection {
-	static fromSymbol(checker: ts.TypeChecker, symbol: ts.Symbol, declaration?: ts.ParameterDeclaration) {
+	static async fromSymbol(checker: ts.TypeChecker, symbol: ts.Symbol, declaration?: ts.ParameterDeclaration) {
 		const valueDeclaration = symbol.valueDeclaration as ts.Declaration | undefined;
 		// eslint-disable-next-line @typescript-eslint/init-declarations
 		let type: Type;
 		if (valueDeclaration) {
 			if (ts.isParameter(valueDeclaration) && valueDeclaration.type) {
-				type = createTypeFromNode(checker, valueDeclaration.type);
+				type = await createTypeFromNode(checker, valueDeclaration.type);
 			} else {
-				type = createTypeFromTsType(checker, checker.getTypeOfSymbolAtLocation(symbol, valueDeclaration));
+				type = await createTypeFromTsType(checker, checker.getTypeOfSymbolAtLocation(symbol, valueDeclaration));
 			}
 		} else {
-			type = createTypeFromTsType(checker, (symbol as ts.Symbol & { type: ts.Type }).type);
+			type = await createTypeFromTsType(checker, (symbol as ts.Symbol & { type: ts.Type }).type);
 		}
 
 		let isOptional = false;
@@ -36,8 +36,8 @@ export class ParameterReflection extends Reflection {
 		return new ParameterReflection(symbol.name, type, isOptional, isRest, defaultValue, declaration ?? symbol.getDeclarations()?.[0] as ts.ParameterDeclaration | undefined);
 	}
 
-	static fromNode(checker: ts.TypeChecker, declaration: ts.ParameterDeclaration) {
-		let type = createTypeFromNode(checker, declaration.type);
+	static async fromNode(checker: ts.TypeChecker, declaration: ts.ParameterDeclaration) {
+		let type = await createTypeFromNode(checker, declaration.type);
 		const isRest = !!declaration.dotDotDotToken;
 		const isOptional = !!declaration.questionToken;
 		if (isOptional) {

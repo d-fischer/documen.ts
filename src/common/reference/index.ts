@@ -106,7 +106,7 @@ export interface AbstractReferenceNode {
 
 export interface ClassReferenceNode extends AbstractReferenceNode {
 	kind: 'class';
-	typeParameter?: TypeParameterReferenceNode[];
+	typeParameters?: TypeParameterReferenceNode[];
 	extendedTypes?: ReferenceType[];
 	ctor?: ConstructorReferenceNode;
 	members: ReferenceNode[]; // TODO less generic I guess
@@ -116,7 +116,7 @@ export interface CallSignatureReferenceNode extends AbstractReferenceNode {
 	kind: 'callSignature';
 	parameters?: ParameterReferenceNode[];
 	type: ReferenceType;
-	typeParameter?: TypeParameterReferenceNode[];
+	typeParameters?: TypeParameterReferenceNode[];
 }
 
 export interface ConstructSignatureReferenceNode extends AbstractReferenceNode {
@@ -175,15 +175,18 @@ export interface EnumMemberReferenceNode extends AbstractReferenceNode {
 export interface TypeAliasReferenceNode extends AbstractReferenceNode {
 	kind: 'typeAlias';
 	type: ReferenceType;
+	typeParameters?: TypeParameterReferenceNode[];
 }
 
 export interface InterfaceReferenceNode extends AbstractReferenceNode {
 	kind: 'interface';
-	typeParameter?: TypeParameterReferenceNode[];
+	typeParameters?: TypeParameterReferenceNode[];
 }
 
 export interface TypeParameterReferenceNode extends AbstractReferenceNode {
 	kind: 'typeParameter';
+	default?: ReferenceType;
+	constraint?: ReferenceType;
 }
 
 export interface ParameterReferenceNode extends AbstractReferenceNode {

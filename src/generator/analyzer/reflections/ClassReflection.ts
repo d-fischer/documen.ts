@@ -2,13 +2,16 @@ import assert from 'assert';
 import * as ts from 'typescript';
 import type { ClassReferenceNode } from '../../../common/reference';
 import { createReflection } from '../createReflection';
+import { resolvePromiseArray } from '../util/promises';
 import { ConstructorReflection } from './ConstructorReflection';
 import type { Reflection } from './Reflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
+import { TypeParameterReflection } from './TypeParameterReflection';
 
 export class ClassReflection extends SymbolBasedReflection {
 	ctor?: ConstructorReflection;
 	members!: Reflection[];
+	typeParameters?: TypeParameterReflection[];
 
 	constructor(symbol: ts.Symbol) {
 		super(symbol);
@@ -25,6 +28,15 @@ export class ClassReflection extends SymbolBasedReflection {
 		assert(classDeclaration);
 		const staticType = checker.getTypeOfSymbolAtLocation(this._symbol, classDeclaration);
 		const staticMembers = checker.getPropertiesOfType(staticType);
+
+		this.typeParameters = await resolvePromiseArray(instanceType.typeParameters?.map(async (param) => {
+			const declaration = param.symbol.declarations[0];
+			assert(ts.isTypeParameterDeclaration(declaration));
+			const result = new TypeParameterReflection(declaration);
+			await result.processChildren(checker);
+			return result;
+		}));
+
 		this.members = await Promise.all([
 			// eslint-disable-next-line no-bitwise
 			...staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => createReflection(checker, mem)),

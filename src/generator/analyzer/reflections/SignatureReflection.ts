@@ -2,33 +2,42 @@ import * as ts from 'typescript';
 import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, GetSignatureReferenceNode, SetSignatureReferenceNode } from '../../../common/reference';
 import { createTypeFromTsType } from '../createType';
 import type { Type } from '../types/Type';
+import { resolvePromiseArray } from '../util/promises';
 import { ParameterReflection } from './ParameterReflection';
 import { Reflection } from './Reflection';
+import { TypeParameterReflection } from './TypeParameterReflection';
 
 export class SignatureReflection extends Reflection {
-	static fromTsSignature(
+	static async fromTsSignature(
 		checker: ts.TypeChecker,
 		parentName: string,
 		kind: ts.SyntaxKind.CallSignature | ts.SyntaxKind.ConstructSignature | ts.SyntaxKind.GetAccessor | ts.SyntaxKind.SetAccessor,
 		signature: ts.Signature,
 		declaration?: ts.SignatureDeclaration
 	) {
-		const params = signature.parameters.map((param, i) => {
+		const params = await resolvePromiseArray(signature.parameters.map(async (param, i) => {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const paramNode = declaration?.parameters?.[i];
 			return ParameterReflection.fromSymbol(checker, param, paramNode);
-		});
+		}));
 
-		const returnType = createTypeFromTsType(checker, signature.getReturnType());
+		const typeParams = await resolvePromiseArray(signature.typeParameters?.map(async param => {
+			const p = new TypeParameterReflection(param);
+			await p.processChildren(checker);
+			return p;
+		}));
 
-		return new SignatureReflection(parentName, kind, params, returnType, signature);
+		const returnType = await createTypeFromTsType(checker, signature.getReturnType());
+
+		return new SignatureReflection(parentName, kind, returnType, params, typeParams, signature);
 	}
 
 	constructor(
 		private readonly _parentName: string,
 		private readonly _kind: ts.SyntaxKind.CallSignature | ts.SyntaxKind.ConstructSignature | ts.SyntaxKind.GetAccessor | ts.SyntaxKind.SetAccessor,
-		private readonly _params: ParameterReflection[],
 		private readonly _returnType: Type,
+		private readonly _params: ParameterReflection[] | undefined,
+		private readonly _typeParams?: TypeParameterReflection[],
 		private readonly _signature?: ts.Signature
 	) {
 		super();
@@ -63,8 +72,9 @@ export class SignatureReflection extends Reflection {
 		return {
 			...this._baseSerialize(),
 			kind: this.serializedKind,
-			parameters: this._params.map(param => param.serialize()),
-			type: this._returnType.serialize()
+			parameters: this._params?.map(param => param.serialize()),
+			type: this._returnType.serialize(),
+			typeParameters: this._typeParams?.map(tp => tp.serialize())
 		};
 	}
 }

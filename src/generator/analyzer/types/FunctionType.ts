@@ -9,7 +9,7 @@ import { ReflectionType } from './ReflectionType';
 
 export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 	kinds: [ts.SyntaxKind.FunctionType],
-	fromNode(checker, node) {
+	async fromNode(checker, node) {
 		const symbol = checker.getSymbolAtLocation(node) ?? node.symbol;
 		const type = checker.getTypeAtLocation(node);
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -17,26 +17,26 @@ export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 			return new IntrinsicType('Function');
 		}
 
-		const params = node.parameters.map(param => ParameterReflection.fromNode(checker, param));
-		const returnType = createTypeFromNode(checker, node.type);
+		const params = await Promise.all(node.parameters.map(async param => ParameterReflection.fromNode(checker, param)));
+		const returnType = await createTypeFromNode(checker, node.type);
 		const signature = new SignatureReflection(
 			'__type',
 			ts.SyntaxKind.CallSignature,
-			params,
-			returnType
+			returnType,
+			params
 		);
 
 		const literalReflection = new TypeLiteralReflection([signature]);
 
 		return new ReflectionType(literalReflection);
 	},
-	fromType(checker, type) {
+	async fromType(checker, type) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (!type.symbol) {
 			return new IntrinsicType('Function');
 		}
 
-		const literalReflection = new TypeLiteralReflection([SignatureReflection.fromTsSignature(checker, '__type', ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])]);
+		const literalReflection = new TypeLiteralReflection([await SignatureReflection.fromTsSignature(checker, '__type', ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])]);
 
 		return new ReflectionType(literalReflection);
 	},

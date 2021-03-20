@@ -20,12 +20,12 @@ export class ArrayType extends Type {
 
 export const arrayTypeReflector: TypeReflector<ts.ArrayTypeNode, ts.TypeReference> = {
 	kinds: [ts.SyntaxKind.ArrayType],
-	fromNode(checker, node) {
-		return new ArrayType(createTypeFromNode(checker, node.elementType));
+	async fromNode(checker, node) {
+		return new ArrayType(await createTypeFromNode(checker, node.elementType));
 	},
-	fromType(checker, type) {
+	async fromType(checker, type) {
 		const typeParams = checker.getTypeArguments(type);
 		assert(typeParams.length);
-		return new ArrayType(createTypeFromTsType(checker, typeParams[0]));
+		return new ArrayType(await createTypeFromTsType(checker, typeParams[0]));
 	},
 };

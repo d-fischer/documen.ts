@@ -20,10 +20,10 @@ const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => {
 	return (
 		<h3 className={classes.root}>
 			{signature.name}
-			{signature.typeParameter?.length && (
+			{signature.typeParameters?.length && (
 				<>
 					&lt;
-					{signature.typeParameter.map((typeParam, idx) => (
+					{signature.typeParameters.map((typeParam, idx) => (
 						<React.Fragment key={typeParam.name}>
 							{idx === 0 ? '' : ', '}
 							{typeParam.name}

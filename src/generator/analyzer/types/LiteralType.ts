@@ -24,7 +24,7 @@ export class LiteralType extends Type {
 
 export const literalTypeReflector: TypeReflector<ts.LiteralTypeNode, ts.LiteralType> = {
 	kinds: [ts.SyntaxKind.LiteralType],
-	fromNode(checker, node) {
+	async fromNode(checker, node) {
 		switch (node.literal.kind) {
 			case ts.SyntaxKind.TrueKeyword:
 			case ts.SyntaxKind.FalseKeyword: {
@@ -61,7 +61,7 @@ export const literalTypeReflector: TypeReflector<ts.LiteralTypeNode, ts.LiteralT
 			}
 		}
 	},
-	fromType(checker, type, node) {
+	async fromType(checker, type, node) {
 		switch (node.literal.kind) {
 			case ts.SyntaxKind.TrueKeyword:
 			case ts.SyntaxKind.FalseKeyword: {

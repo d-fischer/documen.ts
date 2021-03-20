@@ -20,7 +20,7 @@ export class OptionalType extends Type {
 
 export const optionalTypeReflector: TypeReflector<ts.OptionalTypeNode> = {
 	kinds: [ts.SyntaxKind.OptionalType],
-	fromNode(checker, node) {
-		return new OptionalType(removeUndefined(createTypeFromNode(checker, node.type)));
+	async fromNode(checker, node) {
+		return new OptionalType(removeUndefined(await createTypeFromNode(checker, node.type)));
 	},
 };
