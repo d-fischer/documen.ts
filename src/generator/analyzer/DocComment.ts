@@ -30,7 +30,7 @@ export class DocComment {
 			}
 
 			if (!isInCodeBlock) {
-				const tagMatch = /^\s*@(\w+)(.*)$/.exec(line);
+				const tagMatch = /^\s*@(\w+)(.*)$/.exec(cleanedLine);
 				if (tagMatch) {
 					if (currentTagName) {
 						tags.push(new DocCommentTag(currentTagName, currentTagRelatedName, currentTagText));
@@ -58,19 +58,19 @@ export class DocComment {
 				}
 			} else {
 				if (shortTextFinished) {
-					text = text === undefined ? line : `${text}\n${line}`;
+					text = text === undefined ? cleanedLine : `${text}\n${cleanedLine}`;
 				} else {
-					shortText = shortText === undefined ? line : `${shortText}\n${line}`;
+					shortText = shortText === undefined ? cleanedLine : `${shortText}\n${cleanedLine}`;
 					hasAnyShortText = true;
 				}
 			}
 		}
 
 		if (currentTagName) {
-			tags.push(new DocCommentTag(currentTagName, currentTagRelatedName, currentTagText));
+			tags.push(new DocCommentTag(currentTagName, currentTagRelatedName, currentTagText?.trimEnd()));
 		}
 
-		return new DocComment(shortText, text, tags);
+		return new DocComment(shortText?.trimEnd(), text?.trimEnd(), tags);
 	}
 
 	constructor(private readonly _shortText?: string, private readonly _text?: string, private readonly _tags?: DocCommentTag[]) {
