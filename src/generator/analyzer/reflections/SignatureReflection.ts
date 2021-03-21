@@ -11,7 +11,7 @@ import { TypeParameterReflection } from './TypeParameterReflection';
 export class SignatureReflection extends Reflection {
 	static async fromTsSignature(
 		ctx: AnalyzeContext,
-		parentName: string,
+		parent: Reflection | undefined,
 		kind: ts.SyntaxKind.CallSignature | ts.SyntaxKind.ConstructSignature | ts.SyntaxKind.GetAccessor | ts.SyntaxKind.SetAccessor,
 		signature: ts.Signature,
 		declaration?: ts.SignatureDeclaration
@@ -30,11 +30,11 @@ export class SignatureReflection extends Reflection {
 
 		const returnType = await createTypeFromTsType(ctx, signature.getReturnType());
 
-		return new SignatureReflection(parentName, kind, returnType, params, typeParams, signature);
+		return new SignatureReflection(parent, kind, returnType, params, typeParams, signature);
 	}
 
 	constructor(
-		private readonly _parentName: string,
+		private readonly _parent: Reflection | undefined,
 		private readonly _kind: ts.SyntaxKind.CallSignature | ts.SyntaxKind.ConstructSignature | ts.SyntaxKind.GetAccessor | ts.SyntaxKind.SetAccessor,
 		private readonly _returnType: Type,
 		private readonly _params: ParameterReflection[] | undefined,
@@ -50,7 +50,15 @@ export class SignatureReflection extends Reflection {
 	}
 
 	get name() {
-		return this._parentName;
+		if (this._kind === ts.SyntaxKind.ConstructSignature) {
+			return 'constructor';
+		}
+
+		return this._parent?.name ?? '__type';
+	}
+
+	get kind() {
+		return this._kind;
 	}
 
 	get serializedKind() {

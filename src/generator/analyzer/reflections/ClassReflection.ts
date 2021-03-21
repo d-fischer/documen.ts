@@ -21,6 +21,8 @@ export class ClassReflection extends SymbolBasedReflection {
 	}
 
 	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
+
 		const instanceType = ctx.checker.getDeclaredTypeOfSymbol(this._symbol);
 		assert(instanceType.isClassOrInterface());
 		const instanceMembers = ctx.checker.getPropertiesOfType(instanceType);

@@ -15,11 +15,13 @@ export class ConstructorReflection extends SymbolBasedReflection {
 	}
 
 	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
+
 		this.signatures = await Promise.all(
 			this._signatures.map(async (sig, i) =>
 				SignatureReflection.fromTsSignature(
 					ctx,
-					'constructor',
+					this,
 					ts.SyntaxKind.ConstructSignature,
 					sig,
 					this._symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined

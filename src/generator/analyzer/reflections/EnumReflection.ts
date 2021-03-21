@@ -7,7 +7,9 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class EnumReflection extends SymbolBasedReflection {
 	members!: EnumMemberReflection[];
 
-	async processChildren(ctx: AnalyzeContext): Promise<void> {
+	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
+
 		this.members = this._symbol.exports
 			? await Promise.all([...(this._symbol.exports as Map<string, ts.Symbol>).values()]
 				// eslint-disable-next-line no-bitwise

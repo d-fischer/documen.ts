@@ -15,6 +15,8 @@ export class FunctionReflection extends SymbolBasedReflection {
 	}
 
 	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
+
 		this.signatures = await getReflectedCallSignatures(ctx, this._symbol, this);
 	}
 

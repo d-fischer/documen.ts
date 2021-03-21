@@ -14,7 +14,9 @@ export class PropertyReflection extends SymbolBasedReflection {
 		this._handleFlags(symbol.getDeclarations()?.[0]);
 	}
 
-	async processChildren(ctx: AnalyzeContext): Promise<void> {
+	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
+
 		const declaration = this._symbol.getDeclarations()?.[0];
 		this.type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type
 			? await createTypeFromNode(ctx, declaration.type)
@@ -27,7 +29,6 @@ export class PropertyReflection extends SymbolBasedReflection {
 			...this._baseSerialize(),
 			kind: 'property',
 			type: this.type.serialize(),
-
 		};
 	}
 }

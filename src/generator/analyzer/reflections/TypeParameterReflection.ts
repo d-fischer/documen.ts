@@ -20,6 +20,7 @@ export class TypeParameterReflection extends Reflection {
 	async processChildren(ctx: AnalyzeContext) {
 		if ('kind' in this._tsParam) {
 			// is node
+			await this.processJsDoc(this._tsParam);
 			const constraintNode = this._tsParam.constraint;
 			if (constraintNode) {
 				this.constraint = await createTypeFromNode(ctx, constraintNode);

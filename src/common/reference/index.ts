@@ -9,7 +9,7 @@ interface ReferenceFlags {
 
 export interface ReferenceCommentTag {
 	tag: string;
-	text: string;
+	text?: string;
 	param?: string;
 }
 

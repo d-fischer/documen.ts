@@ -20,7 +20,7 @@ export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 		const params = await Promise.all(node.parameters.map(async param => ParameterReflection.fromNode(ctx, param)));
 		const returnType = await createTypeFromNode(ctx, node.type);
 		const signature = new SignatureReflection(
-			'__type',
+			undefined,
 			ts.SyntaxKind.CallSignature,
 			returnType,
 			params
@@ -36,7 +36,7 @@ export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 			return new IntrinsicType('Function');
 		}
 
-		const literalReflection = new TypeLiteralReflection(undefined, [await SignatureReflection.fromTsSignature(checker, '__type', ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])]);
+		const literalReflection = new TypeLiteralReflection(undefined, [await SignatureReflection.fromTsSignature(checker, undefined, ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])]);
 
 		return new ReflectionType(literalReflection);
 	},

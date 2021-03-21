@@ -6,9 +6,10 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class EnumMemberReflection extends SymbolBasedReflection {
 	value!: unknown;
 
-	async processChildren(ctx: AnalyzeContext): Promise<void> {
-		const declaration = this.declarations[0] as ts.EnumMember;
+	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
 
+		const declaration = this.declarations[0] as ts.EnumMember;
 		this.value = ctx.checker.getConstantValue(declaration);
 	}
 

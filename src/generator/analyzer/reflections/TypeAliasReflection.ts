@@ -13,6 +13,8 @@ export class TypeAliasReflection extends SymbolBasedReflection {
 	parameters?: TypeParameterReflection[];
 
 	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
+
 		const decl = this._symbol.getDeclarations()?.find(ts.isTypeAliasDeclaration);
 		assert(decl);
 		this.type = await createTypeFromNode(ctx, decl.type);

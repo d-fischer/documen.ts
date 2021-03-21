@@ -1,6 +1,7 @@
 import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
+import { DocComment } from '../DocComment';
 
 export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest';
 
@@ -9,6 +10,7 @@ export abstract class Reflection {
 	private static readonly _packageNamesByReflectionId = new Map<number, string>();
 	private static _nextReflectionId = 1;
 	readonly id: number;
+	comment?: DocComment;
 
 	protected readonly _flags = new Set<ReflectionFlag>();
 
@@ -48,8 +50,30 @@ export abstract class Reflection {
 	/** @internal */
 	abstract get declarations(): ts.Declaration[];
 
-	// eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-	async processChildren(ctx: AnalyzeContext): Promise<void> {
+	async processJsDoc(node?: ts.Declaration) {
+		node ??= this.declarations[0] as ts.Declaration | undefined;
+		if (node) {
+			const sf = node.getSourceFile();
+			const jsDocCommentRanges = ts.getLeadingCommentRanges(sf.text, node.pos)?.filter(range => sf.text.substr(range.pos, 3) === '/**');
+			if (jsDocCommentRanges?.length) {
+				const lastJsDocCommentRange = jsDocCommentRanges[jsDocCommentRanges.length - 1];
+				const rawComment = sf.text.substring(lastJsDocCommentRange.pos, lastJsDocCommentRange.end);
+				const comment = DocComment.parse(rawComment);
+
+				comment.consumeTags(tag => tag.name === 'private', () => this._flags.add('isPrivate'));
+				comment.consumeTags(tag => tag.name === 'protected', () => this._flags.add('isProtected'));
+				comment.consumeTags(tag => tag.name === 'public', () => this._flags.add('isPublic'));
+
+				if (comment.shortText || comment.text || comment.tags?.length) {
+					this.comment = comment;
+				}
+			}
+		}
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
 	}
 
 	serialize(): ReferenceNode {
@@ -62,7 +86,7 @@ export abstract class Reflection {
 	abstract get name(): string;
 
 	protected _baseSerialize(): Omit<ReferenceNode, 'kind'> & { kind: '__unhandled' } {
-		const node = this.declarations[0];
+		const node = this.declarations[0] as ts.Declaration | undefined;
 		const location = Reflection._getLocation(node);
 
 		return {
@@ -70,6 +94,7 @@ export abstract class Reflection {
 			kind: '__unhandled',
 			name: this.name,
 			flags: Object.fromEntries([...this._flags].map(f => [f, true])),
+			comment: this.comment?.serialize(),
 			location
 		};
 	}

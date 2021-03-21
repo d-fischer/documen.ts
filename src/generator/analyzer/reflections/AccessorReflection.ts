@@ -9,6 +9,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 	setSignature?: SignatureReflection;
 
 	async processChildren(ctx: AnalyzeContext) {
+		await this.processJsDoc();
 		const symbolDeclarations = this._symbol.getDeclarations();
 
 		this.getSignature = await this._findAndConvertSignature(ctx, symbolDeclarations, ts.isGetAccessor);
@@ -29,7 +30,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 		if (decl) {
 			const sig = ctx.checker.getSignatureFromDeclaration(decl);
 			if (sig) {
-				return SignatureReflection.fromTsSignature(ctx, this.name, decl.kind, sig, decl);
+				return SignatureReflection.fromTsSignature(ctx, this, decl.kind, sig, decl);
 			}
 		}
 		return undefined;
