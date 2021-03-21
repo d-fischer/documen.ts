@@ -66,6 +66,7 @@ export class ParameterReflection extends Reflection {
 		if (isOptional) {
 			type = removeUndefined(type);
 		}
+		that._name = declaration.name.getText();
 		that._type = type;
 		that._defaultValue = declaration.initializer ? stringifyExpression(declaration.initializer) : undefined;
 
