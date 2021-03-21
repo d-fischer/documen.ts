@@ -5,23 +5,25 @@ import { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
 export class AccessorReflection extends SymbolBasedReflection {
-	getSignature?: SignatureReflection;
-	setSignature?: SignatureReflection;
+	private _getSignature?: SignatureReflection;
+	private _setSignature?: SignatureReflection;
 
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
-		const symbolDeclarations = this._symbol.getDeclarations();
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		const that = new AccessorReflection(symbol);
+		const symbolDeclarations = that._symbol.getDeclarations();
 
-		this.getSignature = await this._findAndConvertSignature(ctx, symbolDeclarations, ts.isGetAccessor);
-		this.setSignature = await this._findAndConvertSignature(ctx, symbolDeclarations, ts.isSetAccessor);
+		that._getSignature = await that._findAndConvertSignature(ctx, symbolDeclarations, ts.isGetAccessor);
+		that._setSignature = await that._findAndConvertSignature(ctx, symbolDeclarations, ts.isSetAccessor);
+
+		return that;
 	}
 
 	serialize(): AccessorReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: 'accessor',
-			getSignature: this.getSignature?.serialize() as GetSignatureReferenceNode,
-			setSignature: this.setSignature?.serialize() as SetSignatureReferenceNode
+			getSignature: this._getSignature?.serialize() as GetSignatureReferenceNode,
+			setSignature: this._setSignature?.serialize() as SetSignatureReferenceNode
 		};
 	}
 
@@ -30,7 +32,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 		if (decl) {
 			const sig = ctx.checker.getSignatureFromDeclaration(decl);
 			if (sig) {
-				return SignatureReflection.fromTsSignature(ctx, this, decl.kind, sig, decl);
+				return SignatureReflection.fromTsSignature(ctx, decl.kind, sig, this, decl);
 			}
 		}
 		return undefined;

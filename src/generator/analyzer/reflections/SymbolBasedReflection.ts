@@ -1,4 +1,5 @@
 import type * as ts from 'typescript';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { Reflection } from './Reflection';
 
 export class SymbolBasedReflection extends Reflection {
@@ -13,7 +14,11 @@ export class SymbolBasedReflection extends Reflection {
 		return this._reflectionIdsBySymbol.get(symbol);
 	}
 
-	constructor(protected _symbol: ts.Symbol, registerReverse = true) {
+	static async unknown(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		return new SymbolBasedReflection(symbol);
+	}
+
+	protected constructor(protected _symbol: ts.Symbol, registerReverse = true) {
 		super();
 
 		SymbolBasedReflection._symbolsByReflectionId.set(this.id, _symbol);

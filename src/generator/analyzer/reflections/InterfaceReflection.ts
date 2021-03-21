@@ -9,35 +9,38 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 import { TypeParameterReflection } from './TypeParameterReflection';
 
 export class InterfaceReflection extends SymbolBasedReflection {
-	members!: Reflection[];
-	typeParameters?: TypeParameterReflection[];
+	private _members!: Reflection[];
+	private _typeParameters?: TypeParameterReflection[];
 
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		const that = new InterfaceReflection(symbol);
 
-		const type = ctx.checker.getDeclaredTypeOfSymbol(this._symbol);
+		const type = ctx.checker.getDeclaredTypeOfSymbol(symbol);
 		assert(type.isClassOrInterface());
 
-		this.typeParameters = await resolvePromiseArray(type.typeParameters?.map(async (param) => {
+		that._typeParameters = await resolvePromiseArray(type.typeParameters?.map(async (param) => {
 			const declaration = param.symbol.declarations[0];
 			assert(ts.isTypeParameterDeclaration(declaration));
-			const result = new TypeParameterReflection(declaration);
-			await result.processChildren(ctx);
-			return result;
+			return TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 
 		const members = ctx.checker.getPropertiesOfType(type);
-		this.members = await Promise.all([
+		that._members = await Promise.all([
 			...members.map(async mem => createReflection(ctx, mem))
 		]);
+
+		that._handleFlags();
+		that._processJsDoc();
+
+		return that;
 	}
 
 	serialize(): InterfaceReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: 'interface',
-			members: this.members.map(mem => mem.serialize()),
-			typeParameters: this.typeParameters?.map(param => param.serialize())
+			members: this._members.map(mem => mem.serialize()),
+			typeParameters: this._typeParameters?.map(param => param.serialize())
 		};
 	}
 }

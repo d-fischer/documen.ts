@@ -9,28 +9,30 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 import { TypeParameterReflection } from './TypeParameterReflection';
 
 export class TypeAliasReflection extends SymbolBasedReflection {
-	type!: Type;
-	parameters?: TypeParameterReflection[];
+	private _type!: Type;
+	private _parameters?: TypeParameterReflection[];
 
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		const that = new TypeAliasReflection(symbol);
 
-		const decl = this._symbol.getDeclarations()?.find(ts.isTypeAliasDeclaration);
+		const decl = symbol.getDeclarations()?.find(ts.isTypeAliasDeclaration);
 		assert(decl);
-		this.type = await createTypeFromNode(ctx, decl.type);
-		this.parameters = await resolvePromiseArray(decl.typeParameters?.map(async param => {
-			const result = new TypeParameterReflection(param);
-			await result.processChildren(ctx);
-			return result;
-		}));
+		that._type = await createTypeFromNode(ctx, decl.type);
+		that._parameters = await resolvePromiseArray(decl.typeParameters?.map(async param => TypeParameterReflection.fromDeclaration(ctx, param)));
+
+		that._handleFlags();
+		that._processJsDoc();
+
+		return that;
 	}
+
 
 	serialize(): TypeAliasReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: 'typeAlias',
-			type: this.type.serialize(),
-
+			type: this._type.serialize(),
+			typeParameters: this._parameters?.map(param => param.serialize())
 		};
 	}
 }

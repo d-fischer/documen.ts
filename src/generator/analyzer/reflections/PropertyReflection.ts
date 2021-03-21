@@ -6,29 +6,28 @@ import type { Type } from '../types/Type';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
 export class PropertyReflection extends SymbolBasedReflection {
-	type!: Type;
+	private _type!: Type;
 
-	constructor(symbol: ts.Symbol) {
-		super(symbol);
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		const that = new PropertyReflection(symbol);
 
-		this._handleFlags(symbol.getDeclarations()?.[0]);
-	}
-
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
-
-		const declaration = this._symbol.getDeclarations()?.[0];
-		this.type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type
+		const declaration = symbol.getDeclarations()?.[0];
+		that._type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type
 			? await createTypeFromNode(ctx, declaration.type)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			: await createTypeFromTsType(ctx, ctx.checker.getTypeOfSymbolAtLocation(this._symbol, {} as any));
+			: await createTypeFromTsType(ctx, ctx.checker.getTypeOfSymbolAtLocation(symbol, {} as any));
+
+		that._handleFlags();
+		that._processJsDoc();
+
+		return that;
 	}
 
 	serialize(): PropertyReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: 'property',
-			type: this.type.serialize(),
+			type: this._type.serialize(),
 		};
 	}
 }

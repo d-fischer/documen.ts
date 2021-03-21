@@ -1,5 +1,10 @@
 import * as ts from 'typescript';
-import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, GetSignatureReferenceNode, SetSignatureReferenceNode } from '../../../common/reference';
+import type {
+	CallSignatureReferenceNode,
+	ConstructSignatureReferenceNode,
+	GetSignatureReferenceNode,
+	SetSignatureReferenceNode
+} from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import { createTypeFromTsType } from '../createType';
 import type { Type } from '../types/Type';
@@ -8,38 +13,68 @@ import { ParameterReflection } from './ParameterReflection';
 import { Reflection } from './Reflection';
 import { TypeParameterReflection } from './TypeParameterReflection';
 
+type SignatureReflectionKind =
+	| ts.SyntaxKind.CallSignature
+	| ts.SyntaxKind.ConstructSignature
+	| ts.SyntaxKind.GetAccessor
+	| ts.SyntaxKind.SetAccessor;
+
 export class SignatureReflection extends Reflection {
+	private _returnType!: Type;
+	private _params?: ParameterReflection[];
+	private _typeParams?: TypeParameterReflection[];
+
 	static async fromTsSignature(
 		ctx: AnalyzeContext,
-		parent: Reflection | undefined,
-		kind: ts.SyntaxKind.CallSignature | ts.SyntaxKind.ConstructSignature | ts.SyntaxKind.GetAccessor | ts.SyntaxKind.SetAccessor,
+		kind: SignatureReflectionKind,
 		signature: ts.Signature,
+		parent?: Reflection,
 		declaration?: ts.SignatureDeclaration
 	) {
-		const params = await resolvePromiseArray(signature.parameters.map(async (param, i) => {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			const paramNode = declaration?.parameters?.[i];
-			return ParameterReflection.fromSymbol(ctx, param, paramNode);
-		}));
+		const that = new SignatureReflection(kind, signature, parent);
 
-		const typeParams = await resolvePromiseArray(signature.typeParameters?.map(async param => {
-			const p = new TypeParameterReflection(param);
-			await p.processChildren(ctx);
-			return p;
-		}));
+		that._params = await resolvePromiseArray(
+			signature.parameters.map(async (param, i) => {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				const paramNode = declaration?.parameters?.[i];
+				return ParameterReflection.fromSymbol(ctx, param, paramNode);
+			})
+		);
 
-		const returnType = await createTypeFromTsType(ctx, signature.getReturnType());
+		that._typeParams = await resolvePromiseArray(
+			signature.typeParameters?.map(async param => TypeParameterReflection.fromTsTypeParameter(ctx, param))
+		);
 
-		return new SignatureReflection(parent, kind, returnType, params, typeParams, signature);
+		that._returnType = await createTypeFromTsType(ctx, signature.getReturnType());
+
+		that._handleFlags();
+		that._processJsDoc();
+
+		return that;
+	}
+
+	static async fromParts(
+		ctx: AnalyzeContext,
+		kind: SignatureReflectionKind,
+		params: ParameterReflection[],
+		returnType: Type,
+		parent?: Reflection
+	) {
+		const that = new SignatureReflection(kind, undefined, parent);
+
+		that._params = params;
+		that._returnType = returnType;
+
+		that._handleFlags();
+		that._processJsDoc();
+
+		return that;
 	}
 
 	constructor(
-		private readonly _parent: Reflection | undefined,
-		private readonly _kind: ts.SyntaxKind.CallSignature | ts.SyntaxKind.ConstructSignature | ts.SyntaxKind.GetAccessor | ts.SyntaxKind.SetAccessor,
-		private readonly _returnType: Type,
-		private readonly _params: ParameterReflection[] | undefined,
-		private readonly _typeParams?: TypeParameterReflection[],
-		private readonly _signature?: ts.Signature
+		private readonly _kind: SignatureReflectionKind,
+		private readonly _signature?: ts.Signature,
+		private readonly _parent?: Reflection
 	) {
 		super();
 	}
@@ -77,7 +112,11 @@ export class SignatureReflection extends Reflection {
 		}
 	}
 
-	serialize(): CallSignatureReferenceNode | GetSignatureReferenceNode | SetSignatureReferenceNode | ConstructSignatureReferenceNode {
+	serialize():
+		| CallSignatureReferenceNode
+		| GetSignatureReferenceNode
+		| SetSignatureReferenceNode
+		| ConstructSignatureReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: this.serializedKind,

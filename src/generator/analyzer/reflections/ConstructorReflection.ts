@@ -1,40 +1,43 @@
 import * as ts from 'typescript';
-import type { ConstructorReferenceNode, CallSignatureReferenceNode } from '../../../common/reference';
+import type { CallSignatureReferenceNode, ConstructorReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
 export class ConstructorReflection extends SymbolBasedReflection {
-	signatures!: SignatureReflection[];
+	private _signatures!: SignatureReflection[];
 
-	constructor(symbol: ts.Symbol, private readonly _signatures: readonly ts.Signature[]) {
-		// class and constructor are the same symbol, so don't register in reverse
-		super(symbol, false);
+	static async fromSymbolAndSignatures(ctx: AnalyzeContext, symbol: ts.Symbol, signatures: readonly ts.Signature[]) {
+		const that = new ConstructorReflection(symbol);
 
-		this._handleFlags(symbol.getDeclarations()?.[0]);
-	}
-
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
-
-		this.signatures = await Promise.all(
-			this._signatures.map(async (sig, i) =>
+		that._signatures = await Promise.all(
+			signatures.map(async (sig, i) =>
 				SignatureReflection.fromTsSignature(
 					ctx,
-					this,
 					ts.SyntaxKind.ConstructSignature,
 					sig,
-					this._symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
+					that,
+					symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
 				)
 			)
 		);
+
+		that._handleFlags(symbol.getDeclarations()?.[0]);
+		that._processJsDoc();
+
+		return that;
+	}
+
+	constructor(symbol: ts.Symbol) {
+		// class and constructor are the same symbol, so don't register in reverse
+		super(symbol, false);
 	}
 
 	serialize(): ConstructorReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: 'constructor',
-			signatures: this.signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
+			signatures: this._signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
 		};
 	}
 }

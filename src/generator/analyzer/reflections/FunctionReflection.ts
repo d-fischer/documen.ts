@@ -6,25 +6,24 @@ import type { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
 export class FunctionReflection extends SymbolBasedReflection {
-	signatures!: SignatureReflection[];
+	private _signatures!: SignatureReflection[];
 
-	constructor(symbol: ts.Symbol) {
-		super(symbol);
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		const that = new FunctionReflection(symbol);
 
-		this._handleFlags(symbol.getDeclarations()?.[0]);
-	}
+		that._signatures = await getReflectedCallSignatures(ctx, symbol, that);
 
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
+		that._handleFlags();
+		that._processJsDoc();
 
-		this.signatures = await getReflectedCallSignatures(ctx, this._symbol, this);
+		return that;
 	}
 
 	serialize(): FunctionReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: 'function',
-			signatures: this.signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
+			signatures: this._signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
 		};
 	}
 }

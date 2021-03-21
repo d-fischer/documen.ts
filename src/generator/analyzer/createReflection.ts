@@ -45,50 +45,32 @@ export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, p
 	}
 
 	if (ts.isInterfaceDeclaration(declaration)) {
-		const rs = new InterfaceReflection(symbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return InterfaceReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isFunctionDeclaration(declaration)) {
-		const rs = new FunctionReflection(symbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return FunctionReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isClassDeclaration(declaration)) {
-		const rs = new ClassReflection(symbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return ClassReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isMethodDeclaration(declaration) || ts.isMethodSignature(declaration)) {
-		const rs = new MethodReflection(symbol, parentSymbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return MethodReflection.fromSymbol(ctx, symbol, parentSymbol);
 	}
 	if (ts.isAccessor(declaration)) {
-		const rs = new AccessorReflection(symbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return AccessorReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isTypeAliasDeclaration(declaration)) {
-		const rs = new TypeAliasReflection(symbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return TypeAliasReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) {
-		const rs = new PropertyReflection(symbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return PropertyReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isParameter(declaration)) {
 		return ParameterReflection.fromSymbol(ctx, symbol, declaration);
 	}
 	if (ts.isEnumDeclaration(declaration)) {
-		const rs = new EnumReflection(symbol);
-		await rs.processChildren(ctx);
-		return rs;
+		return EnumReflection.fromSymbol(ctx, symbol);
 	}
 
-	const rs = new SymbolBasedReflection(symbol);
-	await rs.processChildren(ctx);
-	return rs;
+	return SymbolBasedReflection.unknown(ctx, symbol);
 }

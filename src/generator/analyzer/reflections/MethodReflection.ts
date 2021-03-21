@@ -8,16 +8,15 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class MethodReflection extends SymbolBasedReflection {
 	signatures!: SignatureReflection[];
 
-	constructor(symbol: ts.Symbol, private readonly _parentSymbol?: ts.Symbol) {
-		super(symbol);
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, parentSymbol?: ts.Symbol) {
+		const that = new MethodReflection(symbol);
 
-		this._handleFlags(symbol.getDeclarations()?.[0]);
-	}
+		that.signatures = await getReflectedCallSignatures(ctx, symbol, that, parentSymbol);
 
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
+		that._handleFlags();
+		that._processJsDoc();
 
-		this.signatures = await getReflectedCallSignatures(ctx, this._symbol, this, this._parentSymbol);
+		return that;
 	}
 
 	serialize(): MethodReferenceNode {

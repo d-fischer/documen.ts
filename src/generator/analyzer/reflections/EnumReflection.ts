@@ -5,28 +5,29 @@ import { EnumMemberReflection } from './EnumMemberReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
 export class EnumReflection extends SymbolBasedReflection {
-	members!: EnumMemberReflection[];
+	private _members!: EnumMemberReflection[];
 
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		const that = new EnumReflection(symbol);
 
-		this.members = this._symbol.exports
-			? await Promise.all([...(this._symbol.exports as Map<string, ts.Symbol>).values()]
+		that._members = symbol.exports
+			? await Promise.all([...(symbol.exports as Map<string, ts.Symbol>).values()]
 				// eslint-disable-next-line no-bitwise
 				.filter(exp => exp.flags & ts.SymbolFlags.EnumMember)
-				.map(async exp => {
-					const result = new EnumMemberReflection(exp);
-					await result.processChildren(ctx);
-					return result;
-				}))
-			: []
+				.map(async exp => EnumMemberReflection.fromSymbol(ctx, exp)))
+			: [];
+
+		that._handleFlags();
+		that._processJsDoc();
+
+		return that;
 	}
 
 	serialize(): EnumReferenceNode {
 		return {
 			...this._baseSerialize(),
 			kind: 'enum',
-			members: this.members.map(mem => mem.serialize())
+			members: this._members.map(mem => mem.serialize())
 		};
 	}
 }

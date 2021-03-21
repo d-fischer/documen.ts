@@ -6,46 +6,53 @@ import type { Type } from '../types/Type';
 import { Reflection } from './Reflection';
 
 export class TypeParameterReflection extends Reflection {
-	constraint?: Type;
-	default?: Type;
+	private _constraint?: Type;
+	private _default?: Type;
 
-	constructor(private readonly _tsParam: ts.TypeParameter | ts.TypeParameterDeclaration) {
+	static async fromTsTypeParameter(ctx: AnalyzeContext, param: ts.TypeParameter) {
+		const that = new TypeParameterReflection(undefined, param.symbol.name);
+
+		const tsConstraint = param.getConstraint();
+		if (tsConstraint) {
+			that._constraint = await createTypeFromTsType(ctx, tsConstraint);
+		}
+
+		const tsDefault = param.getDefault();
+		if (tsDefault) {
+			that._default = await createTypeFromTsType(ctx, tsDefault);
+		}
+
+		return that;
+	}
+
+	static async fromDeclaration(ctx: AnalyzeContext, param: ts.TypeParameterDeclaration) {
+		const that = new TypeParameterReflection(param);
+
+		const constraintNode = param.constraint;
+		if (constraintNode) {
+			that._constraint = await createTypeFromNode(ctx, constraintNode);
+		}
+
+		const defaultNode = param.default;
+		if (defaultNode) {
+			that._default = await createTypeFromNode(ctx, defaultNode);
+		}
+
+		that._processJsDoc();
+
+		return that;
+	}
+
+	constructor(private readonly _declaration?: ts.TypeParameterDeclaration, private readonly _name?: string) {
 		super();
 	}
 
 	get declarations() {
-		return [];
-	}
-
-	async processChildren(ctx: AnalyzeContext) {
-		if ('kind' in this._tsParam) {
-			// is node
-			await this.processJsDoc(this._tsParam);
-			const constraintNode = this._tsParam.constraint;
-			if (constraintNode) {
-				this.constraint = await createTypeFromNode(ctx, constraintNode);
-			}
-
-			const defaultNode = this._tsParam.default;
-			if (defaultNode) {
-				this.default = await createTypeFromNode(ctx, defaultNode);
-			}
-		} else {
-			// is param
-			const tsConstraint = this._tsParam.getConstraint();
-			if (tsConstraint) {
-				this.constraint = await createTypeFromTsType(ctx, tsConstraint);
-			}
-
-			const tsDefault = this._tsParam.getDefault();
-			if (tsDefault) {
-				this.default = await createTypeFromTsType(ctx, tsDefault);
-			}
-		}
+		return this._declaration ? [this._declaration] : [];
 	}
 
 	get name() {
-		return 'kind' in this._tsParam ? this._tsParam.name.text : this._tsParam.symbol.name;
+		return this._name ?? this._declaration!.name.text;
 	}
 
 	serialize(): TypeParameterReferenceNode {
@@ -53,8 +60,8 @@ export class TypeParameterReflection extends Reflection {
 			...this._baseSerialize(),
 			kind: 'typeParameter',
 			name: this.name,
-			constraint: this.constraint?.serialize(),
-			default: this.default?.serialize(),
+			constraint: this._constraint?.serialize(),
+			default: this._default?.serialize(),
 		};
 	}
 }

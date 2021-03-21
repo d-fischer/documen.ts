@@ -8,7 +8,15 @@ import { removeUndefined } from '../util/types';
 import { Reflection } from './Reflection';
 
 export class ParameterReflection extends Reflection {
+	private _name!: string;
+	private _type!: Type;
+	private _defaultValue?: string;
+
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, declaration?: ts.ParameterDeclaration) {
+		declaration ??= symbol.getDeclarations()?.[0] as ts.ParameterDeclaration | undefined;
+
+		const that = new ParameterReflection(declaration);
+
 		const valueDeclaration = symbol.valueDeclaration as ts.Declaration | undefined;
 		// eslint-disable-next-line @typescript-eslint/init-declarations
 		let type: Type;
@@ -31,32 +39,48 @@ export class ParameterReflection extends Reflection {
 			type = removeUndefined(type);
 		}
 
-		const defaultValue = declaration?.initializer ? stringifyExpression(declaration.initializer) : undefined;
+		that._name = symbol.name;
+		that._type = type;
+		that._defaultValue = declaration?.initializer ? stringifyExpression(declaration.initializer) : undefined;
+
 		const isRest = valueDeclaration && ts.isParameter(valueDeclaration) ? !!valueDeclaration.dotDotDotToken : false;
 
-		return new ParameterReflection(symbol.name, type, isOptional, isRest, defaultValue, declaration ?? symbol.getDeclarations()?.[0] as ts.ParameterDeclaration | undefined);
+		that._handleFlags();
+		if (isOptional) {
+			that._flags.add('isOptional');
+		}
+		if (isRest) {
+			that._flags.add('isRest');
+		}
+		that._processJsDoc();
+
+		return that;
 	}
 
 	static async fromNode(ctx: AnalyzeContext, declaration: ts.ParameterDeclaration) {
+		const that = new ParameterReflection(declaration);
+
 		let type = await createTypeFromNode(ctx, declaration.type);
 		const isRest = !!declaration.dotDotDotToken;
 		const isOptional = !!declaration.questionToken;
 		if (isOptional) {
 			type = removeUndefined(type);
 		}
-		const defaultValue = declaration.initializer ? stringifyExpression(declaration.initializer) : undefined;
-		return new ParameterReflection(declaration.name.getText(), type, isOptional, isRest, defaultValue, declaration);
+		that._type = type;
+		that._defaultValue = declaration.initializer ? stringifyExpression(declaration.initializer) : undefined;
+
+		if (isOptional) {
+			that._flags.add('isOptional');
+		}
+		if (isRest) {
+			that._flags.add('isRest');
+		}
+
+		return that;
 	}
 
-	constructor(private readonly _name: string, private readonly _type: Type, private readonly _isOptional: boolean, private readonly _isRest: boolean, private readonly _defaultValue?: string, private readonly _declaration?: ts.ParameterDeclaration) {
+	constructor(private readonly _declaration?: ts.ParameterDeclaration) {
 		super();
-
-		if (this._isOptional) {
-			this._flags.add('isOptional');
-		}
-		if (this._isRest) {
-			this._flags.add('isRest');
-		}
 
 		this._handleFlags(_declaration);
 	}

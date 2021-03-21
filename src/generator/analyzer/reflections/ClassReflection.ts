@@ -14,40 +14,36 @@ export class ClassReflection extends SymbolBasedReflection {
 	members!: Reflection[];
 	typeParameters?: TypeParameterReflection[];
 
-	constructor(symbol: ts.Symbol) {
-		super(symbol);
+	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
+		const that = new ClassReflection(symbol);
 
-		this._handleFlags(symbol.getDeclarations()?.[0]);
-	}
+		const instanceType = ctx.checker.getDeclaredTypeOfSymbol(symbol);
 
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
-
-		const instanceType = ctx.checker.getDeclaredTypeOfSymbol(this._symbol);
 		assert(instanceType.isClassOrInterface());
 		const instanceMembers = ctx.checker.getPropertiesOfType(instanceType);
 
-		const classDeclaration = this._symbol.getDeclarations()?.find(ts.isClassDeclaration);
+		const classDeclaration = symbol.getDeclarations()?.find(ts.isClassDeclaration);
 		assert(classDeclaration);
-		const staticType = ctx.checker.getTypeOfSymbolAtLocation(this._symbol, classDeclaration);
+		const staticType = ctx.checker.getTypeOfSymbolAtLocation(symbol, classDeclaration);
 		const staticMembers = ctx.checker.getPropertiesOfType(staticType);
 
-		this.typeParameters = await resolvePromiseArray(instanceType.typeParameters?.map(async (param) => {
+		that.typeParameters = await resolvePromiseArray(instanceType.typeParameters?.map(async (param) => {
 			const declaration = param.symbol.declarations[0];
 			assert(ts.isTypeParameterDeclaration(declaration));
-			const result = new TypeParameterReflection(declaration);
-			await result.processChildren(ctx);
-			return result;
+			return TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 
-		this.members = await Promise.all([
+		that.members = await Promise.all([
 			// eslint-disable-next-line no-bitwise
 			...staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => createReflection(ctx, mem)),
 			...instanceMembers.map(async mem => createReflection(ctx, mem))
 		]);
-		const ctor = new ConstructorReflection(this._symbol, staticType.getConstructSignatures())
-		await ctor.processChildren(ctx);
-		this.ctor = ctor;
+		that.ctor = await ConstructorReflection.fromSymbolAndSignatures(ctx, symbol, staticType.getConstructSignatures());
+
+		that._handleFlags(symbol.getDeclarations()?.[0]);
+		that._processJsDoc();
+
+		return that;
 	}
 
 	serialize(): ClassReferenceNode {

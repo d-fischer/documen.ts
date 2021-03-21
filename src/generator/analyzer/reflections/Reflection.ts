@@ -1,6 +1,5 @@
 import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
 import { DocComment } from '../DocComment';
 
 export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest';
@@ -38,7 +37,7 @@ export abstract class Reflection {
 		return id ? this._packageNamesByReflectionId.get(id) : undefined;
 	}
 
-	constructor() {
+	protected constructor() {
 		this.id = this._registerReflection();
 	}
 
@@ -49,32 +48,6 @@ export abstract class Reflection {
 
 	/** @internal */
 	abstract get declarations(): ts.Declaration[];
-
-	async processJsDoc(node?: ts.Declaration) {
-		node ??= this.declarations[0] as ts.Declaration | undefined;
-		if (node) {
-			const sf = node.getSourceFile();
-			const jsDocCommentRanges = ts.getLeadingCommentRanges(sf.text, node.pos)?.filter(range => sf.text.substr(range.pos, 3) === '/**');
-			if (jsDocCommentRanges?.length) {
-				const lastJsDocCommentRange = jsDocCommentRanges[jsDocCommentRanges.length - 1];
-				const rawComment = sf.text.substring(lastJsDocCommentRange.pos, lastJsDocCommentRange.end);
-				const comment = DocComment.parse(rawComment);
-
-				comment.consumeTags(tag => tag.name === 'private', () => this._flags.add('isPrivate'));
-				comment.consumeTags(tag => tag.name === 'protected', () => this._flags.add('isProtected'));
-				comment.consumeTags(tag => tag.name === 'public', () => this._flags.add('isPublic'));
-
-				if (comment.shortText || comment.text || comment.tags?.length) {
-					this.comment = comment;
-				}
-			}
-		}
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	async processChildren(ctx: AnalyzeContext) {
-		await this.processJsDoc();
-	}
 
 	serialize(): ReferenceNode {
 		return {
@@ -100,6 +73,8 @@ export abstract class Reflection {
 	}
 
 	protected _handleFlags(declaration?: ts.Declaration) {
+		declaration ??= this.declarations[0] as ts.Declaration | undefined;
+
 		if (!declaration) {
 			return;
 		}
@@ -130,6 +105,29 @@ export abstract class Reflection {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-member-access
 		if (!!(declaration as any).questionToken) {
 			this._flags.add('isOptional');
+		}
+	}
+
+	protected _processJsDoc(declaration?: ts.Declaration) {
+		declaration ??= this.declarations[0] as ts.Declaration | undefined;
+		if (!declaration) {
+			return;
+		}
+
+		const sf = declaration.getSourceFile();
+		const jsDocCommentRanges = ts.getLeadingCommentRanges(sf.text, declaration.pos)?.filter(range => sf.text.substr(range.pos, 3) === '/**');
+		if (jsDocCommentRanges?.length) {
+			const lastJsDocCommentRange = jsDocCommentRanges[jsDocCommentRanges.length - 1];
+			const rawComment = sf.text.substring(lastJsDocCommentRange.pos, lastJsDocCommentRange.end);
+			const comment = DocComment.parse(rawComment);
+
+			comment.consumeTags(tag => tag.name === 'private', () => this._flags.add('isPrivate'));
+			comment.consumeTags(tag => tag.name === 'protected', () => this._flags.add('isProtected'));
+			comment.consumeTags(tag => tag.name === 'public', () => this._flags.add('isPublic'));
+
+			if (comment.shortText || comment.text || comment.tags?.length) {
+				this.comment = comment;
+			}
 		}
 	}
 
