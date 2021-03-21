@@ -1,12 +1,13 @@
 import type { CallSignatureReferenceNode, TypeLiteralReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { Reflection } from './Reflection';
 import type { SignatureReflection } from './SignatureReflection';
 
 export class TypeLiteralReflection extends Reflection {
 	readonly name = '__type';
 
-	constructor(private readonly _members?: Reflection[], private readonly _signatures?: SignatureReflection[]) {
-		super();
+	constructor(ctx: AnalyzeContext, private readonly _members?: Reflection[], private readonly _signatures?: SignatureReflection[]) {
+		super(ctx);
 	}
 
 	get declarations() {

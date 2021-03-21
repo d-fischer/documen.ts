@@ -15,7 +15,7 @@ export class ClassReflection extends SymbolBasedReflection {
 	typeParameters?: TypeParameterReflection[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		const that = new ClassReflection(symbol);
+		const that = new ClassReflection(ctx, symbol);
 
 		const instanceType = ctx.checker.getDeclaredTypeOfSymbol(symbol);
 

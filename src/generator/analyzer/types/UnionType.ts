@@ -24,10 +24,10 @@ export class UnionType extends Type {
 
 export const unionTypeReflector: TypeReflector<ts.UnionTypeNode, ts.UnionType> = {
 	kinds: [ts.SyntaxKind.UnionType],
-	async fromNode(checker, node) {
-		return new UnionType(await resolvePromiseArray(node.types.map(async subTypeNode => createTypeFromNode(checker, subTypeNode))));
+	async fromNode(ctx, node) {
+		return new UnionType(await resolvePromiseArray(node.types.map(async subTypeNode => createTypeFromNode(ctx, subTypeNode))));
 	},
-	async fromType(checker, type) {
-		return new UnionType(await resolvePromiseArray(type.types.map(async (subType) => createTypeFromTsType(checker, subType))));
+	async fromType(ctx, type) {
+		return new UnionType(await resolvePromiseArray(type.types.map(async (subType) => createTypeFromTsType(ctx, subType))));
 	},
 };

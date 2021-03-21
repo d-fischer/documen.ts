@@ -10,7 +10,7 @@ export class TypeParameterReflection extends Reflection {
 	private _default?: Type;
 
 	static async fromTsTypeParameter(ctx: AnalyzeContext, param: ts.TypeParameter) {
-		const that = new TypeParameterReflection(undefined, param.symbol.name);
+		const that = new TypeParameterReflection(ctx, undefined, param.symbol.name);
 
 		const tsConstraint = param.getConstraint();
 		if (tsConstraint) {
@@ -26,7 +26,7 @@ export class TypeParameterReflection extends Reflection {
 	}
 
 	static async fromDeclaration(ctx: AnalyzeContext, param: ts.TypeParameterDeclaration) {
-		const that = new TypeParameterReflection(param);
+		const that = new TypeParameterReflection(ctx, param);
 
 		const constraintNode = param.constraint;
 		if (constraintNode) {
@@ -43,8 +43,8 @@ export class TypeParameterReflection extends Reflection {
 		return that;
 	}
 
-	constructor(private readonly _declaration?: ts.TypeParameterDeclaration, private readonly _name?: string) {
-		super();
+	constructor(ctx: AnalyzeContext, private readonly _declaration?: ts.TypeParameterDeclaration, private readonly _name?: string) {
+		super(ctx);
 	}
 
 	get declarations() {

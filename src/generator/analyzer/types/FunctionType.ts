@@ -21,17 +21,17 @@ export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 		const returnType = await createTypeFromNode(ctx, node.type);
 		const signature = await SignatureReflection.fromParts(ctx, ts.SyntaxKind.CallSignature, params, returnType);
 
-		const literalReflection = new TypeLiteralReflection(undefined, [signature]);
+		const literalReflection = new TypeLiteralReflection(ctx, undefined, [signature]);
 
 		return new ReflectionType(literalReflection);
 	},
-	async fromType(checker, type) {
+	async fromType(ctx, type) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (!type.symbol) {
 			return new IntrinsicType('Function');
 		}
 
-		const literalReflection = new TypeLiteralReflection(undefined, [await SignatureReflection.fromTsSignature(checker, ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])]);
+		const literalReflection = new TypeLiteralReflection(ctx, undefined, [await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])]);
 
 		return new ReflectionType(literalReflection);
 	},

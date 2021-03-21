@@ -1,49 +1,18 @@
 import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
+import type { AnalyzeContext } from '../AnalyzeContext';
 import { DocComment } from '../DocComment';
 
 export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest';
 
 export abstract class Reflection {
-	private static readonly _reflectionsById = new Map<number, Reflection>();
-	private static readonly _packageNamesByReflectionId = new Map<number, string>();
-	private static _nextReflectionId = 1;
 	readonly id: number;
 	comment?: DocComment;
 
 	protected readonly _flags = new Set<ReflectionFlag>();
 
-	static findIdAtPosition(fullPath: string, line: number, column: number): number | undefined {
-		for (const [id, rs] of this._reflectionsById) {
-			const declarations = rs.declarations;
-			for (const declaration of declarations) {
-				const declSf = declaration.getSourceFile();
-				if (declSf.fileName !== fullPath) {
-					continue;
-				}
-				const pos = declSf.getPositionOfLineAndCharacter(line, column);
-
-				if (pos === declaration.getStart()) {
-					return id;
-				}
-			}
-		}
-
-		return undefined;
-	}
-
-	/** @internal */
-	static getPackageNameForReflectionId(id: number | undefined) {
-		return id ? this._packageNamesByReflectionId.get(id) : undefined;
-	}
-
-	protected constructor() {
-		this.id = this._registerReflection();
-	}
-
-	/** @internal */
-	registerForPackageName(name: string) {
-		Reflection._packageNamesByReflectionId.set(this.id, name);
+	protected constructor(ctx: AnalyzeContext) {
+		this.id = ctx.project.registerReflection(this);
 	}
 
 	/** @internal */
@@ -146,11 +115,5 @@ export abstract class Reflection {
 			line: line + 1,
 			character
 		};
-	}
-
-	private _registerReflection(): number {
-		const id = Reflection._nextReflectionId++;
-		Reflection._reflectionsById.set(id, this);
-		return id;
 	}
 }

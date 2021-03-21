@@ -31,7 +31,7 @@ export class SignatureReflection extends Reflection {
 		parent?: Reflection,
 		declaration?: ts.SignatureDeclaration
 	) {
-		const that = new SignatureReflection(kind, signature, parent);
+		const that = new SignatureReflection(ctx, kind, signature, parent);
 
 		that._params = await resolvePromiseArray(
 			signature.parameters.map(async (param, i) => {
@@ -60,7 +60,7 @@ export class SignatureReflection extends Reflection {
 		returnType: Type,
 		parent?: Reflection
 	) {
-		const that = new SignatureReflection(kind, undefined, parent);
+		const that = new SignatureReflection(ctx, kind, undefined, parent);
 
 		that._params = params;
 		that._returnType = returnType;
@@ -72,11 +72,12 @@ export class SignatureReflection extends Reflection {
 	}
 
 	constructor(
+		ctx: AnalyzeContext,
 		private readonly _kind: SignatureReflectionKind,
 		private readonly _signature?: ts.Signature,
 		private readonly _parent?: Reflection
 	) {
-		super();
+		super(ctx);
 	}
 
 	get declarations(): ts.Declaration[] {

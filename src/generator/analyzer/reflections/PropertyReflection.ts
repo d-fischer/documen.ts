@@ -9,7 +9,7 @@ export class PropertyReflection extends SymbolBasedReflection {
 	private _type!: Type;
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		const that = new PropertyReflection(symbol);
+		const that = new PropertyReflection(ctx, symbol);
 
 		const declaration = symbol.getDeclarations()?.[0];
 		that._type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type

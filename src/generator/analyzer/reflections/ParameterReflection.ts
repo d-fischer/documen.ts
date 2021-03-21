@@ -15,7 +15,7 @@ export class ParameterReflection extends Reflection {
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, declaration?: ts.ParameterDeclaration) {
 		declaration ??= symbol.getDeclarations()?.[0] as ts.ParameterDeclaration | undefined;
 
-		const that = new ParameterReflection(declaration);
+		const that = new ParameterReflection(ctx, declaration);
 
 		const valueDeclaration = symbol.valueDeclaration as ts.Declaration | undefined;
 		// eslint-disable-next-line @typescript-eslint/init-declarations
@@ -58,7 +58,7 @@ export class ParameterReflection extends Reflection {
 	}
 
 	static async fromNode(ctx: AnalyzeContext, declaration: ts.ParameterDeclaration) {
-		const that = new ParameterReflection(declaration);
+		const that = new ParameterReflection(ctx, declaration);
 
 		let type = await createTypeFromNode(ctx, declaration.type);
 		const isRest = !!declaration.dotDotDotToken;
@@ -80,8 +80,8 @@ export class ParameterReflection extends Reflection {
 		return that;
 	}
 
-	constructor(private readonly _declaration?: ts.ParameterDeclaration) {
-		super();
+	constructor(ctx: AnalyzeContext, private readonly _declaration?: ts.ParameterDeclaration) {
+		super(ctx);
 
 		this._handleFlags(_declaration);
 	}

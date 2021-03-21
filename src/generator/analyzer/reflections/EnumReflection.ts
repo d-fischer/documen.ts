@@ -8,7 +8,7 @@ export class EnumReflection extends SymbolBasedReflection {
 	private _members!: EnumMemberReflection[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		const that = new EnumReflection(symbol);
+		const that = new EnumReflection(ctx, symbol);
 
 		that._members = symbol.exports
 			? await Promise.all([...(symbol.exports as Map<string, ts.Symbol>).values()]

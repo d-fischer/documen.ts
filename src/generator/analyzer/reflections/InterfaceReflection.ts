@@ -13,7 +13,7 @@ export class InterfaceReflection extends SymbolBasedReflection {
 	private _typeParameters?: TypeParameterReflection[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		const that = new InterfaceReflection(symbol);
+		const that = new InterfaceReflection(ctx, symbol);
 
 		const type = ctx.checker.getDeclaredTypeOfSymbol(symbol);
 		assert(type.isClassOrInterface());

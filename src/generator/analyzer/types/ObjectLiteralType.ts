@@ -20,7 +20,7 @@ export const objectLiteralTypeReflector: TypeReflector<ts.TypeLiteralNode> = {
 		const members = await resolvePromiseArray(ctx.checker.getPropertiesOfType(type).map(async prop => createReflection(ctx, prop, symbol)));
 		const signatures = await resolvePromiseArray(type.getCallSignatures().map(async sig => SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig)));
 
-		const literalReflection = new TypeLiteralReflection(members, signatures);
+		const literalReflection = new TypeLiteralReflection(ctx, members, signatures);
 
 		return new ReflectionType(literalReflection);
 	},
@@ -33,7 +33,7 @@ export const objectLiteralTypeReflector: TypeReflector<ts.TypeLiteralNode> = {
 		const members = await resolvePromiseArray(ctx.checker.getPropertiesOfType(type).map(async prop => createReflection(ctx, prop, type.symbol)));
 		const signatures = await resolvePromiseArray(type.getCallSignatures().map(async sig => SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig)));
 
-		const literalReflection = new TypeLiteralReflection(members, signatures);
+		const literalReflection = new TypeLiteralReflection(ctx, members, signatures);
 
 		return new ReflectionType(literalReflection);
 	},

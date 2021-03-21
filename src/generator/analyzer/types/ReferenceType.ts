@@ -3,37 +3,12 @@ import ts from 'typescript';
 import type { ReferenceReferenceType } from '../../../common/reference';
 import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
-import { Reflection } from '../reflections/Reflection';
-import { SymbolBasedReflection } from '../reflections/SymbolBasedReflection';
 import { resolvePromiseArray } from '../util/promises';
 import { resolveAliasesForSymbol } from '../util/symbolUtil';
 import { ArrayType } from './ArrayType';
 import { Type } from './Type';
 
 export class ReferenceType extends Type {
-	private static readonly _brokenReferences = new Map<ts.Symbol, ReferenceType[]>();
-
-	static registerBrokenReference(symbol: ts.Symbol, type: ReferenceType) {
-		if (this._brokenReferences.has(symbol)) {
-			this._brokenReferences.get(symbol)!.push(type);
-		} else {
-			this._brokenReferences.set(symbol, [type]);
-		}
-	}
-
-	static fixBrokenReferences() {
-		for (const [symbol, types] of this._brokenReferences) {
-			const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(symbol);
-			const packageForSymbol = Reflection.getPackageNameForReflectionId(reflectionIdForSymbol);
-			if (reflectionIdForSymbol !== undefined) {
-				for (const type of types) {
-					type._id = reflectionIdForSymbol;
-					type._package = packageForSymbol;
-				}
-			}
-		}
-	}
-
 	constructor(
 		private readonly _name: string,
 		private readonly _typeArguments?: Type[],
@@ -42,6 +17,11 @@ export class ReferenceType extends Type {
 		private readonly _isTypeParameter?: true
 	) {
 		super();
+	}
+
+	fixBrokenReference(id: number, pkg?: string) {
+		this._id = id;
+		this._package = pkg;
 	}
 
 	serialize(): ReferenceReferenceType {
@@ -73,8 +53,8 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const symbol = ctx.checker.getSymbolAtLocation(node.typeName)!;
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
 
-		const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(origSymbol);
-		const packageForSymbol = Reflection.getPackageNameForReflectionId(reflectionIdForSymbol);
+		const reflectionIdForSymbol = ctx.project.getReflectionIdForSymbol(origSymbol);
+		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			name,
 			await resolvePromiseArray(node.typeArguments?.map(async typeNode => createTypeFromNode(ctx, typeNode))),
@@ -85,7 +65,7 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		);
 
 		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {
-			ReferenceType.registerBrokenReference(origSymbol, result);
+			ctx.project.registerBrokenReference(origSymbol, result);
 		}
 
 		return result;
@@ -94,8 +74,8 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const symbol = type.aliasSymbol ?? type.getSymbol();
 		assert(symbol);
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
-		const reflectionIdForSymbol = SymbolBasedReflection.getReflectionIdForSymbol(origSymbol);
-		const packageForSymbol = Reflection.getPackageNameForReflectionId(reflectionIdForSymbol);
+		const reflectionIdForSymbol = ctx.project.getReflectionIdForSymbol(origSymbol);
+		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			symbol.name,
 			await resolvePromiseArray(type.typeArguments?.map(async arg => createTypeFromTsType(ctx, arg))),
@@ -103,7 +83,7 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		);
 
 		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {
-			ReferenceType.registerBrokenReference(origSymbol, result);
+			ctx.project.registerBrokenReference(origSymbol, result);
 		}
 
 		return result;

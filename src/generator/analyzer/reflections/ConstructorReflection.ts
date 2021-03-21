@@ -8,7 +8,7 @@ export class ConstructorReflection extends SymbolBasedReflection {
 	private _signatures!: SignatureReflection[];
 
 	static async fromSymbolAndSignatures(ctx: AnalyzeContext, symbol: ts.Symbol, signatures: readonly ts.Signature[]) {
-		const that = new ConstructorReflection(symbol);
+		const that = new ConstructorReflection(ctx, symbol);
 
 		that._signatures = await Promise.all(
 			signatures.map(async (sig, i) =>
@@ -28,9 +28,9 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		return that;
 	}
 
-	constructor(symbol: ts.Symbol) {
+	constructor(ctx: AnalyzeContext, symbol: ts.Symbol) {
 		// class and constructor are the same symbol, so don't register in reverse
-		super(symbol, false);
+		super(ctx, symbol, false);
 	}
 
 	serialize(): ConstructorReferenceNode {

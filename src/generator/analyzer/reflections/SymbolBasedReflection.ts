@@ -3,28 +3,14 @@ import type { AnalyzeContext } from '../AnalyzeContext';
 import { Reflection } from './Reflection';
 
 export class SymbolBasedReflection extends Reflection {
-	private static readonly _symbolsByReflectionId = new Map<number, ts.Symbol>();
-	private static readonly _reflectionIdsBySymbol = new Map<ts.Symbol, number>();
-
-	static getSymbolForReflection(reflection: SymbolBasedReflection) {
-		return this._symbolsByReflectionId.get(reflection.id);
-	}
-
-	static getReflectionIdForSymbol(symbol: ts.Symbol) {
-		return this._reflectionIdsBySymbol.get(symbol);
-	}
-
 	static async unknown(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		return new SymbolBasedReflection(symbol);
+		return new SymbolBasedReflection(ctx, symbol);
 	}
 
-	protected constructor(protected _symbol: ts.Symbol, registerReverse = true) {
-		super();
+	protected constructor(ctx: AnalyzeContext, protected _symbol: ts.Symbol, registerReverse = true) {
+		super(ctx);
 
-		SymbolBasedReflection._symbolsByReflectionId.set(this.id, _symbol);
-		if (registerReverse) {
-			SymbolBasedReflection._reflectionIdsBySymbol.set(_symbol, this.id);
-		}
+		ctx.project.registerSymbol(this.id, _symbol, registerReverse);
 	}
 
 	get declarations() {

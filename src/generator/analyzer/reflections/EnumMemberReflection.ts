@@ -7,7 +7,7 @@ export class EnumMemberReflection extends SymbolBasedReflection {
 	private _value!: unknown;
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		const that = new EnumMemberReflection(symbol);
+		const that = new EnumMemberReflection(ctx, symbol);
 		const declaration = symbol.getDeclarations()?.[0] as ts.EnumMember;
 
 		that._value = ctx.checker.getConstantValue(declaration);

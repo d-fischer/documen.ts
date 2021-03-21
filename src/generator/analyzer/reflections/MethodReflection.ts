@@ -9,12 +9,11 @@ export class MethodReflection extends SymbolBasedReflection {
 	signatures!: SignatureReflection[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, parentSymbol?: ts.Symbol) {
-		const that = new MethodReflection(symbol);
+		const that = new MethodReflection(ctx, symbol);
 
 		that.signatures = await getReflectedCallSignatures(ctx, symbol, that, parentSymbol);
 
 		that._handleFlags();
-		that._processJsDoc();
 
 		return that;
 	}

@@ -9,7 +9,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 	private _setSignature?: SignatureReflection;
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		const that = new AccessorReflection(symbol);
+		const that = new AccessorReflection(ctx, symbol);
 		const symbolDeclarations = that._symbol.getDeclarations();
 
 		that._getSignature = await that._findAndConvertSignature(ctx, symbolDeclarations, ts.isGetAccessor);

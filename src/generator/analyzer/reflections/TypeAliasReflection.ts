@@ -13,7 +13,7 @@ export class TypeAliasReflection extends SymbolBasedReflection {
 	private _parameters?: TypeParameterReflection[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		const that = new TypeAliasReflection(symbol);
+		const that = new TypeAliasReflection(ctx, symbol);
 
 		const decl = symbol.getDeclarations()?.find(ts.isTypeAliasDeclaration);
 		assert(decl);

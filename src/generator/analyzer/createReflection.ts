@@ -11,7 +11,7 @@ import { MethodReflection } from './reflections/MethodReflection';
 import { ParameterReflection } from './reflections/ParameterReflection';
 import { PropertyReflection } from './reflections/PropertyReflection';
 import { ReferenceReflection } from './reflections/ReferenceReflection';
-import { Reflection } from './reflections/Reflection';
+import type { Reflection } from './reflections/Reflection';
 import { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
 import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
@@ -36,9 +36,9 @@ export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, p
 					column: lac.character
 				});
 				const fullPath = path.resolve(path.dirname(declSf.fileName), path.dirname(url), origPos.source!);
-				const mappedId = Reflection.findIdAtPosition(fullPath, origPos.line! - 1, origPos.column!);
+				const mappedId = ctx.project.findIdAtPosition(fullPath, origPos.line! - 1, origPos.column!);
 				if (mappedId !== undefined) {
-					return new ReferenceReflection(symbol, mappedId);
+					return new ReferenceReflection(ctx, symbol, mappedId);
 				}
 			}
 		}
