@@ -9,7 +9,7 @@ import type { ReferenceType } from './types/ReferenceType';
 import { nodeToSymbol } from './util/symbolUtil';
 
 export class Project {
-	readonly symbolsByPackage: Record<string, Reflection[]> = {};
+	readonly symbolsByPackage = new Map<string, Reflection[]>();
 
 	private readonly _reflectionsById = new Map<number, Reflection>();
 	private readonly _packageNamesByReflectionId = new Map<number, string>();
@@ -53,7 +53,7 @@ export class Project {
 			result.push(reflection);
 		}
 
-		this.symbolsByPackage[name] = result;
+		this.symbolsByPackage.set(name, result);
 	}
 
 	/** @internal */

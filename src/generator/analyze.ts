@@ -16,7 +16,7 @@ async function main() {
 
 	project.fixBrokenReferences();
 
-	const packages: ReferencePackage[] = Object.entries(project.symbolsByPackage).map(([packageName, packageSymbols]) => ({
+	const packages: ReferencePackage[] = [...project.symbolsByPackage.entries()].map(([packageName, packageSymbols]) => ({
 		packageName,
 		symbols: packageSymbols.map(sym => sym.serialize())
 	}));
