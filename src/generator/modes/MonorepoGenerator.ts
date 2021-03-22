@@ -13,14 +13,8 @@ import HtmlGenerator from './HtmlGenerator';
 import SpaGenerator from './SpaGenerator';
 
 export default class MonorepoGenerator extends Generator {
-	async createReferenceStructure(): Promise<{ reference: SerializedProject; sourceBasePath: string }> {
-		const analyzed = await analyzeMono(['twitch-common', 'twitch']);
-
-		return {
-			reference: analyzed,
-			// FIXME
-			sourceBasePath: '/'
-		};
+	async createReferenceStructure(): Promise<SerializedProject> {
+		return analyzeMono(['twitch-common', 'twitch'], this._config.baseDir);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,7 +28,7 @@ export default class MonorepoGenerator extends Generator {
 		const fsMap = await this._generateFsMap(data, paths);
 		await generator._buildWebpack(data, paths, fsMap);
 
-		if (this._config.ignoredPackages) {
+		if (this._config.ignoredPackages?.length) {
 			process.stdout.write(`Not building docs for package(s): ${this._config.ignoredPackages.join(', ')}\n`);
 		}
 

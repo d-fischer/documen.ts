@@ -22,13 +22,7 @@ export default abstract class Generator {
 		// const entryPoint = this._getEntryPointForPackageFolder(this._config.baseDir);
 
 		// TODO re-enable this properly
-		const reference = await analyzeMono(['twitch']);
-
-		return {
-			// FIXME
-			sourceBasePath: '/',
-			reference
-		};
+		return analyzeMono(['twitch'], this._config.baseDir);
 	}
 
 

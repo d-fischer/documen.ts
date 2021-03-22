@@ -249,7 +249,7 @@ export default class CLICommand extends Command {
 			}
 		}
 
-		const { reference, sourceBasePath } = await generator.createReferenceStructure();
+		const reference = await generator.createReferenceStructure();
 
 		if (process.env.DOCTS_WRITE_JSON) {
 			const jsonPath = path.join(baseDir, outputDir, 'data.json');
@@ -265,7 +265,6 @@ export default class CLICommand extends Command {
 		const tmpResult = await tmp.dir({ unsafeCleanup: true });
 		const paths: Paths = {
 			projectBase: baseDir,
-			sourceBase: sourceBasePath,
 			tmpDir: tmpResult.path,
 			rootUrl
 		};

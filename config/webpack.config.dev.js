@@ -10,14 +10,13 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const fs = require('fs');
-const MonorepoGenerator = require('../lib/generator/modes/MonorepoGenerator').default;
 
 const publicPath = '/';
 const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
 
 const monoRefJson = fs.readFileSync(path.join(process.cwd(), 'docs-mono.json'), 'utf-8');
-const monoRefObj = JSON.parse(monoRefJson);
+const monoRef = JSON.parse(monoRefJson);
 const generatorConfig = {
 	repoUser: 'd-fischer',
 	repoName: 'twitch',
@@ -32,9 +31,6 @@ const generatorConfig = {
 		rootUrl: ''
 	}
 };
-const gen = new MonorepoGenerator(generatorConfig);
-
-const monoRef = gen._transformTopReferenceNode(monoRefObj);
 
 module.exports = {
 	mode: 'development',
@@ -108,7 +104,7 @@ module.exports = {
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),
 			__DOCTS_CONFIG: JSON.stringify(generatorConfig),
-			__DOCTS_PATHS: JSON.stringify({ sourceBase: path.resolve('..'), projectBase: path.resolve('../twitch') }),
+			__DOCTS_PATHS: JSON.stringify({ projectBase: path.resolve('../twitch') }),
 			__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic')
 		}),
 		new CaseSensitivePathsPlugin(),

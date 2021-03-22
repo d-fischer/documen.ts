@@ -10,8 +10,8 @@ export interface SerializedProject {
 	packages: SerializedPackage[];
 }
 
-export async function analyzeMono(packageNames: string[]): Promise<SerializedProject> {
-	const project = new Project();
+export async function analyzeMono(packageNames: string[], baseDir: string): Promise<SerializedProject> {
+	const project = new Project(baseDir);
 
 	for (const pkg of packageNames) {
 		await project.analyzePackage(pkg);

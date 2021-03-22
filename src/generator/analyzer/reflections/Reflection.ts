@@ -1,3 +1,4 @@
+import path from 'path';
 import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
@@ -13,8 +14,8 @@ export abstract class Reflection {
 
 	protected readonly _flags = new Set<ReflectionFlag>();
 
-	protected constructor(ctx: AnalyzeContext) {
-		this.id = ctx.project.registerReflection(this);
+	protected constructor(private readonly _ctx: AnalyzeContext) {
+		this.id = _ctx.project.registerReflection(this);
 	}
 
 	/** @internal */
@@ -31,7 +32,7 @@ export abstract class Reflection {
 
 	protected _baseSerialize(): Omit<ReferenceNode, 'kind'> & { kind: '__unhandled' } {
 		const node = this.declarations[0] as ts.Declaration | undefined;
-		const location = Reflection._getLocation(node);
+		const location = this._getLocation(node);
 
 		return {
 			id: this.id,
@@ -118,18 +119,19 @@ export abstract class Reflection {
 		}
 	}
 
-	private static _getLocation(node?: ts.Node): ReferenceLocation | undefined {
+	private _getLocation(node?: ts.Node): ReferenceLocation | undefined {
 		if (!node) {
 			return undefined;
 		}
 
 		const sf = node.getSourceFile();
 		const { fileName } = sf;
+		const relativeFileName = path.relative(this._ctx.project.baseDir, fileName);
 		const pos = node.getStart();
 		const { character, line } = sf.getLineAndCharacterOfPosition(pos);
 
 		return {
-			fileName,
+			fileName: relativeFileName,
 			line: line + 1,
 			character
 		};

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import type { ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
-import { ConfigContext, projectBase, sourceBase } from '../config';
+import { ConfigContext } from '../config';
 import path from 'path';
 
 import classNames from 'classnames';
@@ -41,7 +41,7 @@ const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
 			config.repoName,
 			'blob',
 			config.repoBranch,
-			path.relative(projectBase, path.join(sourceBase, fileName))
+			fileName
 		)}#L${line}`}
 		target="_blank"
 		rel="noopener noreferrer"

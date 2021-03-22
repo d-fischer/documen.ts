@@ -19,6 +19,9 @@ export class Project {
 	private readonly _reflectionIdsBySymbol = new Map<ts.Symbol, number>();
 	private readonly _brokenReferences = new Map<ts.Symbol, ReferenceType[]>();
 
+	constructor(public readonly baseDir: string) {
+	}
+
 	async analyzePackage(name: string) {
 		const parsedConfig = parseConfig(`packages/${name}/tsconfig.json`);
 		const { options, fileNames } = parsedConfig;

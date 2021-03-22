@@ -7,8 +7,8 @@ declare global {
 	const __DOCTS_PATHS: Paths;
 }
 
-const { projectBase, sourceBase, rootUrl } = __DOCTS_PATHS;
-export { projectBase, sourceBase, rootUrl };
+const { projectBase, rootUrl } = __DOCTS_PATHS;
+export { projectBase, rootUrl };
 
 if (typeof window !== 'undefined') {
 	(window as any).__paths = __DOCTS_PATHS;
