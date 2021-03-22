@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import * as ts from 'typescript';
 import { parseConfig } from '../../common/tools/ConfigTools';
@@ -23,7 +24,8 @@ export class Project {
 	}
 
 	async analyzePackage(name: string) {
-		const parsedConfig = parseConfig(`packages/${name}/tsconfig.json`);
+		const packageFolder = path.join(this.baseDir, 'packages', name);
+		const parsedConfig = parseConfig(path.join(packageFolder, 'tsconfig.json'));
 		const { options, fileNames } = parsedConfig;
 		const prog = ts.createProgram({
 			options,
@@ -32,7 +34,8 @@ export class Project {
 		const checker = prog.getTypeChecker();
 		const ctx = new AnalyzeContext(this, checker, name);
 
-		const sf = prog.getSourceFile(path.join(process.cwd(), 'packages', name, 'src', 'index.ts'))!;
+		const pathToEntryPoint = this._getEntryPointForPackageFolder(packageFolder, parsedConfig);
+		const sf = prog.getSourceFile(pathToEntryPoint)!;
 		const children = sf.statements;
 		const fileExports = children
 			.filter((child): child is ts.ExportDeclaration => ts.isExportDeclaration(child))
@@ -129,5 +132,21 @@ export class Project {
 				}
 			}
 		}
+	}
+
+	protected _getEntryPointForPackageFolder(dir: string, tsconfig: ts.ParsedCommandLine) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+		let mainJsFile: string = pkg.main;
+		const lastPathPart = mainJsFile.split(path.delimiter).reverse()[0];
+		if (!/\.m?js]$/.test(lastPathPart)) {
+			mainJsFile = path.join(mainJsFile, 'index.js');
+		}
+
+		const fullOutPath = path.join(dir, mainJsFile);
+		const innerOutPath = path.relative(tsconfig.options.outDir!, fullOutPath);
+		return path.join(tsconfig.options.rootDir!, innerOutPath.replace(/\.m?js$/, '.ts'));
 	}
 }
