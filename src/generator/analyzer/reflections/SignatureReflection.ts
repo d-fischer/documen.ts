@@ -48,7 +48,7 @@ export class SignatureReflection extends Reflection {
 		that._returnType = await createTypeFromTsType(ctx, signature.getReturnType());
 
 		that._handleFlags();
-		that._processJsDoc();
+		that._processJsDoc(signature.declaration);
 
 		return that;
 	}
@@ -75,9 +75,10 @@ export class SignatureReflection extends Reflection {
 		ctx: AnalyzeContext,
 		private readonly _kind: SignatureReflectionKind,
 		private readonly _signature?: ts.Signature,
-		private readonly _parent?: Reflection
+		parent?: Reflection
 	) {
 		super(ctx);
+		this.parent = parent;
 	}
 
 	get declarations(): ts.Declaration[] {
@@ -90,7 +91,7 @@ export class SignatureReflection extends Reflection {
 			return 'constructor';
 		}
 
-		return this._parent?.name ?? '__type';
+		return this.parent?.name ?? '__type';
 	}
 
 	get kind() {

@@ -68,18 +68,6 @@ module.exports = (outDir, { dev }) => [
 			library: 'DocumenTsHtmlGenerator',
 			libraryTarget: 'umd'
 		},
-		module: {
-			strictExportPresence: true,
-			rules: [
-				{
-					test: /\.tsx?$/,
-					loader: 'ts-loader',
-					options: {
-						configFile: 'tsconfig-enhance.json'
-					}
-				}
-			],
-		},
 		plugins: [
 			new webpack.DefinePlugin({
 				...env.stringified,
@@ -100,6 +88,19 @@ module.exports = (outDir, { dev }) => [
 			pathinfo: true,
 			filename: 'pe.js',
 			publicPath,
+		},
+		module: {
+			strictExportPresence: true,
+			rules: [
+				{
+					test: /\.tsx?$/,
+					loader: 'ts-loader',
+					options: {
+						transpileOnly: true,
+						configFile: 'tsconfig-enhance.json'
+					},
+				}
+			],
 		},
 		plugins: [
 			new webpack.DefinePlugin({

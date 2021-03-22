@@ -1,7 +1,7 @@
 /* eslint-disable no-console,max-classes-per-file */
 import ansi from 'ansi-escapes';
-import { Command, command, ExpectedError, option, Options, params } from 'clime';
-import { promises as fs, existsSync } from 'fs';
+import { Command, command, ExpectedError, metadata, option, Options } from 'clime';
+import fs, { promises as fsp } from 'fs';
 import path from 'path';
 import tmp from 'tmp-promise';
 import type { Config, Manifest } from '../../common/config/Config';
@@ -25,7 +25,11 @@ export class CLICommandOptions extends Options {
 	@option({ description: 'base directory' })
 	baseDir!: string;
 
-	@option({ flag: 'd', description: 'configuration directory', validator: (value: string) => existsSync(path.resolve(process.cwd(), value)) })
+	@option({
+		flag: 'd',
+		description: 'configuration directory',
+		validator: (value: string) => fs.existsSync(path.resolve(process.cwd(), value))
+	})
 	configDir!: string;
 
 	@option({ flag: 'o', description: 'output directory' })
@@ -34,7 +38,12 @@ export class CLICommandOptions extends Options {
 	@option({ flag: 'm', description: 'output mode', default: 'html' })
 	mode!: 'spa' | 'html';
 
-	@option({ flag: 'r', description: 'render mode', default: 'htmlSuffix', validator: value => ['htmlSuffix', 'subDirectories', 'htaccess'].includes(value) })
+	@option({
+		flag: 'r',
+		description: 'render mode',
+		default: 'htmlSuffix',
+		validator: value => ['htmlSuffix', 'subDirectories', 'htaccess'].includes(value)
+	})
 	routerMode!: RouterMode;
 
 	@option({ flag: 'b', description: 'base URL', default: '' })
@@ -62,7 +71,8 @@ export class CLICommandOptions extends Options {
 @command()
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export default class CLICommand extends Command {
-	async execute(@params({ type: String, description: 'input directories' }) inputFolders: string[], options: CLICommandOptions) {
+	@metadata
+	async execute(options: CLICommandOptions) {
 		process.env.NODE_ENV = 'production';
 
 		const baseDir = options.baseDir || process.cwd();
@@ -89,7 +99,7 @@ export default class CLICommand extends Command {
 			}
 
 			try {
-				const fileContents = await fs.readFile(configFile, 'utf-8');
+				const fileContents = await fsp.readFile(configFile, 'utf-8');
 				importedConfig = JSON.parse(fileContents) as Config;
 			} catch (e: unknown) {
 				throw new ExpectedError(`error reading ${configFile} as JSON: ${(e as Error).message}`);
@@ -107,24 +117,16 @@ export default class CLICommand extends Command {
 		if (!indexFile) {
 			indexFile = path.join(baseDir, 'README.md');
 			if (!(await fileExists(indexFile))) {
-				throw new ExpectedError('there was neither a given index file nor a README.md in the root of the project');
+				throw new ExpectedError(
+					'there was neither a given index file nor a README.md in the root of the project'
+				);
 			}
 		}
 
-		let inputDirs = inputFolders;
 		const monorepoRoot = (options.mono || getConfigValue(importedConfig, 'monorepoRoot')) ?? undefined;
 		const ignoredPackages = getConfigValue(importedConfig, 'ignoredPackages') ?? undefined;
 
-		if (!inputFolders.length) {
-			const configInputDirs = getConfigValue(importedConfig, 'inputDirs', true);
-
-			if (monorepoRoot) {
-				const monorepoPackages = (await fs.readdir(path.join(baseDir, monorepoRoot)));
-				inputDirs = monorepoPackages.map(pkg => path.join(baseDir, monorepoRoot, pkg)).filter(inputDir => existsSync(inputDir));
-			} else {
-				inputDirs = configInputDirs;
-			}
-		}
+		const packageNames = monorepoRoot ? await fsp.readdir(path.join(baseDir, monorepoRoot)) : null;
 
 		let needsManifest = false;
 		let versionAware = false;
@@ -141,7 +143,9 @@ export default class CLICommand extends Command {
 
 		if (versionBranchPrefix && versionFolder) {
 			if (!options.repoBranch) {
-				console.error('This project is version aware; please supply the branch name using the CLI option `--repo-branch`.');
+				console.error(
+					'This project is version aware; please supply the branch name using the CLI option `--repo-branch`.'
+				);
 				process.exit(1);
 			}
 
@@ -150,13 +154,17 @@ export default class CLICommand extends Command {
 				outputDir = path.join(rootOutputDir, versionFolder, version);
 				baseUrl = path.posix.join(baseUrl, versionFolder, version);
 			} else if (options.repoBranch !== mainBranchName) {
-				console.error(`This project is version aware and can only build docs for the branch "${mainBranchName}" and branches starting with "${versionBranchPrefix}."`);
+				console.error(
+					`This project is version aware and can only build docs for the branch "${mainBranchName}" and branches starting with "${versionBranchPrefix}."`
+				);
 				process.exit(1);
 			}
 			needsManifest = true;
 			versionAware = true;
 		} else if (versionBranchPrefix || versionFolder) {
-			console.error('Please either specify both the "versionBranchPrefix" and "versionFolder" options, or neither. Specifying only one of them is not supported.');
+			console.error(
+				'Please either specify both the "versionBranchPrefix" and "versionFolder" options, or neither. Specifying only one of them is not supported.'
+			);
 			process.exit(1);
 		}
 
@@ -168,11 +176,11 @@ export default class CLICommand extends Command {
 			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			routerMode: options.routerMode || getConfigValue(importedConfig, 'routerMode') || 'htmlSuffix',
-			inputDirs,
 			outputDir,
 			baseUrl,
 			baseDir,
 			monorepoRoot,
+			packageNames,
 			mainPackage: getConfigValue(importedConfig, 'mainPackage') ?? undefined,
 			mainBranchName,
 			versionBranchPrefix,
@@ -220,34 +228,34 @@ export default class CLICommand extends Command {
 		if (versionAware) {
 			if (version) {
 				console.log(`Cleaning up generated files for version ${version}`);
-				await fs.rmdir(outputDir, { recursive: true });
-				await fs.mkdir(outputDir, { recursive: true });
+				await fsp.rmdir(outputDir, { recursive: true });
+				await fsp.mkdir(outputDir, { recursive: true });
 			} else {
 				console.log(`Cleaning up generated files for branch ${mainBranchName}`);
 				const [versionsRoot] = versionFolder!.split('/');
-				const rootFolderContents = await fs.readdir(rootOutputDir);
+				const rootFolderContents = await fsp.readdir(rootOutputDir);
 				await Promise.all(
 					rootFolderContents
 						.filter(f => !f.startsWith('.') && f !== versionsRoot && f !== 'manifest.json')
 						.map(async f => {
 							const filePath = path.join(rootOutputDir, f);
-							if ((await fs.lstat(filePath)).isDirectory()) {
-								await fs.rmdir(filePath, { recursive: true });
+							if ((await fsp.lstat(filePath)).isDirectory()) {
+								await fsp.rmdir(filePath, { recursive: true });
 							} else {
-								await fs.unlink(filePath);
+								await fsp.unlink(filePath);
 							}
 						})
 				);
 			}
 		}
 
-		const { reference, sourceBasePath } = generator.createReferenceStructure();
+		const { reference, sourceBasePath } = await generator.createReferenceStructure();
 
 		if (process.env.DOCTS_WRITE_JSON) {
 			const jsonPath = path.join(baseDir, outputDir, 'data.json');
 			const json = JSON.stringify(reference, null, 2);
 			console.log(`Writing raw data to ${jsonPath}`);
-			await fs.writeFile(jsonPath, json);
+			await fsp.writeFile(jsonPath, json);
 
 			if (process.env.DOCTS_WRITE_JSON === 'only') {
 				return;
@@ -287,7 +295,7 @@ export default class CLICommand extends Command {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			let manifest: Partial<Manifest> = {};
 			try {
-				const manifestJson = await fs.readFile(manifestPath, 'utf-8');
+				const manifestJson = await fsp.readFile(manifestPath, 'utf-8');
 				console.log(`Read existing manifest from ${manifestPath}`);
 				manifest = JSON.parse(manifestJson) as Manifest;
 			} catch {
@@ -302,7 +310,7 @@ export default class CLICommand extends Command {
 			manifest.rootUrl = rootUrl;
 
 			console.log(`Writing manifest to ${manifestPath}`);
-			await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+			await fsp.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
 		}
 	}
 }

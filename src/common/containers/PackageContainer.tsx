@@ -6,8 +6,8 @@ import NavMenu from '../components/NavMenu';
 import NavMenuGroup from '../components/NavMenuGroup';
 import NavMenuItem from '../components/NavMenuItem';
 import { ConfigContext } from '../config';
-import type { ReferenceNode } from '../reference';
-import { checkVisibility, filterChildrenByMember } from '../tools/NodeTools';
+import type { ClassReferenceNode, EnumReferenceNode, InterfaceReferenceNode, ReferenceNode } from '../reference';
+import { checkVisibility } from '../tools/NodeTools';
 import { getPackageRoot } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
 import PageSwitch from './PageSwitch';
@@ -46,9 +46,9 @@ export const PackageContainer: React.FC = () => {
 		return null;
 	}
 
-	const classNodes = useMemo(() => filterChildrenByMember(root, 'kind', 'class'), [root]).filter(isNodeVisible);
-	const interfaceNodes = useMemo(() => filterChildrenByMember(root, 'kind', 'interface'), [root]).filter(isNodeVisible);
-	const enumNodes = useMemo(() => filterChildrenByMember(root, 'kind', 'enum'), [root]).filter(isNodeVisible);
+	const classNodes = useMemo(() => root.symbols.filter((sym): sym is ClassReferenceNode => sym.kind === 'class'), [root]).filter(isNodeVisible);
+	const interfaceNodes = useMemo(() => root.symbols.filter((sym): sym is InterfaceReferenceNode => sym.kind === 'interface'), [root]).filter(isNodeVisible);
+	const enumNodes = useMemo(() => root.symbols.filter((sym): sym is EnumReferenceNode => sym.kind === 'enum'), [root]).filter(isNodeVisible);
 
 	return (
 		<div className={classes.root}>

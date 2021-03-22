@@ -9,8 +9,9 @@ import type { Config, ConfigInternalArticle } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
 import type { ReferenceNode } from '../../common/reference';
 import { filterByMember } from '../../common/tools/ArrayTools';
-import { checkVisibility, getChildren } from '../../common/tools/NodeTools';
+import { checkVisibility } from '../../common/tools/NodeTools';
 import { getPackagePath } from '../../common/tools/StringTools';
+import type { SerializedProject } from '../analyze';
 import WebpackBuildError from '../errors/WebpackBuildError';
 import WebpackError from '../errors/WebpackError';
 import Generator from './Generator';
@@ -18,11 +19,11 @@ import Generator from './Generator';
 type RenderEntry = [string, string, Promise<string>];
 
 export default class HtmlGenerator extends Generator {
-	async generate(data: ReferenceNode, paths: Paths) {
+	async generate(data: SerializedProject, paths: Paths) {
 		return this._generatePackage(data, paths);
 	}
 
-	async _generatePackage(data: ReferenceNode, paths: Paths, overrideConfig: Partial<Config> = {}) {
+	async _generatePackage(data: SerializedProject, paths: Paths, overrideConfig: Partial<Config> = {}) {
 		const config = {
 			...this._config,
 			...overrideConfig
@@ -46,9 +47,10 @@ export default class HtmlGenerator extends Generator {
 			await fs.copyFile(path.join(paths.tmpDir, 'pe.js'), path.join(outDir, 'pe.js'));
 		}
 
-		const packageData = getChildren(data).find(pkg => pkg.name === config.subPackage)!;
+		const packageData = data.packages.find(pkg => pkg.packageName === config.subPackage)!;
 
-		const packageChildren = getChildren(packageData);
+		const isNodeVisible = (node: ReferenceNode) => checkVisibility(node);
+		const packageChildren = packageData.symbols.filter(isNodeVisible);
 		const monoReadmePath = (config.monorepoRoot && !overrideConfig.indexFile) ? path.join(config.baseDir, config.monorepoRoot, config.subPackage!, 'README.md') : undefined;
 		const pathToRead = config.configDir ? (
 			monoReadmePath && await fs.pathExists(monoReadmePath)
@@ -56,7 +58,6 @@ export default class HtmlGenerator extends Generator {
 				: path.resolve(config.configDir, config.indexFile)
 		) : undefined;
 		const indexPromise = pathToRead && fs.readFile(pathToRead, 'utf-8');
-		const isNodeVisible = (node: ReferenceNode) => checkVisibility(node);
 		await Promise.all([
 			...(indexPromise ? [[`${pre}/`, config.indexTitle, indexPromise] as RenderEntry] : []),
 			...((config.configDir && config.categories) ? config.categories.flatMap(cat => cat.articles.filter((art): art is ConfigInternalArticle => 'file' in art).map(art => ([
@@ -79,7 +80,7 @@ export default class HtmlGenerator extends Generator {
 	}
 
 	/** @protected */
-	async _buildWebpack(data: ReferenceNode, paths: Paths, fsMap: Map<string, string>, overrideConfig: Partial<Config> = {}) {
+	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>, overrideConfig: Partial<Config> = {}) {
 		process.chdir(path.join(__dirname, '../../..'));
 
 		const config = {

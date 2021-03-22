@@ -46,8 +46,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => {
 					<MarkdownParser source={getTag(definition, 'deprecated')!}/>
 				</DeprecationNotice>
 			)}
-			{definition.comment?.shortText ? <MarkdownParser source={definition.comment.shortText}/> : null}
-			{definition.comment?.text ? <MarkdownParser source={definition.comment.text}/> : null}
+			{sig?.comment?.shortText ? <MarkdownParser source={sig.comment.shortText}/> : null}
+			{sig?.comment?.text ? <MarkdownParser source={sig.comment.text}/> : null}
 		</Card>
 	);
 };

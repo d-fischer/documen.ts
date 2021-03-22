@@ -1,11 +1,11 @@
 import React from 'react';
-import type { MethodReferenceNode, PropertyReferenceNode, ReferenceNode } from '../reference';
+import type { InterfaceReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference';
 import { defaultNodeSort, filterChildrenByMember } from '../tools/NodeTools';
 import MethodCard from './cards/MethodCard';
 import PropertyCard from './cards/PropertyCard';
 
 interface InterfaceDetailProps {
-	symbol: ReferenceNode;
+	symbol: InterfaceReferenceNode;
 }
 
 const InterfaceDetail: React.FC<InterfaceDetailProps> = ({ symbol }) => {

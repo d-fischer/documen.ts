@@ -8,7 +8,7 @@ if (process.execArgv.some(s => s.includes('ts-node/register'))) {
 	CLI.commandModuleExtension = '.ts';
 }
 
-const cli = new CLI('documen.ts', path.join(__dirname, 'Commands'));
+const cli = new CLI('documen.ts', path.join(__dirname, 'commands'));
 const shim = new Shim(cli);
 
 // eslint-disable-next-line no-console

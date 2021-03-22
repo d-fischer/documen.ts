@@ -1,3 +1,5 @@
+import type { SerializedProject } from '../../generator/analyze';
+
 interface ReferenceFlags {
 	isExported?: boolean;
 	isOptional?: boolean;
@@ -101,7 +103,6 @@ export interface AbstractReferenceNode {
 	comment?: ReferenceComment;
 	location?: ReferenceLocation;
 	flags?: ReferenceFlags;
-	children?: ReferenceNode[];
 	inheritedFrom?: ReferenceType;
 }
 
@@ -199,7 +200,7 @@ export interface ParameterReferenceNode extends AbstractReferenceNode {
 
 export interface TypeLiteralReferenceNode extends AbstractReferenceNode {
 	kind: 'typeLiteral';
-	members?: ReferenceNode[]; // TODO less generic I guess
+	members: ReferenceNode[]; // TODO less generic I guess
 	signatures?: CallSignatureReferenceNode[];
 }
 
@@ -242,7 +243,7 @@ export type ReferenceNode =
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	const __DOCTS_REFERENCE: ReferenceNode;
+	const __DOCTS_REFERENCE: SerializedProject;
 }
 
 // noinspection UnnecessaryLocalVariableJS

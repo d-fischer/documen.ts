@@ -4,7 +4,7 @@ import OverviewTable from '../components/overviewTable/OverviewTable';
 import SymbolHeader from '../components/SymbolHeader';
 import Card from '../containers/Card';
 import PageContent from '../containers/PageContent';
-import type { EnumMemberReferenceNode } from '../reference';
+import type { EnumMemberReferenceNode, EnumReferenceNode } from '../reference';
 import { getPageType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
 import { defaultNodeSort, filterChildrenByMember } from '../tools/NodeTools';
@@ -26,7 +26,8 @@ const EnumPage: React.FC = () => {
 		return null;
 	}
 
-	const { symbol, packageName } = symbolDef;
+	const symbol = symbolDef.symbol as EnumReferenceNode;
+	const packageName = symbolDef.packageName;
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'enums') {

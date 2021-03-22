@@ -6,10 +6,10 @@ import PropertyCard from '../components/cards/PropertyCard';
 import OverviewTable from '../components/overviewTable/OverviewTable';
 import SymbolHeader from '../components/SymbolHeader';
 import PageContent from '../containers/PageContent';
-import type { AccessorReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode, CallSignatureReferenceNode } from '../reference';
+import type { AccessorReferenceNode, CallSignatureReferenceNode, ClassReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference';
 import { getPageType, hasTag } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
-import { defaultNodeSort, filterChildrenByMember, findChildByMember } from '../tools/NodeTools';
+import { checkVisibility, defaultNodeSort, filterChildrenByMember } from '../tools/NodeTools';
 import { findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
 
@@ -28,14 +28,15 @@ const ClassPage: React.FC = () => {
 		return null;
 	}
 
-	const { symbol, packageName } = symbolDef;
+	const symbol = symbolDef.symbol as ClassReferenceNode;
+	const packageName = symbolDef.packageName;
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'classes') {
 		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
 	}
 
-	const constructor: ConstructorReferenceNode | undefined = findChildByMember(symbol, 'kind', 'constructor');
+	const constructor: ConstructorReferenceNode | undefined = symbol.ctor && checkVisibility(symbol.ctor) ? symbol.ctor : undefined;
 	const constructorSigs: CallSignatureReferenceNode[] = constructor?.signatures ?? [];
 
 	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'method');

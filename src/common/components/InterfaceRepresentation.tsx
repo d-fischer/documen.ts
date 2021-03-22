@@ -2,12 +2,12 @@ import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 import React from 'react';
 import { HashLink } from 'react-router-hash-link';
-import type { ReferenceNode } from '../reference';
+import type { InterfaceReferenceNode } from '../reference';
 import { defaultNodeSort, getChildren } from '../tools/NodeTools';
 import Type from './codeBuilders/Type';
 
 interface InterfaceRepresentationProps {
-	symbol: ReferenceNode;
+	symbol: InterfaceReferenceNode;
 	className?: string;
 }
 

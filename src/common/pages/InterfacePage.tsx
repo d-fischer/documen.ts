@@ -1,14 +1,15 @@
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { Redirect, useParams } from 'react-router';
-import PageContent from '../containers/PageContent';
-import { getPageType } from '../tools/CodeTools';
+import InterfaceDetail from '../components/InterfaceDetail';
+import InterfaceRepresentation from '../components/InterfaceRepresentation';
 import SymbolHeader from '../components/SymbolHeader';
+import PageContent from '../containers/PageContent';
+import type { InterfaceReferenceNode } from '../reference';
+import { getPageType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
 import { findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
-import InterfaceDetail from '../components/InterfaceDetail';
-import InterfaceRepresentation from '../components/InterfaceRepresentation';
-import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
 	representation: {
@@ -32,7 +33,8 @@ const InterfacePage: React.FC = () => {
 		return null;
 	}
 
-	const { symbol, packageName } = symbolDef;
+	const symbol = symbolDef.symbol as InterfaceReferenceNode;
+	const packageName = symbolDef.packageName;
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'interfaces') {

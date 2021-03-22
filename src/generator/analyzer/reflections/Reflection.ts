@@ -2,12 +2,14 @@ import * as ts from 'typescript';
 import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import { DocComment } from '../DocComment';
+import { SignatureReflection } from './SignatureReflection';
 
 export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest';
 
 export abstract class Reflection {
 	readonly id: number;
 	comment?: DocComment;
+	parent?: Reflection;
 
 	protected readonly _flags = new Set<ReflectionFlag>();
 
@@ -90,9 +92,25 @@ export abstract class Reflection {
 			const rawComment = sf.text.substring(lastJsDocCommentRange.pos, lastJsDocCommentRange.end);
 			const comment = DocComment.parse(rawComment);
 
-			comment.consumeTags(tag => tag.name === 'private', () => this._flags.add('isPrivate'));
-			comment.consumeTags(tag => tag.name === 'protected', () => this._flags.add('isProtected'));
-			comment.consumeTags(tag => tag.name === 'public', () => this._flags.add('isPublic'));
+			comment.consumeTags(tag => tag.name === 'private', () => {
+				this._flags.add('isPrivate');
+				if (this instanceof SignatureReflection) {
+					// console.log(`Passing private property from ${this.name} to parent ${ts.SyntaxKind[this.kind]}`);
+					this.parent?._flags.add('isPrivate');
+				}
+			});
+			comment.consumeTags(tag => tag.name === 'protected', () => {
+				this._flags.add('isProtected');
+				if (this instanceof SignatureReflection) {
+					this.parent?._flags.add('isProtected');
+				}
+			});
+			comment.consumeTags(tag => tag.name === 'public', () => {
+				this._flags.add('isPublic');
+				if (this instanceof SignatureReflection) {
+					this.parent?._flags.add('isPublic');
+				}
+			});
 
 			if (comment.shortText || comment.text || comment.tags?.length) {
 				this.comment = comment;

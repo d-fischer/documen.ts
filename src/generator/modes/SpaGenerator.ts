@@ -1,19 +1,19 @@
-import type { Config } from '../../common/config/Config';
-import type Paths from '../../common/Paths';
-import Generator from './Generator';
 import path from 'path';
 import resolveHome from 'untildify';
 import webpack from 'webpack';
-import type { ReferenceNode } from '../../common/reference';
-import WebpackError from '../errors/WebpackError';
+import type { Config } from '../../common/config/Config';
+import type Paths from '../../common/Paths';
+import type { SerializedProject } from '../analyze';
 import WebpackBuildError from '../errors/WebpackBuildError';
+import WebpackError from '../errors/WebpackError';
+import Generator from './Generator';
 
 export default class SpaGenerator extends Generator {
-	async generate(data: ReferenceNode, paths: Paths) {
+	async generate(data: SerializedProject, paths: Paths) {
 		return this._generatePackage(data, paths);
 	}
 
-	async _generatePackage(data: ReferenceNode, paths: Paths, overrideConfig: Partial<Config> = {}) {
+	async _generatePackage(data: SerializedProject, paths: Paths, overrideConfig: Partial<Config> = {}) {
 		return new Promise<void>((resolve, reject) => {
 			process.chdir(path.join(__dirname, '../../..'));
 

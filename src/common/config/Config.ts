@@ -29,13 +29,13 @@ export interface Manifest {
 export interface Config {
 	dev: boolean;
 	configDir: string | null;
-	inputDirs: string[];
 	outputDir: string;
 	mode: GeneratorMode;
 	routerMode: RouterMode;
 	baseDir: string;
 	baseUrl: string;
 	monorepoRoot?: string;
+	packageNames: string[] | null;
 	mainPackage?: string;
 	mainBranchName: string;
 	version?: string;

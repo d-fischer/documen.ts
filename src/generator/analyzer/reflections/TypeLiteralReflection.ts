@@ -18,7 +18,7 @@ export class TypeLiteralReflection extends Reflection {
 		return {
 			...this._baseSerialize(),
 			kind: 'typeLiteral',
-			members: this._members?.map(mem => mem.serialize()),
+			members: this._members?.map(mem => mem.serialize()) ?? [],
 			signatures: this._signatures?.map(sig => sig.serialize() as CallSignatureReferenceNode),
 		};
 	}

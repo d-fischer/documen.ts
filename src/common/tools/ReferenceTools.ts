@@ -9,21 +9,19 @@ interface SymbolDefinition<T extends ReferenceNode> {
 }
 
 export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R extends T>(key: K, value: T[K], pkgName?: string): SymbolDefinition<R> | undefined {
-	// eslint-disable-next-line @typescript-eslint/init-declarations
-	let parent: ReferenceNode;
 	// check for mono different here because there's no access to the context
-	const isMono = reference.children!.every(child => child.kind === 'package');
+	const isMono = reference.packages.length > 1;
 	if (isMono) {
-		for (const pkg of reference.children!) {
-			if (pkgName && pkg.name !== pkgName) {
+		for (const pkg of reference.packages) {
+			if (pkgName && pkg.packageName !== pkgName) {
 				continue;
 			}
-			const found = (filterByMember(pkg.children as T[], key, value) as ReferenceNode[]).find(f => f.kind !== 'reference');
+			const found = (filterByMember(pkg.symbols as T[], key, value) as ReferenceNode[]).find(f => f.kind !== 'reference');
 			if (found) {
 				if (checkVisibility(found)) {
 					return {
 						symbol: found as R,
-						packageName: pkg.name
+						packageName: pkg.packageName
 					};
 				}
 				if (found.kind === 'class') {
@@ -38,14 +36,14 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 			}
 		}
 		return undefined;
-	} else {
-		parent = reference;
 	}
 
-	const foundInParent = findByMember(parent.children as T[], key, value);
+	const parent = reference.packages[0];
+
+	const foundInParent = findByMember(parent.symbols as T[], key, value);
 
 	if (foundInParent) {
-		if (checkVisibility(foundInParent, parent)) {
+		if (checkVisibility(foundInParent)) {
 			return {
 				symbol: foundInParent as R,
 				packageName: undefined
@@ -62,9 +60,9 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 }
 
 export function getPackageRoot(packageName?: string) {
-	return packageName ? reference.children!.find(pkg => pkg.name === packageName) : reference;
+	return packageName ? reference.packages.find(pkg => pkg.packageName === packageName) : reference.packages[0];
 }
 
 export function getPackageList() {
-	return reference.children!.filter(child => child.kind === 'package');
+	return reference.packages;
 }

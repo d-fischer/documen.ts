@@ -102,7 +102,7 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 				setManifestLoading(false);
 			}
 		}, [manifest, manifestLoading, config]);
-		const packages = useMemo(() => getPackageList().filter(pkg => !config.ignoredPackages?.includes(pkg.name)), []);
+		const packages = useMemo(() => getPackageList().filter(pkg => !config.ignoredPackages?.includes(pkg.packageName)), []);
 		const [menuOpen, setMenuOpen] = useState(false);
 		const [warningHidden, setWarningHidden] = useState(!!localStorage.getItem('documents.masterWarning.hidden'));
 		const dismissWarning = useCallback(() => {
@@ -130,10 +130,10 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 					{menuOpen && (
 						<div className={classes.menu}>
 							<a className={classNames(classes.entry, classes.menuEntry)} key={config.mainBranchName}
-							   href={`${manifest.rootUrl}/${packages[0].name}`}>{config.mainBranchName}</a>
+							   href={`${manifest.rootUrl}/${packages[0].packageName}`}>{config.mainBranchName}</a>
 							{manifest.versions.map((version: string) => (
 								<a className={classNames(classes.entry, classes.menuEntry)} key={version}
-								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}/${packages[0].name}`}>{version}</a>
+								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}/${packages[0].packageName}`}>{version}</a>
 							))}
 						</div>
 					)}

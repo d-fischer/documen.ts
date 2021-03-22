@@ -11,19 +11,16 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		const that = new ConstructorReflection(ctx, symbol);
 
 		that._signatures = await Promise.all(
-			signatures.map(async (sig, i) =>
-				SignatureReflection.fromTsSignature(
-					ctx,
-					ts.SyntaxKind.ConstructSignature,
-					sig,
-					that,
-					symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
-				)
-			)
+			signatures.map(async (sig, i) => SignatureReflection.fromTsSignature(
+				ctx,
+				ts.SyntaxKind.ConstructSignature,
+				sig,
+				that,
+				symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
+			))
 		);
 
-		that._handleFlags(symbol.getDeclarations()?.[0]);
-		that._processJsDoc();
+		that._handleFlags();
 
 		return that;
 	}

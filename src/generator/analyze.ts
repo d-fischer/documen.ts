@@ -1,13 +1,16 @@
 import type { ReferenceNode } from '../common/reference';
 import { Project } from './analyzer/Project';
 
-interface ReferencePackage {
+export interface SerializedPackage {
 	packageName: string;
 	symbols: ReferenceNode[];
 }
 
-async function main() {
-	const packageNames = ['twitch-common', 'twitch'];
+export interface SerializedProject {
+	packages: SerializedPackage[];
+}
+
+export async function analyzeMono(packageNames: string[]): Promise<SerializedProject> {
 	const project = new Project();
 
 	for (const pkg of packageNames) {
@@ -16,13 +19,10 @@ async function main() {
 
 	project.fixBrokenReferences();
 
-	const packages: ReferencePackage[] = [...project.symbolsByPackage.entries()].map(([packageName, packageSymbols]) => ({
+	const packages: SerializedPackage[] = [...project.symbolsByPackage.entries()].map(([packageName, packageSymbols]) => ({
 		packageName,
 		symbols: packageSymbols.map(sym => sym.serialize())
 	}));
 
-	// eslint-disable-next-line no-console
-	console.log(JSON.stringify({ packages }, null, 2));
+	return { packages };
 }
-
-void main();

@@ -71,7 +71,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 			return <>Array&lt;<Type def={def.elementType}/>&gt;</>;
 		}
 		case 'literal': {
-			return <>{JSON.stringify(def.value)}</>;
+			return <>{def.value}</>;
 		}
 		case 'reflection': {
 			const { signatures } = def.declaration;

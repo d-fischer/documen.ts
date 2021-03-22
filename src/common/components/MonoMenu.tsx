@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 const MonoMenu: React.FC = () => {
 	const classes = useStyles();
 	const config = useContext(ConfigContext);
-	const packageNames = useMemo(() => getPackageList().map(pkg => pkg.name).filter(pkg => !config.ignoredPackages?.includes(pkg)), []);
+	const packageNames = useMemo(() => getPackageList().map(pkg => pkg.packageName).filter(pkg => !config.ignoredPackages?.includes(pkg)), []);
 	return (
 		<div className={classes.root}>
 			{packageNames.map(pkg => <NavLink to={`/${pkg}/`} className={classes.entry} activeClassName={classes.entryActive} key={pkg}>{pkg}</NavLink>)}

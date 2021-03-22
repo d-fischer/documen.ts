@@ -13,7 +13,7 @@ const ReferenceTypeView: React.FC<ReferenceTypeProps> = ({ isOptional, typeArgum
 	<>
 		{isOptional && '?'}
 		<TypeLink name={def.name} id={def.id}>{def.name}</TypeLink>
-		{typeArguments ? (
+		{typeArguments?.length ? (
 			<>
 				&lt;
 				{typeArguments.map((param, idx) => (
