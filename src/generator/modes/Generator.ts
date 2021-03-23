@@ -1,9 +1,11 @@
+import { promises as fs } from 'fs';
+import path from 'path';
+import type { PackageJson } from 'type-fest';
 import type { TypeDocOptions } from 'typedoc';
-import { Application, TSConfigReader } from 'typedoc';
 import type { Config } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
-import type { SerializedProject } from '../analyze';
-import { analyzeMono } from '../analyze';
+import type { SerializedProject } from '../../common/reference';
+import { Project } from '../analyzer/Project';
 
 export default abstract class Generator {
 	protected _config: Config;
@@ -13,13 +15,12 @@ export default abstract class Generator {
 	}
 
 	async createReferenceStructure() {
-		const typeDoc = new Application();
-		typeDoc.options.addReader(new TSConfigReader());
+		const project = new Project(this._config.baseDir);
 
-		// const entryPoint = this._getEntryPointForPackageFolder(this._config.baseDir);
+		const packageJson = JSON.parse(await fs.readFile(path.join(this._config.baseDir, 'package.json'), 'utf8')) as PackageJson;
+		await project.analyzeSinglePackage(packageJson);
 
-		// TODO re-enable this properly
-		return analyzeMono(['twitch'], this._config.baseDir);
+		return project.serialize();
 	}
 
 

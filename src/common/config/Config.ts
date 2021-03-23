@@ -35,7 +35,7 @@ export interface Config {
 	baseDir: string;
 	baseUrl: string;
 	monorepoRoot?: string;
-	packageNames: string[] | null;
+	packageDirNames: string[] | null;
 	mainPackage?: string;
 	mainBranchName: string;
 	version?: string;

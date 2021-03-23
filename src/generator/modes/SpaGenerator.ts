@@ -3,7 +3,7 @@ import resolveHome from 'untildify';
 import webpack from 'webpack';
 import type { Config } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
-import type { SerializedProject } from '../analyze';
+import type { SerializedProject } from '../../common/reference';
 import WebpackBuildError from '../errors/WebpackBuildError';
 import WebpackError from '../errors/WebpackError';
 import Generator from './Generator';

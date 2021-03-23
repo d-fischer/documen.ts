@@ -126,7 +126,7 @@ export default class CLICommand extends Command {
 		const monorepoRoot = (options.mono || getConfigValue(importedConfig, 'monorepoRoot')) ?? undefined;
 		const ignoredPackages = getConfigValue(importedConfig, 'ignoredPackages') ?? undefined;
 
-		const packageNames = monorepoRoot ? await fsp.readdir(path.join(baseDir, monorepoRoot)) : null;
+		const packageDirNames = monorepoRoot ? await fsp.readdir(path.join(baseDir, monorepoRoot)) : null;
 
 		let needsManifest = false;
 		let versionAware = false;
@@ -180,7 +180,7 @@ export default class CLICommand extends Command {
 			baseUrl,
 			baseDir,
 			monorepoRoot,
-			packageNames,
+			packageDirNames,
 			mainPackage: getConfigValue(importedConfig, 'mainPackage') ?? undefined,
 			mainBranchName,
 			versionBranchPrefix,

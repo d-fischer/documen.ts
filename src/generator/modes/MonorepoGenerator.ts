@@ -1,20 +1,52 @@
 import * as vfs from '@typescript/vfs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import type { OutputChunk } from 'rollup';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
+import toposort from 'toposort';
+import type { PackageJson } from 'type-fest';
 import * as ts from 'typescript';
 import type { Config } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
-import type { SerializedProject } from '../analyze';
-import { analyzeMono } from '../analyze';
+import type { SerializedProject } from '../../common/reference';
+import { Project } from '../analyzer/Project';
 import Generator from './Generator';
 import HtmlGenerator from './HtmlGenerator';
 import SpaGenerator from './SpaGenerator';
 
 export default class MonorepoGenerator extends Generator {
-	async createReferenceStructure(): Promise<SerializedProject> {
-		return analyzeMono(['twitch-common', 'twitch'], this._config.baseDir);
+	async createReferenceStructure() {
+		const project = new Project(this._config.baseDir, this._config.monorepoRoot);
+
+		const packageDirNames = this._config.packageDirNames!;
+		const packageDirsToPackageJson = new Map(await Promise.all(
+			packageDirNames.map(async dirName => {
+				const packageFolder = path.join(this._config.baseDir, this._config.monorepoRoot!, dirName);
+				const packageJson = JSON.parse(await fs.readFile(path.join(packageFolder, 'package.json'), 'utf8')) as PackageJson;
+
+				return [dirName, packageJson] as const;
+			})
+		));
+		const packageNames = [...packageDirsToPackageJson.values()].map(packageJson => packageJson.name!);
+
+		const packageDirsToNames = new Map([...packageDirsToPackageJson].map(([packageDirName, packageJson]) => [packageDirName, packageJson.name!]))
+		const packageNamesToDirs = new Map([...packageDirsToPackageJson].map(([packageDirName, packageJson]) => [packageJson.name!, packageDirName]))
+
+		const dependencies = [...packageDirsToPackageJson].flatMap(([packageDirName, packageJson]) => [...Object.keys(packageJson.dependencies ?? {}), ...Object.keys(packageJson.devDependencies ?? {})]
+				.filter(dep => packageNames.includes(dep) && dep !== packageJson.name!)
+				.map(dep => [dep, packageDirsToNames.get(packageDirName)!] as [string, string]));
+
+		const sortedPackageNames = toposort(dependencies);
+
+		for (const packageName of sortedPackageNames) {
+			const packageDir = packageNamesToDirs.get(packageName)!;
+			await project.analyzeMonorepoPackage(packageDir, packageDirsToPackageJson.get(packageDir)!);
+		}
+
+		project.fixBrokenReferences();
+
+		return project.serialize();
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -54,7 +86,8 @@ export default class MonorepoGenerator extends Generator {
 
 	protected async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
 		const bundle = await rollup({
-			input: Object.fromEntries(data.packages.map(pkg => [pkg.packageName, path.join(paths.projectBase, this._config.monorepoRoot!, pkg.packageName, 'lib', 'index.d.ts')])),
+			// TODO get proper entry point
+			input: Object.fromEntries(data.packages.map(pkg => [pkg.packageName, path.join(paths.projectBase, this._config.monorepoRoot!, pkg.folderName!, 'lib', 'index.d.ts')])),
 			plugins: [dts()]
 		});
 		const { output } = await bundle.generate({ format: 'es' });

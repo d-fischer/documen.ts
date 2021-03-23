@@ -1,5 +1,3 @@
-import type { SerializedProject } from '../../generator/analyze';
-
 interface ReferenceFlags {
 	isExported?: boolean;
 	isOptional?: boolean;
@@ -240,6 +238,16 @@ export type ReferenceNode =
 	| ReferenceReferenceNode
 	| VariableReferenceNode
 	| PackageReferenceNode;
+
+export interface SerializedPackage {
+	packageName: string;
+	folderName?: string;
+	symbols: ReferenceNode[];
+}
+
+export interface SerializedProject {
+	packages: SerializedPackage[];
+}
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/naming-convention

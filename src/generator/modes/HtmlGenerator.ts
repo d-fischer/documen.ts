@@ -1,3 +1,4 @@
+import { omit } from '@d-fischer/shared-utils';
 import * as vfs from '@typescript/vfs';
 import fs from 'fs-extra';
 import path from 'path';
@@ -7,11 +8,10 @@ import webpack from 'webpack';
 import type { ArticleContent } from '../../common/components/PageArticle';
 import type { Config, ConfigInternalArticle } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
-import type { ReferenceNode } from '../../common/reference';
+import type { ReferenceNode, SerializedProject } from '../../common/reference';
 import { filterByMember } from '../../common/tools/ArrayTools';
 import { checkVisibility } from '../../common/tools/NodeTools';
 import { getPackagePath } from '../../common/tools/StringTools';
-import type { SerializedProject } from '../analyze';
 import WebpackBuildError from '../errors/WebpackBuildError';
 import WebpackError from '../errors/WebpackError';
 import Generator from './Generator';
@@ -100,17 +100,15 @@ export default class HtmlGenerator extends Generator {
 			await new Promise<void>((resolve, reject) => {
 				const webpackCompiler = webpack(webpackConfig);
 
-				const { webpackProgressCallback, ...configWithoutCallback } = config;
-
-				if (webpackProgressCallback) {
-					(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
+				if (config.webpackProgressCallback) {
+					(new webpack.ProgressPlugin(config.webpackProgressCallback)).apply(webpackCompiler);
 				}
 
 				/* eslint-disable @typescript-eslint/naming-convention */
 				const definitions: Record<string, string> = {
 					__DOCTS_REFERENCE: JSON.stringify(data),
-					__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
-					__DOCTS_PATHS: JSON.stringify(paths)
+					__DOCTS_CONFIG: JSON.stringify(omit(config, ['webpackProgressCallback'])),
+					__DOCTS_PATHS: JSON.stringify(omit(paths, ['tmpDir']))
 				};
 				if (config.shouldEnhance && webpackConfig.output?.filename === 'pe.js') {
 					definitions.__DOCTS_FSMAP = JSON.stringify(fsMapEntries);
