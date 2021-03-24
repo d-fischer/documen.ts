@@ -28,6 +28,7 @@ export interface Manifest {
 
 export interface Config {
 	dev: boolean;
+	prettier: boolean;
 	configDir: string | null;
 	inputDirs: string[];
 	outputDir: string;

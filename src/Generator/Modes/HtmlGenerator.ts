@@ -1,3 +1,4 @@
+import * as prettier from 'prettier';
 import * as ts from 'typescript';
 import * as vfs from '@typescript/vfs';
 import fs from 'fs-extra';
@@ -151,7 +152,11 @@ export default class HtmlGenerator extends Generator {
 		}
 		const outFile = path.join(outDir, relativeOutFile);
 		await fs.mkdirp(path.dirname(outFile));
-		const str = render(resourcePath, config, content);
+		let str = render(resourcePath, config, content);
+
+		if (config.prettier) {
+			str = prettier.format(str, { parser: 'html' });
+		}
 
 		await fs.writeFile(outFile, str);
 	}

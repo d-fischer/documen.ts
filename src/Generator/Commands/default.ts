@@ -164,6 +164,7 @@ export default class CLICommand extends Command {
 		// TODO investigate the CLI defaults
 		const generatorConfig: Config = {
 			dev: options.dev,
+			prettier: getConfigValue(importedConfig, 'prettier') ?? options.dev,
 			configDir,
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
