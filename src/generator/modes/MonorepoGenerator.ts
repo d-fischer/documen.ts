@@ -1,3 +1,5 @@
+/// <reference lib="es2019.object" />
+
 import * as vfs from '@typescript/vfs';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -46,7 +48,21 @@ export default class MonorepoGenerator extends Generator {
 
 		project.fixBrokenReferences();
 
-		return project.serialize();
+		const result = project.serialize();
+
+		result.packages.sort((a, b) => {
+			if (a.packageName === this._config.mainPackage) {
+				return -1;
+			}
+
+			if (b.packageName === this._config.mainPackage) {
+				return 1;
+			}
+
+			return a.packageName.localeCompare(b.packageName);
+		});
+
+		return result;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
