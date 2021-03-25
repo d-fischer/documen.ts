@@ -1,7 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { PackageJson } from 'type-fest';
-import type { TypeDocOptions } from 'typedoc';
 import type { Config } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
 import type { SerializedProject } from '../../common/reference';
@@ -32,10 +31,6 @@ export default abstract class Generator {
 	/** @protected */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
 	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>, overrideConfig?: Partial<Config>) {
-	}
-
-	protected _overrideTypeDocConfig(): Partial<TypeDocOptions> {
-		return {};
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
