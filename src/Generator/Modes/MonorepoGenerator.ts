@@ -1,3 +1,5 @@
+/// <reference lib="es2019.object" />
+
 import * as vfs from '@typescript/vfs';
 import path from 'path';
 import type { OutputChunk } from 'rollup';
