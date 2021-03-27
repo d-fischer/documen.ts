@@ -26,8 +26,7 @@
 	"include": [
 		"types",
 		"src/common",
-		"src/generator",
-		"node_modules/clime"
+		"src/generator"
 	],
 	"exclude": [
 		"node_modules",

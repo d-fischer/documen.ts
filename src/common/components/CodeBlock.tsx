@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/styles';
 import { twoslasher } from '@typescript/twoslash';
 import * as lzString from 'lz-string';
-import * as randomstring from 'randomstring';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import jsHighlight from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
@@ -9,6 +8,7 @@ import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
 import tsHighlight from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import darcula from 'react-syntax-highlighter/dist/esm/styles/hljs/darcula';
 import * as ts from 'typescript';
+import { getRandomString } from '../tools/StringTools';
 
 SyntaxHighlighter.registerLanguage('javascript', jsHighlight);
 SyntaxHighlighter.registerLanguage('js', jsHighlight);
@@ -121,7 +121,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 	({ codeInfo: [language, languageMode] = [], text }) => {
 		const isTwoslash = languageMode === 'twoslash';
 		const classes = useStyles();
-		const [idSuffix] = useState(() => randomstring.generate({ length: 8, charset: 'alphabetic' }));
+		const [idSuffix] = useState(() => getRandomString(8));
 		const [mode, setMode] = useState('ts');
 		const transpile = mode !== 'ts';
 		const showCjs = mode === 'cjs';

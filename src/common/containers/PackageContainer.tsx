@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 	}
 }, { name: 'PackageContainer' });
 
-interface PackageContainerRouteParams {
+export interface PackageContainerRouteParams {
 	packageName?: string;
 }
 
@@ -37,6 +37,7 @@ export const PackageContainer: React.FC = () => {
 	const { packageName } = useParams<PackageContainerRouteParams>();
 	const classes = useStyles();
 	const config = useContext(ConfigContext);
+	const relevantConfig = useMemo(() => packageName ? { ...config, ...config.packages?.[packageName] } : config, [packageName, config]);
 
 	const pre = getPackagePath(packageName);
 
@@ -54,7 +55,7 @@ export const PackageContainer: React.FC = () => {
 		<div className={classes.root}>
 			<NavMenu className={classes.nav}>
 				<NavMenuItem path={`${pre}/`} exact={true}>Welcome</NavMenuItem>
-				{config.categories?.map(cat => (
+				{relevantConfig.categories?.map(cat => (
 					<NavMenuGroup key={cat.name} title={cat.title}>
 						{cat.articles.map(article => 'externalLink' in article ? (
 							<NavMenuItem key={article.name} external path={article.externalLink} title={article.title}>{article.title}</NavMenuItem>

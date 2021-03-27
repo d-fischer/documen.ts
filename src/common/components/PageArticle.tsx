@@ -8,9 +8,13 @@ export interface ArticleContent {
 
 const PageArticleContext = createContext<ArticleContent | undefined>({ title: '', content: '' });
 
-const PageArticle: React.FC = () => (
+interface PageArticleProps {
+	mockContent?: string;
+}
+
+const PageArticle: React.FC<PageArticleProps> = ({ mockContent }) => (
 	<PageArticleContext.Consumer>
-		{article => article && <MarkdownParser source={article.content}/>}
+		{article => article && <MarkdownParser source={mockContent ?? article.content}/>}
 	</PageArticleContext.Consumer>
 );
 

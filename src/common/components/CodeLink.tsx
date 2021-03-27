@@ -3,7 +3,6 @@ import type { ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
 import { ConfigContext } from '../config';
-import path from 'path';
 
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
@@ -36,13 +35,13 @@ const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
 	const { location: { fileName, line } } = symbol;
 	return <a
 		className={classNames(classes.root, className)}
-		href={`https://github.com/${path.join(
+		href={`https://github.com/${[
 			config.repoUser,
 			config.repoName,
 			'blob',
 			config.repoBranch,
 			fileName
-		)}#L${line}`}
+		].join('/')}#L${line}`}
 		target="_blank"
 		rel="noopener noreferrer"
 		title="Go to the code"

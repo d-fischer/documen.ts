@@ -1,5 +1,7 @@
-import React, { useContext } from 'react';
-import { ConfigContext } from '../config';
+import React, { useContext, useMemo } from 'react';
+import { ConfigContext, mockFs } from '../config';
+import type { ConfigInternalArticle } from '../config/Config';
+import type { PackageContainerRouteParams } from '../containers/PackageContainer';
 
 import PageHeader from '../containers/PageHeader';
 import PageContent from '../containers/PageContent';
@@ -16,14 +18,18 @@ const DocPage: React.FC = () => {
 	const article = useContext(PageArticleContext);
 	const config = useContext(ConfigContext);
 
+	const { packageName } = useParams<PackageContainerRouteParams>();
+	const relevantConfig = useMemo(() => packageName ? { ...config, ...config.packages?.[packageName] } : config, [packageName, config]);
+
 	let title = article?.title;
+	let mockContent: string | undefined = undefined;
 
 	if (!title) {
-		if (!config.categories) {
+		if (!relevantConfig.categories) {
 			return null;
 		}
 
-		const category = config.categories.find(cat => cat.name === categoryName);
+		const category = relevantConfig.categories.find(cat => cat.name === categoryName);
 		if (!category) {
 			return null;
 		}
@@ -34,6 +40,12 @@ const DocPage: React.FC = () => {
 		}
 
 		title = confArticle.title;
+		if (mockFs) {
+			const fileName = (confArticle as ConfigInternalArticle).file;
+			if (fileName) {
+				mockContent = mockFs.get(fileName);
+			}
+		}
 	}
 
 	return (
@@ -42,7 +54,7 @@ const DocPage: React.FC = () => {
 				<h1>{title}</h1>
 			</PageHeader>
 			<PageContent>
-				<PageArticle/>
+				<PageArticle mockContent={mockContent}/>
 			</PageContent>
 		</>
 	);

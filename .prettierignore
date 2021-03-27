@@ -4,3 +4,4 @@
 *.md
 package.json
 /docs*.json
+testdocs

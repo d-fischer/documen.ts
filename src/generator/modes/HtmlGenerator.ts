@@ -108,6 +108,7 @@ export default class HtmlGenerator extends Generator {
 				/* eslint-disable @typescript-eslint/naming-convention */
 				const definitions: Record<string, string> = {
 					__DOCTS_REFERENCE: JSON.stringify(data),
+					__DOCTS_MOCK_FS: 'undefined',
 					__DOCTS_CONFIG: JSON.stringify(omit(config, ['webpackProgressCallback'])),
 					__DOCTS_PATHS: JSON.stringify(omit(paths, ['tmpDir']))
 				};
@@ -122,7 +123,7 @@ export default class HtmlGenerator extends Generator {
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (err) {
 						reject(new WebpackError(err));
-					} else if (stats.hasErrors()) {
+					} else if (stats?.hasErrors()) {
 						reject(new WebpackBuildError(stats));
 					} else {
 						process.stdout.write('\n\n');

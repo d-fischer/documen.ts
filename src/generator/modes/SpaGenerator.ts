@@ -39,6 +39,8 @@ export default class SpaGenerator extends Generator {
 				/* eslint-disable @typescript-eslint/naming-convention */
 				__DOCTS_REFERENCE: JSON.stringify(data),
 				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
+				// TODO
+				__DOCTS_MOCK_FS: 'undefined',
 				__DOCTS_PATHS: JSON.stringify(paths)
 				/* eslint-enable @typescript-eslint/naming-convention */
 			})).apply(webpackCompiler);
@@ -47,7 +49,7 @@ export default class SpaGenerator extends Generator {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (err) {
 					reject(new WebpackError(err));
-				} else if (stats.hasErrors()) {
+				} else if (stats?.hasErrors()) {
 					reject(new WebpackBuildError(stats));
 				} else {
 					resolve();
