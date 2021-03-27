@@ -98,7 +98,7 @@ const useStyles = makeStyles(theme => ({
 
 export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 'static' ? (
 	props => {
-		const { codeInfo: [language, languageMode] = [], text } = props;
+		const { codeInfo: [language, languageMode] = ['text'], text } = props;
 		if (languageMode === 'twoslash') {
 			// clean up a tiny bit of twoslash specific stuff for the static output
 			const cleanText = text.replace(/[\w\W]*?(?:^|\n)\/\/ ---cut---\n/, '').replace(/\/\/ @.*\n/g, '');
@@ -118,7 +118,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		);
 	}
 ) : (
-	({ codeInfo: [language, languageMode] = [], text }) => {
+	({ codeInfo: [language, languageMode] = ['text'], text }) => {
 		const isTwoslash = languageMode === 'twoslash';
 		const classes = useStyles();
 		const [idSuffix] = useState(() => getRandomString(8));
