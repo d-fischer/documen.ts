@@ -83,10 +83,4 @@ module.exports = {
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
 	],
-	node: {
-		dgram: 'empty',
-		fs: 'empty',
-		net: 'empty',
-		tls: 'empty',
-	},
 };

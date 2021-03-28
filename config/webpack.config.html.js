@@ -20,6 +20,13 @@ const baseConfig = {
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
+		fallback: {
+			dgram: false,
+			fs: false,
+			net: false,
+			tls: false,
+			perf_hooks: false,
+		}
 	},
 	module: {
 		strictExportPresence: true,

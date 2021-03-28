@@ -28,7 +28,6 @@ try {
 	function createMockFs(dirPath) {
 		function worker(dirPath, prefix) {
 			const fileNames = fs.readdirSync(dirPath);
-			console.log(dirPath, fileNames);
 			return fileNames.flatMap(fileName => {
 				const prefixedPath = prefix ? path.join(prefix, fileName) : fileName;
 				const fullPath = path.join(dirPath, fileName);
