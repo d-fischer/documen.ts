@@ -30,9 +30,10 @@ export abstract class Reflection {
 
 	abstract get name(): string;
 
-	protected _baseSerialize(): Omit<ReferenceNode, 'kind'> & { kind: '__unhandled' } {
-		const node = this.declarations[0] as ts.Declaration | undefined;
-		const location = this._getLocation(node);
+	protected _baseSerialize(locationReflection?: Reflection): Omit<ReferenceNode, 'kind'> & { kind: '__unhandled' } {
+		locationReflection ??= this;
+		const locationDeclaration = locationReflection.declarations[0] as ts.Declaration | undefined;
+		const location = locationReflection._getLocation(locationDeclaration);
 
 		return {
 			id: this.id,
@@ -119,6 +120,8 @@ export abstract class Reflection {
 		}
 	}
 
+	private _getLocation(node: ts.Node): ReferenceLocation;
+	private _getLocation(node?: ts.Node): ReferenceLocation | undefined;
 	private _getLocation(node?: ts.Node): ReferenceLocation | undefined {
 		if (!node) {
 			return undefined;

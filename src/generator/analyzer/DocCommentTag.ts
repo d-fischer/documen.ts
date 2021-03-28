@@ -1,4 +1,7 @@
 export class DocCommentTag {
-	constructor(public readonly name: string, public readonly relatedName?: string, public readonly text?: string) {
+	readonly name;
+
+	constructor(name: string, public readonly relatedName?: string, public readonly text?: string) {
+		this.name = name.toLowerCase();
 	}
 }

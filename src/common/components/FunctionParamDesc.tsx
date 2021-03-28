@@ -1,14 +1,14 @@
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
+import type { CallSignatureReferenceNode, ConstructorReferenceNode, ConstructSignatureReferenceNode, FunctionReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference';
 
 import { hasTag } from '../tools/CodeTools';
-import type { ReferenceCommentTag, CallSignatureReferenceNode } from '../reference';
 
 import FunctionParamDescEntry from './FunctionParamDescEntry';
-import { makeStyles } from '@material-ui/styles';
 
 interface FunctionParamDescProps {
-	signature: CallSignatureReferenceNode;
-	additionalTags?: ReferenceCommentTag[];
+	functionDefinition: FunctionReferenceNode | MethodReferenceNode | ConstructorReferenceNode | PropertyReferenceNode;
+	signature: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
 	isCallback?: boolean;
 }
 
@@ -23,9 +23,9 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'FunctionParamDesc' });
 
-const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ signature, additionalTags, isCallback }) => {
+const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ functionDefinition, signature, isCallback }) => {
 	const classes = useStyles();
-	if (!signature.parameters) {
+	if (!signature.parameters.length) {
 		return null;
 	}
 	return <table className={classes.root}>
@@ -47,7 +47,7 @@ const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ signature, additi
 			<FunctionParamDescEntry
 				key={param.name}
 				param={param}
-				additionalTags={additionalTags}
+				functionDefinition={functionDefinition}
 				isCallback={isCallback}
 				expandParams={hasTag(signature, 'expandParams')}
 			/>

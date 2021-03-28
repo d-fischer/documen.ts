@@ -16,7 +16,7 @@ interface EventCardProps {
 	definition: PropertyReferenceNode;
 }
 
-const getParamDefinition = (param: ParameterReferenceNode) => {
+function getParamDefinition(param: ParameterReferenceNode) {
 	if (param.type.type === 'reflection' && param.type.declaration.signatures && param.type.declaration.signatures.length) {
 		return param.type.declaration.signatures[0];
 	} else if (param.type.type === 'reference' && param.type.id) {
@@ -30,29 +30,7 @@ const getParamDefinition = (param: ParameterReferenceNode) => {
 	}
 
 	return undefined;
-};
-
-const getDefinedTags = (prop: PropertyReferenceNode) => {
-	if (prop.type.type === 'reflection' && prop.type.declaration.signatures && prop.type.declaration.signatures.length) {
-		const sig = prop.type.declaration.signatures[0];
-		if (sig.parameters?.length) {
-			const paramDefinition = sig.parameters[0];
-			if (paramDefinition.type.type === 'reflection') {
-				return prop.comment?.tags;
-			} else if (paramDefinition.type.type === 'reference' && paramDefinition.type.id) {
-				const ref = findSymbolByMember('id', paramDefinition.type.id);
-				if (ref) {
-					const { symbol } = ref;
-					if (symbol.kind === 'typeAlias' && symbol.type.type === 'reflection') {
-						return symbol.comment?.tags;
-					}
-				}
-			}
-		}
-	}
-
-	return prop.comment?.tags;
-};
+}
 
 const useStyles = makeStyles(theme => ({
 	root: {},
@@ -75,7 +53,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 	let handlerParamDefinition: CallSignatureReferenceNode | undefined = undefined;
 	if (definition.type.type === 'reflection' && definition.type.declaration.signatures && definition.type.declaration.signatures.length) {
 		handlerDefinition = definition.type.declaration.signatures[0];
-		if (handlerDefinition.parameters?.length) {
+		if (handlerDefinition.parameters.length) {
 			handlerParamDefinition = getParamDefinition(handlerDefinition.parameters[0]);
 		}
 	} else if (definition.type.type === 'reference' && definition.type.typeArguments?.length) {
@@ -89,12 +67,14 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 					id: -1,
 					name: type.type === 'named-tuple-member' ? type.name : `_arg${idx}`,
 					kind: 'parameter',
-					type: type.type === 'named-tuple-member' ? type.element : type
+					type: type.type === 'named-tuple-member' ? type.element : type,
+					location: definition.location
 				})),
 				type: {
 					type: 'intrinsic',
 					name: 'void'
-				}
+				},
+				location: definition.location
 			};
 		}
 	}
@@ -105,7 +85,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 				{name ?? definition.name}(
 				{handlerParamDefinition ? (
 					<>
-						({handlerParamDefinition.parameters?.map((handlerParam, handlerParamIndex) => (
+						({handlerParamDefinition.parameters.map((handlerParam, handlerParamIndex) => (
 						<React.Fragment key={handlerParam.name}>
 							{handlerParamIndex === 0 ? '' : ', '}
 							{handlerParam.name}
@@ -122,7 +102,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 			)}
 			{definition.comment?.shortText ? <MarkdownParser source={definition.comment.shortText}/> : null}
 			{definition.comment?.text ? <MarkdownParser source={definition.comment.text}/> : null}
-			{handlerParamDefinition ? <FunctionParamDesc signature={handlerParamDefinition} isCallback additionalTags={getDefinedTags(definition)}/> : null}
+			{handlerParamDefinition ? <FunctionParamDesc functionDefinition={definition} signature={handlerParamDefinition} isCallback/> : null}
 		</Card>
 	);
 };

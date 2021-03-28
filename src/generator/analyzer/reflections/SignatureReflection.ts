@@ -21,7 +21,7 @@ type SignatureReflectionKind =
 
 export class SignatureReflection extends Reflection {
 	private _returnType!: Type;
-	private _params?: ParameterReflection[];
+	private _params!: ParameterReflection[];
 	private _typeParams?: TypeParameterReflection[];
 
 	static async fromTsSignature(
@@ -120,9 +120,9 @@ export class SignatureReflection extends Reflection {
 		| SetSignatureReferenceNode
 		| ConstructSignatureReferenceNode {
 		return {
-			...this._baseSerialize(),
+			...this._baseSerialize(this.parent),
 			kind: this.serializedKind,
-			parameters: this._params?.map(param => param.serialize()),
+			parameters: this._params.map(param => param.serialize()),
 			type: this._returnType.serialize(),
 			typeParameters: this._typeParams?.map(tp => tp.serialize())
 		};

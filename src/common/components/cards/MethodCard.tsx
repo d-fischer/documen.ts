@@ -2,7 +2,15 @@ import React, { useMemo } from 'react';
 import Card from '../../containers/Card';
 import FunctionSignature from '../FunctionSignature';
 import FunctionParamDesc from '../FunctionParamDesc';
-import type { ConstructorReferenceNode, MethodReferenceNode, ReferenceType, CallSignatureReferenceNode } from '../../reference';
+import type {
+	ConstructorReferenceNode,
+	MethodReferenceNode,
+	ReferenceType,
+	CallSignatureReferenceNode,
+	ConstructSignatureReferenceNode,
+	ClassReferenceNode,
+	InterfaceReferenceNode
+} from '../../reference';
 import { getTag, hasTag } from '../../tools/CodeTools';
 
 import DeprecationNotice from '../DeprecationNotice';
@@ -14,8 +22,9 @@ import MarkdownParser from '../../tools/MarkdownParser';
 import { getAnchorName, typeIsAsync } from '../../tools/NodeTools';
 
 interface MethodCardProps {
+	parent: ClassReferenceNode | InterfaceReferenceNode;
 	definition: ConstructorReferenceNode | MethodReferenceNode;
-	sig: CallSignatureReferenceNode;
+	sig: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
 	isConstructor?: boolean;
 }
 
@@ -42,20 +51,23 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'MethodCard' });
 
-const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor }) => {
+const MethodCard: React.FC<MethodCardProps> = ({ parent, definition, sig, isConstructor }) => {
 	const classes = useStyles();
 
-	const [isAsync, returnType] = useMemo<[boolean, ReferenceType]>(() => {
+	const [isAsync, returnType] = useMemo<[boolean, ReferenceType?]>(() => {
+		if (sig.kind === 'constructSignature') {
+			return [false];
+		}
 		if (typeIsAsync(sig.type)) {
 			return [true, sig.type.typeArguments?.[0] ?? { type: 'intrinsic', name: 'any' }];
 		}
 		return [false, sig.type];
-	}, [sig.type]);
+	}, [sig]);
 
 	return (
 		<Card className={classes.root} id={getAnchorName(definition, sig.name)} key={sig.id}>
 			<CardToolbar className={classes.toolbar} definition={definition} signature={sig}/>
-			<FunctionSignature signature={sig} isConstructor={isConstructor}/>
+			<FunctionSignature signature={sig} parent={parent}/>
 			{definition.flags?.isStatic && <Badge>static</Badge>}
 			{isAsync && (
 				<Badge
@@ -73,7 +85,7 @@ const MethodCard: React.FC<MethodCardProps> = ({ definition, sig, isConstructor 
 			)}
 			{sig.comment?.shortText && <MarkdownParser source={sig.comment.shortText}/>}
 			{sig.comment?.text && <MarkdownParser source={sig.comment.text}/>}
-			<FunctionParamDesc signature={sig}/>
+			<FunctionParamDesc functionDefinition={definition} signature={sig}/>
 			{!isConstructor && (
 				<div className={classes.returnTypeWrapper}>
 					Return type:{' '}

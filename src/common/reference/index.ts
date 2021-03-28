@@ -114,14 +114,14 @@ export interface ClassReferenceNode extends AbstractReferenceNode {
 
 export interface CallSignatureReferenceNode extends AbstractReferenceNode {
 	kind: 'callSignature';
-	parameters?: ParameterReferenceNode[];
+	parameters: ParameterReferenceNode[];
 	type: ReferenceType;
 	typeParameters?: TypeParameterReferenceNode[];
 }
 
 export interface ConstructSignatureReferenceNode extends AbstractReferenceNode {
 	kind: 'constructSignature';
-	parameters?: ParameterReferenceNode[];
+	parameters: ParameterReferenceNode[];
 }
 
 export interface PropertyReferenceNode extends AbstractReferenceNode {
@@ -131,7 +131,7 @@ export interface PropertyReferenceNode extends AbstractReferenceNode {
 
 export interface GetSignatureReferenceNode extends AbstractReferenceNode {
 	kind: 'getSignature';
-	parameters?: ReferenceNode[];
+	parameters: ReferenceNode[];
 	type: ReferenceType;
 }
 

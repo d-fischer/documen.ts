@@ -1,10 +1,10 @@
-import React from 'react';
-import type { CallSignatureReferenceNode } from '../reference';
 import { makeStyles } from '@material-ui/styles';
+import React from 'react';
+import type { CallSignatureReferenceNode, ClassReferenceNode, ConstructSignatureReferenceNode, InterfaceReferenceNode } from '../reference';
 
 interface FunctionSignatureProps {
-	signature: CallSignatureReferenceNode;
-	isConstructor?: boolean;
+	signature: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
+	parent?: ClassReferenceNode | InterfaceReferenceNode;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -15,12 +15,19 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'FunctionSignature' });
 
-const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => {
+const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature, parent }) => {
 	const classes = useStyles();
+
+	let name = signature.name;
+
+	if (signature.kind === 'constructSignature' && parent) {
+		name = `new ${parent.name}`;
+	}
+
 	return (
 		<h3 className={classes.root}>
-			{signature.name}
-			{signature.typeParameters?.length && (
+			{name}
+			{signature.kind === 'callSignature' && signature.typeParameters?.length && (
 				<>
 					&lt;
 					{signature.typeParameters.map((typeParam, idx) => (
@@ -32,10 +39,10 @@ const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature }) => {
 					&gt;
 				</>
 			)}
-			({signature.parameters?.map((param, idx) => (
+			({signature.parameters.map((param, idx) => (
 			<React.Fragment key={param.name}>
 				{idx === 0 ? '' : ', '}
-				{param.name === '__namedParameters' ? 'params' : param.name}
+				{/^__\d+$/.test(param.name) ? 'params' : param.name}
 			</React.Fragment>
 		))})
 		</h3>

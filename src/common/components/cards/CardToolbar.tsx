@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ReferenceNode, CallSignatureReferenceNode } from '../../reference';
+import type { ReferenceNode, CallSignatureReferenceNode, ConstructSignatureReferenceNode } from '../../reference';
 import CodeLink from '../CodeLink';
 import { HashLink } from 'react-router-hash-link';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -11,7 +11,7 @@ import { getAnchorName } from '../../tools/NodeTools';
 interface CardToolbarProps {
 	name?: string;
 	definition: ReferenceNode;
-	signature?: CallSignatureReferenceNode;
+	signature?: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
 	className?: string;
 }
 
@@ -37,7 +37,7 @@ const CardToolbar: React.FC<CardToolbarProps> = ({ name, definition, signature, 
 	const classes = useStyles();
 	return (
 		<div className={classNames(classes.root, className)}>
-			<CodeLink className={classes.button} symbol={definition}/>
+			<CodeLink className={classes.button} symbol={definition} signature={signature}/>
 			<HashLink className={classNames(classes.button, classes.anchor)} to={`#${getAnchorName(definition, name ?? signature?.name)}`} title="Direct link to this symbol">
 				<Icon icon={faLink} size="lg"/>
 			</HashLink>

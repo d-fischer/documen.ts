@@ -2,7 +2,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
-import type { ParameterReferenceNode, PropertyReferenceNode, ReferenceCommentTag, VariableReferenceNode } from '../reference';
+import type { ConstructorReferenceNode, FunctionReferenceNode, MethodReferenceNode, ParameterReferenceNode, PropertyReferenceNode, VariableReferenceNode } from '../reference';
 import { isOptionalType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
 import { getChildren } from '../tools/NodeTools';
@@ -11,7 +11,7 @@ import Type from './codeBuilders/Type';
 
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;
-	additionalTags?: ReferenceCommentTag[];
+	functionDefinition: FunctionReferenceNode | MethodReferenceNode | ConstructorReferenceNode | PropertyReferenceNode;
 	isCallback?: boolean;
 	expandParams?: boolean;
 	paramNamePrefix?: string;
@@ -35,19 +35,19 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'FunctionParamDescEntry' });
 
-const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, additionalTags, isCallback, expandParams, paramNamePrefix = '' }) => {
+const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, functionDefinition, isCallback, expandParams, paramNamePrefix = '' }) => {
 	const classes = useStyles();
 	const shortDesc = param.comment?.shortText;
 	let desc = param.comment?.text;
 
-	if (!desc && additionalTags) {
-		const correctTag = additionalTags.find(tag => tag.tag === 'param' && tag.param === param.name);
+	if (!desc) {
+		const correctTag = functionDefinition.comment?.tags?.find(tag => tag.tag === 'param' && tag.param === param.name);
 		if (correctTag) {
 			desc = correctTag.text;
 		}
 	}
 
-	const paramName = `${paramNamePrefix}${param.name === '__namedParameters' ? 'params' : param.name}`;
+	const paramName = `${paramNamePrefix}${/^__\d+$/.test(param.name) ? 'params' : param.name}`;
 	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	const defaultValue = param.kind === 'property' ? undefined : (param.defaultValue || undefined);
 
@@ -58,7 +58,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 			<FunctionParamDescEntry
 				key={`${paramName}.${subParam.name}`}
 				param={subParam}
-				additionalTags={additionalTags}
+				functionDefinition={functionDefinition}
 				isCallback={isCallback}
 				expandParams={expandParams}
 				paramNamePrefix={`${paramName}.`}
@@ -73,7 +73,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 					<FunctionParamDescEntry
 						key={`${paramName}.${subParam.name}`}
 						param={subParam}
-						additionalTags={additionalTags}
+						functionDefinition={functionDefinition}
 						isCallback={isCallback}
 						expandParams={expandParams}
 						paramNamePrefix={`${paramName}.`}

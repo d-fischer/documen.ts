@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import type { ReferenceNode } from '../reference';
+import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, ReferenceNode } from '../reference';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
 import { ConfigContext } from '../config';
@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/styles';
 
 interface CodeLinkProps {
 	symbol: ReferenceNode;
+	signature?: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
 	className?: string;
 }
 
@@ -24,15 +25,21 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'CodeLink' });
 
-const CodeLink: React.FC<CodeLinkProps> = ({ symbol, className }) => {
+const CodeLink: React.FC<CodeLinkProps> = ({ signature, symbol, className }) => {
 	const classes = useStyles();
 	const config = useContext(ConfigContext);
 
-	if (!(config.repoUser && config.repoName && symbol.location)) {
+	if (!(config.repoUser && config.repoName)) {
 		return null;
 	}
 
-	const { location: { fileName, line } } = symbol;
+	const { location } = signature ?? symbol;
+
+	if (!location) {
+		return null;
+	}
+
+	const { fileName, line } = location;
 	return <a
 		className={classNames(classes.root, className)}
 		href={`https://github.com/${[
