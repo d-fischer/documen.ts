@@ -120,7 +120,7 @@ export class SignatureReflection extends Reflection {
 		| SetSignatureReferenceNode
 		| ConstructSignatureReferenceNode {
 		return {
-			...this._baseSerialize(this.parent),
+			...this._baseSerialize(),
 			kind: this.serializedKind,
 			parameters: this._params.map(param => param.serialize()),
 			type: this._returnType.serialize(),

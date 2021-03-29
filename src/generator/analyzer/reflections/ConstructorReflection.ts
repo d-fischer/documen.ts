@@ -32,7 +32,7 @@ export class ConstructorReflection extends SymbolBasedReflection {
 
 	serialize(): ConstructorReferenceNode {
 		return {
-			...this._baseSerialize(),
+			...this._baseSerialize(this._signatures[this._signatures.length - 1]),
 			kind: 'constructor',
 			signatures: this._signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
 		};

@@ -47,7 +47,9 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 		}
 	}
 
-	const paramName = `${paramNamePrefix}${/^__\d+$/.test(param.name) ? 'params' : param.name}`;
+	const isNamedParams = /^__\d+$/.test(param.name);
+	expandParams ||= isNamedParams;
+	const paramName = `${paramNamePrefix}${isNamedParams ? 'params' : param.name}`;
 	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	const defaultValue = param.kind === 'property' ? undefined : (param.defaultValue || undefined);
 
