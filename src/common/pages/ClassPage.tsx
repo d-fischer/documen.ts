@@ -7,6 +7,7 @@ import OverviewTable from '../components/overviewTable/OverviewTable';
 import SymbolHeader from '../components/SymbolHeader';
 import PageContent from '../containers/PageContent';
 import type { AccessorReferenceNode, CallSignatureReferenceNode, ClassReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference';
+import { partition } from '../tools/ArrayTools';
 import { getPageType, hasTag } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
 import { checkVisibility, defaultNodeSort, filterChildrenByMember } from '../tools/NodeTools';
@@ -40,12 +41,15 @@ const ClassPage: React.FC = () => {
 	const constructorSigs: CallSignatureReferenceNode[] = constructor?.signatures ?? [];
 
 	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'method');
+	methods.sort(defaultNodeSort)
 
 	const properties: PropertyReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'property');
-	const propertiesWithoutEvents = properties.filter(prop => !hasTag(prop, 'eventListener'));
-	const events = properties.filter(prop => hasTag(prop, 'eventListener'));
+	const [propertiesWithoutEvents, events] = partition(properties, prop => hasTag(prop, 'eventListener'));
+	events.sort(defaultNodeSort);
 
 	const accessors: AccessorReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'accessor');
+
+	const allGetProps = [...propertiesWithoutEvents, ...accessors].filter(prop => prop.kind === 'property' || !!prop.getSignature).sort(defaultNodeSort);
 
 	return (
 		<>
@@ -55,8 +59,9 @@ const ClassPage: React.FC = () => {
 					<>
 						<h2>Overview</h2>
 						<OverviewTable
-							properties={[...propertiesWithoutEvents, ...accessors]}
-							events={events} methods={methods}
+							properties={allGetProps}
+							events={events}
+							methods={methods}
 						/>
 					</>
 				) : null}
@@ -70,25 +75,28 @@ const ClassPage: React.FC = () => {
 				{events.length ? (
 					<>
 						<h2>Events</h2>
-						{events.sort(defaultNodeSort).map(prop => <EventCard key={prop.id} definition={prop}/>)}
+						{events.map(prop => <EventCard key={prop.id} definition={prop}/>)}
 					</>
 				) : null}
 				{propertiesWithoutEvents.length || accessors.length ? (
 					<>
 						<h2>Properties</h2>
-						{propertiesWithoutEvents.sort(defaultNodeSort).map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
-						{accessors.map(acc => {
-							if (!acc.getSignature) {
+						{allGetProps.map(prop => {
+							if (prop.kind === 'property') {
+								return <PropertyCard key={prop.id} definition={prop}/>;
+							}
+
+							if (!prop.getSignature) {
 								return null;
 							}
-							return <PropertyCard key={acc.id} name={acc.name} definition={acc}/>;
+							return <PropertyCard key={prop.id} name={prop.name} definition={prop}/>;
 						})}
 					</>
 				) : null}
 				{methods.length ? (
 					<>
 						<h2>Methods</h2>
-						{methods.sort(defaultNodeSort).map(method => method.signatures?.map(sig => <MethodCard key={sig.id} parent={symbol} definition={method} sig={sig}/>))}
+						{methods.map(method => method.signatures?.map(sig => <MethodCard key={sig.id} parent={symbol} definition={method} sig={sig}/>))}
 					</>
 				) : null}
 			</PageContent>

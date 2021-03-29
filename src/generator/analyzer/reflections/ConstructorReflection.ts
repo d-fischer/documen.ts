@@ -11,13 +11,15 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		const that = new ConstructorReflection(ctx, symbol);
 
 		that._signatures = await Promise.all(
-			signatures.map(async (sig, i) => SignatureReflection.fromTsSignature(
-				ctx,
-				ts.SyntaxKind.ConstructSignature,
-				sig,
-				that,
-				symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
-			))
+			signatures
+				.filter(sig => !!sig.declaration)
+				.map(async (sig, i) => SignatureReflection.fromTsSignature(
+					ctx,
+					ts.SyntaxKind.ConstructSignature,
+					sig,
+					that,
+					symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
+				))
 		);
 
 		that._handleFlags();
@@ -32,7 +34,7 @@ export class ConstructorReflection extends SymbolBasedReflection {
 
 	serialize(): ConstructorReferenceNode {
 		return {
-			...this._baseSerialize(this._signatures[this._signatures.length - 1]),
+			...this._baseSerialize(this._signatures.length ? this._signatures[this._signatures.length - 1] : undefined),
 			kind: 'constructor',
 			signatures: this._signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
 		};
