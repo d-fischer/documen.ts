@@ -62,7 +62,8 @@ export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, p
 	if (ts.isTypeAliasDeclaration(declaration)) {
 		return TypeAliasReflection.fromSymbol(ctx, symbol);
 	}
-	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) {
+	// eslint-disable-next-line no-bitwise
+	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration) || symbol.flags & ts.SymbolFlags.Property) {
 		return PropertyReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isParameter(declaration)) {
