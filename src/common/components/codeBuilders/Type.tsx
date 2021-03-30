@@ -82,7 +82,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 						return (
 							<>
 								(
-								{signature.parameters ? signature.parameters.map((param, i) => (
+								{signature.parameters.length ? signature.parameters.map((param, i) => (
 									<React.Fragment key={param.name}>
 										{i === 0 ? null : ', '}{param.name}: <Type def={param.type}/>
 									</React.Fragment>
@@ -140,7 +140,10 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 		}
 		default: {
 			return (
-				<>{def.name}</>
+				<>
+					{isOptional ? '?' : ''}
+					{def.name}
+				</>
 			);
 		}
 	}
