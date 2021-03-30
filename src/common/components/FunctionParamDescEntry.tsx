@@ -5,7 +5,7 @@ import React from 'react';
 import type { ConstructorReferenceNode, FunctionReferenceNode, MethodReferenceNode, ParameterReferenceNode, PropertyReferenceNode, VariableReferenceNode } from '../reference';
 import { isOptionalType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
-import { getChildren } from '../tools/NodeTools';
+import { defaultNodeSort, getChildren } from '../tools/NodeTools';
 import { findSymbolByMember } from '../tools/ReferenceTools';
 import Type from './codeBuilders/Type';
 
@@ -56,7 +56,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 	const result: React.ReactNode[] = [];
 
 	if (param.type.type === 'reflection') {
-		result.push(...getChildren(param.type.declaration).filter((c): c is VariableReferenceNode => c.kind === 'variable').map(subParam => (
+		result.push(...getChildren(param.type.declaration).filter((c): c is VariableReferenceNode => c.kind === 'variable').sort(defaultNodeSort).map(subParam => (
 			<FunctionParamDescEntry
 				key={`${paramName}.${subParam.name}`}
 				param={subParam}
@@ -71,7 +71,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 		if (refDesc) {
 			const { symbol: ref } = refDesc;
 			if (ref.kind === 'interface') {
-				result.push(...getChildren(ref).filter((c): c is PropertyReferenceNode => c.kind === 'property').map(subParam => (
+				result.push(...getChildren(ref).filter((c): c is PropertyReferenceNode => c.kind === 'property').sort(defaultNodeSort).map(subParam => (
 					<FunctionParamDescEntry
 						key={`${paramName}.${subParam.name}`}
 						param={subParam}
