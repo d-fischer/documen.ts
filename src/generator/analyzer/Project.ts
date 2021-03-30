@@ -104,6 +104,11 @@ export class Project {
 		return this._reflectionIdsBySymbol.get(symbol);
 	}
 
+	getReflectionForSymbol(symbol: ts.Symbol) {
+		const reflectionId = this._reflectionIdsBySymbol.get(symbol);
+		return reflectionId ? this._reflectionsById.get(reflectionId) : undefined;
+	}
+
 	registerBrokenReference(symbol: ts.Symbol, type: ReferenceType) {
 		if (this._brokenReferences.has(symbol)) {
 			this._brokenReferences.get(symbol)!.push(type);
