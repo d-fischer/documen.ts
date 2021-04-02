@@ -2,7 +2,15 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
-import type { ConstructorReferenceNode, FunctionReferenceNode, MethodReferenceNode, ParameterReferenceNode, PropertyReferenceNode, VariableReferenceNode } from '../reference';
+import type {
+	CallSignatureReferenceNode,
+	ConstructorReferenceNode, ConstructSignatureReferenceNode,
+	FunctionReferenceNode,
+	MethodReferenceNode,
+	ParameterReferenceNode,
+	PropertyReferenceNode,
+	VariableReferenceNode
+} from '../reference';
 import { isOptionalType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
 import { defaultNodeSort, getChildren } from '../tools/NodeTools';
@@ -12,6 +20,7 @@ import Type from './codeBuilders/Type';
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;
 	functionDefinition: FunctionReferenceNode | MethodReferenceNode | ConstructorReferenceNode | PropertyReferenceNode;
+	functionSignature?: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
 	isCallback?: boolean;
 	expandParams?: boolean;
 	paramNamePrefix?: string;
@@ -35,13 +44,13 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'FunctionParamDescEntry' });
 
-const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, functionDefinition, isCallback, expandParams, paramNamePrefix = '' }) => {
+const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, functionDefinition, functionSignature, isCallback, expandParams, paramNamePrefix = '' }) => {
 	const classes = useStyles();
 	const shortDesc = param.comment?.shortText;
 	let desc = param.comment?.text;
 
 	if (!desc) {
-		const correctTag = functionDefinition.comment?.tags?.find(tag => tag.tag === 'param' && tag.param === param.name);
+		const correctTag = (functionSignature?.comment ?? functionDefinition.comment)?.tags?.find(tag => tag.tag === 'param' && tag.param === param.name);
 		if (correctTag) {
 			desc = correctTag.text;
 		}
@@ -61,6 +70,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 				key={`${paramName}.${subParam.name}`}
 				param={subParam}
 				functionDefinition={functionDefinition}
+				functionSignature={functionSignature}
 				isCallback={isCallback}
 				expandParams={expandParams}
 				paramNamePrefix={`${paramName}.`}
@@ -76,6 +86,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 						key={`${paramName}.${subParam.name}`}
 						param={subParam}
 						functionDefinition={functionDefinition}
+						functionSignature={functionSignature}
 						isCallback={isCallback}
 						expandParams={expandParams}
 						paramNamePrefix={`${paramName}.`}

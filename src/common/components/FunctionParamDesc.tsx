@@ -47,6 +47,7 @@ const FunctionParamDesc: React.FC<FunctionParamDescProps> = ({ functionDefinitio
 			<FunctionParamDescEntry
 				key={param.name}
 				param={param}
+				functionSignature={signature}
 				functionDefinition={functionDefinition}
 				isCallback={isCallback}
 				expandParams={hasTag(signature, 'expandParams')}

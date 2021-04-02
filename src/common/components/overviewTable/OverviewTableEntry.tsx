@@ -33,7 +33,7 @@ const OverviewTableEntry: React.FC<OverviewTableEntryProps> = ({ node }) => {
 	return (
 		<li className={classes.root}>
 			<HashLink className={classes.link} to={`#${getAnchorName(node)}`}>{node.name}</HashLink>
-			{hasTag(node, 'deprecated') || (node.kind === 'method' && node.signatures?.some(sig => hasTag(sig, 'deprecated'))) ? (
+			{hasTag(node, 'deprecated') || (node.kind === 'method' && node.signatures?.some(sig => hasTag(sig, 'deprecated'))) || node.kind === 'accessor' && node.getSignature && hasTag(node.getSignature, 'deprecated') ? (
 				<Badge small className={classes.deprecatedBadge} title="deprecated">d</Badge>
 			) : null}
 			{node.flags?.isStatic ? <Badge small title='static'>s</Badge> : null}

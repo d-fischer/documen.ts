@@ -26,7 +26,7 @@ export const getTag = (node: ReferenceNode, name: string): string | null => {
 
 export const hasTag = (node: ReferenceNode, name: string): boolean => getTag(node, name) !== null;
 
-export const isStringLiteral = (def?: ReferenceType): boolean => {
+export const isLiteral = (def?: ReferenceType): boolean => {
 	if (!def) {
 		return false;
 	}
@@ -35,7 +35,7 @@ export const isStringLiteral = (def?: ReferenceType): boolean => {
 		case 'literal':
 			return true;
 		case 'union':
-			return def.types.every(isStringLiteral);
+			return def.types.every(isLiteral);
 		default:
 			return false;
 	}
