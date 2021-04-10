@@ -1,9 +1,6 @@
 import ts from 'typescript';
-import { createReflection } from '../createReflection';
 import type { TypeReflector } from '../createType';
-import { SignatureReflection } from '../reflections/SignatureReflection';
 import { TypeLiteralReflection } from '../reflections/TypeLiteralReflection';
-import { resolvePromiseArray } from '../util/promises';
 import { IntrinsicType } from './IntrinsicType';
 import { ReflectionType } from './ReflectionType';
 
@@ -17,12 +14,7 @@ export const objectLiteralTypeReflector: TypeReflector<ts.TypeLiteralNode> = {
 			return new IntrinsicType('Object');
 		}
 
-		const members = await resolvePromiseArray(ctx.checker.getPropertiesOfType(type).map(async prop => createReflection(ctx, prop, symbol)));
-		const signatures = await resolvePromiseArray(type.getCallSignatures().map(async sig => SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig)));
-
-		const literalReflection = new TypeLiteralReflection(ctx, members, signatures);
-
-		return new ReflectionType(literalReflection);
+		return new ReflectionType(await TypeLiteralReflection.fromTsType(ctx, type));
 	},
 	async fromType(ctx, type) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -30,11 +22,6 @@ export const objectLiteralTypeReflector: TypeReflector<ts.TypeLiteralNode> = {
 			return new IntrinsicType('Object');
 		}
 
-		const members = await resolvePromiseArray(ctx.checker.getPropertiesOfType(type).map(async prop => createReflection(ctx, prop, type.symbol)));
-		const signatures = await resolvePromiseArray(type.getCallSignatures().map(async sig => SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig)));
-
-		const literalReflection = new TypeLiteralReflection(ctx, members, signatures);
-
-		return new ReflectionType(literalReflection);
+		return new ReflectionType(await TypeLiteralReflection.fromTsType(ctx, type));
 	},
 };

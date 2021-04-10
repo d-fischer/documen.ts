@@ -16,7 +16,7 @@ import { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
 import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
 
-export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, parentSymbol?: ts.Symbol): Promise<Reflection> {
+export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: Reflection): Promise<Reflection> {
 	const declaration = symbol.getDeclarations()?.[0];
 	assert(declaration);
 	const declSf = declaration.getSourceFile();
@@ -54,17 +54,17 @@ export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, p
 		return ClassReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isMethodDeclaration(declaration) || ts.isMethodSignature(declaration)) {
-		return MethodReflection.fromSymbol(ctx, symbol, parentSymbol);
+		return MethodReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
 	}
 	if (ts.isAccessor(declaration)) {
-		return AccessorReflection.fromSymbol(ctx, symbol);
+		return AccessorReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
 	}
 	if (ts.isTypeAliasDeclaration(declaration)) {
 		return TypeAliasReflection.fromSymbol(ctx, symbol);
 	}
 	// eslint-disable-next-line no-bitwise
 	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration) || symbol.flags & ts.SymbolFlags.Property) {
-		return PropertyReflection.fromSymbol(ctx, symbol);
+		return PropertyReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
 	}
 	if (ts.isParameter(declaration)) {
 		return ParameterReflection.fromSymbol(ctx, symbol, declaration);
@@ -74,4 +74,11 @@ export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, p
 	}
 
 	return SymbolBasedReflection.unknown(ctx, symbol);
+}
+
+export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: Reflection): Promise<Reflection> {
+	const reflection = await createReflectionInternal(ctx, symbol, parent);
+	ctx.project.registerForPackageName(ctx.packageName, reflection);
+
+	return reflection;
 }

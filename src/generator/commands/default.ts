@@ -168,7 +168,6 @@ export default class CLICommand extends Command {
 			process.exit(1);
 		}
 
-		// TODO investigate the CLI defaults
 		const generatorConfig: Config = {
 			dev: options.dev,
 			prettier: getConfigValue(importedConfig, 'prettier') ?? options.dev,

@@ -1,10 +1,5 @@
 import * as ts from 'typescript';
-import type {
-	CallSignatureReferenceNode,
-	ConstructSignatureReferenceNode,
-	GetSignatureReferenceNode,
-	SetSignatureReferenceNode
-} from '../../../common/reference';
+import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, GetSignatureReferenceNode, SetSignatureReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import { createTypeFromTsType } from '../createType';
 import type { Type } from '../types/Type';
@@ -119,8 +114,9 @@ export class SignatureReflection extends Reflection {
 		| GetSignatureReferenceNode
 		| SetSignatureReferenceNode
 		| ConstructSignatureReferenceNode {
+		const decl = this._signature?.getDeclaration();
 		return {
-			...this._baseSerialize(),
+			...this._baseSerialize(decl?.name),
 			kind: this.serializedKind,
 			parameters: this._params.map(param => param.serialize()),
 			type: this._returnType.serialize(),

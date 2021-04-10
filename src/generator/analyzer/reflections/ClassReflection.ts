@@ -5,21 +5,35 @@ import type { AnalyzeContext } from '../AnalyzeContext';
 import { createReflection } from '../createReflection';
 import { resolvePromiseArray } from '../util/promises';
 import { ConstructorReflection } from './ConstructorReflection';
-import type { Reflection } from './Reflection';
+import { Heritage } from './Heritage';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 import { TypeParameterReflection } from './TypeParameterReflection';
 
 export class ClassReflection extends SymbolBasedReflection {
 	ctor?: ConstructorReflection;
-	members!: Reflection[];
+	members!: SymbolBasedReflection[];
 	typeParameters?: TypeParameterReflection[];
+	extends?: Heritage[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
 		const that = new ClassReflection(ctx, symbol);
 
 		const instanceType = ctx.checker.getDeclaredTypeOfSymbol(symbol);
-
 		assert(instanceType.isClassOrInterface());
+
+		const extendsTypes = await resolvePromiseArray(
+			symbol.getDeclarations()
+				?.filter((decl): decl is ts.ClassDeclaration => ts.isClassDeclaration(decl))
+				.flatMap(decl => decl.heritageClauses
+					?.filter(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)
+					.flatMap(clause => clause.types.map(async type => Heritage.fromTypeNode(ctx, type))) ?? []
+				)
+		);
+
+		if (extendsTypes?.length) {
+			that.extends = extendsTypes;
+		}
+
 		const instanceMembers = ctx.checker.getPropertiesOfType(instanceType);
 
 		const classDeclaration = symbol.getDeclarations()?.find(ts.isClassDeclaration);
@@ -35,8 +49,8 @@ export class ClassReflection extends SymbolBasedReflection {
 
 		that.members = await Promise.all([
 			// eslint-disable-next-line no-bitwise
-			...staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => createReflection(ctx, mem, symbol)),
-			...instanceMembers.map(async mem => createReflection(ctx, mem, symbol))
+			...staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>),
+			...instanceMembers.map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>)
 		]);
 		that.ctor = await ConstructorReflection.fromSymbolAndSignatures(ctx, symbol, staticType.getConstructSignatures());
 
@@ -48,10 +62,11 @@ export class ClassReflection extends SymbolBasedReflection {
 
 	serialize(): ClassReferenceNode {
 		return {
-			...this._baseSerialize(),
+			...this._baseSerialize((this.declarations[0] as ts.ClassDeclaration | undefined)?.name),
 			kind: 'class',
 			ctor: this.ctor?.serialize(),
-			members: this.members.map(m => m.serialize())
+			members: this.members.map(m => m.serialize()),
+			extendedTypes: this.extends?.map(ext => ext.type.serialize())
 		};
 	}
 }

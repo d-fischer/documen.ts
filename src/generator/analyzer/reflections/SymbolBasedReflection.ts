@@ -20,4 +20,8 @@ export class SymbolBasedReflection extends Reflection {
 	get name() {
 		return this._symbol.name;
 	}
+
+	get symbol() {
+		return this._symbol;
+	}
 }

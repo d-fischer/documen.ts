@@ -26,7 +26,7 @@ export class InterfaceReflection extends SymbolBasedReflection {
 
 		const members = ctx.checker.getPropertiesOfType(type);
 		that._members = await Promise.all([
-			...members.map(async mem => createReflection(ctx, mem))
+			...members.map(async mem => createReflection(ctx, mem, that))
 		]);
 
 		that._handleFlags();

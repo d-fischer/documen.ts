@@ -47,10 +47,10 @@ export class ParameterReflection extends Reflection {
 
 		that._handleFlags();
 		if (isOptional) {
-			that._flags.add('isOptional');
+			that.flags.add('isOptional');
 		}
 		if (isRest) {
-			that._flags.add('isRest');
+			that.flags.add('isRest');
 		}
 		that._processJsDoc();
 
@@ -71,10 +71,10 @@ export class ParameterReflection extends Reflection {
 		that._defaultValue = declaration.initializer ? stringifyExpression(declaration.initializer) : undefined;
 
 		if (isOptional) {
-			that._flags.add('isOptional');
+			that.flags.add('isOptional');
 		}
 		if (isRest) {
-			that._flags.add('isRest');
+			that.flags.add('isRest');
 		}
 
 		return that;

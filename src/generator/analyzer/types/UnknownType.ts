@@ -6,6 +6,10 @@ export class UnknownType extends Type {
 		super();
 	}
 
+	get name() {
+		return this._name;
+	}
+
 	serialize() {
 		return {
 			type: '__unhandled',

@@ -5,11 +5,11 @@ import type { AnalyzeContext } from '../AnalyzeContext';
 import { SignatureReflection } from '../reflections/SignatureReflection';
 import type { SymbolBasedReflection } from '../reflections/SymbolBasedReflection';
 
-export async function getReflectedCallSignatures(ctx: AnalyzeContext, symbol: ts.Symbol, reflection: SymbolBasedReflection, parentSymbol?: ts.Symbol) {
-	const locationDeclaration = parentSymbol?.getDeclarations()?.find(
+export async function getReflectedCallSignatures(ctx: AnalyzeContext, symbol: ts.Symbol, reflection: SymbolBasedReflection, parent?: SymbolBasedReflection) {
+	const locationDeclaration = parent?.symbol.getDeclarations()?.find(
 		decl => ts.isClassDeclaration(decl) || ts.isInterfaceDeclaration(decl)
 		)
-		?? parentSymbol?.getDeclarations()?.[0]?.getSourceFile()
+		?? parent?.symbol.getDeclarations()?.[0]?.getSourceFile()
 		?? symbol.getDeclarations()?.[0]?.getSourceFile();
 	assert(locationDeclaration);
 

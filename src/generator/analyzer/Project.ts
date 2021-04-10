@@ -1,15 +1,15 @@
 import assert from 'assert';
 import path from 'path';
-import * as ts from 'typescript';
 import type { PackageJson } from 'type-fest';
-import type { SerializedPackage, SerializedProject } from '../../common/reference';
+import * as ts from 'typescript';
+import type { ReferenceLocation, SerializedPackage, SerializedProject } from '../../common/reference';
 import { parseConfig } from '../../common/tools/ConfigTools';
 import { AnalyzeContext } from './AnalyzeContext';
 import { createReflection } from './createReflection';
 import type { Reflection } from './reflections/Reflection';
 import type { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
 import type { ReferenceType } from './types/ReferenceType';
-import { nodeToSymbol } from './util/symbolUtil';
+import { nodeToSymbol } from './util/symbols';
 
 export class Project {
 	private readonly _symbolsByPackage = new Map<string, Reflection[]>();
@@ -129,6 +129,26 @@ export class Project {
 		}
 	}
 
+	getNodeLocation(node: ts.Node): ReferenceLocation;
+	getNodeLocation(node?: ts.Node): ReferenceLocation | undefined;
+	getNodeLocation(node?: ts.Node): ReferenceLocation | undefined {
+		if (!node) {
+			return undefined;
+		}
+
+		const sf = node.getSourceFile();
+		const { fileName } = sf;
+		const relativeFileName = path.relative(this.baseDir, fileName);
+		const pos = node.getStart();
+		const { character, line } = sf.getLineAndCharacterOfPosition(pos);
+
+		return {
+			fileName: relativeFileName,
+			line: line + 1,
+			character
+		};
+	}
+
 	protected _getEntryPointForPackageFolder(dir: string, pkg: PackageJson, tsconfig: ts.ParsedCommandLine) {
 		let mainJsFile: string = pkg.main!;
 		const lastPathPart = mainJsFile.split(path.delimiter).reverse()[0];
@@ -172,7 +192,6 @@ export class Project {
 		const result: Reflection[] = [];
 		for (const sym of fileExports) {
 			const reflection = await createReflection(ctx, sym);
-			this.registerForPackageName(packageName, reflection);
 			result.push(reflection);
 		}
 

@@ -7,6 +7,8 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class ConstructorReflection extends SymbolBasedReflection {
 	private _signatures!: SignatureReflection[];
 
+	readonly isInheritable = true;
+
 	static async fromSymbolAndSignatures(ctx: AnalyzeContext, symbol: ts.Symbol, signatures: readonly ts.Signature[]) {
 		const that = new ConstructorReflection(ctx, symbol);
 
@@ -33,8 +35,9 @@ export class ConstructorReflection extends SymbolBasedReflection {
 	}
 
 	serialize(): ConstructorReferenceNode {
+		const lastSignature = this._signatures.length ? this._signatures[this._signatures.length - 1] : undefined;
 		return {
-			...this._baseSerialize(this._signatures.length ? this._signatures[this._signatures.length - 1] : undefined),
+			...this._baseSerialize((lastSignature?.declarations as ts.Declaration | undefined)?.[0]),
 			kind: 'constructor',
 			signatures: this._signatures.map(sig => sig.serialize() as CallSignatureReferenceNode)
 		};

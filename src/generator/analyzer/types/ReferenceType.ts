@@ -4,7 +4,7 @@ import type { ReferenceReferenceType } from '../../../common/reference';
 import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
 import { resolvePromiseArray } from '../util/promises';
-import { resolveAliasesForSymbol } from '../util/symbolUtil';
+import { resolveAliasesForSymbol } from '../util/symbols';
 import { ArrayType } from './ArrayType';
 import { Type } from './Type';
 
@@ -17,6 +17,10 @@ export class ReferenceType extends Type {
 		private readonly _isTypeParameter?: true
 	) {
 		super();
+	}
+
+	get name() {
+		return this._name;
 	}
 
 	fixBrokenReference(id: number, pkg?: string) {
