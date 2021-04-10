@@ -47,11 +47,13 @@ export class ClassReflection extends SymbolBasedReflection {
 			return TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 
-		that.members = await Promise.all([
-			// eslint-disable-next-line no-bitwise
-			...staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>),
-			...instanceMembers.map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>)
-		]);
+		ctx.staticContext = true;
+		// eslint-disable-next-line no-bitwise
+		that.members = await Promise.all(staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>));
+		ctx.staticContext = false;
+
+		that.members.push(...(await Promise.all(instanceMembers.map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>))));
+
 		that.ctor = await ConstructorReflection.fromSymbolAndSignatures(ctx, symbol, staticType.getConstructSignatures());
 
 		that._handleFlags(symbol.getDeclarations()?.[0]);

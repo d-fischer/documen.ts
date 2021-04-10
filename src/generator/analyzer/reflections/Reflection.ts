@@ -71,7 +71,7 @@ export abstract class Reflection {
 		if (modifiers & ts.ModifierFlags.Abstract) {
 			this.flags.add('isAbstract');
 		}
-		if (modifiers & ts.ModifierFlags.Static) {
+		if (this._ctx.staticContext || modifiers & ts.ModifierFlags.Static) {
 			this.flags.add('isStatic');
 		}
 		/* eslint-enable no-bitwise */
