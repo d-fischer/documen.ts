@@ -68,7 +68,8 @@ export class ClassReflection extends SymbolBasedReflection {
 			kind: 'class',
 			ctor: this.ctor?.serialize(),
 			members: this.members.map(m => m.serialize()),
-			extendedTypes: this.extends?.map(ext => ext.type.serialize())
+			extendedTypes: this.extends?.map(ext => ext.type.serialize()),
+			typeParameters: this.typeParameters?.map(param => param.serialize())
 		};
 	}
 }
