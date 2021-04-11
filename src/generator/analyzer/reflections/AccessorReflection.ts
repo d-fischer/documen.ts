@@ -2,7 +2,7 @@ import * as ts from 'typescript';
 import type { AccessorReferenceNode, GetSignatureReferenceNode, SetSignatureReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import type { ReferenceType } from '../types/ReferenceType';
-import { handleInherit } from '../util/inheritance';
+import { handleInheritance } from '../util/inheritance';
 import { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
@@ -22,7 +22,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 
 		that.parent = parent;
 
-		handleInherit(ctx, that);
+		handleInheritance(ctx, that);
 
 		return that;
 	}

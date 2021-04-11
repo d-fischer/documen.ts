@@ -4,7 +4,7 @@ import type { AnalyzeContext } from '../AnalyzeContext';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
 import type { ReferenceType } from '../types/ReferenceType';
 import type { Type } from '../types/Type';
-import { handleInherit } from '../util/inheritance';
+import { handleInheritance } from '../util/inheritance';
 import { MethodReflection } from './MethodReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
@@ -38,7 +38,7 @@ export class PropertyReflection extends SymbolBasedReflection {
 		that._handleFlags();
 		that._processJsDoc();
 
-		handleInherit(ctx, that);
+		handleInheritance(ctx, that);
 
 		return that;
 	}

@@ -4,7 +4,7 @@ import type { CallSignatureReferenceNode, MethodReferenceNode } from '../../../c
 import type { AnalyzeContext } from '../AnalyzeContext';
 import type { ReferenceType } from '../types/ReferenceType';
 import { getReflectedCallSignatures } from '../util/functions';
-import { handleInherit } from '../util/inheritance';
+import { handleInheritance } from '../util/inheritance';
 import { SignatureReflection } from './SignatureReflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 
@@ -23,7 +23,7 @@ export class MethodReflection extends SymbolBasedReflection {
 		that._handleFlags();
 		that._processJsDoc();
 
-		handleInherit(ctx, that);
+		handleInheritance(ctx, that);
 
 		return that;
 	}
@@ -43,7 +43,7 @@ export class MethodReflection extends SymbolBasedReflection {
 
 		that._handleFlags(parentDeclaration);
 
-		handleInherit(ctx, that);
+		handleInheritance(ctx, that);
 
 		return that;
 	}

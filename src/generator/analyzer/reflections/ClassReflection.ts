@@ -54,7 +54,7 @@ export class ClassReflection extends SymbolBasedReflection {
 
 		that.members.push(...(await Promise.all(instanceMembers.map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>))));
 
-		that.ctor = await ConstructorReflection.fromSymbolAndSignatures(ctx, symbol, staticType.getConstructSignatures());
+		that.ctor = await ConstructorReflection.fromSymbolAndSignatures(ctx, symbol, staticType.getConstructSignatures(), that);
 
 		that._handleFlags(symbol.getDeclarations()?.[0]);
 		that._processJsDoc();
