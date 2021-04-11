@@ -17,7 +17,6 @@ import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
 
 export async function findSourceMappedId(ctx: AnalyzeContext, declaration: ts.Declaration): Promise<number | undefined> {
-	assert(declaration);
 	const declSf = declaration.getSourceFile();
 	if (declSf.fileName.endsWith('.d.ts')) {
 		const declFullText = declSf.getFullText();

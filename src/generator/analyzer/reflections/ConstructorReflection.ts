@@ -13,8 +13,11 @@ export class ConstructorReflection extends SymbolBasedReflection {
 	readonly isInheritable = true;
 	inheritedFrom?: Type;
 
-	static async fromSymbolAndSignatures(ctx: AnalyzeContext, symbol: ts.Symbol, signatures: readonly ts.Signature[], parent: ClassReflection) {
-		const that = new ConstructorReflection(ctx, symbol);
+	static async fromSignatures(ctx: AnalyzeContext, classSymbol: ts.Symbol, signatures: readonly ts.Signature[], parent: ClassReflection) {
+		const declaration = signatures[0].declaration as ts.ConstructSignatureDeclaration | undefined;
+		const symbol = declaration?.symbol;
+		const registerReverse = (declaration?.parent as ts.ClassDeclaration | undefined)?.name?.text === parent.name;
+		const that = new ConstructorReflection(ctx, symbol ?? classSymbol, registerReverse);
 
 		that.parent = parent;
 		that._signatures = await Promise.all(
@@ -25,20 +28,19 @@ export class ConstructorReflection extends SymbolBasedReflection {
 					ts.SyntaxKind.ConstructSignature,
 					sig,
 					that,
-					symbol.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
+					symbol?.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
 				))
 		);
 
-		handleConstructorInheritance(ctx, that);
+		handleConstructorInheritance(ctx, that, signatures);
 
 		that._handleFlags();
 
 		return that;
 	}
 
-	constructor(ctx: AnalyzeContext, symbol: ts.Symbol) {
-		// class and constructor are the same symbol, so don't register in reverse
-		super(ctx, symbol, false);
+	get name() {
+		return this.parent!.name;
 	}
 
 	serialize(): ConstructorReferenceNode {

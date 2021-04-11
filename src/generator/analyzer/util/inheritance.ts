@@ -1,4 +1,5 @@
 import assert from 'assert';
+import type ts from 'typescript';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import type { AccessorReflection } from '../reflections/AccessorReflection';
 import { ClassReflection } from '../reflections/ClassReflection';
@@ -26,7 +27,9 @@ export function handleInheritance(ctx: AnalyzeContext, reflection: PropertyRefle
 					const superReflection = ctx.project.getReflectionForSymbol(tsSuperClass.symbol) as ClassReflection | undefined;
 					const qualifiedName = `${tsSuperClass.symbol.name}.${reflection.name}`;
 					if (superReflection) {
-						const superProperty = superReflection.members.find(mem => mem.name === reflection.name && mem.flags.has('isStatic') === isStatic);
+						// might be uninitialized here
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+						const superProperty = superReflection.members?.find(mem => mem.name === reflection.name && mem.flags.has('isStatic') === isStatic);
 						if (superProperty) {
 							const packageForSuperProperty = ctx.project.getPackageNameForReflectionId(superProperty.id);
 
@@ -50,39 +53,45 @@ export function handleInheritance(ctx: AnalyzeContext, reflection: PropertyRefle
 	}
 }
 
-export function handleConstructorInheritance(ctx: AnalyzeContext, reflection: ConstructorReflection) {
+export function handleConstructorInheritance(ctx: AnalyzeContext, reflection: ConstructorReflection, signatures: readonly ts.Signature[]) {
 	const cls = reflection.parent as ClassReflection;
 	const extendedClass = cls.extends?.[0];
 	if (!extendedClass) {
 		return;
 	}
 
-	const tsSuperClass = ctx.checker.getTypeAtLocation(extendedClass.node);
-	// TODO traverse further up the chain
-	const tsSuperCtor = tsSuperClass.getProperties().find(prop => prop.name === 'constructor');
+	const ctorDecl = (signatures[0] as ts.Signature | undefined)?.getDeclaration();
+	const ctorSymbol = ctorDecl?.symbol;
 
-	const qualifiedName = `${(extendedClass.type as ReferenceType).name}.constructor`;
+	if (!ctorSymbol) {
+		return;
+	}
 
-	const superReflection = ctx.project.getReflectionForSymbol(tsSuperClass.symbol) as ClassReflection | undefined;
-	if (superReflection) {
-		const superCtor = superReflection.ctor;
-		if (superCtor) {
-			const packageForSuperProperty = ctx.project.getPackageNameForReflectionId(superCtor.id);
+	const qualifiedName = `${(ctorSymbol.declarations[0].parent as ts.ClassDeclaration).name!.getText()}.constructor`;
 
-			reflection.inheritedFrom = new ReferenceType(
-				qualifiedName,
-				undefined,
-				superCtor.id,
-				packageForSuperProperty
-			);
-
+	const ctorReflection = ctx.project.getReflectionForSymbol(ctorSymbol);
+	if (ctorReflection) {
+		if (ctorReflection.id === reflection.id) {
+			// not actually inherited
 			return;
 		}
+		const packageForSuperProperty = ctx.project.getPackageNameForReflectionId(ctorReflection.id);
+
+		const ref = new ReferenceType(
+			qualifiedName,
+			undefined,
+			ctorReflection.id,
+			packageForSuperProperty
+		);
+		reflection.inheritedFrom = ref;
+		if (!packageForSuperProperty) {
+			ctx.project.registerBrokenReference(ctorSymbol, ref);
+		}
+
+		return;
 	}
 	const ref = new ReferenceType(qualifiedName);
 
 	reflection.inheritedFrom = ref;
-	if (tsSuperCtor) {
-		ctx.project.registerBrokenReference(tsSuperCtor, ref);
-	}
+	ctx.project.registerBrokenReference(ctorSymbol, ref);
 }
