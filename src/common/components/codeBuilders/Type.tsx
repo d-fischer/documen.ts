@@ -99,7 +99,10 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				}
 			}
 			// if it doesn't have a signature, it's an anonymous object (as far as we know)
-			return <>object</>;
+			return <>
+				{isOptional ? '?' : ''}
+				object
+			</>;
 		}
 		case 'reference': {
 			if (def.id) {

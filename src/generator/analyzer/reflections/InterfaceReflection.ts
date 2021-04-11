@@ -4,13 +4,16 @@ import type { InterfaceReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import { createReflection } from '../createReflection';
 import { resolvePromiseArray } from '../util/promises';
+import { Heritage } from './Heritage';
 import type { Reflection } from './Reflection';
 import { SymbolBasedReflection } from './SymbolBasedReflection';
 import { TypeParameterReflection } from './TypeParameterReflection';
 
 export class InterfaceReflection extends SymbolBasedReflection {
-	private _members!: Reflection[];
-	private _typeParameters?: TypeParameterReflection[];
+	members!: Reflection[];
+	typeParameters?: TypeParameterReflection[];
+
+	extends?: Heritage[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
 		const that = new InterfaceReflection(ctx, symbol);
@@ -18,14 +21,27 @@ export class InterfaceReflection extends SymbolBasedReflection {
 		const type = ctx.checker.getDeclaredTypeOfSymbol(symbol);
 		assert(type.isClassOrInterface());
 
-		that._typeParameters = await resolvePromiseArray(type.typeParameters?.map(async (param) => {
+		const extendsTypes = await resolvePromiseArray(
+			symbol.getDeclarations()
+				?.filter((decl): decl is ts.InterfaceDeclaration => ts.isInterfaceDeclaration(decl))
+				.flatMap(decl => decl.heritageClauses
+					?.filter(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)
+					.flatMap(clause => clause.types.map(async extendedType => Heritage.fromTypeNode(ctx, extendedType))) ?? []
+				)
+		);
+
+		if (extendsTypes?.length) {
+			that.extends = extendsTypes;
+		}
+
+		that.typeParameters = await resolvePromiseArray(type.typeParameters?.map(async param => {
 			const declaration = param.symbol.declarations[0];
 			assert(ts.isTypeParameterDeclaration(declaration));
 			return TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 
 		const members = ctx.checker.getPropertiesOfType(type);
-		that._members = await Promise.all([
+		that.members = await Promise.all([
 			...members.map(async mem => createReflection(ctx, mem, that))
 		]);
 
@@ -39,8 +55,8 @@ export class InterfaceReflection extends SymbolBasedReflection {
 		return {
 			...this._baseSerialize(),
 			kind: 'interface',
-			members: this._members.map(mem => mem.serialize()),
-			typeParameters: this._typeParameters?.map(param => param.serialize())
+			members: this.members.map(mem => mem.serialize()),
+			typeParameters: this.typeParameters?.map(param => param.serialize())
 		};
 	}
 }

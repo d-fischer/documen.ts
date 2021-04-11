@@ -103,7 +103,7 @@ export const exprWithTypeArgsReflector: TypeReflector<ts.ExpressionWithTypeArgum
 		const symbol = ctx.checker.getSymbolAtLocation(node.expression);
 		assert(symbol);
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
-		const reflectionIdForSymbol = (await findSourceMappedId(ctx, origSymbol.valueDeclaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const reflectionIdForSymbol = (await findSourceMappedId(ctx, origSymbol.declarations[0])) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			origSymbol.name,

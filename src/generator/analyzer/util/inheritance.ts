@@ -4,28 +4,29 @@ import type { AnalyzeContext } from '../AnalyzeContext';
 import type { AccessorReflection } from '../reflections/AccessorReflection';
 import { ClassReflection } from '../reflections/ClassReflection';
 import type { ConstructorReflection } from '../reflections/ConstructorReflection';
+import { InterfaceReflection } from '../reflections/InterfaceReflection';
 import type { MethodReflection } from '../reflections/MethodReflection';
 import type { PropertyReflection } from '../reflections/PropertyReflection';
 import { ReferenceType } from '../types/ReferenceType';
 
 export function handleInheritance(ctx: AnalyzeContext, reflection: PropertyReflection | MethodReflection | AccessorReflection) {
-	const classReflection = reflection.parent;
+	const parentReflection = reflection.parent;
 	// TODO handle interfaces
-	if (classReflection instanceof ClassReflection) {
-		const classDeclaration = classReflection.declarations[0];
-		assert(classDeclaration);
+	if (parentReflection instanceof ClassReflection || parentReflection instanceof InterfaceReflection) {
+		const parentDeclaration = parentReflection.declarations[0];
+		assert(parentDeclaration);
 		const isStatic = reflection.flags.has('isStatic');
 
-		for (const superClass of classReflection.extends ?? []) {
-			const tsSuperClass = ctx.checker.getTypeAtLocation(isStatic ? superClass.node.expression : superClass.node);
+		for (const superType of parentReflection.extends ?? []) {
+			const tsSuperType = ctx.checker.getTypeAtLocation(isStatic ? superType.node.expression : superType.node);
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			const tsSuperProperty = tsSuperClass.getProperties().find(prop => (prop.escapedName ?? prop.name) === reflection.name);
+			const tsSuperProperty = tsSuperType.getProperties().find(prop => (prop.escapedName ?? prop.name) === reflection.name);
 			if (tsSuperProperty) {
-				const inherits = tsSuperProperty.getDeclarations()?.some(decl => decl.parent !== classDeclaration);
+				const inherits = tsSuperProperty.getDeclarations()?.some(decl => decl.parent !== parentDeclaration);
 
 				if (inherits) {
-					const superReflection = ctx.project.getReflectionForSymbol(tsSuperClass.symbol) as ClassReflection | undefined;
-					const qualifiedName = `${tsSuperClass.symbol.name}.${reflection.name}`;
+					const superReflection = ctx.project.getReflectionForSymbol(tsSuperType.symbol) as ClassReflection | InterfaceReflection | undefined;
+					const qualifiedName = `${tsSuperType.symbol.name}.${reflection.name}`;
 					if (superReflection) {
 						// might be uninitialized here
 						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

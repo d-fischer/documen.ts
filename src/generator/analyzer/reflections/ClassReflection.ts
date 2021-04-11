@@ -13,6 +13,7 @@ export class ClassReflection extends SymbolBasedReflection {
 	ctor?: ConstructorReflection;
 	members!: SymbolBasedReflection[];
 	typeParameters?: TypeParameterReflection[];
+
 	extends?: Heritage[];
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol) {
