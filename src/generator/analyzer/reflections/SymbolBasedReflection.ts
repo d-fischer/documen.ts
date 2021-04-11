@@ -18,7 +18,13 @@ export class SymbolBasedReflection extends Reflection {
 	}
 
 	get name() {
-		return this._symbol.name;
+		const origName = this._symbol.name;
+		const symbolMatch = /^__@(\w+)$/.exec(origName);
+		if (!symbolMatch) {
+			return origName;
+		}
+
+		return `[Symbol.${symbolMatch[1]}]`;
 	}
 
 	get symbol() {
