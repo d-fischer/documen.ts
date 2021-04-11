@@ -2,6 +2,7 @@
 
 import * as vfs from '@typescript/vfs';
 import { promises as fs } from 'fs';
+import ora from 'ora';
 import path from 'path';
 import type { OutputChunk } from 'rollup';
 import { rollup } from 'rollup';
@@ -92,11 +93,11 @@ export default class MonorepoGenerator extends Generator {
 				subPackage
 			};
 
-			process.stdout.write(`Building docs for package ${subPackage}...\n`);
-
-			await generator._generatePackage(data, paths, config);
-
-			process.stdout.write(`\rFinished building docs for package ${subPackage}\n`);
+			const throbber = ora({ text: `Building docs for package ${subPackage}...`, color: 'blue' }).start();
+			await generator._generatePackage(data, paths, config, (progress, total) => {
+				throbber.text = `Building docs for package ${subPackage} (${progress}/${total})...`;
+			});
+			throbber.succeed();
 		}
 	}
 

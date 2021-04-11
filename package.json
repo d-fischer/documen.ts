@@ -47,6 +47,7 @@
     "history": "^4.10.1",
     "html-webpack-plugin": "^4.5.1",
     "lz-string": "^1.4.4",
+    "ora": "^5.4.0",
     "path": "^0.12.7",
     "prettier": "^2.2.1",
     "prop-types": "^15.7.2",

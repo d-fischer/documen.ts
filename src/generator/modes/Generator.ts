@@ -6,6 +6,8 @@ import type Paths from '../../common/Paths';
 import type { SerializedProject } from '../../common/reference';
 import { Project } from '../analyzer/Project';
 
+export type GeneratorProgressCallback = (progress: number, total: number) => void
+
 export default abstract class Generator {
 	protected _config: Config;
 
@@ -26,7 +28,7 @@ export default abstract class Generator {
 	abstract generate(data: SerializedProject, paths: Paths): Promise<void>;
 
 	/** @protected */
-	abstract _generatePackage(data: SerializedProject, paths: Paths, overrideConfig?: Partial<Config>): Promise<void>;
+	abstract _generatePackage(data: SerializedProject, paths: Paths, overrideConfig?: Partial<Config>, progressCallback?: GeneratorProgressCallback): Promise<void>;
 
 	/** @protected */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function

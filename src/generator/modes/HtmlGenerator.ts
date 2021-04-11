@@ -15,6 +15,7 @@ import { checkVisibility } from '../../common/tools/NodeTools';
 import { getPackagePath } from '../../common/tools/StringTools';
 import WebpackBuildError from '../errors/WebpackBuildError';
 import WebpackError from '../errors/WebpackError';
+import type { GeneratorProgressCallback } from './Generator';
 import Generator from './Generator';
 
 type RenderEntry = [string, string, Promise<string>];
@@ -24,7 +25,7 @@ export default class HtmlGenerator extends Generator {
 		return this._generatePackage(data, paths);
 	}
 
-	async _generatePackage(data: SerializedProject, paths: Paths, overrideConfig: Partial<Config> = {}) {
+	async _generatePackage(data: SerializedProject, paths: Paths, overrideConfig: Partial<Config> = {}, progressCallback?: GeneratorProgressCallback) {
 		const config = {
 			...this._config,
 			...overrideConfig
@@ -58,26 +59,64 @@ export default class HtmlGenerator extends Generator {
 				? monoReadmePath
 				: path.resolve(config.configDir, config.indexFile)
 		) : undefined;
+
 		const indexPromise = pathToRead && fs.readFile(pathToRead, 'utf-8');
-		await Promise.all([
-			...(indexPromise ? [[`${pre}/`, config.indexTitle, indexPromise] as RenderEntry] : []),
-			...((config.configDir && config.categories) ? config.categories.flatMap(cat => cat.articles.filter((art): art is ConfigInternalArticle => 'file' in art).map(art => ([
-				`${pre}/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(config.configDir!, art.file), 'utf-8')
-			] as RenderEntry))) : []),
-			...filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `${pre}/reference/classes/${value.name}`),
-			...filterByMember(packageChildren, 'kind', 'interface').filter(isNodeVisible).map(value => `${pre}/reference/interfaces/${value.name}`),
-			...filterByMember(packageChildren, 'kind', 'enum').filter(isNodeVisible).map(value => `${pre}/reference/enums/${value.name}`)
-		].map(async (entry: RenderEntry | string) => {
-			if (Array.isArray(entry)) {
-				const [resourcePath, title, contentPromise] = entry;
-				return this._renderToFile(render, resourcePath, outDir, config, {
-					content: await contentPromise,
-					title
-				});
+
+		const articleEntries = (config.configDir && config.categories) ? config.categories.flatMap(cat => cat.articles.filter((art): art is ConfigInternalArticle => 'file' in art).map(art => ([
+			`${pre}/docs/${cat.name}/${art.name}`, art.title, fs.readFile(path.join(config.configDir!, art.file), 'utf-8')
+		] as RenderEntry))) : [];
+
+		const classPaths = filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `${pre}/reference/classes/${value.name}`);
+		const interfacePaths = filterByMember(packageChildren, 'kind', 'interface').filter(isNodeVisible).map(value => `${pre}/reference/interfaces/${value.name}`);
+		const enumPaths = filterByMember(packageChildren, 'kind', 'enum').filter(isNodeVisible).map(value => `${pre}/reference/enums/${value.name}`);
+
+		const totalCount = +!!indexPromise + articleEntries.length + classPaths.length + interfacePaths.length + enumPaths.length;
+		let progress = 0;
+
+		function reportProgress(increment = 1) {
+			if (increment) {
+				progress += increment;
 			}
 
-			return this._renderToFile(render, entry, outDir, config);
-		}));
+			progressCallback?.(progress, totalCount);
+		}
+
+		const renderFromEntry = async (entry: RenderEntry) => {
+			const [resourcePath, title, contentPromise] = entry;
+
+			await this._renderToFile(render, resourcePath, outDir, config, {
+				content: await contentPromise,
+				title
+			});
+
+			reportProgress();
+		};
+
+		const renderFromPath = async (resourcePath: string) => {
+			await this._renderToFile(render, resourcePath, outDir, config);
+
+			reportProgress();
+		};
+
+		reportProgress(0);
+
+		if (indexPromise) {
+			await renderFromEntry([`${pre}/`, config.indexTitle, indexPromise]);
+		}
+
+		for (const articleEntry of articleEntries) {
+			await renderFromEntry(articleEntry);
+		}
+
+		for (const classPath of classPaths) {
+			await renderFromPath(classPath);
+		}
+		for (const interfacePath of interfacePaths) {
+			await renderFromPath(interfacePath);
+		}
+		for (const enumPath of enumPaths) {
+			await renderFromPath(enumPath);
+		}
 	}
 
 	/** @protected */
