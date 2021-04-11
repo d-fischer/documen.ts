@@ -78,12 +78,13 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 	async fromType(ctx, type) {
 		const symbol = type.aliasSymbol ?? type.getSymbol();
 		assert(symbol);
+		const typeArgs = type.aliasSymbol ? type.aliasTypeArguments : type.typeArguments;
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
 		const reflectionIdForSymbol = ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			symbol.name,
-			await resolvePromiseArray(type.typeArguments?.map(async arg => createTypeFromTsType(ctx, arg))),
+			await resolvePromiseArray(typeArgs?.map(async arg => createTypeFromTsType(ctx, arg))),
 			reflectionIdForSymbol,
 			packageForSymbol
 		);

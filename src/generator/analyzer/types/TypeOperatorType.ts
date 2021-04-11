@@ -49,6 +49,9 @@ export const typeOperatorTypeReflector: TypeReflector<ts.TypeOperatorNode> = {
 		}
 
 		if (node.operator === ts.SyntaxKind.KeyOfKeyword) {
+			if (type.isUnion() && type.origin) {
+				return createTypeFromTsType(ctx, type.origin);
+			}
 			const targetType = (type as ts.Type & { type: ts.Type }).type;
 			return new TypeOperatorType('keyof', await createTypeFromTsType(ctx, targetType));
 		}

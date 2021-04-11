@@ -56,6 +56,9 @@ export const unionTypeReflector: TypeReflector<ts.UnionTypeNode, ts.UnionType> =
 		return new UnionType(await resolvePromiseArray(node.types.map(async subTypeNode => createTypeFromNode(ctx, subTypeNode))));
 	},
 	async fromType(ctx, type) {
+		if (type.origin) {
+			return createTypeFromTsType(ctx, type.origin);
+		}
 		return new UnionType(await resolvePromiseArray(type.types.map(async (subType) => createTypeFromTsType(ctx, subType))));
 	},
 };

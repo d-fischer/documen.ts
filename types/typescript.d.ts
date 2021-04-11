@@ -5,4 +5,9 @@ declare module 'typescript' {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-qualifier
 		symbol?: ts.Symbol;
 	}
+
+	interface UnionType {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-qualifier
+		origin?: ts.Type;
+	}
 }
