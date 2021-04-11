@@ -3,7 +3,8 @@ import classNames from 'classnames';
 import React from 'react';
 import { HashLink } from 'react-router-hash-link';
 import type { InterfaceReferenceNode } from '../reference';
-import { defaultNodeSort, getChildren } from '../tools/NodeTools';
+import { defaultNodeSort } from '../tools/NodeTools';
+import { getChildren } from '../tools/ReferenceTools';
 import Type from './codeBuilders/Type';
 
 interface InterfaceRepresentationProps {

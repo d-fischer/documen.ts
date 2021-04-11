@@ -101,5 +101,12 @@
   },
   "bin": {
     "documen.ts": "bin/docs.js"
+  },
+  "madge": {
+    "detectiveOptions": {
+      "ts": {
+        "skipTypeImports": true
+      }
+    }
   }
 }

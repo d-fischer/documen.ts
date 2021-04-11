@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import Card from '../../containers/Card';
+import { getAnchorName, typeIsAsync } from '../../tools/NodeTools';
 import FunctionSignature from '../FunctionSignature';
 import FunctionParamDesc from '../FunctionParamDesc';
 import type {
@@ -19,7 +20,6 @@ import Badge from '../Badge';
 import { makeStyles } from '@material-ui/styles';
 import Type from '../codeBuilders/Type';
 import MarkdownParser from '../../tools/MarkdownParser';
-import { getAnchorName, typeIsAsync } from '../../tools/NodeTools';
 
 interface MethodCardProps {
 	parent: ClassReferenceNode | InterfaceReferenceNode;

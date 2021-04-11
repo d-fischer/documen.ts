@@ -7,8 +7,8 @@ import PageContent from '../containers/PageContent';
 import type { EnumMemberReferenceNode, EnumReferenceNode } from '../reference';
 import { getPageType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
-import { defaultNodeSort, filterChildrenByMember } from '../tools/NodeTools';
-import { findSymbolByMember } from '../tools/ReferenceTools';
+import { defaultNodeSort } from '../tools/NodeTools';
+import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
 
 interface EnumPageRouteParams {

@@ -7,7 +7,7 @@ import { IntrinsicType, intrinsicTypeReflector } from './types/IntrinsicType';
 import { literalTypeReflector } from './types/LiteralType';
 import { objectLiteralTypeReflector } from './types/ObjectLiteralType';
 import { optionalTypeReflector } from './types/OptionalType';
-import { referenceTypeReflector } from './types/ReferenceType';
+import { exprWithTypeArgsReflector, referenceTypeReflector } from './types/ReferenceType';
 import { tupleTypeReflector } from './types/TupleType';
 import type { Type } from './types/Type';
 import { typeOperatorTypeReflector } from './types/TypeOperatorType';
@@ -33,6 +33,7 @@ function loadTypeReflectors() {
 
 	for (const reflector of [
 		arrayTypeReflector,
+		exprWithTypeArgsReflector,
 		functionTypeReflector,
 		intrinsicTypeReflector,
 		literalTypeReflector,

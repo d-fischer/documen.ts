@@ -1,12 +1,12 @@
 import React from 'react';
 import type { ReferenceNode, CallSignatureReferenceNode, ConstructSignatureReferenceNode } from '../../reference';
+import { getAnchorName } from '../../tools/NodeTools';
 import CodeLink from '../CodeLink';
 import { HashLink } from 'react-router-hash-link';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/styles';
-import { getAnchorName } from '../../tools/NodeTools';
 
 interface CardToolbarProps {
 	name?: string;

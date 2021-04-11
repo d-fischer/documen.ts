@@ -5,7 +5,7 @@ import type { ParameterReferenceNode, PropertyReferenceNode, CallSignatureRefere
 import { getTag, hasTag } from '../../tools/CodeTools';
 import MarkdownParser from '../../tools/MarkdownParser';
 import { getAnchorName } from '../../tools/NodeTools';
-import { findSymbolByMember } from '../../tools/ReferenceTools';
+import { findSymbolByMember} from '../../tools/ReferenceTools';
 import DeprecationNotice from '../DeprecationNotice';
 
 import FunctionParamDesc from '../FunctionParamDesc';

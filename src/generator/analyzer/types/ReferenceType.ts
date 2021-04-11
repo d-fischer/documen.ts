@@ -1,6 +1,7 @@
 import assert from 'assert';
-import ts from 'typescript';
+import ts, { SyntaxKind } from 'typescript';
 import type { ReferenceReferenceType } from '../../../common/reference';
+import { findSourceMappedId } from '../createReflection';
 import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
 import { resolvePromiseArray } from '../util/promises';
@@ -83,7 +84,31 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const result = new ReferenceType(
 			symbol.name,
 			await resolvePromiseArray(type.typeArguments?.map(async arg => createTypeFromTsType(ctx, arg))),
-			reflectionIdForSymbol
+			reflectionIdForSymbol,
+			packageForSymbol
+		);
+
+		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {
+			ctx.project.registerBrokenReference(origSymbol, result);
+		}
+
+		return result;
+	}
+};
+
+export const exprWithTypeArgsReflector: TypeReflector<ts.ExpressionWithTypeArguments> = {
+	kinds: [SyntaxKind.ExpressionWithTypeArguments],
+	async fromNode(ctx, node) {
+		const symbol = ctx.checker.getSymbolAtLocation(node.expression);
+		assert(symbol);
+		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
+		const reflectionIdForSymbol = (await findSourceMappedId(ctx, origSymbol.valueDeclaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
+		const result = new ReferenceType(
+			origSymbol.name,
+			await resolvePromiseArray(node.typeArguments?.map(async (type) => createTypeFromNode(ctx, type))),
+			reflectionIdForSymbol,
+			packageForSymbol
 		);
 
 		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {

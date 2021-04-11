@@ -16,8 +16,7 @@ import { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
 import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
 
-export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: Reflection): Promise<Reflection> {
-	const declaration = symbol.getDeclarations()?.[0];
+export async function findSourceMappedId(ctx: AnalyzeContext, declaration: ts.Declaration): Promise<number | undefined> {
 	assert(declaration);
 	const declSf = declaration.getSourceFile();
 	if (declSf.fileName.endsWith('.d.ts')) {
@@ -36,12 +35,21 @@ export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.S
 					column: lac.character
 				});
 				const fullPath = path.resolve(path.dirname(declSf.fileName), path.dirname(url), origPos.source!);
-				const mappedId = ctx.project.findIdAtPosition(fullPath, origPos.line! - 1, origPos.column!);
-				if (mappedId !== undefined) {
-					return new ReferenceReflection(ctx, symbol, mappedId);
-				}
+				return ctx.project.findIdAtPosition(fullPath, origPos.line! - 1, origPos.column!);
 			}
 		}
+	}
+
+	return undefined;
+}
+
+export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: Reflection): Promise<Reflection> {
+	const declaration = symbol.getDeclarations()?.[0];
+	assert(declaration);
+
+	const sourceMappedId = await findSourceMappedId(ctx, declaration);
+	if (sourceMappedId !== undefined) {
+		return new ReferenceReflection(ctx, symbol, sourceMappedId);
 	}
 
 	if (ts.isInterfaceDeclaration(declaration)) {

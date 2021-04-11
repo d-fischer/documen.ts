@@ -13,8 +13,8 @@ import type {
 } from '../reference';
 import { isOptionalType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
-import { defaultNodeSort, getChildren } from '../tools/NodeTools';
-import { findSymbolByMember } from '../tools/ReferenceTools';
+import { defaultNodeSort } from '../tools/NodeTools';
+import { findSymbolByMember, getChildren } from '../tools/ReferenceTools';
 import Type from './codeBuilders/Type';
 
 interface FunctionParamDescEntryProps {

@@ -10,8 +10,8 @@ import type { AccessorReferenceNode, CallSignatureReferenceNode, ClassReferenceN
 import { partition } from '../tools/ArrayTools';
 import { getPageType, hasTag } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
-import { checkVisibility, defaultNodeSort, filterChildrenByMember } from '../tools/NodeTools';
-import { findSymbolByMember } from '../tools/ReferenceTools';
+import { checkVisibility, defaultNodeSort } from '../tools/NodeTools';
+import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
 
 interface ClassPageRouteParams {
