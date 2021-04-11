@@ -63,9 +63,13 @@ export class ClassReflection extends SymbolBasedReflection {
 		return that;
 	}
 
+	get locationNode() {
+		return (this.declarations[0] as ts.ClassDeclaration | undefined)?.name;
+	}
+
 	serialize(): ClassReferenceNode {
 		return {
-			...this._baseSerialize((this.declarations[0] as ts.ClassDeclaration | undefined)?.name),
+			...this._baseSerialize(),
 			kind: 'class',
 			ctor: this.ctor?.serialize(),
 			members: this.members.map(m => m.serialize()),

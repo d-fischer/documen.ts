@@ -1,16 +1,19 @@
 import * as ts from 'typescript';
-import type { ReferenceNode } from '../../../common/reference';
+import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import { DocComment } from '../DocComment';
 import { SignatureReflection } from './SignatureReflection';
 
-export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest';
+export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest' | 'isExternal';
 
 export abstract class Reflection {
 	readonly id: number;
 
 	comment?: DocComment;
 	parent?: Reflection;
+
+	private _locationCalculated = false;
+	location?: ReferenceLocation;
 
 	readonly isInheritable: boolean = false;
 
@@ -23,6 +26,10 @@ export abstract class Reflection {
 	/** @internal */
 	abstract get declarations(): ts.Declaration[];
 
+	get locationNode(): ts.Node | undefined {
+		return undefined;
+	}
+
 	serialize(): ReferenceNode {
 		return {
 			...this._baseSerialize(),
@@ -32,10 +39,18 @@ export abstract class Reflection {
 
 	abstract get name(): string;
 
-	protected _baseSerialize(locationNode?: ts.Node): Omit<ReferenceNode, 'kind'> & { kind: '__unhandled' } {
-		locationNode ??= this.declarations[0] as ts.Declaration | undefined;
-		const location = this._ctx.project.getNodeLocation(locationNode);
+	protected _calculateLocation() {
+		if (!this._locationCalculated) {
+			const locationNode = this.locationNode ?? this.declarations[0] as ts.Declaration | undefined;
+			this.location = this._ctx.project.getNodeLocation(locationNode);
+			this._locationCalculated = true;
+		}
 
+		return this.location;
+	}
+
+	protected _baseSerialize(): Omit<ReferenceNode, 'kind'> & { kind: '__unhandled' } {
+		const location = this._calculateLocation();
 		return {
 			id: this.id,
 			kind: '__unhandled',
@@ -79,6 +94,15 @@ export abstract class Reflection {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-member-access
 		if (!!(declaration as any).questionToken) {
 			this.flags.add('isOptional');
+		}
+
+		if (this.parent?.flags.has('isExternal')) {
+			this.flags.add('isExternal')
+		} else {
+			const location = this._calculateLocation();
+			if (location && /(?:^|\/)node_modules\//.test(location.fileName)) {
+				this.flags.add('isExternal');
+			}
 		}
 	}
 

@@ -27,9 +27,13 @@ export class AccessorReflection extends SymbolBasedReflection {
 		return that;
 	}
 
+	get locationNode() {
+		return (this.declarations[0] as ts.AccessorDeclaration | undefined)?.name;
+	}
+
 	serialize(): AccessorReferenceNode {
 		return {
-			...this._baseSerialize((this.declarations[0] as ts.AccessorDeclaration | undefined)?.name),
+			...this._baseSerialize(),
 			kind: 'accessor',
 			getSignature: this._getSignature?.serialize() as GetSignatureReferenceNode,
 			setSignature: this._setSignature?.serialize() as SetSignatureReferenceNode,

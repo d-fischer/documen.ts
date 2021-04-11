@@ -48,9 +48,13 @@ export class MethodReflection extends SymbolBasedReflection {
 		return that;
 	}
 
+	get locationNode() {
+		return (this._symbol.getDeclarations()?.[0] as ts.MethodDeclaration | undefined)?.name;
+	}
+
 	serialize(): MethodReferenceNode {
 		return {
-			...this._baseSerialize((this._symbol.getDeclarations()?.[0] as ts.MethodDeclaration | undefined)?.name),
+			...this._baseSerialize(),
 			kind: 'method',
 			signatures: this.signatures.map(sig => sig.serialize() as CallSignatureReferenceNode),
 			inheritedFrom: this.inheritedFrom?.serialize()

@@ -10,6 +10,11 @@ export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
 		return false;
 	}
 
+	// things with no parent are root exports and should be hidden if they're re-exports from external packages
+	if (!parent && node.flags?.isExternal) {
+		return false;
+	}
+
 	// noinspection RedundantIfStatementJS - to make it clearer, we use only if statements here
 	if (node.inheritedFrom && !(parent && hasTag(parent, 'inheritdoc'))) {
 		return false;

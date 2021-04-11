@@ -43,9 +43,13 @@ export class PropertyReflection extends SymbolBasedReflection {
 		return that;
 	}
 
+	get locationNode() {
+		return (this.declarations[0] as ts.PropertyDeclaration | undefined)?.name;
+	}
+
 	serialize(): PropertyReferenceNode {
 		return {
-			...this._baseSerialize((this.declarations[0] as ts.PropertyDeclaration | undefined)?.name),
+			...this._baseSerialize(),
 			kind: 'property',
 			type: this._type.serialize(),
 			inheritedFrom: this.inheritedFrom?.serialize()

@@ -43,10 +43,15 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		return this.parent!.name;
 	}
 
-	serialize(): ConstructorReferenceNode {
+	get locationNode() {
 		const lastSignature = this._signatures.length ? this._signatures[this._signatures.length - 1] : undefined;
+		const declarations = lastSignature?.declarations;
+		return declarations?.[0];
+	}
+
+	serialize(): ConstructorReferenceNode {
 		return {
-			...this._baseSerialize((lastSignature?.declarations as ts.Declaration | undefined)?.[0]),
+			...this._baseSerialize(),
 			kind: 'constructor',
 			signatures: this._signatures.map(sig => sig.serialize() as CallSignatureReferenceNode),
 			inheritedFrom: this.inheritedFrom?.serialize()

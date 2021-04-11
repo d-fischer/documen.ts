@@ -37,7 +37,7 @@ const ClassPage: React.FC = () => {
 		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
 	}
 
-	const constructor: ConstructorReferenceNode | undefined = symbol.ctor && checkVisibility(symbol.ctor) ? symbol.ctor : undefined;
+	const constructor: ConstructorReferenceNode | undefined = symbol.ctor && checkVisibility(symbol.ctor, symbol) ? symbol.ctor : undefined;
 	const constructorSigs: CallSignatureReferenceNode[] = constructor?.signatures ?? [];
 
 	const methods: MethodReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'method');

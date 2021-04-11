@@ -109,14 +109,19 @@ export class SignatureReflection extends Reflection {
 		}
 	}
 
+	get locationNode() {
+		const decl = this._signature?.getDeclaration();
+
+		return decl?.name;
+	}
+
 	serialize():
 		| CallSignatureReferenceNode
 		| GetSignatureReferenceNode
 		| SetSignatureReferenceNode
 		| ConstructSignatureReferenceNode {
-		const decl = this._signature?.getDeclaration();
 		return {
-			...this._baseSerialize(decl?.name),
+			...this._baseSerialize(),
 			kind: this.serializedKind,
 			parameters: this._params.map(param => param.serialize()),
 			type: this._returnType.serialize(),

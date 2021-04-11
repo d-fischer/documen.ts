@@ -81,7 +81,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 					case 'callSignature': {
 						return (
 							<>
-								(
+								{isOptional ? '?' : ''}(
 								{signature.parameters.length ? signature.parameters.map((param, i) => (
 									<React.Fragment key={param.name}>
 										{i === 0 ? null : ', '}{param.name}: <Type def={param.type}/>
