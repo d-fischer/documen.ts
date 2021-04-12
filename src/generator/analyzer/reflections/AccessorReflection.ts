@@ -12,6 +12,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 
 	readonly isInheritable = true;
 	inheritedFrom?: ReferenceType;
+	overwrites?: ReferenceType;
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: SymbolBasedReflection) {
 		const that = new AccessorReflection(ctx, symbol);
@@ -37,7 +38,8 @@ export class AccessorReflection extends SymbolBasedReflection {
 			kind: 'accessor',
 			getSignature: this._getSignature?.serialize() as GetSignatureReferenceNode,
 			setSignature: this._setSignature?.serialize() as SetSignatureReferenceNode,
-			inheritedFrom: this.inheritedFrom?.serialize()
+			inheritedFrom: this.inheritedFrom?.serialize(),
+			overwrites: this.overwrites?.serialize()
 		};
 	}
 

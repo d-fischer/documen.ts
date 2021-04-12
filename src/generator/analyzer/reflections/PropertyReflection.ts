@@ -11,8 +11,9 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class PropertyReflection extends SymbolBasedReflection {
 	private _type!: Type;
 
-	inheritedFrom?: ReferenceType;
 	readonly isInheritable = true;
+	inheritedFrom?: ReferenceType;
+	overwrites?: ReferenceType;
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, parent: SymbolBasedReflection) {
 		const declarations = symbol.getDeclarations();
@@ -52,7 +53,8 @@ export class PropertyReflection extends SymbolBasedReflection {
 			...this._baseSerialize(),
 			kind: 'property',
 			type: this._type.serialize(),
-			inheritedFrom: this.inheritedFrom?.serialize()
+			inheritedFrom: this.inheritedFrom?.serialize(),
+			overwrites: this.overwrites?.serialize()
 		};
 	}
 }

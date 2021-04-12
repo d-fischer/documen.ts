@@ -11,8 +11,9 @@ import { SymbolBasedReflection } from './SymbolBasedReflection';
 export class MethodReflection extends SymbolBasedReflection {
 	signatures!: SignatureReflection[];
 
-	inheritedFrom?: ReferenceType;
 	readonly isInheritable = true;
+	inheritedFrom?: ReferenceType;
+	overwrites?: ReferenceType;
 
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, parent: SymbolBasedReflection) {
 		const that = new MethodReflection(ctx, symbol);
@@ -57,7 +58,8 @@ export class MethodReflection extends SymbolBasedReflection {
 			...this._baseSerialize(),
 			kind: 'method',
 			signatures: this.signatures.map(sig => sig.serialize() as CallSignatureReferenceNode),
-			inheritedFrom: this.inheritedFrom?.serialize()
+			inheritedFrom: this.inheritedFrom?.serialize(),
+			overwrites: this.overwrites?.serialize()
 		};
 	}
 }

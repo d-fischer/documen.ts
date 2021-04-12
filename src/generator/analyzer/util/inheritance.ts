@@ -19,36 +19,43 @@ export function handleInheritance(ctx: AnalyzeContext, reflection: PropertyRefle
 
 		for (const superType of parentReflection.extends ?? []) {
 			const tsSuperType = ctx.checker.getTypeAtLocation(isStatic ? superType.node.expression : superType.node);
+			const tsType = isStatic
+				? ctx.checker.getTypeOfSymbolAtLocation(parentReflection.symbol, parentDeclaration)
+				: ctx.checker.getDeclaredTypeOfSymbol(parentReflection.symbol);
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			const tsProperty = tsType.getProperties().find(prop => (prop.escapedName ?? prop.name) === reflection.name);
+			if (!tsProperty) {
+				continue;
+			}
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const tsSuperProperty = tsSuperType.getProperties().find(prop => (prop.escapedName ?? prop.name) === reflection.name);
 			if (tsSuperProperty) {
-				const inherits = tsSuperProperty.getDeclarations()?.some(decl => decl.parent !== parentDeclaration);
+				const inherits = tsProperty.getDeclarations()?.some(decl => decl.parent !== parentDeclaration);
+				const key = inherits ? 'inheritedFrom' : 'overwrites';
 
-				if (inherits) {
-					const superReflection = ctx.project.getReflectionForSymbol(tsSuperType.symbol) as ClassReflection | InterfaceReflection | undefined;
-					const qualifiedName = `${tsSuperType.symbol.name}.${reflection.name}`;
-					if (superReflection) {
-						// might be uninitialized here
-						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-						const superProperty = superReflection.members?.find(mem => mem.name === reflection.name && mem.flags.has('isStatic') === isStatic);
-						if (superProperty) {
-							const packageForSuperProperty = ctx.project.getPackageNameForReflectionId(superProperty.id);
+				const superReflection = ctx.project.getReflectionForSymbol(tsSuperType.symbol) as ClassReflection | InterfaceReflection | undefined;
+				const qualifiedName = `${tsSuperType.symbol.name}.${reflection.name}`;
+				if (superReflection) {
+					// might be uninitialized here
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+					const superProperty = superReflection.members?.find(mem => mem.name === reflection.name && mem.flags.has('isStatic') === isStatic);
+					if (superProperty) {
+						const packageForSuperProperty = ctx.project.getPackageNameForReflectionId(superProperty.id);
 
-							reflection.inheritedFrom = new ReferenceType(
-								qualifiedName,
-								undefined,
-								superProperty.id,
-								packageForSuperProperty
-							);
-							break;
-						}
+						reflection[key] = new ReferenceType(
+							qualifiedName,
+							undefined,
+							superProperty.id,
+							packageForSuperProperty
+						);
+						break;
 					}
-
-					const ref = new ReferenceType(qualifiedName);
-					ctx.project.registerBrokenReference(tsSuperProperty, ref);
-					reflection.inheritedFrom = ref;
-					break;
 				}
+
+				const ref = new ReferenceType(qualifiedName);
+				ctx.project.registerBrokenReference(tsSuperProperty, ref);
+				reflection[key] = ref;
+				break;
 			}
 		}
 	}

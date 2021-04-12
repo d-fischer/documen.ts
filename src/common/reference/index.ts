@@ -102,6 +102,7 @@ export interface AbstractReferenceNode {
 	location?: ReferenceLocation;
 	flags?: ReferenceFlags;
 	inheritedFrom?: ReferenceType;
+	overwrites?: ReferenceType;
 }
 
 export interface ClassReferenceNode extends AbstractReferenceNode {
