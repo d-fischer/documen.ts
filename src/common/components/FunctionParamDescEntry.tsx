@@ -11,7 +11,7 @@ import type {
 	PropertyReferenceNode,
 	VariableReferenceNode
 } from '../reference';
-import { isOptionalType } from '../tools/CodeTools';
+import { hasTag, isOptionalType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/MarkdownParser';
 import { defaultNodeSort } from '../tools/NodeTools';
 import { findSymbolByMember, getChildren } from '../tools/ReferenceTools';
@@ -80,7 +80,7 @@ const FunctionParamDescEntry: React.FC<FunctionParamDescEntryProps> = ({ param, 
 		const refDesc = findSymbolByMember('id', param.type.id);
 		if (refDesc) {
 			const { symbol: ref } = refDesc;
-			if (ref.kind === 'interface') {
+			if (ref.kind === 'interface' && !hasTag(ref, 'neverExpand')) {
 				result.push(...getChildren(ref).filter((c): c is PropertyReferenceNode => c.kind === 'property').sort(defaultNodeSort).map(subParam => (
 					<FunctionParamDescEntry
 						key={`${paramName}.${subParam.name}`}
