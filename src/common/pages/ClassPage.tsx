@@ -16,13 +16,13 @@ import { getPackagePath } from '../tools/StringTools';
 
 interface ClassPageRouteParams {
 	name: string;
-	pkg?: string;
+	packageName?: string;
 }
 
 const ClassPage: React.FC = () => {
-	const { name, pkg } = useParams<ClassPageRouteParams>();
+	const { name, packageName } = useParams<ClassPageRouteParams>();
 
-	const symbolDef = findSymbolByMember('name', name, pkg);
+	const symbolDef = findSymbolByMember('name', name, packageName);
 
 	if (!symbolDef) {
 		// TODO
@@ -30,7 +30,6 @@ const ClassPage: React.FC = () => {
 	}
 
 	const symbol = symbolDef.symbol as ClassReferenceNode;
-	const packageName = symbolDef.packageName;
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'classes') {

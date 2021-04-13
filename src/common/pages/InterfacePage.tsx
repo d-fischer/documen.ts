@@ -19,14 +19,14 @@ const useStyles = makeStyles({
 
 interface InterfacePageRouteParams {
 	name: string;
-	pkg?: string;
+	packageName?: string;
 }
 
 const InterfacePage: React.FC = () => {
 	const classes = useStyles();
-	const { name, pkg } = useParams<InterfacePageRouteParams>();
+	const { name, packageName } = useParams<InterfacePageRouteParams>();
 
-	const symbolDef = findSymbolByMember('name', name, pkg);
+	const symbolDef = findSymbolByMember('name', name, packageName);
 
 	if (!symbolDef) {
 		// TODO
@@ -34,7 +34,6 @@ const InterfacePage: React.FC = () => {
 	}
 
 	const symbol = symbolDef.symbol as InterfaceReferenceNode;
-	const packageName = symbolDef.packageName;
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'interfaces') {

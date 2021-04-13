@@ -13,13 +13,13 @@ import { getPackagePath } from '../tools/StringTools';
 
 interface EnumPageRouteParams {
 	name: string;
-	pkg?: string;
+	packageName?: string;
 }
 
 const EnumPage: React.FC = () => {
-	const { name, pkg } = useParams<EnumPageRouteParams>();
+	const { name, packageName } = useParams<EnumPageRouteParams>();
 
-	const symbolDef = findSymbolByMember('name', name, pkg);
+	const symbolDef = findSymbolByMember('name', name, packageName);
 
 	if (!symbolDef) {
 		// TODO
@@ -27,7 +27,6 @@ const EnumPage: React.FC = () => {
 	}
 
 	const symbol = symbolDef.symbol as EnumReferenceNode;
-	const packageName = symbolDef.packageName;
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'enums') {
