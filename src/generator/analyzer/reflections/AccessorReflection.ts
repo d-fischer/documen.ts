@@ -25,6 +25,8 @@ export class AccessorReflection extends SymbolBasedReflection {
 
 		handleInheritance(ctx, that);
 
+		that._handleFlags();
+
 		return that;
 	}
 
