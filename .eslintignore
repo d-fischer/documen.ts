@@ -1,6 +1,6 @@
 node_modules
 bin
 lib
-src/Server
+src/server
 config
 .eslintrc.js

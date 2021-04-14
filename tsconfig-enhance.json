@@ -2,8 +2,8 @@
 	"extends": "./tsconfig.json",
 	"include": [
 		"types",
-		"src/Common",
-		"src/ProgressiveEnhancement"
+		"src/common",
+		"src/progressiveEnhancement"
 	],
 	"compilerOptions": {
 		"module": "esnext"

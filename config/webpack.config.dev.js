@@ -10,31 +10,57 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const fs = require('fs');
-const MonorepoGenerator = require('../lib/Generator/Modes/MonorepoGenerator').default;
 
 const publicPath = '/';
 const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
 
 const monoRefJson = fs.readFileSync(path.join(process.cwd(), 'docs-mono.json'), 'utf-8');
-const monoRefObj = JSON.parse(monoRefJson);
-const generatorConfig = {
-	repoUser: 'd-fischer',
-	repoName: 'twitch',
-	repoBranch: 'master',
-	monorepoRoot: 'packages',
-	mainPackage: 'twitch',
-	mainBranchName: 'master',
-	versionBranchPrefix: 'support/',
-	versionFolder: 'versions',
-	__devManifest: {
-		versions: ['4.2'],
-		rootUrl: ''
-	}
-};
-const gen = new MonorepoGenerator(generatorConfig);
+const monoRef = JSON.parse(monoRefJson);
+let generatorConfig;
+let mockFs;
+try {
+	const generatorConfigJson = fs.readFileSync(path.join(__dirname, '../testdocs/config.json'), 'utf-8');
+	generatorConfig = {
+		...JSON.parse(generatorConfigJson),
+		versionBranchPrefix: undefined
+	};
+	function createMockFs(dirPath) {
+		function worker(dirPath, prefix) {
+			const fileNames = fs.readdirSync(dirPath);
+			return fileNames.flatMap(fileName => {
+				const prefixedPath = prefix ? path.join(prefix, fileName) : fileName;
+				const fullPath = path.join(dirPath, fileName);
+				const stat = fs.lstatSync(fullPath);
+				if (stat.isDirectory()) {
+					return worker(fullPath, prefixedPath);
+				}
 
-const monoRef = gen._transformTopReferenceNode(monoRefObj);
+				return [[prefixedPath, fs.readFileSync(fullPath, 'utf-8')]];
+			});
+		}
+
+		return new Map(worker(dirPath));
+	}
+	mockFs = createMockFs(path.resolve(__dirname, '../testdocs'));
+} catch (e) {
+	console.error(e);
+	generatorConfig = {
+		repoUser: 'd-fischer',
+		repoName: 'twitch',
+		repoBranch: 'master',
+		monorepoRoot: 'packages',
+		mainPackage: 'twitch',
+		mainBranchName: 'master',
+		versionBranchPrefix: 'support/',
+		versionFolder: 'versions',
+
+		__devManifest: {
+			versions: ['4.5'],
+			rootUrl: ''
+		}
+	};
+}
 
 module.exports = {
 	mode: 'development',
@@ -74,6 +100,12 @@ module.exports = {
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
+		fallback: {
+			dgram: false,
+			fs: false,
+			net: false,
+			tls: false
+		}
 	},
 	module: {
 		strictExportPresence: true,
@@ -108,7 +140,8 @@ module.exports = {
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),
 			__DOCTS_CONFIG: JSON.stringify(generatorConfig),
-			__DOCTS_PATHS: JSON.stringify({ sourceBase: path.resolve('..'), projectBase: path.resolve('../twitch') }),
+			__DOCTS_MOCK_FS: mockFs ? JSON.stringify([...mockFs]) : 'null',
+			__DOCTS_PATHS: JSON.stringify({ projectBase: path.resolve('../twitch') }),
 			__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic')
 		}),
 		new CaseSensitivePathsPlugin(),
@@ -117,10 +150,4 @@ module.exports = {
 	performance: {
 		hints: false,
 	},
-	node: {
-		dgram: 'empty',
-		fs: 'empty',
-		net: 'empty',
-		tls: 'empty',
-	}
 };

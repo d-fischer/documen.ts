@@ -10,3 +10,4 @@ docs*.json
 yarn.lock
 publishNewVersion.sh
 .editorconfig
+testdocs

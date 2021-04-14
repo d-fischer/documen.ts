@@ -1,0 +1,7 @@
+/lib
+/LICENSE
+*.sh
+*.md
+package.json
+/docs*.json
+testdocs

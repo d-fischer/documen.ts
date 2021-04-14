@@ -20,6 +20,13 @@ const baseConfig = {
 			process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
 		),
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
+		fallback: {
+			dgram: false,
+			fs: false,
+			net: false,
+			tls: false,
+			perf_hooks: false,
+		}
 	},
 	module: {
 		strictExportPresence: true,
@@ -65,20 +72,8 @@ module.exports = (outDir, { dev }) => [
 				path
 					.relative(paths.appSrc, info.absoluteResourcePath)
 					.replace(/\\/g, '/'),
-			library: 'DocumenTSHTMLGenerator',
+			library: 'DocumenTsHtmlGenerator',
 			libraryTarget: 'umd'
-		},
-		module: {
-			strictExportPresence: true,
-			rules: [
-				{
-					test: /\.tsx?$/,
-					loader: 'ts-loader',
-					options: {
-						configFile: 'tsconfig-enhance.json'
-					}
-				}
-			],
 		},
 		plugins: [
 			new webpack.DefinePlugin({
@@ -100,6 +95,19 @@ module.exports = (outDir, { dev }) => [
 			pathinfo: true,
 			filename: 'pe.js',
 			publicPath,
+		},
+		module: {
+			strictExportPresence: true,
+			rules: [
+				{
+					test: /\.tsx?$/,
+					loader: 'ts-loader',
+					options: {
+						transpileOnly: true,
+						configFile: 'tsconfig-enhance.json'
+					},
+				}
+			],
 		},
 		plugins: [
 			new webpack.DefinePlugin({
