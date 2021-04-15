@@ -21,7 +21,7 @@ const insertIntoSkeleton = (html: string, css: string, baseUrl: string, shouldEn
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Twitch.js documentation</title>
     <style>
-    	@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+    	@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
 
 		html {
 			height: 100%;
@@ -55,6 +55,7 @@ ${shouldEnhance ? `<script src="${path.posix.join(baseUrl, 'pe.js')}"></script>`
 </html>`;
 
 const render = (url: string, config: Config, article?: ArticleContent) => {
+	// eslint-disable-next-line @typescript-eslint/init-declarations
 	let elem: React.ReactElement;
 	const baseUrl = path.posix.join('/', config.baseUrl || '');
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
