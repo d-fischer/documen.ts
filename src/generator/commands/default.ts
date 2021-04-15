@@ -20,7 +20,10 @@ import SpaGenerator from '../modes/SpaGenerator';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class CLICommandOptions extends Options {
 	@option({ description: 'development mode; disable some optimizations in favor of speed' })
-	dev!: boolean;
+	dev?: boolean;
+
+	@option({ description: 'use prettier on all HTML files; defaults to value of dev flag' })
+	prettier?: boolean;
 
 	@option({ description: 'base directory' })
 	baseDir!: string;
@@ -169,8 +172,8 @@ export default class CLICommand extends Command {
 		}
 
 		const generatorConfig: Config = {
-			dev: options.dev,
-			prettier: getConfigValue(importedConfig, 'prettier') ?? options.dev,
+			dev: options.dev ?? false,
+			prettier: getConfigValue(importedConfig, 'prettier') ?? options.prettier ?? options.dev ?? false,
 			configDir,
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
@@ -179,6 +182,7 @@ export default class CLICommand extends Command {
 			outputDir,
 			baseUrl,
 			baseDir,
+			packageScope: getConfigValue(importedConfig, 'packageScope')?.replace(/^@/, '') ?? undefined,
 			monorepoRoot,
 			packageDirNames,
 			mainPackage: getConfigValue(importedConfig, 'mainPackage') ?? undefined,

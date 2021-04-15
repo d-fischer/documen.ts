@@ -2,6 +2,7 @@ import assert from 'assert';
 import path from 'path';
 import type { PackageJson } from 'type-fest';
 import * as ts from 'typescript';
+import type { Config } from '../../common/config/Config';
 import type { ReferenceLocation, SerializedPackage, SerializedProject } from '../../common/reference';
 import { parseConfig } from '../../common/tools/ConfigTools';
 import { AnalyzeContext } from './AnalyzeContext';
@@ -23,23 +24,28 @@ export class Project {
 	private readonly _reflectionIdsBySymbol = new Map<ts.Symbol, number>();
 	private readonly _brokenReferences = new Map<ts.Symbol, ReferenceType[]>();
 
-	constructor(public readonly baseDir: string, public readonly monorepoRoot?: string) {
+	constructor(private readonly _config: Config) {
 	}
-
 	async analyzeSinglePackage(packageJson: PackageJson) {
-		const parsedConfig = parseConfig(path.join(this.baseDir, 'tsconfig.json'));
+		const parsedConfig = parseConfig(path.join(this._config.baseDir, 'tsconfig.json'));
 
-		await this._analyzePackage(this.baseDir, packageJson, parsedConfig);
+		const scopeLength = this._config.packageScope ? this._config.packageScope.length + 2 : 0;
+		const packageName = packageJson.name!.slice(scopeLength);
+
+		await this._analyzePackage(packageName, this._config.baseDir, packageJson, parsedConfig);
 	}
 
 	async analyzeMonorepoPackage(packageDirName: string, packageJson: PackageJson) {
-		assert(this.monorepoRoot);
-		const packageFolder = path.join(this.baseDir, this.monorepoRoot, packageDirName);
+		assert(this._config.monorepoRoot);
+		const packageFolder = path.join(this._config.baseDir, this._config.monorepoRoot, packageDirName);
 		const parsedConfig = parseConfig(path.join(packageFolder, 'tsconfig.json'));
 
-		this._packageNameToDir.set(packageJson.name!, packageDirName);
+		const scopeLength = this._config.packageScope ? this._config.packageScope.length + 2 : 0;
+		const packageName = packageJson.name!.slice(scopeLength);
 
-		await this._analyzePackage(packageFolder, packageJson, parsedConfig);
+		this._packageNameToDir.set(packageName, packageDirName);
+
+		await this._analyzePackage(packageName, packageFolder, packageJson, parsedConfig);
 	}
 
 	serialize(): SerializedProject {
@@ -138,7 +144,7 @@ export class Project {
 
 		const sf = node.getSourceFile();
 		const { fileName } = sf;
-		const relativeFileName = path.relative(this.baseDir, fileName);
+		const relativeFileName = path.relative(this._config.baseDir, fileName);
 		const pos = node.getStart();
 		const { character, line } = sf.getLineAndCharacterOfPosition(pos);
 
@@ -161,8 +167,7 @@ export class Project {
 		return path.join(tsconfig.options.rootDir!, innerOutPath.replace(/\.m?js$/, '.ts'));
 	}
 
-	private async _analyzePackage(packageFolder: string, packageJson: PackageJson, tsconfig: ts.ParsedCommandLine) {
-		const packageName = packageJson.name!;
+	private async _analyzePackage(packageName: string, packageFolder: string, packageJson: PackageJson, tsconfig: ts.ParsedCommandLine) {
 		const { options, fileNames } = tsconfig;
 		const prog = ts.createProgram({
 			options,

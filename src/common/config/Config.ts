@@ -35,6 +35,7 @@ export interface Config {
 	routerMode: RouterMode;
 	baseDir: string;
 	baseUrl: string;
+	packageScope?: string;
 	monorepoRoot?: string;
 	packageDirNames: string[] | null;
 	mainPackage?: string;

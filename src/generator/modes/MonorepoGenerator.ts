@@ -20,29 +20,47 @@ import SpaGenerator from './SpaGenerator';
 
 export default class MonorepoGenerator extends Generator {
 	async createReferenceStructure() {
-		const project = new Project(this._config.baseDir, this._config.monorepoRoot);
+		const project = new Project(this._config);
 
 		const packageDirNames = this._config.packageDirNames!;
-		const packageDirsToPackageJson = new Map(await Promise.all(
-			packageDirNames.map(async dirName => {
-				const packageFolder = path.join(this._config.baseDir, this._config.monorepoRoot!, dirName);
-				const packageJson = JSON.parse(await fs.readFile(path.join(packageFolder, 'package.json'), 'utf8')) as PackageJson;
+		const packageDirsToPackageJson = new Map(
+			await Promise.all(
+				packageDirNames.map(async dirName => {
+					const packageFolder = path.join(this._config.baseDir, this._config.monorepoRoot!, dirName);
+					const packageJson = JSON.parse(
+						await fs.readFile(path.join(packageFolder, 'package.json'), 'utf8')
+					) as PackageJson;
 
-				return [dirName, packageJson] as const;
-			})
-		));
+					return [dirName, packageJson] as const;
+				})
+			)
+		);
 		const packageNames = [...packageDirsToPackageJson.values()].map(packageJson => packageJson.name!);
 
-		const packageDirsToNames = new Map([...packageDirsToPackageJson].map(([packageDirName, packageJson]) => [packageDirName, packageJson.name!]))
-		const packageNamesToDirs = new Map([...packageDirsToPackageJson].map(([packageDirName, packageJson]) => [packageJson.name!, packageDirName]))
+		const packageDirsToNames = new Map(
+			[...packageDirsToPackageJson].map(([packageDirName, packageJson]) => [packageDirName, packageJson.name!])
+		);
+		const packageNamesToDirs = new Map(
+			[...packageDirsToPackageJson].map(([packageDirName, packageJson]) => [packageJson.name!, packageDirName])
+		);
 
-		const dependencies = [...packageDirsToPackageJson].flatMap(([packageDirName, packageJson]) => [...Object.keys(packageJson.dependencies ?? {}), ...Object.keys(packageJson.devDependencies ?? {})]
+		const dependencies = [...packageDirsToPackageJson].flatMap(([packageDirName, packageJson]) =>
+			[...Object.keys(packageJson.dependencies ?? {}), ...Object.keys(packageJson.devDependencies ?? {})]
 				.filter(dep => packageNames.includes(dep) && dep !== packageJson.name!)
-				.map(dep => [dep, packageDirsToNames.get(packageDirName)!] as [string, string]));
+				.map(dep => [dep, packageDirsToNames.get(packageDirName)!] as [string, string])
+		);
 
 		const sortedPackageNames = toposort(dependencies);
 
-		for (const packageName of sortedPackageNames) {
+		const namesInScope = this._config.packageScope
+			? sortedPackageNames.filter(p => p.startsWith(`@${this._config.packageScope!}/`))
+			: sortedPackageNames;
+
+		if (namesInScope.some(n => n.includes('/'))) {
+			throw new Error('Slashes in package names detected. If you\'re not using the `packageScope` option, you probably should.')
+		}
+
+		for (const packageName of namesInScope) {
 			const packageDir = packageNamesToDirs.get(packageName)!;
 			await project.analyzeMonorepoPackage(packageDir, packageDirsToPackageJson.get(packageDir)!);
 		}
@@ -51,12 +69,17 @@ export default class MonorepoGenerator extends Generator {
 
 		const result = project.serialize();
 
+		const scopedMainPackage =
+			this._config.packageScope && this._config.mainPackage
+				? `@${this._config.packageScope}/${this._config.mainPackage}`
+				: this._config.mainPackage;
+
 		result.packages.sort((a, b) => {
-			if (a.packageName === this._config.mainPackage) {
+			if (a.packageName === scopedMainPackage) {
 				return -1;
 			}
 
-			if (b.packageName === this._config.mainPackage) {
+			if (b.packageName === scopedMainPackage) {
 				return 1;
 			}
 
@@ -104,13 +127,22 @@ export default class MonorepoGenerator extends Generator {
 	protected async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
 		const bundle = await rollup({
 			// TODO get proper entry point
-			input: Object.fromEntries(data.packages.map(pkg => [pkg.packageName, path.join(paths.projectBase, this._config.monorepoRoot!, pkg.folderName!, 'lib', 'index.d.ts')])),
+			input: Object.fromEntries(
+				data.packages.map(pkg => [
+					pkg.packageName,
+					path.join(paths.projectBase, this._config.monorepoRoot!, pkg.folderName!, 'lib', 'index.d.ts')
+				])
+			),
 			plugins: [dts()]
 		});
 		const { output } = await bundle.generate({ format: 'es' });
 
 		const libMap = vfs.createDefaultMapFromNodeModules({ target: ts.ScriptTarget.ES2015 });
-		const generatedMap = new Map<string, string>(output.filter((out): out is OutputChunk => out.type === 'chunk').map<[string, string]>(chunk => [`/node_modules/@types/${chunk.name}/index.d.ts`, chunk.code]));
+		const generatedMap = new Map<string, string>(
+			output
+				.filter((out): out is OutputChunk => out.type === 'chunk')
+				.map<[string, string]>(chunk => [`/node_modules/@types/${chunk.name}/index.d.ts`, chunk.code])
+		);
 		return new Map<string, string>([...libMap, ...generatedMap]);
 	}
 

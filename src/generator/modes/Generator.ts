@@ -16,7 +16,7 @@ export default abstract class Generator {
 	}
 
 	async createReferenceStructure() {
-		const project = new Project(this._config.baseDir);
+		const project = new Project(this._config);
 
 		const packageJson = JSON.parse(await fs.readFile(path.join(this._config.baseDir, 'package.json'), 'utf8')) as PackageJson;
 		await project.analyzeSinglePackage(packageJson);
