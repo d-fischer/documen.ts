@@ -56,8 +56,8 @@ export default class MonorepoGenerator extends Generator {
 			? sortedPackageNames.filter(p => p.startsWith(`@${this._config.packageScope!}/`))
 			: sortedPackageNames;
 
-		if (namesInScope.some(n => n.includes('/'))) {
-			throw new Error('Slashes in package names detected. If you\'re not using the `packageScope` option, you probably should.')
+		if (!this._config.packageScope && namesInScope.some(n => n.includes('/'))) {
+			throw new Error('Slashes in package names detected. You should probably use the `packageScope` option.')
 		}
 
 		for (const packageName of namesInScope) {
