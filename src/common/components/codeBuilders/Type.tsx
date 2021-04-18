@@ -68,7 +68,21 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 			);
 		}
 		case 'array': {
-			return <>Array&lt;<Type def={def.elementType}/>&gt;</>;
+			if (!def.elementType) {
+				return <>Array</>;
+			}
+			if (def.elementType.type === 'union') {
+				return (
+					<>
+						{isOptional ? '?' : ''}
+						(<Type def={def.elementType}/>)[]
+					</>
+				);
+			}
+			return <>
+				{isOptional ? '?' : ''}
+				<Type def={def.elementType}/>[]
+			</>;
 		}
 		case 'literal': {
 			return (
