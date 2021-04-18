@@ -71,7 +71,12 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 			return <>Array&lt;<Type def={def.elementType}/>&gt;</>;
 		}
 		case 'literal': {
-			return <>{def.value}</>;
+			return (
+				<>
+					{isOptional ? '?' : ''}
+					{def.value}
+				</>
+			);
 		}
 		case 'reflection': {
 			const { signatures } = def.declaration;
@@ -99,10 +104,12 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				}
 			}
 			// if it doesn't have a signature, it's an anonymous object (as far as we know)
-			return <>
-				{isOptional ? '?' : ''}
-				object
-			</>;
+			return (
+				<>
+					{isOptional ? '?' : ''}
+					object
+				</>
+			);
 		}
 		case 'reference': {
 			if (def.id) {
@@ -119,12 +126,14 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 			return <ReferenceTypeView def={def} typeArguments={def.typeArguments} isOptional={isOptional}/>;
 		}
 		case 'tuple': {
-			return <>[{def.elements.map((type, idx) => (
-				<React.Fragment key={idx}>
-					{idx === 0 ? '' : ', '}
-					<Type def={type as ReferenceType}/>
-				</React.Fragment>
-			))}]</>
+			return (
+				<>[{def.elements.map((type, idx) => (
+					<React.Fragment key={idx}>
+						{idx === 0 ? '' : ', '}
+						<Type def={type as ReferenceType}/>
+					</React.Fragment>
+				))}]</>
+			);
 		}
 		case 'optional': {
 			return (
@@ -132,14 +141,14 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 					?
 					<Type def={def.elementType}/>
 				</>
-			)
+			);
 		}
 		case 'typeOperator': {
 			return (
 				<>
 					{def.operator} <Type def={def.target}/>
 				</>
-			)
+			);
 		}
 		default: {
 			return (
