@@ -10,13 +10,13 @@ import PageArticle, { PageArticleContext } from '../components/PageArticle';
 const IndexPage: React.FC = () => {
 	const article = useContext(PageArticleContext);
 	const config = useContext(ConfigContext);
-	const title = article?.title ?? config.indexTitle;
 	let mockContent: string | undefined = undefined;
 	const { packageName } = useParams<PackageContainerRouteParams>();
 	const relevantConfig = useMemo(() => packageName ? { ...config, ...config.packages?.[packageName] } : config, [packageName, config]);
 	if (mockFs && relevantConfig.indexFile) {
 		mockContent = mockFs.get(relevantConfig.indexFile);
 	}
+	const title = article?.title ?? relevantConfig.indexTitle;
 	return (
 		<>
 			<PageHeader>
