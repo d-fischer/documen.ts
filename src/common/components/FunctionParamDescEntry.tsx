@@ -12,7 +12,7 @@ import type {
 	VariableReferenceNode
 } from '../reference';
 import { hasTag, isOptionalType } from '../tools/CodeTools';
-import MarkdownParser from '../tools/MarkdownParser';
+import MarkdownParser from '../tools/markdown/MarkdownParser';
 import { defaultNodeSort } from '../tools/NodeTools';
 import { findSymbolByMember, getChildren } from '../tools/ReferenceTools';
 import Type from './codeBuilders/Type';

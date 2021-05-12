@@ -17,7 +17,8 @@ SyntaxHighlighter.registerLanguage('typescript', tsHighlight);
 SyntaxHighlighter.registerLanguage('ts', tsHighlight);
 
 interface CodeBlockProps {
-	codeInfo?: string[];
+	lang?: string;
+	langMeta?: string;
 	text: string;
 }
 
@@ -98,13 +99,13 @@ const useStyles = makeStyles(theme => ({
 
 export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 'static' ? (
 	props => {
-		const { codeInfo: [language, languageMode] = ['text'], text } = props;
-		if (languageMode === 'twoslash') {
+		const { lang, langMeta, text } = props;
+		if (langMeta === 'twoslash') {
 			// clean up a tiny bit of twoslash specific stuff for the static output
 			const cleanText = text.replace(/[\w\W]*?(?:^|\n)\/\/ ---cut---\n/, '').replace(/\/\/ @.*\n/g, '');
 			return (
 				<div data-dynamic-component="CodeBlock" data-component-props={JSON.stringify(props)}>
-					<SyntaxHighlighter language={language} style={darcula as unknown}>
+					<SyntaxHighlighter language={lang} style={darcula as unknown}>
 						{cleanText}
 					</SyntaxHighlighter>
 				</div>
@@ -112,14 +113,14 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		}
 
 		return (
-			<SyntaxHighlighter language={language} style={darcula as unknown}>
+			<SyntaxHighlighter language={lang} style={darcula as unknown}>
 				{text}
 			</SyntaxHighlighter>
 		);
 	}
 ) : (
-	({ codeInfo: [language, languageMode] = ['text'], text }) => {
-		const isTwoslash = languageMode === 'twoslash';
+	({ lang, langMeta, text }) => {
+		const isTwoslash = langMeta === 'twoslash';
 		const classes = useStyles();
 		const [idSuffix] = useState(() => getRandomString(8));
 		const [mode, setMode] = useState('ts');
@@ -139,7 +140,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 
 		if (!isTwoslash) {
 			return (
-				<SyntaxHighlighter language={language} style={darcula as unknown}>
+				<SyntaxHighlighter language={lang} style={darcula as unknown}>
 					{text}
 				</SyntaxHighlighter>
 			);
@@ -155,7 +156,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 					<input className={classes.modeInput} type="radio" name="mode" id={`mode-cjs-${idSuffix}`} value="cjs" checked={mode === 'cjs'} onClick={changeMode}/>
 					<label className={classes.mode} htmlFor={`mode-cjs-${idSuffix}`} title="CommonJS">CJS</label>
 				</form>
-				<SyntaxHighlighter language={language} style={darcula as unknown}>
+				<SyntaxHighlighter language={lang} style={darcula as unknown}>
 					{twoslashed!.code}
 				</SyntaxHighlighter>
 			</div>

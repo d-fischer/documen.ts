@@ -3,7 +3,7 @@ import React from 'react';
 import Card from '../../containers/Card';
 import type { AccessorReferenceNode, PropertyReferenceNode } from '../../reference';
 import { getTag, hasTag, isLiteral } from '../../tools/CodeTools';
-import MarkdownParser from '../../tools/MarkdownParser';
+import MarkdownParser from '../../tools/markdown/MarkdownParser';
 import { getAnchorName } from '../../tools/NodeTools';
 import Badge from '../Badge';
 import Type from '../codeBuilders/Type';

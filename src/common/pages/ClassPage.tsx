@@ -9,7 +9,7 @@ import PageContent from '../containers/PageContent';
 import type { AccessorReferenceNode, CallSignatureReferenceNode, ClassReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference';
 import { partition } from '../tools/ArrayTools';
 import { getPageType, hasTag } from '../tools/CodeTools';
-import MarkdownParser from '../tools/MarkdownParser';
+import MarkdownParser from '../tools/markdown/MarkdownParser';
 import { checkVisibility, defaultNodeSort } from '../tools/NodeTools';
 import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';

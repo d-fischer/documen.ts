@@ -7,7 +7,7 @@ import SymbolHeader from '../components/SymbolHeader';
 import PageContent from '../containers/PageContent';
 import type { InterfaceReferenceNode } from '../reference';
 import { getPageType } from '../tools/CodeTools';
-import MarkdownParser from '../tools/MarkdownParser';
+import MarkdownParser from '../tools/markdown/MarkdownParser';
 import { findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
 

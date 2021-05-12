@@ -6,7 +6,7 @@ import Card from '../containers/Card';
 import PageContent from '../containers/PageContent';
 import type { EnumMemberReferenceNode, EnumReferenceNode } from '../reference';
 import { getPageType } from '../tools/CodeTools';
-import MarkdownParser from '../tools/MarkdownParser';
+import MarkdownParser from '../tools/markdown/MarkdownParser';
 import { defaultNodeSort } from '../tools/NodeTools';
 import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';

@@ -1,5 +1,5 @@
 import React, { createContext } from 'react';
-import MarkdownParser from '../tools/MarkdownParser';
+import MarkdownParser from '../tools/markdown/MarkdownParser';
 
 export interface ArticleContent {
 	title: string;

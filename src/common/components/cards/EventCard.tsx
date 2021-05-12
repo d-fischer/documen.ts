@@ -3,7 +3,7 @@ import React from 'react';
 import Card from '../../containers/Card';
 import type { ParameterReferenceNode, PropertyReferenceNode, CallSignatureReferenceNode } from '../../reference';
 import { getTag, hasTag } from '../../tools/CodeTools';
-import MarkdownParser from '../../tools/MarkdownParser';
+import MarkdownParser from '../../tools/markdown/MarkdownParser';
 import { getAnchorName } from '../../tools/NodeTools';
 import { findSymbolByMember} from '../../tools/ReferenceTools';
 import DeprecationNotice from '../DeprecationNotice';

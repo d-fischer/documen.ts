@@ -1,5 +1,5 @@
 import React from 'react';
-import MarkdownParser from '../tools/MarkdownParser';
+import MarkdownParser from '../tools/markdown/MarkdownParser';
 import CodeLink from './CodeLink';
 import PageHeader from '../containers/PageHeader';
 import type { ReferenceNode } from '../reference';

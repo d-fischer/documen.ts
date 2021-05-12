@@ -19,7 +19,7 @@ import CardToolbar from './CardToolbar';
 import Badge from '../Badge';
 import { makeStyles } from '@material-ui/styles';
 import Type from '../codeBuilders/Type';
-import MarkdownParser from '../../tools/MarkdownParser';
+import MarkdownParser from '../../tools/markdown/MarkdownParser';
 
 interface MethodCardProps {
 	parent: ClassReferenceNode | InterfaceReferenceNode;
