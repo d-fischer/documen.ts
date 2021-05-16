@@ -1,7 +1,7 @@
 /// <reference lib="es2019.object" />
 
 import * as vfs from '@typescript/vfs';
-import { promises as fs } from 'fs';
+import fs from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
 import type { OutputChunk } from 'rollup';
@@ -16,6 +16,7 @@ import type { SerializedProject } from '../../common/reference';
 import { Project } from '../analyzer/Project';
 import Generator from './Generator';
 import HtmlGenerator from './HtmlGenerator';
+import type { OutputGenerator } from './OutputGenerator';
 import SpaGenerator from './SpaGenerator';
 
 export default class MonorepoGenerator extends Generator {
@@ -90,18 +91,28 @@ export default class MonorepoGenerator extends Generator {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	async _generatePackage(data: SerializedProject, paths: Paths) {
+	async _generateReference(data: SerializedProject, paths: Paths) {
 		// stub
 	}
 
 	async generate(data: SerializedProject, paths: Paths) {
 		const generator = this._createGenerator(this._config);
 
+		const { ignoredPackages } = this._config;
+
 		const fsMap = await this._generateFsMap(data, paths);
 		await generator._buildWebpack(data, paths, fsMap);
 
-		if (this._config.ignoredPackages?.length) {
-			process.stdout.write(`Not building docs for package(s): ${this._config.ignoredPackages.join(', ')}\n`);
+		await generator._generateCommons(paths);
+
+		const docsThrobber = ora({ text: 'Building docs...', color: 'blue' }).start();
+		await generator._generateDocs(paths, (progress, total) => {
+			docsThrobber.text = `Building docs (${progress}/${total})...`;
+		});
+		docsThrobber.succeed();
+
+		if (ignoredPackages?.length) {
+			process.stdout.write(`Not building reference for package(s): ${ignoredPackages.join(', ')}\n`);
 		}
 
 		for (const pkg of data.packages) {
@@ -111,28 +122,30 @@ export default class MonorepoGenerator extends Generator {
 				continue;
 			}
 
-			const config = {
-				...(this._config.packages?.[subPackage] ?? {}),
-				subPackage
-			};
-
-			const throbber = ora({ text: `Building docs for package ${subPackage}...`, color: 'blue' }).start();
-			await generator._generatePackage(data, paths, config, (progress, total) => {
-				throbber.text = `Building docs for package ${subPackage} (${progress}/${total})...`;
+			const referenceThrobber = ora({ text: `Building reference for package ${subPackage}...`, color: 'blue' }).start();
+			await generator._generateReference(data, paths, subPackage, (progress, total) => {
+				referenceThrobber.text = `Building reference for package ${subPackage} (${progress}/${total})...`;
 			});
-			throbber.succeed();
+			referenceThrobber.succeed();
 		}
 	}
 
 	protected async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
+		const input = Object.fromEntries(
+			data.packages.map(pkg => {
+				let packageName = pkg.packageName;
+				if (this._config.packageScope) {
+					packageName = `${this._config.packageScope}__${packageName}`;
+				}
+				return [
+					packageName,
+					path.join(paths.projectBase, this._config.monorepoRoot!, pkg.folderName!, 'lib', 'index.d.ts')
+				];
+			})
+		);
 		const bundle = await rollup({
 			// TODO get proper entry point
-			input: Object.fromEntries(
-				data.packages.map(pkg => [
-					pkg.packageName,
-					path.join(paths.projectBase, this._config.monorepoRoot!, pkg.folderName!, 'lib', 'index.d.ts')
-				])
-			),
+			input: input,
 			plugins: [dts()]
 		});
 		const { output } = await bundle.generate({ format: 'es' });
@@ -146,7 +159,7 @@ export default class MonorepoGenerator extends Generator {
 		return new Map<string, string>([...libMap, ...generatedMap]);
 	}
 
-	private _createGenerator(config: Config): Generator {
+	private _createGenerator(config: Config): OutputGenerator {
 		switch (this._config.mode) {
 			case 'spa': {
 				return new SpaGenerator(config);

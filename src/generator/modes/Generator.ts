@@ -28,9 +28,6 @@ export default abstract class Generator {
 	abstract generate(data: SerializedProject, paths: Paths): Promise<void>;
 
 	/** @protected */
-	abstract _generatePackage(data: SerializedProject, paths: Paths, overrideConfig?: Partial<Config>, progressCallback?: GeneratorProgressCallback): Promise<void>;
-
-	/** @protected */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
 	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>, overrideConfig?: Partial<Config>) {
 	}
@@ -38,5 +35,13 @@ export default abstract class Generator {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
 		return new Map();
+	}
+
+	protected async withProgress(total: number, callback: GeneratorProgressCallback | undefined, worker: (callback: (amount?: number) => void) => Promise<void>) {
+		let progress = 0;
+		await worker((amount = 1) => {
+			progress += amount;
+			callback?.(progress, total);
+		});
 	}
 }

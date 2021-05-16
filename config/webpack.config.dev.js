@@ -10,6 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const fs = require('fs');
+const MonorepoGenerator = require('../lib/generator/modes/MonorepoGenerator').default;
 
 const publicPath = '/';
 const publicUrl = '';
@@ -62,7 +63,9 @@ try {
 	};
 }
 
-module.exports = {
+const fsMapPromise = new MonorepoGenerator(generatorConfig)._generateFsMap(monoRef, { projectBase: path.resolve(process.cwd(), '../twitch') });
+
+module.exports = fsMapPromise.then(fsMap => ({
 	mode: 'development',
 	devtool: 'cheap-module-source-map',
 	devServer: {
@@ -140,6 +143,7 @@ module.exports = {
 		new webpack.DefinePlugin({
 			__DOCTS_REFERENCE: JSON.stringify(monoRef),
 			__DOCTS_CONFIG: JSON.stringify(generatorConfig),
+			__DOCTS_FSMAP: JSON.stringify([...fsMap]),
 			__DOCTS_MOCK_FS: mockFs ? JSON.stringify([...mockFs]) : 'null',
 			__DOCTS_PATHS: JSON.stringify({ projectBase: path.resolve('../twitch') }),
 			__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic')
@@ -150,4 +154,4 @@ module.exports = {
 	performance: {
 		hints: false,
 	},
-};
+}));

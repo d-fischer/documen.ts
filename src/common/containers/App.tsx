@@ -1,27 +1,25 @@
 import React, { useContext } from 'react';
-import PackageContainer from './PackageContainer';
-import { Route, Switch } from 'react-router';
-import MonoIndexPage from '../pages/MonoIndexPage';
+import { Route, Routes } from 'react-router-dom';
+import MainMenu from '../components/MainMenu';
 import { ConfigContext } from '../config';
-import MonoMenu from '../components/MonoMenu';
+import DocPage from '../pages/DocPage';
+import IndexPage from '../pages/IndexPage';
+import ReferencePackageContainer from './ReferencePackageContainer';
 
 const App: React.FunctionComponent = () => {
 	const config = useContext(ConfigContext);
+	const baseUrl = `/${(config.baseUrl || '').replace(/^\//, '')}`;
 	const isMono = !!config.monorepoRoot;
-	if (isMono) {
-		return (
-			<>
-				<MonoMenu/>
-				<Switch>
-					<Route exact={true} path="/" component={MonoIndexPage}/>
-					<Route path="/:packageName" component={PackageContainer}/>
-				</Switch>
-			</>
-		);
-	}
-
 	return (
-		<Route component={PackageContainer}/>
+		<>
+			<MainMenu/>
+			<Routes basename={baseUrl}>
+				<Route path="/" element={<IndexPage/>}/>
+				<Route path={isMono ? '/reference/:packageName/*' : '/reference/*'} element={<ReferencePackageContainer/>}/>
+				<Route path="/docs/:category" element={<DocPage/>}/>
+				<Route path="/docs/:category/:group/:article" element={<DocPage/>}/>
+			</Routes>
+		</>
 	);
 };
 

@@ -1,24 +1,20 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
 	root: {
-		color: '#cc7070',
-
-		'& p': {
-			display: 'inline'
-		}
+		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.warning}`,
+		padding: theme.spacing.unit * 2,
+		margin: '1em 0'
 	},
-	label: {
-		textTransform: 'uppercase'
-	}
-}, { name: 'DeprecationNotice' });
+}), { name: 'DeprecationNotice' });
 
 const DeprecationNotice: React.FC = ({ children }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
-			<strong className={classes.label}>Deprecated.</strong> {children}
+			<h3>Deprecated</h3>
+			{children}
 		</div>
 	);
 };

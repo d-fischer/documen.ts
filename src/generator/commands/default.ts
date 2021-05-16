@@ -191,6 +191,7 @@ export default class CLICommand extends Command {
 			versionFolder,
 			version,
 			ignoredPackages,
+			title: getConfigValue(importedConfig, 'title'),
 			repoUser: options.repoUser || getConfigValue(importedConfig, 'repoUser'),
 			repoName: options.repoName || getConfigValue(importedConfig, 'repoName'),
 			repoBaseFolder: getConfigValue(importedConfig, 'repoBaseFolder'),
@@ -198,7 +199,6 @@ export default class CLICommand extends Command {
 			indexTitle: (options.indexTitle || getConfigValue(importedConfig, 'indexTitle')) ?? 'Welcome',
 			indexFile,
 			categories: getConfigValue(importedConfig, 'categories') ?? undefined,
-			packages: getConfigValue(importedConfig, 'packages') ?? undefined,
 			shouldEnhance: true,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
 				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);

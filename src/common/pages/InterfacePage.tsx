@@ -1,10 +1,11 @@
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
-import { Redirect, useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router-dom';
 import InterfaceDetail from '../components/InterfaceDetail';
 import InterfaceRepresentation from '../components/InterfaceRepresentation';
 import SymbolHeader from '../components/SymbolHeader';
 import PageContent from '../containers/PageContent';
+import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer';
 import type { InterfaceReferenceNode } from '../reference';
 import { getPageType } from '../tools/CodeTools';
 import MarkdownParser from '../tools/markdown/MarkdownParser';
@@ -17,14 +18,13 @@ const useStyles = makeStyles({
 	}
 }, { name: 'InterfacePage' });
 
-interface InterfacePageRouteParams {
+interface InterfacePageRouteParams extends PackageContainerRouteParams {
 	name: string;
-	packageName?: string;
 }
 
 const InterfacePage: React.FC = () => {
 	const classes = useStyles();
-	const { name, packageName } = useParams<InterfacePageRouteParams>();
+	const { name, packageName } = useParams() as unknown as InterfacePageRouteParams;
 
 	const symbolDef = findSymbolByMember('name', name, packageName);
 
@@ -37,7 +37,7 @@ const InterfacePage: React.FC = () => {
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'interfaces') {
-		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
+		return <Navigate replace to={`/reference${getPackagePath(packageName)}/${correctPageType}/${name}`}/>;
 	}
 
 	return (

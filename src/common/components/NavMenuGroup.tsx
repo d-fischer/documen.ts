@@ -9,10 +9,7 @@ const useStyles = makeStyles(({ colors: { text: textColor }, spacing: { unit: sp
 	root: {
 		display: 'block',
 		color: textColor,
-
-		'&:not(:first-child)': {
-			marginTop: space * 2
-		}
+		padding: `${space}px 0`,
 	},
 	title: {
 		margin: 0,

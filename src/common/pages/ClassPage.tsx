@@ -1,11 +1,12 @@
 import React from 'react';
-import { Redirect, useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router-dom';
 import EventCard from '../components/cards/EventCard';
 import MethodCard from '../components/cards/MethodCard';
 import PropertyCard from '../components/cards/PropertyCard';
 import OverviewTable from '../components/overviewTable/OverviewTable';
 import SymbolHeader from '../components/SymbolHeader';
 import PageContent from '../containers/PageContent';
+import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer';
 import type { AccessorReferenceNode, CallSignatureReferenceNode, ClassReferenceNode, ConstructorReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference';
 import { partition } from '../tools/ArrayTools';
 import { getPageType, hasTag } from '../tools/CodeTools';
@@ -14,13 +15,12 @@ import { checkVisibility, defaultNodeSort } from '../tools/NodeTools';
 import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
 
-interface ClassPageRouteParams {
+interface ClassPageRouteParams extends PackageContainerRouteParams {
 	name: string;
-	packageName?: string;
 }
 
 const ClassPage: React.FC = () => {
-	const { name, packageName } = useParams<ClassPageRouteParams>();
+	const { name, packageName } = useParams() as unknown as ClassPageRouteParams;
 
 	const symbolDef = findSymbolByMember('name', name, packageName);
 
@@ -33,7 +33,7 @@ const ClassPage: React.FC = () => {
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'classes') {
-		return <Redirect to={`${getPackagePath(packageName)}/reference/${correctPageType}/${name}`}/>;
+		return <Navigate replace to={`/reference${getPackagePath(packageName)}/${correctPageType}/${name}`}/>;
 	}
 
 	const constructor: ConstructorReferenceNode | undefined = symbol.ctor && checkVisibility(symbol.ctor, symbol) ? symbol.ctor : undefined;

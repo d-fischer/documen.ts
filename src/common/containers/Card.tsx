@@ -10,12 +10,16 @@ interface CardProps {
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		margin: theme.spacing.unit * 2,
+		margin: `${theme.spacing.unit * 2}px 0`,
 		padding: theme.spacing.unit * 2,
-		border: `1px solid ${theme.colors.border}`,
+		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.border}`,
 
 		'& h3, & h4': {
 			margin: 0
+		},
+
+		'& :last-child': {
+			marginBottom: 0
 		}
 	}
 }), { name: 'Card' });

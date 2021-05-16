@@ -1,31 +1,25 @@
 import path from 'path';
 import resolveHome from 'untildify';
 import webpack from 'webpack';
-import type { Config } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
 import type { SerializedProject } from '../../common/reference';
 import WebpackBuildError from '../errors/WebpackBuildError';
 import WebpackError from '../errors/WebpackError';
-import Generator from './Generator';
+import { OutputGenerator } from './OutputGenerator';
 
-export default class SpaGenerator extends Generator {
+export default class SpaGenerator extends OutputGenerator {
 	async generate(data: SerializedProject, paths: Paths) {
-		return this._generatePackage(data, paths);
+		return this._generateReference(data, paths);
 	}
 
-	async _generatePackage(data: SerializedProject, paths: Paths, overrideConfig: Partial<Config> = {}) {
+	async _generateReference(data: SerializedProject, paths: Paths) {
 		return new Promise<void>((resolve, reject) => {
 			process.chdir(path.join(__dirname, '../../..'));
-
-			const config = {
-				...this._config,
-				...overrideConfig
-			};
 
 			// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires
 			const webpackConfig = require('../../../config/webpack.config.spa') as webpack.Configuration;
 
-			webpackConfig.output!.path = path.resolve(this._config.baseDir, resolveHome(config.outputDir));
+			webpackConfig.output!.path = path.resolve(this._config.baseDir, resolveHome(this._config.outputDir));
 
 			const webpackCompiler = webpack(webpackConfig);
 
@@ -56,5 +50,13 @@ export default class SpaGenerator extends Generator {
 				}
 			});
 		});
+	}
+
+	async _generateCommons(): Promise<void> {
+		return Promise.resolve(undefined);
+	}
+
+	async _generateDocs(): Promise<void> {
+		return Promise.resolve(undefined);
 	}
 }

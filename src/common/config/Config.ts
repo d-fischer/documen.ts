@@ -15,10 +15,18 @@ export interface ConfigExternalArticle {
 
 export type ConfigArticle = ConfigInternalArticle | ConfigExternalArticle;
 
-export interface ConfigCategory {
+export interface ConfigArticleCategory {
+	name: string;
+	indexTitle?: string;
+	indexFile?: string;
+	title?: string;
+	groups?: ConfigArticleGroup[];
+}
+
+export interface ConfigArticleGroup {
 	name: string;
 	title: string;
-	articles: ConfigArticle[];
+	articles?: ConfigArticle[];
 }
 
 export interface Manifest {
@@ -44,15 +52,14 @@ export interface Config {
 	versionBranchPrefix?: string;
 	versionFolder?: string;
 	ignoredPackages?: string[];
-	subPackage?: string;
+	title: string | null;
 	repoUser: string | null;
 	repoName: string | null;
 	repoBaseFolder: string | null;
 	repoBranch: string;
 	indexFile: string;
 	indexTitle: string;
-	categories?: ConfigCategory[];
-	packages?: Record<string, Config>;
+	categories?: ConfigArticleCategory[];
 	shouldEnhance: boolean;
 	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
 	/** @private */

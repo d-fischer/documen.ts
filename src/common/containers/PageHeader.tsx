@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		borderBottom: `1px solid ${theme.colors.border}`,
 		padding: theme.spacing.unit * 2,
 		position: 'relative',
 		backgroundColor: theme.colors.background.active,

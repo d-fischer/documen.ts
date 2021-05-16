@@ -1,45 +1,14 @@
-import invariant from 'tiny-invariant';
+import type { Location, PartialLocation, To } from 'history';
+import { Action, createPath, parsePath } from 'history';
 import React from 'react';
-import PropTypes from 'prop-types';
-import type { History, Location, LocationDescriptorObject } from 'history';
-import { createLocation, createPath } from 'history';
 import { Router } from 'react-router';
 
-const addLeadingSlash = (path: string) =>
-	path.startsWith('/') ? path : `/${path}`;
+interface StaticRouterWithSuffixProps {
+	location: string | PartialLocation;
+	suffix?: string;
+}
 
-const removeTrailingSlash = (path: string) =>
-	path.endsWith('/') ? path.slice(0, -1) : path;
-
-const addBasename = (basename: string, location: Location) => {
-	if (!basename) {
-		return location;
-	}
-
-	return {
-		...location,
-		pathname: addLeadingSlash(basename) + location.pathname
-	};
-};
-
-const stripBasename = (basename: string, location: Location) => {
-	if (!basename) {
-		return location;
-	}
-
-	const base = addLeadingSlash(basename);
-
-	if (base === '/' || !location.pathname.startsWith(base)) {
-		return location;
-	}
-
-	return {
-		...location,
-		pathname: location.pathname.substr(base.length)
-	};
-};
-
-const stripSuffix = (suffix: string, location: Location) => {
+const stripSuffix = (suffix: string, location: Location): Location => {
 	if (suffix && location.pathname.endsWith(suffix)) {
 		return {
 			...location,
@@ -50,93 +19,94 @@ const stripSuffix = (suffix: string, location: Location) => {
 	return location;
 };
 
-const createUrl = (location: LocationDescriptorObject | string, suffix?: string) => {
-	const loc = createLocation(location);
-	if (!loc.pathname.endsWith('/') && suffix) {
-		loc.pathname += suffix;
+const createUrl = (location: To, suffix?: string): string => {
+	if (typeof location === 'string') {
+		return (location.endsWith('/') || !suffix) ? location : `${location}${suffix}`;
+	}
+	if (!location.pathname) {
+		return '/';
+	}
+	if (!location.pathname.endsWith('/') && suffix) {
+		location.pathname += suffix;
 	}
 
-	return createPath(loc);
+	return createPath(location);
 };
 
-const staticHandler = (methodName: string) => () => {
-	invariant(false, 'You cannot %s with a static router', methodName);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {
-};
-
-interface StaticRouterContext {
-	action?: string;
-	location?: LocationDescriptorObject;
-	url?: string;
-}
-
-interface StaticRouterWithSuffixProps {
-	basename: string;
-	context: StaticRouterContext;
-	location: string | LocationDescriptorObject;
-	suffix?: string;
-}
-
-class StaticRouterWithSuffix extends React.Component<StaticRouterWithSuffixProps> {
-	static defaultProps = {
-		basename: '',
-		location: '/'
-	};
-
-	static childContextTypes = {
-		router: PropTypes.object.isRequired
-	};
-
-	getChildContext() {
-		return {
-			router: {
-				staticContext: this.props.context
-			}
-		};
+const StaticRouterWithSuffix: React.FunctionComponent<StaticRouterWithSuffixProps> = ({ children, location: loc, suffix }) => {
+	if (typeof loc === 'string') {
+		loc = parsePath(loc);
 	}
 
-	createHref = (path: LocationDescriptorObject | string) => addLeadingSlash(`${removeTrailingSlash(this.props.basename)}${createUrl(path, this.props.suffix)}`);
-
-	handlePush = (location: LocationDescriptorObject | string) => {
-		const { basename, context, suffix } = this.props;
-		context.action = 'PUSH';
-		context.location = addBasename(basename, createLocation(location));
-		context.url = createUrl(context.location, suffix);
+	const action = Action.Pop;
+	let location: Location = {
+		pathname: loc.pathname ?? '/',
+		search: loc.search ?? '',
+		hash: loc.hash ?? '',
+		state: loc.state ?? null,
+		key: loc.key ?? 'default'
 	};
 
-	handleReplace = (location: LocationDescriptorObject | string) => {
-		const { basename, context, suffix } = this.props;
-		context.action = 'REPLACE';
-		context.location = addBasename(basename, createLocation(location));
-		context.url = createUrl(context.location, suffix);
-	};
-
-	handleListen = () => noop;
-
-	handleBlock = () => noop;
-
-	render() {
-		const { basename, location, suffix = '', ...props } = this.props;
-
-		const history: History = {
-			createHref: this.createHref,
-			action: 'POP',
-			location: stripSuffix(suffix, stripBasename(basename, createLocation(location))),
-			push: this.handlePush,
-			replace: this.handleReplace,
-			go: staticHandler('go'),
-			goBack: staticHandler('goBack'),
-			goForward: staticHandler('goForward'),
-			listen: this.handleListen,
-			block: this.handleBlock,
-			length: 0
-		};
-
-		return <Router {...props} history={history}/>;
+	if (suffix) {
+		location = stripSuffix(suffix, location);
 	}
-}
+
+	const staticNavigator = {
+		createHref(to: To) {
+			return createUrl(to);
+		},
+		push(to: To) {
+			throw new Error(
+				'You cannot use navigator.push() on the server because it is a stateless ' +
+				'environment. This error was probably triggered when you did a ' +
+				`\`navigate(${JSON.stringify(to)})\` somewhere in your app.`
+			);
+		},
+		replace(to: To) {
+			throw new Error(
+				'You cannot use navigator.replace() on the server because it is a stateless ' +
+				'environment. This error was probably triggered when you did a ' +
+				`\`navigate(${JSON.stringify(to)}, { replace: true })\` somewhere ` +
+				'in your app.'
+			);
+		},
+		go(delta: number) {
+			throw new Error(
+				'You cannot use navigator.go() on the server because it is a stateless ' +
+				'environment. This error was probably triggered when you did a ' +
+				`\`navigate(${delta})\` somewhere in your app.`
+			);
+		},
+		back() {
+			throw new Error(
+				'You cannot use navigator.back() on the server because it is a stateless ' +
+				'environment.'
+			);
+		},
+		forward() {
+			throw new Error(
+				'You cannot use navigator.forward() on the server because it is a stateless ' +
+				'environment.'
+			);
+		},
+		block() {
+			throw new Error(
+				'You cannot use navigator.block() on the server because it is a stateless ' +
+				'environment.'
+			);
+		}
+	};
+
+	return (
+		<Router
+			action={action}
+			location={location}
+			navigator={staticNavigator}
+			static={true}
+		>
+			{children}
+		</Router>
+	);
+};
 
 export default StaticRouterWithSuffix;

@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 
 import App from '../common/containers/App';
-import type { BrowserRouterProps, HashRouterProps } from 'react-router-dom';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -14,7 +13,7 @@ import ts from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from '../common/theme';
 
-const Router: React.ComponentType<BrowserRouterProps | HashRouterProps> = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
+const Router = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 SyntaxHighlighter.registerLanguage('js', js);

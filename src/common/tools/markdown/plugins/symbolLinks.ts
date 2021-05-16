@@ -42,7 +42,7 @@ export function symbolLinks(): Transformer {
 
 				const linkAst: Link = {
 					type: 'link',
-					url: `${getPackagePath(packageName)}/reference/${pageType}/${symbolName}`,
+					url: `/reference${getPackagePath(packageName)}/${pageType}/${symbolName}`,
 					children: [
 						{
 							type: 'text',

@@ -6,7 +6,7 @@ import type { Config } from '../config/Config';
 import StaticRouterWithSuffix from './StaticRouterWithSuffix';
 import App from '../containers/App';
 import type RouterMode from './RouterMode';
-import { StaticRouter } from 'react-router';
+import { StaticRouter } from 'react-router-dom/server';
 import type { ArticleContent } from '../components/PageArticle';
 import { PageArticleContext } from '../components/PageArticle';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
@@ -68,7 +68,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 				<ConfigContext.Provider value={config}>
 					<PageArticleContext.Provider value={article}>
 						<ThemeProvider theme={theme}>
-							<StaticRouterWithSuffix basename={baseUrl} context={{}} location={url} suffix=".html">
+							<StaticRouterWithSuffix location={url} suffix=".html">
 								<App/>
 							</StaticRouterWithSuffix>
 						</ThemeProvider>
@@ -84,7 +84,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 				<ConfigContext.Provider value={config}>
 					<PageArticleContext.Provider value={article}>
 						<ThemeProvider theme={theme}>
-							<StaticRouter basename={baseUrl} context={{}} location={url}>
+							<StaticRouter location={url}>
 								<App/>
 							</StaticRouter>
 						</ThemeProvider>

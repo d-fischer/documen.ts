@@ -6,9 +6,8 @@ import OverviewTableEntry from './OverviewTableEntry';
 const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'flex',
-		margin: theme.spacing.unit * 2,
+		marginBottom: theme.spacing.unit * 2,
 		padding: theme.spacing.unit * 2,
-		border: `1px solid ${theme.colors.border}`
 	},
 	column: {
 		minWidth: 300
@@ -19,7 +18,8 @@ const useStyles = makeStyles(theme => ({
 	},
 	list: {
 		margin: 0,
-		paddingLeft: theme.spacing.unit * 2
+		paddingLeft: theme.spacing.unit,
+		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.border}`
 	}
 }), { name: 'OverviewTable' });
 

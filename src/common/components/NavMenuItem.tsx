@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/styles';
 
 interface NavMenuItemProps {
 	path: string;
-	exact?: boolean;
 	external?: boolean;
 	title?: string;
 }
@@ -36,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'NavMenuItem' });
 
-const NavMenuItem: React.FC<NavMenuItemProps> = ({ path, exact, external, title, children }) => {
+const NavMenuItem: React.FC<NavMenuItemProps> = ({ path, external, title, children }) => {
 	const classes = useStyles();
 	if (external) {
 		return (
@@ -46,7 +45,7 @@ const NavMenuItem: React.FC<NavMenuItemProps> = ({ path, exact, external, title,
 		);
 	}
 	return (
-		<NavLink to={path} exact={exact} className={classes.root} activeClassName={classes.rootActive} title={title}>
+		<NavLink to={path} end className={classes.root} activeClassName={classes.rootActive} title={title}>
 			{children}
 		</NavLink>
 	);

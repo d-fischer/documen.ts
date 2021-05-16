@@ -37,7 +37,7 @@ const TypeLink: React.FC<TypeLinkProps> = ({ id, name, children, symbol }) => {
 		return <>{children}</>;
 	}
 
-	return <Link className={classes.root} to={`${getPackagePath(packageName)}/reference/${getPageType(symbol)}/${name}`}>{children}</Link>;
+	return <Link className={classes.root} to={`/reference${getPackagePath(packageName)}/${getPageType(symbol)}/${name}`}>{children}</Link>;
 };
 
 export default TypeLink;
