@@ -54,7 +54,7 @@ export default class HtmlGenerator extends OutputGenerator {
 		const articleEntries = configDir == null ? [] : categories?.flatMap(
 			cat => (
 				[
-					...(cat.indexFile ? [[`/docs/${cat.name}/`, cat.indexTitle ?? cat.name, fs.readFile(path.join(configDir, cat.indexFile), 'utf-8')] as RenderEntry] : []),
+					[`/docs/${cat.name}/`, cat.indexTitle ?? cat.name, fs.readFile(path.join(configDir, cat.indexFile!), 'utf-8')] as RenderEntry,
 					...cat.groups?.flatMap(
 						grp => grp.articles
 								?.filter(
@@ -140,18 +140,13 @@ export default class HtmlGenerator extends OutputGenerator {
 	}
 
 	/** @protected */
-	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>, overrideConfig: Partial<Config> = {}) {
+	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>) {
 		process.chdir(path.join(__dirname, '../../..'));
 
-		const config = {
-			...this._config,
-			...overrideConfig
-		};
-
-		const fsMapEntries = config.shouldEnhance ? [...fsMap.entries()] : [];
+		const fsMapEntries = this._config.shouldEnhance ? [...fsMap.entries()] : [];
 
 		// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-var-requires
-		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir, config) as webpack.Configuration | webpack.Configuration[];
+		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir, this._config) as webpack.Configuration | webpack.Configuration[];
 		if (!Array.isArray(webpackConfigs)) {
 			webpackConfigs = [webpackConfigs];
 		}
@@ -160,18 +155,18 @@ export default class HtmlGenerator extends OutputGenerator {
 			await new Promise<void>((resolve, reject) => {
 				const webpackCompiler = webpack(webpackConfig);
 
-				if (config.webpackProgressCallback) {
-					(new webpack.ProgressPlugin(config.webpackProgressCallback)).apply(webpackCompiler);
+				if (this._config.webpackProgressCallback) {
+					(new webpack.ProgressPlugin(this._config.webpackProgressCallback)).apply(webpackCompiler);
 				}
 
 				/* eslint-disable @typescript-eslint/naming-convention */
 				const definitions: Record<string, string> = {
 					__DOCTS_REFERENCE: JSON.stringify(data),
 					__DOCTS_MOCK_FS: 'null',
-					__DOCTS_CONFIG: JSON.stringify(omit(config, ['webpackProgressCallback'])),
+					__DOCTS_CONFIG: JSON.stringify(omit(this._config, ['webpackProgressCallback'])),
 					__DOCTS_PATHS: JSON.stringify(omit(paths, ['tmpDir']))
 				};
-				if (config.shouldEnhance && webpackConfig.output?.filename === 'pe.js') {
+				if (this._config.shouldEnhance && webpackConfig.output?.filename === 'pe.js') {
 					definitions.__DOCTS_FSMAP = JSON.stringify(fsMapEntries);
 				}
 				/* eslint-enable @typescript-eslint/naming-convention */

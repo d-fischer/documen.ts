@@ -171,6 +171,15 @@ export default class CLICommand extends Command {
 			process.exit(1);
 		}
 
+		const categories = getConfigValue(importedConfig, 'categories')?.filter(cat => {
+			if (cat.indexFile) {
+				return true;
+			}
+
+			console.warn(`Expected indexFile property for category ${cat.name}`);
+			return false;
+		});
+
 		const generatorConfig: Config = {
 			dev: options.dev ?? false,
 			prettier: getConfigValue(importedConfig, 'prettier') ?? options.prettier ?? options.dev ?? false,
@@ -198,7 +207,7 @@ export default class CLICommand extends Command {
 			repoBranch: options.repoBranch || 'master',
 			indexTitle: (options.indexTitle || getConfigValue(importedConfig, 'indexTitle')) ?? 'Welcome',
 			indexFile,
-			categories: getConfigValue(importedConfig, 'categories') ?? undefined,
+			categories: categories ?? undefined,
 			shouldEnhance: true,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
 				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);
