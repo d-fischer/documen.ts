@@ -13,13 +13,13 @@ import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
 import theme from '../theme';
 import { dom } from '@fortawesome/fontawesome-svg-core';
 
-const insertIntoSkeleton = (html: string, css: string, baseUrl: string, shouldEnhance: boolean) =>
+const insertIntoSkeleton = (html: string, css: string, baseUrl: string, config: Config) =>
 	`<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Twitch.js documentation</title>
+    <title>${config.title ?? 'Documentation'}</title>
     <style>
     	@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
 
@@ -50,7 +50,7 @@ const insertIntoSkeleton = (html: string, css: string, baseUrl: string, shouldEn
 </head>
 <body>
 <div id="app-root">${html}</div>
-${shouldEnhance ? `<script src="${path.posix.join(baseUrl, 'pe.js')}"></script>` : ''}
+${config.shouldEnhance ? `<script src="${path.posix.join(baseUrl, 'pe.js')}"></script>` : ''}
 </body>
 </html>`;
 
@@ -96,7 +96,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 		default:
 			elem = <></>;
 	}
-	return insertIntoSkeleton(renderToString(sheets.collect(elem)), sheets.toString(), baseUrl, config.shouldEnhance);
+	return insertIntoSkeleton(renderToString(sheets.collect(elem)), sheets.toString(), baseUrl, config);
 };
 
 export default render;

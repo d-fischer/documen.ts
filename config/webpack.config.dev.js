@@ -138,6 +138,9 @@ module.exports = fsMapPromise.then(fsMap => ({
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: paths.appHtml,
+			templateParameters: {
+				title: `[DEV] ${generatorConfig.title ?? 'documen.ts'}`
+			}
 		}),
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.DefinePlugin({

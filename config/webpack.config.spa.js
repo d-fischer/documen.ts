@@ -14,7 +14,7 @@ if (env.stringified['process.env'].NODE_ENV !== '"production"') {
 	throw new Error('Production builds must have NODE_ENV=production.');
 }
 
-module.exports = {
+module.exports = (outDir, { title }) =>  ({
 	mode: 'production',
 	bail: true,
 	devtool: 'source-map',
@@ -68,6 +68,9 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: paths.appHtml,
+			templateParameters: {
+				title: title ?? 'Documentation'
+			},
 			minify: {
 				removeComments: true,
 				collapseWhitespace: true,
@@ -83,4 +86,4 @@ module.exports = {
 		new webpack.DefinePlugin(env.stringified),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
 	],
-};
+});

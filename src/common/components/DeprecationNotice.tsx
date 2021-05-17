@@ -3,7 +3,9 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.warning}`,
+		display: 'flow-root',
+		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.badges.deprecated}`,
+		backgroundColor: theme.colors.background.active,
 		padding: theme.spacing.unit * 2,
 		margin: '1em 0'
 	},
