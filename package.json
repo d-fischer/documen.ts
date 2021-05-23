@@ -1,6 +1,6 @@
 {
   "name": "@d-fischer/documen.ts",
-  "version": "0.13.2",
+  "version": "0.13.3",
   "homepage": "https://github.com/d-fischer/documen.ts",
   "main": "lib/generator/index.js",
   "engines": {
