@@ -76,8 +76,12 @@ const DocPage: React.FC = () => {
 				<NavMenuItem path={`/docs/${confCategory.name}`}>{confCategory.indexTitle ?? confCategory.name}</NavMenuItem>
 				{confCategory.groups?.map(grp => (
 					<NavMenuGroup key={grp.name} title={grp.title}>
-						{grp.articles?.map(art => (
-							<NavMenuItem key={art.name} path={`/docs/${confCategory.name}/${grp.name}/${art.name}`}>
+						{grp.articles?.map(art => 'externalLink' in art ? (
+							<NavMenuItem key={art.name} external path={art.externalLink} title={art.title}>
+								{art.title}
+							</NavMenuItem>
+						) : (
+							<NavMenuItem key={art.name} path={`/docs/${confCategory.name}/${grp.name}/${art.name}`} title={art.title}>
 								{art.title}
 							</NavMenuItem>
 						))}
