@@ -1,4 +1,5 @@
-import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
+import { useMemo } from 'react';
+import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
 import { hasTag } from './CodeTools';
 
 export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
@@ -43,4 +44,21 @@ export function getAnchorName(node: ReferenceNode, name?: string) {
 
 export function typeIsAsync(type: ReferenceType): type is ReferenceReferenceType {
 	return type.type === 'reference' && type.name === 'Promise' && !type.id;
+}
+
+export interface AsyncTypeDef {
+	isAsync: boolean;
+	returnType?: ReferenceType;
+}
+
+export function useAsyncType(sig: CallSignatureReferenceNode | ConstructSignatureReferenceNode) {
+	return useMemo<AsyncTypeDef>(() => {
+		if (sig.kind === 'constructSignature') {
+			return { isAsync: false };
+		}
+		if (typeIsAsync(sig.type)) {
+			return { isAsync: true, returnType: sig.type.typeArguments?.[0] ?? { type: 'intrinsic', name: 'any' } };
+		}
+		return { isAsync: false, returnType: sig.type };
+	}, [sig]);
 }

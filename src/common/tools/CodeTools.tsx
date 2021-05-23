@@ -45,10 +45,12 @@ export const getPageType = (node: ReferenceNode): string => {
 	switch (node.kind) {
 		case 'class':
 			return 'classes';
-		case 'enum':
-			return 'enums';
 		case 'interface':
 			return 'interfaces';
+		case 'function':
+			return 'functions';
+		case 'enum':
+			return 'enums';
 		default:
 			return 'unknown';
 	}
