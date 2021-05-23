@@ -247,9 +247,14 @@ export default class CLICommand extends Command {
 				console.log(`Cleaning up generated files for branch ${mainBranchName}`);
 				const [versionsRoot] = versionFolder!.split('/');
 				const rootFolderContents = await fsp.readdir(rootOutputDir);
+				const ignoredFiles = [
+					versionsRoot,
+					'manifest.json',
+					...getConfigValue(importedConfig, 'persistentFiles') ?? []
+				]
 				await Promise.all(
 					rootFolderContents
-						.filter(f => !f.startsWith('.') && f !== versionsRoot && f !== 'manifest.json')
+						.filter(f => !f.startsWith('.') && !ignoredFiles.includes(f))
 						.map(async f => {
 							const filePath = path.join(rootOutputDir, f);
 							if ((await fsp.lstat(filePath)).isDirectory()) {

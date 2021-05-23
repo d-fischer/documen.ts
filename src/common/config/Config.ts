@@ -39,6 +39,7 @@ export interface Config {
 	prettier: boolean;
 	configDir: string | null;
 	outputDir: string;
+	persistentFiles?: string[];
 	mode: GeneratorMode;
 	routerMode: RouterMode;
 	baseDir: string;
