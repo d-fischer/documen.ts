@@ -111,10 +111,11 @@ export default class HtmlGenerator extends OutputGenerator {
 		const packageChildren = packageData.symbols.filter(isNodeVisible);
 
 		const classPaths = filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `/reference${pkgPath}/classes/${value.name}`);
+		const functionPaths = filterByMember(packageChildren, 'kind', 'function').filter(isNodeVisible).map(value => `/reference${pkgPath}/functions/${value.name}`);
 		const interfacePaths = filterByMember(packageChildren, 'kind', 'interface').filter(isNodeVisible).map(value => `/reference${pkgPath}/interfaces/${value.name}`);
 		const enumPaths = filterByMember(packageChildren, 'kind', 'enum').filter(isNodeVisible).map(value => `/reference${pkgPath}/enums/${value.name}`);
 
-		const totalCount = 1 + classPaths.length + interfacePaths.length + enumPaths.length;
+		const totalCount = 1 + classPaths.length + functionPaths.length + interfacePaths.length + enumPaths.length;
 
 		await this.withProgress(totalCount, progressCallback, async reportProgress => {
 			const renderFromPath = async (resourcePath: string) => {
@@ -129,6 +130,9 @@ export default class HtmlGenerator extends OutputGenerator {
 
 			for (const classPath of classPaths) {
 				await renderFromPath(classPath);
+			}
+			for (const functionPath of functionPaths) {
+				await renderFromPath(functionPath);
 			}
 			for (const interfacePath of interfacePaths) {
 				await renderFromPath(interfacePath);
