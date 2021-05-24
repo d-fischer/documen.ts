@@ -67,7 +67,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 					id: -1,
 					name: type.type === 'named-tuple-member' ? type.name : `_arg${idx}`,
 					kind: 'parameter',
-					type: type.type === 'named-tuple-member' ? type.element : type,
+					type: type.type === 'named-tuple-member' ? type.elementType : type,
 					location: definition.location
 				})),
 				type: {

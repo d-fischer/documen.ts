@@ -72,14 +72,14 @@ export interface TypeOperatorReferenceType {
 
 export interface TupleReferenceType {
 	type: 'tuple';
-	elements: TupleMemberReferenceType[];
+	elements: ReferenceType[];
 }
 
 export interface NamedTupleMemberReferenceType {
 	type: 'named-tuple-member';
 	name: string;
 	isOptional: boolean;
-	element: ReferenceType;
+	elementType: ReferenceType;
 }
 
 export type ReferenceType =
@@ -91,8 +91,8 @@ export type ReferenceType =
 	| OptionalReferenceType
 	| ReflectionReferenceType
 	| TypeOperatorReferenceType
-	| TupleReferenceType;
-export type TupleMemberReferenceType = NamedTupleMemberReferenceType | ReferenceType;
+	| TupleReferenceType
+	| NamedTupleMemberReferenceType;
 
 export interface AbstractReferenceNode {
 	id: number;

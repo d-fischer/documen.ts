@@ -5,6 +5,7 @@ import { arrayTypeReflector } from './types/ArrayType';
 import { functionTypeReflector } from './types/FunctionType';
 import { IntrinsicType, intrinsicTypeReflector } from './types/IntrinsicType';
 import { literalTypeReflector } from './types/LiteralType';
+import { namedTupleElementReflector } from './types/NamedTupleElementType';
 import { objectLiteralTypeReflector } from './types/ObjectLiteralType';
 import { optionalTypeReflector } from './types/OptionalType';
 import { exprWithTypeArgsReflector, referenceTypeReflector } from './types/ReferenceType';
@@ -37,6 +38,7 @@ function loadTypeReflectors() {
 		functionTypeReflector,
 		intrinsicTypeReflector,
 		literalTypeReflector,
+		namedTupleElementReflector,
 		objectLiteralTypeReflector,
 		optionalTypeReflector,
 		referenceTypeReflector,
