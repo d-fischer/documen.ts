@@ -144,10 +144,15 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				<>[{def.elements.map((type, idx) => (
 					<React.Fragment key={idx}>
 						{idx === 0 ? '' : ', '}
-						<Type def={type as ReferenceType}/>
+						<Type def={type}/>
 					</React.Fragment>
 				))}]</>
 			);
+		}
+		case 'named-tuple-member': {
+			return (
+				<>{def.name}: <Type def={def.elementType}/></>
+			)
 		}
 		case 'optional': {
 			return (
