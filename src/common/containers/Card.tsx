@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 			margin: 0
 		},
 
-		'& :last-child': {
+		'& > :last-child': {
 			marginBottom: 0
 		}
 	}

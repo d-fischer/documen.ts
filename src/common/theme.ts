@@ -19,6 +19,7 @@ const theme = {
 		}
 	},
 	fonts: {
+		default: '"Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
 		code: 'Monaco, Menlo, "Lucida Console", monospace'
 	},
 	spacing: {

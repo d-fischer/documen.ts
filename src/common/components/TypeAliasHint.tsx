@@ -38,9 +38,9 @@ const useStyles = makeStyles(theme => ({
 		background: theme.colors.background.active,
 		border: `1px solid ${theme.colors.border}`,
 		textAlign: 'left',
+		fontFamily: theme.fonts.default,
 		width: 'min-content',
 		minWidth: 250,
-		maxWidth: 400,
 
 		'&::before, &::after': {
 			content: '""',
@@ -65,10 +65,17 @@ const useStyles = makeStyles(theme => ({
 		'& code': {
 			whiteSpace: 'pre-wrap',
 			wordWrap: 'break-word'
-		}
+		},
+
+		'& > :first-child': {
+			marginTop: 0
+		},
+		'& > :last-child': {
+			marginBottom: 0
+		},
 	},
 	aliasedType: {
-		whiteSpace: 'nowrap'
+		fontFamily: theme.fonts.code
 	}
 }), { name: 'TypeAliasHint' });
 
