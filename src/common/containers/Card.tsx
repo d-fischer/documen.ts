@@ -20,6 +20,10 @@ const useStyles = makeStyles(theme => ({
 
 		'& > :last-child': {
 			marginBottom: 0
+		},
+
+		'&:target': {
+			backgroundColor: theme.colors.background.active
 		}
 	}
 }), { name: 'Card' });
