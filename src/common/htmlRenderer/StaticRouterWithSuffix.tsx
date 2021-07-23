@@ -53,7 +53,7 @@ const StaticRouterWithSuffix: React.FunctionComponent<StaticRouterWithSuffixProp
 
 	const staticNavigator = {
 		createHref(to: To) {
-			return createUrl(to);
+			return createUrl(to, suffix);
 		},
 		push(to: To) {
 			throw new Error(
