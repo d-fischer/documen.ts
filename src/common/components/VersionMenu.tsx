@@ -133,7 +133,7 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 							   href={`${manifest.rootUrl}/${packages[0].packageName}`}>{config.mainBranchName}</a>
 							{manifest.versions.map((version: string) => (
 								<a className={classNames(classes.entry, classes.menuEntry)} key={version}
-								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}/${packages[0].packageName}`}>{version}</a>
+								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}`}>{version}</a>
 							))}
 						</div>
 					)}
