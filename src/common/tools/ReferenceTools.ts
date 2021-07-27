@@ -50,7 +50,7 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 			};
 		}
 		if (foundInParent.kind === 'class') {
-			const extendedType = (foundInParent as ClassReferenceNode).extendedTypes?.[0];
+			const extendedType = foundInParent.extendedTypes?.[0];
 			if (extendedType?.type === 'reference' && extendedType.id)
 				return findSymbolByMember('id', extendedType.id);
 		}
