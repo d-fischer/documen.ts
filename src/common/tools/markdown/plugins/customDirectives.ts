@@ -3,6 +3,7 @@ import type { Processor, Transformer } from 'unified';
 import type { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import { toHast } from 'mdast-util-to-hast';
+import type { MdastNode } from 'mdast-util-to-hast/lib';
 
 interface CustomDirectivesOptions {
 	classes: Record<string, string>;
@@ -11,7 +12,7 @@ interface CustomDirectivesOptions {
 export function customDirectives(this: Processor, { classes }: CustomDirectivesOptions): Transformer {
 	this.use(remarkDirective);
 
-	function visitor(node: Node) {
+	function visitor(node: Node & Record<string, unknown>) {
 		const directiveName = node.name as string;
 
 		if (directiveName === 'warning') {
@@ -34,7 +35,7 @@ export function customDirectives(this: Processor, { classes }: CustomDirectivesO
 							}
 						]
 					},
-					...((node.children as Node[] | undefined)?.map(c => toHast(c)) ?? [])
+					...((node.children as MdastNode[] | undefined)?.map(c => toHast(c)) ?? [])
 				]
 			}
 		}
