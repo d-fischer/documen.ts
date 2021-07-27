@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { HashLink } from 'react-router-hash-link';
 import { CodeBlock } from '../../components/CodeBlock';
 import { customDirectives } from './plugins/customDirectives';
+import { gfmTables } from './plugins/gfmTables';
 import { symbolLinks } from './plugins/symbolLinks';
 
 interface MarkdownParserProps {
@@ -74,22 +75,7 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 		warningTitle: classes.warningTitle
 	}), [classes]);
 
-	// 	if (node.type === 'paragraph' && !event.entering) {
-	// 		if (node.firstChild?.literal === '/' && node.firstChild.next?.literal === '!' && node.firstChild.next.next?.literal === '\\' && node.firstChild.next.next.next) {
-	// 			const parent = new Node('custom_block', node.sourcepos);
-	// 			warningNodes.add(parent.);
-	// 			const textNode = node.firstChild.next.next.next;
-	// 			textNode.literal = textNode.literal?.trimStart() ?? null;
-	// 			parent.appendChild(textNode);
-	// 			node.insertAfter(parent);
-	// 			node.firstChild.next.next.unlink();
-	// 			node.firstChild.next.unlink();
-	// 			node.firstChild.unlink();
-	// 			node.unlink();
-	// 		}
-	// 		// transform linked type names
-
-	return <ReactMarkdown remarkPlugins={[symbolLinks, [customDirectives, { classes: customDirectiveClasses }]]} components={components}>{source}</ReactMarkdown>
+	return <ReactMarkdown remarkPlugins={[symbolLinks, gfmTables, [customDirectives, { classes: customDirectiveClasses }]]} components={components}>{source}</ReactMarkdown>
 };
 
 export default React.memo(MarkdownParser);
