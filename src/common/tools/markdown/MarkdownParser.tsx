@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	warning: {
 		display: 'flow-root',
-		borderLeft: `${theme.spacing.unit / 2} solid ${theme.colors.warning}`,
+		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.warning}`,
 		backgroundColor: theme.colors.background.active,
 		marginBottom: '1em',
 		padding: '0 1em'
