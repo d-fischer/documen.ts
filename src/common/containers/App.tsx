@@ -3,7 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 import MainMenu from '../components/MainMenu';
 import { ConfigContext } from '../config';
 import DocPage from '../pages/DocPage';
-import IndexPage from '../pages/IndexPage';
 import ReferencePackageContainer from './ReferencePackageContainer';
 
 const App: React.FunctionComponent = () => {
@@ -14,7 +13,7 @@ const App: React.FunctionComponent = () => {
 		<>
 			<MainMenu/>
 			<Routes basename={baseUrl}>
-				<Route path="/" element={<IndexPage/>}/>
+				<Route path="/" element={<DocPage/>}/>
 				<Route path={isMono ? '/reference/:packageName/*' : '/reference/*'} element={<ReferencePackageContainer/>}/>
 				<Route path="/docs/:category" element={<DocPage/>}/>
 				<Route path="/docs/:category/:group/:article" element={<DocPage/>}/>
