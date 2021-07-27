@@ -75,7 +75,9 @@ export function handleConstructorInheritance(ctx: AnalyzeContext, reflection: Co
 		return;
 	}
 
-	const qualifiedName = `${(ctorSymbol.declarations[0].parent as ts.ClassDeclaration).name!.getText()}.constructor`;
+	const declaration = ctorSymbol.declarations?.[0];
+	assert(declaration);
+	const qualifiedName = `${(declaration.parent as ts.ClassDeclaration).name!.getText()}.constructor`;
 
 	const ctorReflection = ctx.project.getReflectionForSymbol(ctorSymbol);
 	if (ctorReflection) {

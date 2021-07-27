@@ -57,8 +57,10 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 
 		const symbol = ctx.checker.getSymbolAtLocation(node.typeName)!;
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
+		const declaration = origSymbol.declarations?.[0];
+		assert(declaration);
 
-		const reflectionIdForSymbol = (await findSourceMappedId(ctx, origSymbol.declarations[0])) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const reflectionIdForSymbol = (await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			name,
@@ -80,7 +82,9 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		assert(symbol);
 		const typeArgs = type.aliasSymbol ? type.aliasTypeArguments : type.typeArguments;
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
-		const reflectionIdForSymbol = (await findSourceMappedId(ctx, origSymbol.declarations[0])) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const declaration = origSymbol.declarations?.[0];
+		assert(declaration);
+		const reflectionIdForSymbol = (await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			symbol.name,
@@ -103,7 +107,9 @@ export const exprWithTypeArgsReflector: TypeReflector<ts.ExpressionWithTypeArgum
 		const symbol = ctx.checker.getSymbolAtLocation(node.expression);
 		assert(symbol);
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
-		const reflectionIdForSymbol = (await findSourceMappedId(ctx, origSymbol.declarations[0])) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const declaration = origSymbol.declarations?.[0];
+		assert(declaration);
+		const reflectionIdForSymbol = (await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			origSymbol.name,

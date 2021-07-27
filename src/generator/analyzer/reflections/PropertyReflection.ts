@@ -34,7 +34,7 @@ export class PropertyReflection extends SymbolBasedReflection {
 		that._type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type
 			? await createTypeFromNode(ctx, declaration.type)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			: await createTypeFromTsType(ctx, ctx.checker.getTypeOfSymbolAtLocation(symbol, {} as any));
+			: await createTypeFromTsType(ctx, ctx.checker.getTypeOfSymbolAtLocation(symbol, { kind: ts.SyntaxKind.SourceFile } as any));
 
 		that._handleFlags();
 		that._processJsDoc();

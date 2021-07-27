@@ -43,8 +43,8 @@ export class ClassReflection extends SymbolBasedReflection {
 		const staticMembers = ctx.checker.getPropertiesOfType(staticType);
 
 		that.typeParameters = await resolvePromiseArray(instanceType.typeParameters?.map(async (param) => {
-			const declaration = param.symbol.declarations[0];
-			assert(ts.isTypeParameterDeclaration(declaration));
+			const declaration = param.symbol.declarations?.[0];
+			assert(declaration && ts.isTypeParameterDeclaration(declaration));
 			return TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 

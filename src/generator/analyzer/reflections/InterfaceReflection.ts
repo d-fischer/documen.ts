@@ -35,8 +35,8 @@ export class InterfaceReflection extends SymbolBasedReflection {
 		}
 
 		that.typeParameters = await resolvePromiseArray(type.typeParameters?.map(async param => {
-			const declaration = param.symbol.declarations[0];
-			assert(ts.isTypeParameterDeclaration(declaration));
+			const declaration = param.symbol.declarations?.[0];
+			assert(declaration && ts.isTypeParameterDeclaration(declaration));
 			return TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 
