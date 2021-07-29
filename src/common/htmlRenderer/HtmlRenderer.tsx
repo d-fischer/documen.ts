@@ -39,6 +39,7 @@ const insertIntoSkeleton = (html: string, css: string, baseUrl: string, config: 
 			padding: 0;
 			font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 			font-size: 14px;
+			line-height: 1.6em;
 			background: #141414;
 			color: #b9b9b9;
 		}

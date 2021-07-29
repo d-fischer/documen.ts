@@ -14,9 +14,15 @@ interface MarkdownParserProps {
 
 const useStyles = makeStyles(theme => ({
 	link: {
-		color: theme.colors.link,
+		color: 'inherit',
 		fontWeight: 'bold',
-		textDecoration: 'none'
+		textDecoration: 'none',
+		borderBottom: `1.5px solid ${theme.colors.accent.default}`,
+		transition: 'border-color .3s ease-in-out',
+
+		'&:hover': {
+			borderBottomColor: theme.colors.accent.focus
+		}
 	},
 	warning: {
 		display: 'flow-root',

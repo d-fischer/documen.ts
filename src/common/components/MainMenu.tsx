@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
 		color: theme.colors.text,
 		transition: 'background-color .3s ease-in-out, border-color .3s ease-in-out',
 		borderBottom: '3px solid transparent',
+		lineHeight: '1.3em',
 
 		'&:hover': {
 			backgroundColor: theme.colors.background.hover
