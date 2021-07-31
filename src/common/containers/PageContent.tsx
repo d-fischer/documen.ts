@@ -6,20 +6,11 @@ const useStyles = makeStyles(theme => ({
 		padding: theme.spacing.unit * 2,
 
 		'& h2': {
-			margin: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 2}px`
-		},
+			margin: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 2}px`,
 
-		'& table': {
-			borderCollapse: 'collapse'
-		},
-
-		'& th, & td': {
-			border: `1px solid ${theme.colors.border}`,
-			padding: theme.spacing.unit
-		},
-
-		'& li': {
-			margin: `${theme.spacing.unit * 2}px 0`
+			'&:first-child': {
+				marginTop: 0
+			}
 		}
 	}
 }), { name: 'PageContent' });

@@ -8,7 +8,8 @@ import Badge from '../Badge';
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		listStyleType: 'none'
+		listStyleType: 'none',
+		lineHeight: '1.3em'
 	},
 	link: {
 		color: theme.colors.link,

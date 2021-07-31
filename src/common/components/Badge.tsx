@@ -16,6 +16,7 @@ const useStyles = makeStyles<DefaultTheme, BadgeStyleProps>(theme => ({
 		padding: '2px 5px',
 		borderRadius: 5,
 		fontSize: 12,
+		lineHeight: 'normal',
 		textDecoration: 'none',
 		cursor: ({ hasLink }) => hasLink ? 'pointer' : 'default'
 	},

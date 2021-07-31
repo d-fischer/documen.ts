@@ -13,6 +13,24 @@ interface MarkdownParserProps {
 }
 
 const useStyles = makeStyles(theme => ({
+	root: {
+		'& table': {
+			borderCollapse: 'collapse'
+		},
+
+		'& th, & td': {
+			border: `1px solid ${theme.colors.border}`,
+			padding: theme.spacing.unit
+		},
+
+		'& li': {
+			margin: `${theme.spacing.unit * 2}px 0`,
+
+			'&::marker': {
+				color: '#647d0f'
+			}
+		}
+	},
 	link: {
 		color: 'inherit',
 		fontWeight: 'bold',
@@ -81,7 +99,7 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 		warningTitle: classes.warningTitle
 	}), [classes]);
 
-	return <ReactMarkdown remarkPlugins={[symbolLinks, gfmTables, [customDirectives, { classes: customDirectiveClasses }]]} components={components}>{source}</ReactMarkdown>
+	return <ReactMarkdown className={classes.root} remarkPlugins={[symbolLinks, gfmTables, [customDirectives, { classes: customDirectiveClasses }]]} components={components}>{source}</ReactMarkdown>
 };
 
 export default React.memo(MarkdownParser);
