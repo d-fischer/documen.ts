@@ -35,11 +35,11 @@ export default class HtmlGenerator extends OutputGenerator {
 		}
 	}
 
-	async _generateDocs(paths: Paths, progressCallback?: GeneratorProgressCallback, subPackage?: string) {
+	async _generateDocs(paths: Paths, progressCallback?: GeneratorProgressCallback) {
 		const { monorepoRoot, baseDir, outputDir, configDir, indexFile, categories, indexTitle } = this._config;
 		const outDir = path.resolve(baseDir, resolveHome(outputDir));
 
-		const monoReadmePath = (monorepoRoot && !indexFile) ? path.join(baseDir, monorepoRoot, subPackage!, 'README.md') : undefined;
+		const monoReadmePath = (monorepoRoot && !indexFile) ? path.join(baseDir, 'README.md') : undefined;
 		const pathToRead = configDir ? (
 			monoReadmePath && await fs.pathExists(monoReadmePath)
 				? monoReadmePath
@@ -91,7 +91,9 @@ export default class HtmlGenerator extends OutputGenerator {
 	}
 
 	async _generateReference(data: SerializedProject, paths: Paths, subPackage?: string, progressCallback?: GeneratorProgressCallback) {
-		const outDir = path.resolve(this._config.baseDir, resolveHome(this._config.outputDir));
+		const { monorepoRoot, baseDir, outputDir, packageScope } = this._config;
+
+		const outDir = path.resolve(this._config.baseDir, resolveHome(outputDir));
 		const pkgPath = getPackagePath(subPackage);
 
 		const fullDir = path.join(outDir, 'reference', pkgPath);
@@ -102,6 +104,9 @@ export default class HtmlGenerator extends OutputGenerator {
 			await fs.mkdirp(fullDir);
 		}
 
+		const packageReadmePath = monorepoRoot ? path.join(baseDir, monorepoRoot, subPackage!, 'README.md') : undefined;
+		const packageReadmePromise = packageReadmePath && await fs.pathExists(packageReadmePath) ? fs.readFile(packageReadmePath, 'utf-8') : undefined;
+
 		// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
 		const { default: render } = require(path.join(paths.tmpDir, 'generator.js'));
 
@@ -110,10 +115,12 @@ export default class HtmlGenerator extends OutputGenerator {
 		const isNodeVisible = (node: ReferenceNode) => checkVisibility(node);
 		const packageChildren = packageData.symbols.filter(isNodeVisible);
 
-		const classPaths = filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `/reference${pkgPath}/classes/${value.name}`);
-		const functionPaths = filterByMember(packageChildren, 'kind', 'function').filter(isNodeVisible).map(value => `/reference${pkgPath}/functions/${value.name}`);
-		const interfacePaths = filterByMember(packageChildren, 'kind', 'interface').filter(isNodeVisible).map(value => `/reference${pkgPath}/interfaces/${value.name}`);
-		const enumPaths = filterByMember(packageChildren, 'kind', 'enum').filter(isNodeVisible).map(value => `/reference${pkgPath}/enums/${value.name}`);
+		const packageRootPath = `/reference${pkgPath}/`;
+
+		const classPaths = filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `${packageRootPath}/classes/${value.name}`);
+		const functionPaths = filterByMember(packageChildren, 'kind', 'function').filter(isNodeVisible).map(value => `${packageRootPath}/functions/${value.name}`);
+		const interfacePaths = filterByMember(packageChildren, 'kind', 'interface').filter(isNodeVisible).map(value => `${packageRootPath}/interfaces/${value.name}`);
+		const enumPaths = filterByMember(packageChildren, 'kind', 'enum').filter(isNodeVisible).map(value => `${packageRootPath}/enums/${value.name}`);
 
 		const totalCount = 1 + classPaths.length + functionPaths.length + interfacePaths.length + enumPaths.length;
 
@@ -124,9 +131,25 @@ export default class HtmlGenerator extends OutputGenerator {
 				reportProgress();
 			};
 
+			const renderFromEntry = async (entry: RenderEntry) => {
+				const [resourcePath, title, contentPromise] = entry;
+
+				await this._renderToFile(render, resourcePath, outDir, this._config, {
+					content: await contentPromise,
+					title
+				});
+
+				reportProgress();
+			};
+
 			reportProgress(0);
 
-			await renderFromPath(`/reference${pkgPath}/`);
+			if (packageReadmePromise) {
+				const packageFullName = packageScope ? `@${packageScope}/${subPackage!}` : subPackage!
+				await renderFromEntry([packageRootPath, `${packageFullName}`, packageReadmePromise]);
+			} else {
+				await renderFromPath(packageRootPath);
+			}
 
 			for (const classPath of classPaths) {
 				await renderFromPath(classPath);

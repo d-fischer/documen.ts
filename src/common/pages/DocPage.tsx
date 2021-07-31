@@ -95,9 +95,11 @@ const DocPage: React.FC = () => {
 				</NavMenu>
 			) : null}
 			<div className={classes.main}>
-				<PageHeader>
-					<h1>{title}</h1>
-				</PageHeader>
+				{title ? (
+					<PageHeader>
+						<h1>{title}</h1>
+					</PageHeader>
+				) : null}
 				<PageContent>
 					<PageArticle mockContent={mockContent}/>
 				</PageContent>
