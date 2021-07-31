@@ -97,12 +97,16 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
+// clean up a tiny bit of twoslash specific stuff for the static output
+function getCleanText(text: string) {
+	return text.replace(/[\w\W]*?(?:^|\n)\/\/ ---cut---\n/, '').replace(/\/\/ @.*\n/g, '');
+}
+
 export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 'static' ? (
 	props => {
 		const { lang, langMeta, text } = props;
 		if (langMeta === 'twoslash') {
-			// clean up a tiny bit of twoslash specific stuff for the static output
-			const cleanText = text.replace(/[\w\W]*?(?:^|\n)\/\/ ---cut---\n/, '').replace(/\/\/ @.*\n/g, '');
+			const cleanText = getCleanText(text);
 			return (
 				<div data-dynamic-component="CodeBlock" data-component-props={JSON.stringify(props)}>
 					<SyntaxHighlighter language={lang} style={darcula as unknown}>
@@ -129,14 +133,29 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		const changeMode = useCallback<React.EventHandler<React.FormEvent<HTMLInputElement>>>((e) => {
 			setMode(e.currentTarget.value);
 		}, []);
-		const twoslashed = useMemo(() => isTwoslash ? twoslasher(text, 'ts', {
-			defaultOptions: { showEmit: transpile },
-			tsModule: ts,
-			lzstringModule: lzString,
-			// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-			fsMap: require('../../progressiveEnhancement/fsMap').fsMap,
-			customTransformers: showCjs ? { after: [friendlyCjsTransform()] } : undefined
-		}) : undefined, [text, transpile, showCjs]);
+		const twoslashed = useMemo(() => {
+			if (isTwoslash) {
+				try {
+					return twoslasher(text, 'ts', {
+						defaultOptions: { showEmit: transpile },
+						tsModule: ts,
+						lzstringModule: lzString,
+						// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
+						fsMap: require('../../progressiveEnhancement/fsMap').fsMap,
+						customTransformers: showCjs ? { after: [friendlyCjsTransform()] } : undefined
+					});
+				} catch (e) {
+					// eslint-disable-next-line no-console
+					console.error('Error rendering twoslash', e);
+					return {
+						code: getCleanText(text),
+						error: e as Error
+					};
+				}
+			} else {
+				return undefined;
+			}
+		}, [text, transpile, showCjs]);
 
 		if (!isTwoslash) {
 			return (
