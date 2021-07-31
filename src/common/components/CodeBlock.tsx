@@ -109,7 +109,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 			const cleanText = getCleanText(text);
 			return (
 				<div data-dynamic-component="CodeBlock" data-component-props={JSON.stringify(props)}>
-					<SyntaxHighlighter language={lang} style={darcula as unknown}>
+					<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
 						{cleanText}
 					</SyntaxHighlighter>
 				</div>
@@ -117,7 +117,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 		}
 
 		return (
-			<SyntaxHighlighter language={lang} style={darcula as unknown}>
+			<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
 				{text}
 			</SyntaxHighlighter>
 		);
@@ -159,7 +159,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 
 		if (!isTwoslash) {
 			return (
-				<SyntaxHighlighter language={lang} style={darcula as unknown}>
+				<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
 					{text}
 				</SyntaxHighlighter>
 			);
@@ -175,7 +175,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 's
 					<input className={classes.modeInput} type="radio" name="mode" id={`mode-cjs-${idSuffix}`} value="cjs" checked={mode === 'cjs'} onClick={changeMode}/>
 					<label className={classes.mode} htmlFor={`mode-cjs-${idSuffix}`} title="CommonJS">CJS</label>
 				</form>
-				<SyntaxHighlighter language={lang} style={darcula as unknown}>
+				<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
 					{twoslashed!.code}
 				</SyntaxHighlighter>
 			</div>
