@@ -115,7 +115,7 @@ export default class HtmlGenerator extends OutputGenerator {
 		const isNodeVisible = (node: ReferenceNode) => checkVisibility(node);
 		const packageChildren = packageData.symbols.filter(isNodeVisible);
 
-		const packageRootPath = `/reference${pkgPath}/`;
+		const packageRootPath = `/reference${pkgPath}`;
 
 		const classPaths = filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `${packageRootPath}/classes/${value.name}`);
 		const functionPaths = filterByMember(packageChildren, 'kind', 'function').filter(isNodeVisible).map(value => `${packageRootPath}/functions/${value.name}`);
@@ -146,7 +146,7 @@ export default class HtmlGenerator extends OutputGenerator {
 
 			if (packageReadmePromise) {
 				const packageFullName = packageScope ? `@${packageScope}/${subPackage!}` : subPackage!
-				await renderFromEntry([packageRootPath, `${packageFullName}`, packageReadmePromise]);
+				await renderFromEntry([`${packageRootPath}/`, packageFullName, packageReadmePromise]);
 			} else {
 				await renderFromPath(packageRootPath);
 			}

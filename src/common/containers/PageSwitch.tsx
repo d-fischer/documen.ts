@@ -8,7 +8,7 @@ import InterfacePage from '../pages/InterfacePage';
 
 const PageSwitch: React.FunctionComponent = () => (
 	<Routes>
-		<Route element={<DocPage/>}/>
+		<Route path="/" element={<DocPage/>}/>
 		<Route path="classes/:name" element={<ClassPage/>}/>
 		<Route path="functions/:name" element={<FunctionPage/>}/>
 		<Route path="interfaces/:name" element={<InterfacePage/>}/>
