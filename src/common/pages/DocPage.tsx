@@ -76,10 +76,10 @@ const DocPage: React.FC = () => {
 
 	return (
 		<div className={classes.root}>
-			{confCategory ? (
+			{confCategory?.groups?.length && confCategory.groups.some(grp => grp.articles?.length) ? (
 				<NavMenu className={classes.nav}>
 					<NavMenuItem path={`/docs/${confCategory.name}/`}>{confCategory.indexTitle ?? confCategory.name}</NavMenuItem>
-					{confCategory.groups?.map(grp => (
+					{confCategory.groups.map(grp => (
 						<NavMenuGroup key={grp.name} title={grp.title}>
 							{grp.articles?.map(art => 'externalLink' in art ? (
 								<NavMenuItem key={art.name} external path={art.externalLink} title={art.title}>
@@ -91,7 +91,7 @@ const DocPage: React.FC = () => {
 								</NavMenuItem>
 							))}
 						</NavMenuGroup>
-					)) ?? null}
+					))}
 				</NavMenu>
 			) : null}
 			<div className={classes.main}>
