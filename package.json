@@ -7,6 +7,7 @@
     "node": ">= 12.10.0"
   },
   "dependencies": {
+    "@d-fischer/react-syntax-highlighter": "^15.4.5",
     "@d-fischer/shared-utils": "^3.0.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
@@ -58,7 +59,6 @@
     "react-markdown": "^6.0.1",
     "react-router-dom": "^6.0.0-beta.0",
     "react-router-hash-link": "^2.3.1",
-    "react-syntax-highlighter": "^15.4.3",
     "remark-directive": "^1.0.1",
     "rollup": "^2.36.1",
     "rollup-plugin-dts": "^2.0.1",

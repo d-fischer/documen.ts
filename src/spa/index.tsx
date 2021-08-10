@@ -6,10 +6,10 @@ import registerServiceWorker from './registerServiceWorker';
 import App from '../common/containers/App';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
-import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
-import ts from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
+import { Light as SyntaxHighlighter } from '@d-fischer/react-syntax-highlighter';
+import js from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/javascript';
+import json from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/json';
+import ts from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from '../common/theme';
 

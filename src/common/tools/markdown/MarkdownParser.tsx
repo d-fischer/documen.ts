@@ -86,7 +86,7 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 			if (!inline) {
 				const match = /language-(\w+)/.exec(className || '');
 				if (match) {
-					return <CodeBlock lang={match[1]} langMeta={node.data?.meta} text={String(children).trimEnd()}/>;
+					return <CodeBlock lang={match[1]} langMeta={node.data?.meta.split(' ') ?? []} text={String(children).trimEnd()}/>;
 				}
 			}
 			return <code className={className} {...props}>{children}</code>;
