@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import MainMenu from '../components/MainMenu';
 import { ConfigContext } from '../config';
 import DocPage from '../pages/DocPage';
+import AppLayout from './AppLayout';
 import ReferencePackageContainer from './ReferencePackageContainer';
 
 const App: React.FunctionComponent = () => {
@@ -11,12 +11,13 @@ const App: React.FunctionComponent = () => {
 	const isMono = !!config.monorepoRoot;
 	return (
 		<>
-			<MainMenu/>
 			<Routes basename={baseUrl}>
-				<Route path="/" element={<DocPage/>}/>
-				<Route path={isMono ? '/reference/:packageName/*' : '/reference/*'} element={<ReferencePackageContainer/>}/>
-				<Route path="/docs/:category" element={<DocPage/>}/>
-				<Route path="/docs/:category/:group/:article" element={<DocPage/>}/>
+				<Route element={<AppLayout />}>
+					<Route path="" element={<DocPage/>}/>
+					<Route path={isMono ? 'reference/:packageName/*' : '/reference/*'} element={<ReferencePackageContainer/>}/>
+					<Route path="docs/:category" element={<DocPage/>}/>
+					<Route path="docs/:category/:group/:article" element={<DocPage/>}/>
+				</Route>
 			</Routes>
 		</>
 	);

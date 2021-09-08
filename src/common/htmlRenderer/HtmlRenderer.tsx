@@ -62,6 +62,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	const routerMode: RouterMode = config.routerMode || 'server';
 	const sheets = new ServerStyleSheets();
+	const joinedUrl = path.posix.join(baseUrl, url);
 
 	switch (routerMode) {
 		case 'htmlSuffix': {
@@ -69,7 +70,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 				<ConfigContext.Provider value={config}>
 					<PageArticleContext.Provider value={article}>
 						<ThemeProvider theme={theme}>
-							<StaticRouterWithSuffix location={url} suffix=".html">
+							<StaticRouterWithSuffix location={joinedUrl} suffix=".html">
 								<App/>
 							</StaticRouterWithSuffix>
 						</ThemeProvider>
@@ -85,7 +86,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 				<ConfigContext.Provider value={config}>
 					<PageArticleContext.Provider value={article}>
 						<ThemeProvider theme={theme}>
-							<StaticRouter location={url}>
+							<StaticRouter location={joinedUrl}>
 								<App/>
 							</StaticRouter>
 						</ThemeProvider>

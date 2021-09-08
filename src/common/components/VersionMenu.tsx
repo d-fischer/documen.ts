@@ -1,11 +1,10 @@
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { ConfigContext, rootUrl } from '../config';
 import { useAsyncEffect } from '../tools/FunctionTools';
-import { getPackageList } from '../tools/ReferenceTools';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles(theme => ({
 	entry: {
@@ -17,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 		color: theme.colors.text,
 		transition: 'background-color .3s ease-in-out, border-color .3s ease-in-out',
 		borderBottom: '3px solid transparent',
+		lineHeight: '1.3em',
 
 		'&:hover': {
 			backgroundColor: theme.colors.background.hover
@@ -102,7 +102,6 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 				setManifestLoading(false);
 			}
 		}, [manifest, manifestLoading, config]);
-		const packages = useMemo(() => getPackageList().filter(pkg => !config.ignoredPackages?.includes(pkg.packageName)), []);
 		const [menuOpen, setMenuOpen] = useState(false);
 		const [warningHidden, setWarningHidden] = useState(!!localStorage.getItem('documents.masterWarning.hidden'));
 		const dismissWarning = useCallback(() => {
@@ -130,10 +129,10 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 					{menuOpen && (
 						<div className={classes.menu}>
 							<a className={classNames(classes.entry, classes.menuEntry)} key={config.mainBranchName}
-							   href={`${manifest.rootUrl}/${packages[0].packageName}`}>{config.mainBranchName}</a>
+							   href={`${manifest.rootUrl}/`}>{config.mainBranchName}</a>
 							{manifest.versions.map((version: string) => (
 								<a className={classNames(classes.entry, classes.menuEntry)} key={version}
-								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}`}>{version}</a>
+								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}/`}>{version}</a>
 							))}
 						</div>
 					)}

@@ -47,17 +47,17 @@ try {
 } catch (e) {
 	console.error(e);
 	generatorConfig = {
-		repoUser: 'd-fischer',
-		repoName: 'twitch',
-		repoBranch: 'master',
+		repoUser: 'twurple',
+		repoName: 'twurple',
+		repoBranch: 'versions/5.0',
 		monorepoRoot: 'packages',
 		mainPackage: 'twitch',
-		mainBranchName: 'master',
-		versionBranchPrefix: 'support/',
+		mainBranchName: 'main',
+		versionBranchPrefix: 'versions/',
 		versionFolder: 'versions',
 
 		__devManifest: {
-			versions: ['4.5'],
+			versions: ['5.0'],
 			rootUrl: ''
 		}
 	};
