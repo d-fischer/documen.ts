@@ -138,6 +138,7 @@ export default class CLICommand extends Command {
 		const mainBranchName = getConfigValue(importedConfig, 'mainBranchName') ?? 'master';
 		const versionBranchPrefix = getConfigValue(importedConfig, 'versionBranchPrefix') ?? undefined;
 		const versionFolder = getConfigValue(importedConfig, 'versionFolder') ?? undefined;
+		const defaultVersion = getConfigValue(importedConfig, 'defaultVersion') ?? mainBranchName;
 
 		let outputDir = rootOutputDir;
 		let version: string | undefined = undefined;
@@ -154,13 +155,17 @@ export default class CLICommand extends Command {
 
 			if (options.repoBranch.startsWith(versionBranchPrefix)) {
 				version = options.repoBranch.substr(versionBranchPrefix.length);
-				outputDir = path.join(rootOutputDir, versionFolder, version);
-				baseUrl = path.posix.join(baseUrl, versionFolder, version);
-			} else if (options.repoBranch !== mainBranchName) {
+			} else if (options.repoBranch === mainBranchName) {
+				version = mainBranchName;
+			} else {
 				console.error(
 					`This project is version aware and can only build docs for the branch "${mainBranchName}" and branches starting with "${versionBranchPrefix}."`
 				);
 				process.exit(1);
+			}
+			if (version !== defaultVersion) {
+				outputDir = path.join(rootOutputDir, versionFolder, version);
+				baseUrl = path.posix.join(baseUrl, versionFolder, version);
 			}
 			needsManifest = true;
 			versionAware = true;
@@ -199,12 +204,13 @@ export default class CLICommand extends Command {
 			versionBranchPrefix,
 			versionFolder,
 			version,
+			defaultVersion,
 			ignoredPackages,
 			title: getConfigValue(importedConfig, 'title'),
 			repoUser: options.repoUser || getConfigValue(importedConfig, 'repoUser'),
 			repoName: options.repoName || getConfigValue(importedConfig, 'repoName'),
 			repoBaseFolder: getConfigValue(importedConfig, 'repoBaseFolder'),
-			repoBranch: options.repoBranch || 'master',
+			repoBranch: options.repoBranch || mainBranchName,
 			indexTitle: (options.indexTitle || getConfigValue(importedConfig, 'indexTitle')) ?? 'Welcome',
 			indexFile,
 			categories: categories ?? undefined,
@@ -239,19 +245,15 @@ export default class CLICommand extends Command {
 		}
 
 		if (versionAware) {
-			if (version) {
-				console.log(`Cleaning up generated files for version ${version}`);
-				await fsp.rmdir(outputDir, { recursive: true });
-				await fsp.mkdir(outputDir, { recursive: true });
-			} else {
-				console.log(`Cleaning up generated files for branch ${mainBranchName}`);
+			console.log(`Cleaning up generated files for ${(version === mainBranchName ? `branch ${mainBranchName}` : `version ${version!}`)}`);
+			if (version === defaultVersion) {
 				const [versionsRoot] = versionFolder!.split('/');
 				const rootFolderContents = await fsp.readdir(rootOutputDir);
 				const ignoredFiles = [
 					versionsRoot,
 					'manifest.json',
 					...getConfigValue(importedConfig, 'persistentFiles') ?? []
-				]
+				];
 				await Promise.all(
 					rootFolderContents
 						.filter(f => !f.startsWith('.') && !ignoredFiles.includes(f))
@@ -264,6 +266,9 @@ export default class CLICommand extends Command {
 							}
 						})
 				);
+			} else {
+				await fsp.rmdir(outputDir, { recursive: true });
+				await fsp.mkdir(outputDir, { recursive: true });
 			}
 		}
 
@@ -324,6 +329,7 @@ export default class CLICommand extends Command {
 			}
 			// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 			manifest.versions = [...versionsSet].sort();
+			manifest.defaultVersion = defaultVersion;
 			manifest.rootUrl = rootUrl;
 
 			console.log(`Writing manifest to ${manifestPath}`);

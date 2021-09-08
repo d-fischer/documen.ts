@@ -1,5 +1,3 @@
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
@@ -31,41 +29,6 @@ const useStyles = makeStyles(theme => ({
 	activator: {
 		borderRight: '0 none',
 		borderLeft: `1px solid ${theme.colors.border}`
-	},
-	masterWarning: {
-		position: 'absolute',
-		right: 0,
-		top: '100%',
-		zIndex: 1,
-		border: `1px solid ${theme.colors.border}`,
-		backgroundColor: theme.colors.background.default,
-		width: 300,
-		borderRadius: 5,
-		padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-		marginTop: theme.spacing.unit / 2,
-
-		'&::before, &::after': {
-			content: '""',
-			display: 'block',
-			position: 'absolute',
-			right: 10,
-			bottom: '100%',
-			width: 0,
-			height: 0,
-			border: '10px solid transparent',
-			borderTop: '0 none'
-		},
-
-		'&::before': {
-			borderBottomColor: theme.colors.border,
-			zIndex: 2
-		},
-
-		'&::after': {
-			marginBottom: -1,
-			borderBottomColor: theme.colors.background.default,
-			zIndex: 3
-		}
 	},
 	menu: {
 		position: 'absolute',
@@ -103,34 +66,18 @@ const VersionMenu: React.FC = __DOCTS_COMPONENT_MODE === 'static' ? (
 			}
 		}, [manifest, manifestLoading, config]);
 		const [menuOpen, setMenuOpen] = useState(false);
-		const [warningHidden, setWarningHidden] = useState(!!localStorage.getItem('documents.masterWarning.hidden'));
-		const dismissWarning = useCallback(() => {
-			setWarningHidden(true);
-			localStorage.setItem('documents.masterWarning.hidden', 'true')
-		}, []);
 		const toggleMenuOpen = useCallback(() => setMenuOpen(b => !b), []);
 		return (
-			manifest?.versions?.length ? (
+			manifest?.versions?.filter(v => v !== config.defaultVersion).length ? (
 				<div className={classes.wrapper}>
 					<div className={classNames(classes.entry, classes.activator)} onClick={toggleMenuOpen}>
-						{currentVersion ? currentVersion : (
-							<>
-								<Icon icon={faExclamationTriangle} className={classes.warning}/> {config.mainBranchName}
-							</>
-						)}
+						{currentVersion}
 					</div>
-					{(!currentVersion && !warningHidden) ? (
-						<div className={classes.masterWarning} onClick={dismissWarning}>
-							This is the documentation of the development version.<br/>
-							Some of this documentation might not reflect the state of the latest stable version.<br/>
-							Please choose your appropriate version or dismiss this warning by clicking on it.
-						</div>
-					) : null}
 					{menuOpen && (
 						<div className={classes.menu}>
-							<a className={classNames(classes.entry, classes.menuEntry)} key={config.mainBranchName}
-							   href={`${manifest.rootUrl}/`}>{config.mainBranchName}</a>
-							{manifest.versions.map((version: string) => (
+							<a className={classNames(classes.entry, classes.menuEntry)} key={config.defaultVersion}
+							   href={`${manifest.rootUrl}/`}>{config.defaultVersion}</a>
+							{manifest.versions.filter(v => v !== config.defaultVersion).map((version: string) => (
 								<a className={classNames(classes.entry, classes.menuEntry)} key={version}
 								   href={`${manifest.rootUrl}/${config.versionFolder!}/${version}/`}>{version}</a>
 							))}

@@ -31,6 +31,7 @@ export interface ConfigArticleGroup {
 
 export interface Manifest {
 	versions?: string[];
+	defaultVersion: string;
 	rootUrl: string;
 }
 
@@ -52,6 +53,7 @@ export interface Config {
 	version?: string;
 	versionBranchPrefix?: string;
 	versionFolder?: string;
+	defaultVersion?: string;
 	ignoredPackages?: string[];
 	title: string | null;
 	repoUser: string | null;
