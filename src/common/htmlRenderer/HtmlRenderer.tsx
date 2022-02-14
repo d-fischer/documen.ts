@@ -70,7 +70,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 				<ConfigContext.Provider value={config}>
 					<PageArticleContext.Provider value={article}>
 						<ThemeProvider theme={theme}>
-							<StaticRouterWithSuffix location={joinedUrl} suffix=".html">
+							<StaticRouterWithSuffix basename={baseUrl} location={joinedUrl} suffix=".html">
 								<App/>
 							</StaticRouterWithSuffix>
 						</ThemeProvider>

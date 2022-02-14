@@ -260,14 +260,14 @@ export default class CLICommand extends Command {
 						.map(async f => {
 							const filePath = path.join(rootOutputDir, f);
 							if ((await fsp.lstat(filePath)).isDirectory()) {
-								await fsp.rmdir(filePath, { recursive: true });
+								await fsp.rm(filePath, { recursive: true });
 							} else {
 								await fsp.unlink(filePath);
 							}
 						})
 				);
 			} else {
-				await fsp.rmdir(outputDir, { recursive: true });
+				await fsp.rm(outputDir, { recursive: true });
 				await fsp.mkdir(outputDir, { recursive: true });
 			}
 		}

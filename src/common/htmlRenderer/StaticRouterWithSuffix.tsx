@@ -1,10 +1,11 @@
-import type { Location, PartialLocation, To } from 'history';
-import { Action, createPath, parsePath } from 'history';
+import type { Location, To } from 'history';
+import { createPath, parsePath } from 'history';
 import React from 'react';
 import { Router } from 'react-router';
 
 interface StaticRouterWithSuffixProps {
-	location: string | PartialLocation;
+	basename?: string;
+	location: string | Partial<Location>;
 	suffix?: string;
 }
 
@@ -33,12 +34,11 @@ const createUrl = (location: To, suffix?: string): string => {
 	return createPath(location);
 };
 
-const StaticRouterWithSuffix: React.FunctionComponent<StaticRouterWithSuffixProps> = ({ children, location: loc, suffix }) => {
+const StaticRouterWithSuffix: React.FunctionComponent<StaticRouterWithSuffixProps> = ({ children, location: loc, suffix, basename }) => {
 	if (typeof loc === 'string') {
 		loc = parsePath(loc);
 	}
 
-	const action = Action.Pop;
 	let location: Location = {
 		pathname: loc.pathname ?? '/',
 		search: loc.search ?? '',
@@ -99,7 +99,7 @@ const StaticRouterWithSuffix: React.FunctionComponent<StaticRouterWithSuffixProp
 
 	return (
 		<Router
-			action={action}
+			basename={basename}
 			location={location}
 			navigator={staticNavigator}
 			static={true}

@@ -7,11 +7,10 @@ import ReferencePackageContainer from './ReferencePackageContainer';
 
 const App: React.FunctionComponent = () => {
 	const config = useContext(ConfigContext);
-	const baseUrl = `/${(config.baseUrl || '').replace(/^\//, '')}`;
 	const isMono = !!config.monorepoRoot;
 	return (
 		<>
-			<Routes basename={baseUrl}>
+			<Routes>
 				<Route element={<AppLayout />}>
 					<Route path="" element={<DocPage/>}/>
 					<Route path={isMono ? 'reference/:packageName/*' : '/reference/*'} element={<ReferencePackageContainer/>}/>
