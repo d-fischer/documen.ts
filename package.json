@@ -9,8 +9,9 @@
   "dependencies": {
     "@d-fischer/react-syntax-highlighter": "^15.4.5",
     "@d-fischer/shared-utils": "^3.0.1",
-    "@fortawesome/fontawesome-svg-core": "1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-brands-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "0.1.16",
     "@material-ui/styles": "^5.0.0-alpha.15",
     "@rollup/plugin-multi-entry": "^4.0.0",
@@ -78,7 +79,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "peerDependencies": {
-    "typescript": "^4.0.5"
+    "typescript": "~4.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -93,7 +94,7 @@
     "prettier": "^2.2.1",
     "react-error-overlay": "^6.0.7",
     "react-refresh": "^0.9.0",
-    "typescript": "~4.3.5",
+    "typescript": "~4.6.3",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"
   },

@@ -1,3 +1,5 @@
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { makeStyles } from '@material-ui/styles';
 import classNames from 'classnames';
 import React, { useContext, useMemo } from 'react';
@@ -13,8 +15,8 @@ const useStyles = makeStyles(
 			display: 'flex'
 		},
 		entry: {
-			margin: `0 ${theme.spacing.unit}px`,
-			padding: theme.spacing.unit,
+			margin: 0,
+			padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
 			cursor: 'pointer',
 			textDecoration: 'none',
 			userSelect: 'none',
@@ -66,6 +68,7 @@ const useStyles = makeStyles(
 			borderBottom: '0 none',
 			margin: 0,
 			borderLeft: '3px solid transparent',
+			whiteSpace: 'nowrap',
 
 			'&:first-child': {
 				borderTop: '0 none'
@@ -142,9 +145,14 @@ const MainMenu: React.FC = () => {
 					))}
 				</div>
 			</div>
+			<div className={classes.spacer} />
+			{config.repoUser && config.repoName ? (
+				<a href={`https://github.com/${config.repoUser}/${config.repoName}`} className={classes.entry}>
+					<Icon icon={faGithub} />
+				</a>
+			) : null}
 			{config.versionBranchPrefix ? (
 				<>
-					<div className={classes.spacer} />
 					<VersionMenu />
 				</>
 			) : null}
