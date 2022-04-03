@@ -27,7 +27,6 @@ export default abstract class Generator {
 
 	abstract generate(data: SerializedProject, paths: Paths): Promise<void>;
 
-	/** @protected */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
 	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>, overrideConfig?: Partial<Config>) {
 	}

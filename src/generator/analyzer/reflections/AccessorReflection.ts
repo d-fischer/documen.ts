@@ -50,7 +50,7 @@ export class AccessorReflection extends SymbolBasedReflection {
 		if (decl) {
 			const sig = ctx.checker.getSignatureFromDeclaration(decl);
 			if (sig) {
-				return SignatureReflection.fromTsSignature(ctx, decl.kind, sig, this, decl);
+				return await SignatureReflection.fromTsSignature(ctx, decl.kind, sig, this, decl);
 			}
 		}
 		return undefined;

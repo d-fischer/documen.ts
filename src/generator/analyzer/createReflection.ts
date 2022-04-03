@@ -52,35 +52,35 @@ export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.S
 	}
 
 	if (ts.isInterfaceDeclaration(declaration)) {
-		return InterfaceReflection.fromSymbol(ctx, symbol);
+		return await InterfaceReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isFunctionDeclaration(declaration)) {
-		return FunctionReflection.fromSymbol(ctx, symbol);
+		return await FunctionReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isClassDeclaration(declaration)) {
-		return ClassReflection.fromSymbol(ctx, symbol);
+		return await ClassReflection.fromSymbol(ctx, symbol);
 	}
 	if (ts.isMethodDeclaration(declaration) || ts.isMethodSignature(declaration)) {
-		return MethodReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
+		return await MethodReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
 	}
 	if (ts.isAccessor(declaration)) {
-		return AccessorReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
+		return await AccessorReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
 	}
 	if (ts.isTypeAliasDeclaration(declaration)) {
-		return TypeAliasReflection.fromSymbol(ctx, symbol);
+		return await TypeAliasReflection.fromSymbol(ctx, symbol);
 	}
 	// eslint-disable-next-line no-bitwise
 	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration) || symbol.flags & ts.SymbolFlags.Property) {
-		return PropertyReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
+		return await PropertyReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
 	}
 	if (ts.isParameter(declaration)) {
-		return ParameterReflection.fromSymbol(ctx, symbol, declaration);
+		return await ParameterReflection.fromSymbol(ctx, symbol, declaration);
 	}
 	if (ts.isEnumDeclaration(declaration)) {
-		return EnumReflection.fromSymbol(ctx, symbol);
+		return await EnumReflection.fromSymbol(ctx, symbol);
 	}
 
-	return SymbolBasedReflection.unknown(ctx, symbol);
+	return await SymbolBasedReflection.unknown(ctx, symbol);
 }
 
 export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: Reflection): Promise<Reflection> {

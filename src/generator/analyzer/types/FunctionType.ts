@@ -17,7 +17,7 @@ export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 			return new IntrinsicType('Function');
 		}
 
-		const params = await Promise.all(node.parameters.map(async param => ParameterReflection.fromNode(ctx, param)));
+		const params = await Promise.all(node.parameters.map(async param => await ParameterReflection.fromNode(ctx, param)));
 		const returnType = await createTypeFromNode(ctx, node.type);
 		const signature = await SignatureReflection.fromParts(ctx, ts.SyntaxKind.CallSignature, params, returnType);
 

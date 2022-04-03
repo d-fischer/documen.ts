@@ -58,14 +58,12 @@ export class Project {
 		return { packages };
 	}
 
-	/** @internal */
 	registerReflection(reflection: Reflection): number {
 		const id = this._nextReflectionId++;
 		this._reflectionsById.set(id, reflection);
 		return id;
 	}
 
-	/** @internal */
 	registerSymbol(id: number, symbol: ts.Symbol, withReverse = true) {
 		this._symbolsByReflectionId.set(id, symbol);
 		if (withReverse) {
@@ -73,7 +71,6 @@ export class Project {
 		}
 	}
 
-	/** @internal */
 	registerForPackageName(name: string, reflection: Reflection) {
 		this._packageNamesByReflectionId.set(reflection.id, name);
 	}
@@ -97,7 +94,10 @@ export class Project {
 		return undefined;
 	}
 
-	/** @internal */
+	/**
+	 * @param id
+	 * @internal
+	 */
 	getPackageNameForReflectionId(id: number | undefined) {
 		return id ? this._packageNamesByReflectionId.get(id) : undefined;
 	}

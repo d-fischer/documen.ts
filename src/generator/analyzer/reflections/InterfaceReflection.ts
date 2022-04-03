@@ -26,7 +26,7 @@ export class InterfaceReflection extends SymbolBasedReflection {
 				?.filter((decl): decl is ts.InterfaceDeclaration => ts.isInterfaceDeclaration(decl))
 				.flatMap(decl => decl.heritageClauses
 					?.filter(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)
-					.flatMap(clause => clause.types.map(async extendedType => Heritage.fromTypeNode(ctx, extendedType))) ?? []
+					.flatMap(clause => clause.types.map(async extendedType => await Heritage.fromTypeNode(ctx, extendedType))) ?? []
 				)
 		);
 
@@ -37,12 +37,12 @@ export class InterfaceReflection extends SymbolBasedReflection {
 		that.typeParameters = await resolvePromiseArray(type.typeParameters?.map(async param => {
 			const declaration = param.symbol.declarations?.[0];
 			assert(declaration && ts.isTypeParameterDeclaration(declaration));
-			return TypeParameterReflection.fromDeclaration(ctx, declaration);
+			return await TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 
 		const members = ctx.checker.getPropertiesOfType(type);
 		that.members = await Promise.all([
-			...members.map(async mem => createReflection(ctx, mem, that))
+			...members.map(async mem => await createReflection(ctx, mem, that))
 		]);
 
 		that._handleFlags();

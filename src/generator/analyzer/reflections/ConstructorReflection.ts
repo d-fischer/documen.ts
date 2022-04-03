@@ -23,7 +23,7 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		that._signatures = await Promise.all(
 			signatures
 				.filter(sig => !!sig.declaration)
-				.map(async (sig, i) => SignatureReflection.fromTsSignature(
+				.map(async (sig, i) => await SignatureReflection.fromTsSignature(
 					ctx,
 					ts.SyntaxKind.ConstructSignature,
 					sig,

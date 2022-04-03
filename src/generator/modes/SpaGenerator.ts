@@ -9,11 +9,11 @@ import { OutputGenerator } from './OutputGenerator';
 
 export default class SpaGenerator extends OutputGenerator {
 	async generate(data: SerializedProject, paths: Paths) {
-		return this._generateReference(data, paths);
+		await this._generateReference(data, paths);
 	}
 
 	async _generateReference(data: SerializedProject, paths: Paths) {
-		return new Promise<void>((resolve, reject) => {
+		await new Promise<void>((resolve, reject) => {
 			process.chdir(path.join(__dirname, '../../..'));
 
 			// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires
@@ -53,10 +53,10 @@ export default class SpaGenerator extends OutputGenerator {
 	}
 
 	async _generateCommons(): Promise<void> {
-		return Promise.resolve(undefined);
+		await Promise.resolve(undefined);
 	}
 
 	async _generateDocs(): Promise<void> {
-		return Promise.resolve(undefined);
+		await Promise.resolve(undefined);
 	}
 }

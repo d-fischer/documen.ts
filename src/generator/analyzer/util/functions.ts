@@ -17,5 +17,5 @@ export async function getReflectedCallSignatures(ctx: AnalyzeContext, symbol: ts
 
 	const sigs = type.getCallSignatures()
 	const declarations = symbol.getDeclarations()?.filter(ts.isFunctionLike) ?? [];
-	return Promise.all([...zip(declarations, sigs)].map(async ([decl, sig]) => SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig, reflection, decl)));
+	return await Promise.all([...zip(declarations, sigs)].map(async ([decl, sig]) => await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig, reflection, decl)));
 }

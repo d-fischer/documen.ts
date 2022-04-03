@@ -18,7 +18,7 @@ export class TypeAliasReflection extends SymbolBasedReflection {
 		const decl = symbol.getDeclarations()?.find(ts.isTypeAliasDeclaration);
 		assert(decl);
 		that._type = await createTypeFromNode(ctx, decl.type);
-		that._parameters = await resolvePromiseArray(decl.typeParameters?.map(async param => TypeParameterReflection.fromDeclaration(ctx, param)));
+		that._parameters = await resolvePromiseArray(decl.typeParameters?.map(async param => await TypeParameterReflection.fromDeclaration(ctx, param)));
 
 		that._handleFlags();
 		that._processJsDoc();

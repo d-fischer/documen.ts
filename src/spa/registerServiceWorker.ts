@@ -18,7 +18,7 @@ const isLocalhost = Boolean(
 );
 
 async function registerValidServiceWorker(swUrl: string) {
-	return navigator.serviceWorker
+	await navigator.serviceWorker
 		.register(swUrl)
 		.then(registration => {
 			registration.onupdatefound = () => {
@@ -73,7 +73,7 @@ async function checkValidServiceWorker(swUrl: string) {
 }
 
 export default async function registerServiceWorker() {
-	return new Promise<void>((resolve, reject) => {
+	await new Promise<void>((resolve, reject) => {
 		if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
 			// The URL constructor is available in all browsers that support SW.
 			const publicUrl = new URL(
@@ -110,7 +110,7 @@ export default async function registerServiceWorker() {
 export async function unregister() {
 	if ('serviceWorker' in navigator) {
 		const registration = await navigator.serviceWorker.ready;
-		return registration.unregister();
+		return await registration.unregister();
 	}
 	return false;
 }

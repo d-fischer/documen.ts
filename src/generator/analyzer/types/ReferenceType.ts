@@ -64,7 +64,7 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			name,
-			await resolvePromiseArray(node.typeArguments?.map(async typeNode => createTypeFromNode(ctx, typeNode))),
+			await resolvePromiseArray(node.typeArguments?.map(async typeNode => await createTypeFromNode(ctx, typeNode))),
 			reflectionIdForSymbol,
 			packageForSymbol,
 			// eslint-disable-next-line no-bitwise
@@ -88,7 +88,7 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			symbol.name,
-			await resolvePromiseArray(typeArgs?.map(async arg => createTypeFromTsType(ctx, arg))),
+			await resolvePromiseArray(typeArgs?.map(async arg => await createTypeFromTsType(ctx, arg))),
 			reflectionIdForSymbol,
 			packageForSymbol
 		);
@@ -113,7 +113,7 @@ export const exprWithTypeArgsReflector: TypeReflector<ts.ExpressionWithTypeArgum
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			origSymbol.name,
-			await resolvePromiseArray(node.typeArguments?.map(async (type) => createTypeFromNode(ctx, type))),
+			await resolvePromiseArray(node.typeArguments?.map(async (type) => await createTypeFromNode(ctx, type))),
 			reflectionIdForSymbol,
 			packageForSymbol
 		);

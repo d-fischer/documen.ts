@@ -72,7 +72,7 @@ export async function createTypeFromNode(ctx: AnalyzeContext, node?: ts.TypeNode
 
 	const reflector = getReflectorForKind(node.kind);
 
-	return reflector.fromNode(ctx, node);
+	return await reflector.fromNode(ctx, node);
 }
 
 export async function createTypeFromTsType(ctx: AnalyzeContext, type?: ts.Type) {
@@ -85,5 +85,5 @@ export async function createTypeFromTsType(ctx: AnalyzeContext, type?: ts.Type) 
 
 	const reflector = getReflectorForKind(typeNode.kind);
 
-	return reflector.fromType(ctx, type, typeNode);
+	return await reflector.fromType(ctx, type, typeNode);
 }

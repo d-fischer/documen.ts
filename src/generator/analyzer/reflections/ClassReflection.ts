@@ -27,7 +27,7 @@ export class ClassReflection extends SymbolBasedReflection {
 				?.filter((decl): decl is ts.ClassDeclaration => ts.isClassDeclaration(decl))
 				.flatMap(decl => decl.heritageClauses
 					?.filter(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)
-					.flatMap(clause => clause.types.map(async type => Heritage.fromTypeNode(ctx, type))) ?? []
+					.flatMap(clause => clause.types.map(async type => await Heritage.fromTypeNode(ctx, type))) ?? []
 				)
 		);
 
@@ -45,15 +45,15 @@ export class ClassReflection extends SymbolBasedReflection {
 		that.typeParameters = await resolvePromiseArray(instanceType.typeParameters?.map(async (param) => {
 			const declaration = param.symbol.declarations?.[0];
 			assert(declaration && ts.isTypeParameterDeclaration(declaration));
-			return TypeParameterReflection.fromDeclaration(ctx, declaration);
+			return await TypeParameterReflection.fromDeclaration(ctx, declaration);
 		}));
 
 		ctx.staticContext = true;
 		// eslint-disable-next-line no-bitwise
-		that.members = await Promise.all(staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>));
+		that.members = await Promise.all(staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => await (createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>)));
 		ctx.staticContext = false;
 
-		that.members.push(...(await Promise.all(instanceMembers.map(async mem => createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>))));
+		that.members.push(...(await Promise.all(instanceMembers.map(async mem => await (createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>)))));
 
 		that.ctor = await ConstructorReflection.fromSignatures(ctx, symbol, staticType.getConstructSignatures(), that);
 

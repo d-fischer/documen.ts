@@ -166,7 +166,6 @@ export default class HtmlGenerator extends OutputGenerator {
 		});
 	}
 
-	/** @protected */
 	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>) {
 		process.chdir(path.join(__dirname, '../../..'));
 

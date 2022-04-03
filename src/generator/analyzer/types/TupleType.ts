@@ -23,13 +23,13 @@ export class TupleType extends Type {
 export const tupleTypeReflector: TypeReflector<ts.TupleTypeNode, ts.TupleTypeReference> = {
 	kinds: [ts.SyntaxKind.TupleType],
 	async fromNode(ctx, node) {
-		return new TupleType(await resolvePromiseArray(node.elements.map(async subTypeNode => createTypeFromNode(ctx, subTypeNode))));
+		return new TupleType(await resolvePromiseArray(node.elements.map(async subTypeNode => await createTypeFromNode(ctx, subTypeNode))));
 	},
 	async fromType(ctx, type, node) {
 		const elements = node.elements;
 		const types = type.typeArguments?.slice(0, elements.length);
 
-		let result: Array<Type | NamedTupleElementType> | undefined = await resolvePromiseArray(types?.map(async t => createTypeFromTsType(ctx, t)));
+		let result: Array<Type | NamedTupleElementType> | undefined = await resolvePromiseArray(types?.map(async t => await createTypeFromTsType(ctx, t)));
 
 		if (type.target.labeledElementDeclarations) {
 			const labels = type.target.labeledElementDeclarations;

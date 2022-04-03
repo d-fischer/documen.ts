@@ -32,12 +32,12 @@ export class SignatureReflection extends Reflection {
 			signature.parameters.map(async (param, i) => {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				const paramNode = declaration?.parameters?.[i];
-				return ParameterReflection.fromSymbol(ctx, param, paramNode);
+				return await ParameterReflection.fromSymbol(ctx, param, paramNode);
 			})
 		);
 
 		that._typeParams = await resolvePromiseArray(
-			signature.typeParameters?.map(async param => TypeParameterReflection.fromTsTypeParameter(ctx, param))
+			signature.typeParameters?.map(async param => await TypeParameterReflection.fromTsTypeParameter(ctx, param))
 		);
 
 		that._returnType = await createTypeFromTsType(ctx, signature.getReturnType());

@@ -8,6 +8,7 @@ interface TypeAliasHintProps {
 	symbol: TypeAliasReferenceNode;
 }
 
+/* eslint-disable @typescript-eslint/naming-convention */
 const useStyles = makeStyles(theme => ({
 	root: {
 		position: 'relative',
@@ -78,6 +79,7 @@ const useStyles = makeStyles(theme => ({
 		fontFamily: theme.fonts.code
 	}
 }), { name: 'TypeAliasHint' });
+/* eslint-enable @typescript-eslint/naming-convention */
 
 const TypeAliasHint: React.FC<TypeAliasHintProps> = ({ symbol: { comment, name, type } }) => {
 	const classes = useStyles();

@@ -18,13 +18,13 @@ export class PropertyReflection extends SymbolBasedReflection {
 	static async fromSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, parent: SymbolBasedReflection) {
 		const declarations = symbol.getDeclarations();
 		if (declarations?.every(decl => ts.isMethodDeclaration(decl) || ts.isMethodSignature(decl))) {
-			return MethodReflection.fromSymbol(ctx, symbol, parent);
+			return await MethodReflection.fromSymbol(ctx, symbol, parent);
 		}
 
 		const declaration = declarations?.[0];
 		if (declaration) {
 			if (ts.isPropertyDeclaration(declaration) && declaration.initializer && ts.isArrowFunction(declaration.initializer)) {
-				return MethodReflection.fromArrowSymbol(ctx, symbol, declaration.initializer, parent);
+				return await MethodReflection.fromArrowSymbol(ctx, symbol, declaration.initializer, parent);
 			}
 		}
 

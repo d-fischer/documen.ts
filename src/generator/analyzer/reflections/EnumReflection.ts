@@ -14,7 +14,7 @@ export class EnumReflection extends SymbolBasedReflection {
 			? await Promise.all([...(symbol.exports as Map<string, ts.Symbol>).values()]
 				// eslint-disable-next-line no-bitwise
 				.filter(exp => exp.flags & ts.SymbolFlags.EnumMember)
-				.map(async exp => EnumMemberReflection.fromSymbol(ctx, exp)))
+				.map(async exp => await EnumMemberReflection.fromSymbol(ctx, exp)))
 			: [];
 
 		that._handleFlags();
