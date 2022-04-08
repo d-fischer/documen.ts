@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'PageContent' });
 
-const PageContent: React.FC = ({ children }) => {
+const PageContent: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>

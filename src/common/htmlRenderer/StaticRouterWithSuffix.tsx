@@ -34,7 +34,7 @@ const createUrl = (location: To, suffix?: string): string => {
 	return createPath(location);
 };
 
-const StaticRouterWithSuffix: React.FunctionComponent<StaticRouterWithSuffixProps> = ({ children, location: loc, suffix, basename }) => {
+const StaticRouterWithSuffix: React.FunctionComponent<React.PropsWithChildren<StaticRouterWithSuffixProps>> = ({ children, location: loc, suffix, basename }) => {
 	if (typeof loc === 'string') {
 		loc = parsePath(loc);
 	}

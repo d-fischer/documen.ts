@@ -13,7 +13,7 @@ interface NavMenuProps {
 	className?: string;
 }
 
-const NavMenu: React.FC<NavMenuProps> = ({ children, className }) => {
+const NavMenu: React.FC<React.PropsWithChildren<NavMenuProps>> = ({ children, className }) => {
 	const classes = useStyles();
 	return (
 		<div className={classNames(classes.root, className)}>

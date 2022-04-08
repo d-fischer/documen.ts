@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'TypeLink' });
 
-const TypeLink: React.FC<TypeLinkProps> = ({ id, name, children, symbol }) => {
+const TypeLink: React.FC<React.PropsWithChildren<TypeLinkProps>> = ({ id, name, children, symbol }) => {
 	const classes = useStyles();
 
 	let packageName: string | undefined = undefined;

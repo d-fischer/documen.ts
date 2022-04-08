@@ -39,7 +39,7 @@ const useStyles = makeStyles(
 	{ name: 'NavMenuItem' }
 );
 
-const NavMenuItem: React.FC<NavMenuItemProps> = ({ path, external, title, children }) => {
+const NavMenuItem: React.FC<React.PropsWithChildren<NavMenuItemProps>> = ({ path, external, title, children }) => {
 	const classes = useStyles();
 	if (external) {
 		return (

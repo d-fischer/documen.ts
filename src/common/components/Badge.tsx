@@ -34,7 +34,7 @@ interface BadgeProps {
 	className?: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({ small, title, href, className, children }) => {
+const Badge: React.FC<React.PropsWithChildren<BadgeProps>> = ({ small, title, href, className, children }) => {
 	const hasLink = !!href;
 	const classes = useStyles({ hasLink });
 	const Component = hasLink ? 'a' : 'span';

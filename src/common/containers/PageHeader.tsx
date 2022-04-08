@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'PageHeader' });
 
-const PageHeader: React.FC = ({ children }) => {
+const PageHeader: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>

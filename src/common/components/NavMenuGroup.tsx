@@ -27,7 +27,7 @@ const useStyles = makeStyles(({ colors: { text: textColor }, spacing: { unit: sp
 	}
 }), { name: 'NavMenuGroup' });
 
-const NavMenuGroup: React.FC<NavMenuGroupProps> = ({ title, children }) => {
+const NavMenuGroup: React.FC<React.PropsWithChildren<NavMenuGroupProps>> = ({ title, children }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>

@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }), { name: 'Card' });
 
-const Card: React.FC<CardProps> = ({ className, id, children }) => {
+const Card: React.FC<React.PropsWithChildren<CardProps>> = ({ className, id, children }) => {
 	const classes = useStyles();
 	return (
 		<div id={id} className={classNames(classes.root, className)}>
