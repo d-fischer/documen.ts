@@ -267,7 +267,7 @@ export default class CLICommand extends Command {
 						})
 				);
 			} else {
-				await fsp.rm(outputDir, { recursive: true });
+				await fsp.rm(outputDir, { force: true, recursive: true });
 				await fsp.mkdir(outputDir, { recursive: true });
 			}
 		}
