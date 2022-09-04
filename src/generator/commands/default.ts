@@ -223,36 +223,21 @@ export default class CLICommand extends Command {
 			}
 		};
 
-		// eslint-disable-next-line @typescript-eslint/init-declarations
-		let generator: Generator;
-
-		if (generatorConfig.monorepoRoot) {
-			generator = new MonorepoGenerator(generatorConfig);
-		} else {
-			switch (generatorConfig.mode) {
-				case 'spa': {
-					generator = new SpaGenerator(generatorConfig);
-					break;
-				}
-				case 'html': {
-					generator = new HtmlGenerator(generatorConfig);
-					break;
-				}
-				default: {
-					throw new Error(`Generator '${options.mode}' not found`);
-				}
-			}
-		}
+		const generator = this._getGeneratorForConfig(generatorConfig);
 
 		if (versionAware) {
-			console.log(`Cleaning up generated files for ${(version === mainBranchName ? `branch ${mainBranchName}` : `version ${version!}`)}`);
+			console.log(
+				`Cleaning up generated files for ${
+					version === mainBranchName ? `branch ${mainBranchName}` : `version ${version!}`
+				}`
+			);
 			if (version === defaultVersion) {
 				const [versionsRoot] = versionFolder!.split('/');
 				const rootFolderContents = await fsp.readdir(rootOutputDir);
 				const ignoredFiles = [
 					versionsRoot,
 					'manifest.json',
-					...getConfigValue(importedConfig, 'persistentFiles') ?? []
+					...(getConfigValue(importedConfig, 'persistentFiles') ?? [])
 				];
 				await Promise.all(
 					rootFolderContents
@@ -334,6 +319,23 @@ export default class CLICommand extends Command {
 
 			console.log(`Writing manifest to ${manifestPath}`);
 			await fsp.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+		}
+	}
+
+	private _getGeneratorForConfig(config: Config): Generator {
+		if (config.monorepoRoot) {
+			return new MonorepoGenerator(config);
+		}
+		switch (config.mode) {
+			case 'spa': {
+				return new SpaGenerator(config);
+			}
+			case 'html': {
+				return new HtmlGenerator(config);
+			}
+			default: {
+				throw new Error(`Generator '${config.mode as string}' not found`);
+			}
 		}
 	}
 }

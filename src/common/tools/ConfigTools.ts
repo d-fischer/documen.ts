@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import path from 'path';
 import ts from 'typescript';
 
 export function exit(exitCode: number): never {
@@ -53,7 +54,7 @@ function handleConfigParsingErrors(parsedCommandLine: ts.ParsedCommandLine | und
 	}
 }
 
-export function parseConfig(configFilePath: string) {
+function createConfigParsingHost() {
 	const tempCompilerHost = ts.createCompilerHost({}, false);
 	// from here https://github.com/Microsoft/TypeScript/blob/6fb0f6818ad48bf4f685e86c03405ddc84b530ed/src/compiler/program.ts#L2812
 	const configParsingHost: ts.ParseConfigFileHost = {
@@ -65,6 +66,11 @@ export function parseConfig(configFilePath: string) {
 		getCurrentDirectory: () => tempCompilerHost.getCurrentDirectory(),
 		onUnRecoverableConfigFileDiagnostic: () => undefined
 	};
+	return { tempCompilerHost, configParsingHost };
+}
+
+export function parseConfig(configFilePath: string) {
+	const { tempCompilerHost, configParsingHost } = createConfigParsingHost();
 	const parsedConfig = ts.getParsedCommandLineOfConfigFile(
 		configFilePath,
 		{},
@@ -75,6 +81,17 @@ export function parseConfig(configFilePath: string) {
 			}
 		}
 	)!;
+
+	handleConfigParsingErrors(parsedConfig, tempCompilerHost);
+
+	return parsedConfig;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function parseConfigObject(o: any, mockFilePath: string) {
+	const { tempCompilerHost, configParsingHost } = createConfigParsingHost();
+
+	const parsedConfig = ts.parseJsonConfigFileContent(o, configParsingHost, path.basename(mockFilePath));
 
 	handleConfigParsingErrors(parsedConfig, tempCompilerHost);
 

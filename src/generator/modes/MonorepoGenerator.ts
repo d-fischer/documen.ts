@@ -1,5 +1,6 @@
 /// <reference lib="es2019.object" />
 
+import { mapOptional } from '@d-fischer/shared-utils';
 import * as vfs from '@typescript/vfs';
 import fs from 'fs-extra';
 import ora from 'ora';
@@ -13,6 +14,8 @@ import * as ts from 'typescript';
 import type { Config } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
 import type { SerializedProject } from '../../common/reference';
+import { parseConfig, parseConfigObject } from '../../common/tools/ConfigTools';
+import { fileExists } from '../../common/tools/FileTools';
 import { Project } from '../analyzer/Project';
 import Generator from './Generator';
 import HtmlGenerator from './HtmlGenerator';
@@ -58,12 +61,14 @@ export default class MonorepoGenerator extends Generator {
 			: sortedPackageNames;
 
 		if (!this._config.packageScope && namesInScope.some(n => n.includes('/'))) {
-			throw new Error('Slashes in package names detected. You should probably use the `packageScope` option.')
+			throw new Error('Slashes in package names detected. You should probably use the `packageScope` option.');
 		}
+
+		const rootProgram = await this._createReferenceRootProgram(packageDirsToPackageJson);
 
 		for (const packageName of namesInScope) {
 			const packageDir = packageNamesToDirs.get(packageName)!;
-			await project.analyzeMonorepoPackage(packageDir, packageDirsToPackageJson.get(packageDir)!);
+			await project.analyzeMonorepoPackage(packageDir, packageDirsToPackageJson.get(packageDir)!, rootProgram);
 		}
 
 		project.fixBrokenReferences();
@@ -122,7 +127,10 @@ export default class MonorepoGenerator extends Generator {
 				continue;
 			}
 
-			const referenceThrobber = ora({ text: `Building reference for package ${subPackage}...`, color: 'blue' }).start();
+			const referenceThrobber = ora({
+				text: `Building reference for package ${subPackage}...`,
+				color: 'blue'
+			}).start();
 			await generator._generateReference(data, paths, subPackage, (progress, total) => {
 				referenceThrobber.text = `Building reference for package ${subPackage} (${progress}/${total})...`;
 			});
@@ -171,5 +179,64 @@ export default class MonorepoGenerator extends Generator {
 				throw new Error(`Generator '${this._config.mode as string}' not found`);
 			}
 		}
+	}
+
+	private async _createReferenceRootProgram(
+		packagesDirsToPackageJson: Map<string, PackageJson>
+	): Promise<ts.Program | undefined> {
+		const rootConfigFileName = path.join(this._config.baseDir, 'tsconfig.json');
+		if (await fileExists(rootConfigFileName)) {
+			const rootConfig = parseConfig(rootConfigFileName);
+			if (rootConfig.projectReferences?.length) {
+				const readConfigFile = (p: string) => fs.readFileSync(p, 'utf-8');
+				const configs = rootConfig.projectReferences.map(ref =>
+					ts.readConfigFile(path.join(ref.path, 'tsconfig.json'), readConfigFile)
+				);
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				const firstExtends = configs[0].config.extends as string | undefined;
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				if (configs.some(conf => conf.config.extends !== firstExtends)) {
+					throw new Error(
+						'Package tsconfig files should all extend from the same base config that includes all compiler options'
+					);
+				}
+
+				const resolvedExtends = mapOptional(firstExtends, ex =>
+					path.resolve(rootConfig.projectReferences![0].path, ex)
+				);
+
+				const parsedConfigs = rootConfig.projectReferences.map(ref => ({
+					configFilePath: ref.path,
+					...parseConfig(path.join(ref.path, 'tsconfig.json'))
+				}));
+
+				const rootNames = parsedConfigs.flatMap(conf => conf.fileNames);
+
+				const resolvedRootConfig = {
+					extends: resolvedExtends,
+					paths: Object.fromEntries(
+						parsedConfigs.map(conf => {
+							const pathName = path.basename(conf.configFilePath);
+							const packageJson = packagesDirsToPackageJson.get(pathName)!;
+							return [
+								packageJson.name!,
+								[Project.getEntryPointForPackageFolder(conf.configFilePath, packageJson, conf)]
+							];
+						})
+					),
+					include: rootNames
+				};
+
+				const parsedRootConfig = parseConfigObject(resolvedRootConfig, this._config.baseDir);
+				return ts.createProgram({
+					options: parsedRootConfig.options,
+					configFileParsingDiagnostics: parsedRootConfig.errors,
+					rootNames: rootNames,
+					host: ts.createCompilerHost(parsedRootConfig.options)
+				});
+			}
+		}
+
+		return undefined;
 	}
 }

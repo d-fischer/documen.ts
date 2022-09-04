@@ -24,8 +24,21 @@ export class Project {
 	private readonly _reflectionIdsBySymbol = new Map<ts.Symbol, number>();
 	private readonly _brokenReferences = new Map<ts.Symbol, ReferenceType[]>();
 
+	static getEntryPointForPackageFolder(dir: string, pkg: PackageJson, tsconfig: ts.ParsedCommandLine) {
+		let mainJsFile: string = pkg.main!;
+		const lastPathPart = mainJsFile.split(path.delimiter).reverse()[0];
+		if (!/\.m?js]$/.test(lastPathPart)) {
+			mainJsFile = path.join(mainJsFile, 'index.js');
+		}
+
+		const fullOutPath = path.join(dir, mainJsFile);
+		const innerOutPath = path.relative(tsconfig.options.outDir!, fullOutPath);
+		return path.join(tsconfig.options.rootDir!, innerOutPath.replace(/\.m?js$/, '.ts'));
+	}
+
 	constructor(private readonly _config: Config) {
 	}
+
 	async analyzeSinglePackage(packageJson: PackageJson) {
 		const parsedConfig = parseConfig(path.join(this._config.baseDir, 'tsconfig.json'));
 
@@ -35,8 +48,9 @@ export class Project {
 		await this._analyzePackage(packageName, this._config.baseDir, packageJson, parsedConfig);
 	}
 
-	async analyzeMonorepoPackage(packageDirName: string, packageJson: PackageJson) {
+	async analyzeMonorepoPackage(packageDirName: string, packageJson: PackageJson, tsProgram?: ts.Program) {
 		assert(this._config.monorepoRoot);
+
 		const packageFolder = path.join(this._config.baseDir, this._config.monorepoRoot, packageDirName);
 		const parsedConfig = parseConfig(path.join(packageFolder, 'tsconfig.json'));
 
@@ -45,7 +59,7 @@ export class Project {
 
 		this._packageNameToDir.set(packageName, packageDirName);
 
-		await this._analyzePackage(packageName, packageFolder, packageJson, parsedConfig);
+		await this._analyzePackage(packageName, packageFolder, packageJson, parsedConfig, tsProgram);
 	}
 
 	serialize(): SerializedProject {
@@ -134,9 +148,9 @@ export class Project {
 			}
 		}
 	}
-
 	getNodeLocation(node: ts.Node): ReferenceLocation;
 	getNodeLocation(node?: ts.Node): ReferenceLocation | undefined;
+
 	getNodeLocation(node?: ts.Node): ReferenceLocation | undefined {
 		if (!node) {
 			return undefined;
@@ -155,29 +169,17 @@ export class Project {
 		};
 	}
 
-	protected _getEntryPointForPackageFolder(dir: string, pkg: PackageJson, tsconfig: ts.ParsedCommandLine) {
-		let mainJsFile: string = pkg.main!;
-		const lastPathPart = mainJsFile.split(path.delimiter).reverse()[0];
-		if (!/\.m?js]$/.test(lastPathPart)) {
-			mainJsFile = path.join(mainJsFile, 'index.js');
-		}
-
-		const fullOutPath = path.join(dir, mainJsFile);
-		const innerOutPath = path.relative(tsconfig.options.outDir!, fullOutPath);
-		return path.join(tsconfig.options.rootDir!, innerOutPath.replace(/\.m?js$/, '.ts'));
-	}
-
-	private async _analyzePackage(packageName: string, packageFolder: string, packageJson: PackageJson, tsconfig: ts.ParsedCommandLine) {
+	private async _analyzePackage(packageName: string, packageFolder: string, packageJson: PackageJson, tsconfig: ts.ParsedCommandLine, program?: ts.Program) {
 		const { options, fileNames } = tsconfig;
-		const prog = ts.createProgram({
+		program ??= ts.createProgram({
 			options,
 			rootNames: fileNames
 		});
-		const checker = prog.getTypeChecker();
+		const checker = program.getTypeChecker();
 		const ctx = new AnalyzeContext(this, checker, packageName);
 
-		const pathToEntryPoint = this._getEntryPointForPackageFolder(packageFolder, packageJson, tsconfig);
-		const sf = prog.getSourceFile(pathToEntryPoint)!;
+		const pathToEntryPoint = Project.getEntryPointForPackageFolder(packageFolder, packageJson, tsconfig);
+		const sf = program.getSourceFile(pathToEntryPoint)!;
 		const children = sf.statements;
 		const fileExports = children
 			.filter((child): child is ts.ExportDeclaration => ts.isExportDeclaration(child))

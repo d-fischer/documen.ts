@@ -46,6 +46,11 @@ export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.S
 	const declaration = symbol.getDeclarations()?.[0];
 	assert(declaration);
 
+	const originalId = ctx.project.getReflectionIdForSymbol(symbol);
+	if (originalId !== undefined) {
+		return new ReferenceReflection(ctx, symbol, originalId);
+	}
+
 	const sourceMappedId = await findSourceMappedId(ctx, declaration);
 	if (sourceMappedId !== undefined) {
 		return new ReferenceReflection(ctx, symbol, sourceMappedId);
