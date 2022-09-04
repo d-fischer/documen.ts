@@ -182,6 +182,7 @@ export interface TypeAliasReferenceNode extends AbstractReferenceNode {
 export interface InterfaceReferenceNode extends AbstractReferenceNode {
 	kind: 'interface';
 	typeParameters?: TypeParameterReferenceNode[];
+	extendedTypes?: ReferenceType[];
 	members: ReferenceNode[]; // TODO less generic I guess
 }
 

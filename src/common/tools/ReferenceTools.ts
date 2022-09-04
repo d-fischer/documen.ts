@@ -1,4 +1,10 @@
-import type { ClassReferenceNode, EnumReferenceNode, InterfaceReferenceNode, ReferenceNode, TypeLiteralReferenceNode } from '../reference';
+import type {
+	ClassReferenceNode,
+	EnumReferenceNode,
+	InterfaceReferenceNode,
+	ReferenceNode,
+	TypeLiteralReferenceNode
+} from '../reference';
 import reference from '../reference';
 import { filterByMember, findByMember } from './ArrayTools';
 import { checkVisibility } from './NodeTools';
@@ -8,7 +14,12 @@ interface SymbolDefinition<T extends ReferenceNode> {
 	packageName?: string;
 }
 
-export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R extends T = T>(key: K, value: T[K], pkgName?: string, withPrivate = false): SymbolDefinition<R> | undefined {
+export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R extends T = T>(
+	key: K,
+	value: T[K],
+	pkgName?: string,
+	withPrivate = false
+): SymbolDefinition<R> | undefined {
 	// check for mono different here because there's no access to the context
 	const isMono = reference.packages.length > 1;
 	if (isMono) {
@@ -16,7 +27,9 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 			if (pkgName && pkg.packageName !== pkgName) {
 				continue;
 			}
-			const found = (filterByMember(pkg.symbols as T[], key, value) as ReferenceNode[]).find(f => f.kind !== 'reference');
+			const found = (filterByMember(pkg.symbols as T[], key, value) as ReferenceNode[]).find(
+				f => f.kind !== 'reference'
+			);
 			if (found) {
 				if (withPrivate || checkVisibility(found)) {
 					return {
@@ -51,8 +64,7 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 		}
 		if (foundInParent.kind === 'class') {
 			const extendedType = foundInParent.extendedTypes?.[0];
-			if (extendedType?.type === 'reference' && extendedType.id)
-				return findSymbolByMember('id', extendedType.id);
+			if (extendedType?.type === 'reference' && extendedType.id) return findSymbolByMember('id', extendedType.id);
 		}
 	}
 
@@ -61,16 +73,25 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 
 const resolvedMemberCache = new WeakMap<ReferenceNode, ReferenceNode[]>();
 
-export function getChildren(node: ClassReferenceNode | InterfaceReferenceNode | EnumReferenceNode | TypeLiteralReferenceNode, withPrivate = false): ReferenceNode[] {
+export function getChildren(
+	node: ClassReferenceNode | InterfaceReferenceNode | EnumReferenceNode | TypeLiteralReferenceNode,
+	withPrivate = false
+): ReferenceNode[] {
 	function resolveMembers() {
-		if (node.kind !== 'class') {
+		if (node.kind !== 'class' && node.kind !== 'interface') {
 			return node.members;
 		}
+
 		const extendedClass = node.extendedTypes?.[0];
 		if (extendedClass?.type !== 'reference' || !extendedClass.id) {
 			return node.members;
 		}
-		const extendedClassNode = findSymbolByMember<ClassReferenceNode, 'id'>('id', extendedClass.id, extendedClass.package, true);
+		const extendedClassNode = findSymbolByMember<ClassReferenceNode | InterfaceReferenceNode, 'id'>(
+			'id',
+			extendedClass.id,
+			extendedClass.package,
+			true
+		);
 		if (!extendedClassNode?.symbol) {
 			return node.members;
 		}
@@ -93,11 +114,21 @@ export function getChildren(node: ClassReferenceNode | InterfaceReferenceNode | 
 	return withPrivate ? resolvedMembers : resolvedMembers.filter(child => checkVisibility(child, node));
 }
 
-export function findChildByMember<K extends keyof ReferenceNode, R extends ReferenceNode>(node: ClassReferenceNode | InterfaceReferenceNode | EnumReferenceNode | TypeLiteralReferenceNode, key: K, value: ReferenceNode[K], withPrivate = false) {
+export function findChildByMember<K extends keyof ReferenceNode, R extends ReferenceNode>(
+	node: ClassReferenceNode | InterfaceReferenceNode | EnumReferenceNode | TypeLiteralReferenceNode,
+	key: K,
+	value: ReferenceNode[K],
+	withPrivate = false
+) {
 	return findByMember<ReferenceNode, K, R>(getChildren(node, withPrivate), key, value);
 }
 
-export function filterChildrenByMember<K extends keyof ReferenceNode, R extends ReferenceNode>(node: ClassReferenceNode | InterfaceReferenceNode | EnumReferenceNode | TypeLiteralReferenceNode, key: K, value: ReferenceNode[K], withPrivate = false) {
+export function filterChildrenByMember<K extends keyof ReferenceNode, R extends ReferenceNode>(
+	node: ClassReferenceNode | InterfaceReferenceNode | EnumReferenceNode | TypeLiteralReferenceNode,
+	key: K,
+	value: ReferenceNode[K],
+	withPrivate = false
+) {
 	return filterByMember<ReferenceNode, K, R>(getChildren(node, withPrivate), key, value);
 }
 
