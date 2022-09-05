@@ -16,7 +16,10 @@ import { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
 import { TypeAliasReflection } from './reflections/TypeAliasReflection';
 import { getSourceMapConsumer } from './util/sourceMaps';
 
-export async function findSourceMappedId(ctx: AnalyzeContext, declaration: ts.Declaration): Promise<number | undefined> {
+export async function findSourceMappedId(
+	ctx: AnalyzeContext,
+	declaration: ts.Declaration
+): Promise<number | undefined> {
 	const declSf = declaration.getSourceFile();
 	if (declSf.fileName.endsWith('.d.ts')) {
 		const declFullText = declSf.getFullText();
@@ -42,14 +45,13 @@ export async function findSourceMappedId(ctx: AnalyzeContext, declaration: ts.De
 	return undefined;
 }
 
-export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: Reflection): Promise<Reflection> {
+export async function createReflectionInternal(
+	ctx: AnalyzeContext,
+	symbol: ts.Symbol,
+	parent?: Reflection
+): Promise<Reflection> {
 	const declaration = symbol.getDeclarations()?.[0];
 	assert(declaration);
-
-	const originalId = ctx.project.getReflectionIdForSymbol(symbol);
-	if (originalId !== undefined) {
-		return new ReferenceReflection(ctx, symbol, originalId);
-	}
 
 	const sourceMappedId = await findSourceMappedId(ctx, declaration);
 	if (sourceMappedId !== undefined) {
@@ -74,8 +76,12 @@ export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.S
 	if (ts.isTypeAliasDeclaration(declaration)) {
 		return await TypeAliasReflection.fromSymbol(ctx, symbol);
 	}
-	// eslint-disable-next-line no-bitwise
-	if (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration) || symbol.flags & ts.SymbolFlags.Property) {
+	if (
+		ts.isPropertyDeclaration(declaration) ||
+		ts.isPropertySignature(declaration) ||
+		// eslint-disable-next-line no-bitwise
+		symbol.flags & ts.SymbolFlags.Property
+	) {
 		return await PropertyReflection.fromSymbol(ctx, symbol, parent as SymbolBasedReflection);
 	}
 	if (ts.isParameter(declaration)) {
@@ -88,7 +94,11 @@ export async function createReflectionInternal(ctx: AnalyzeContext, symbol: ts.S
 	return await SymbolBasedReflection.unknown(ctx, symbol);
 }
 
-export async function createReflection(ctx: AnalyzeContext, symbol: ts.Symbol, parent?: Reflection): Promise<Reflection> {
+export async function createReflection(
+	ctx: AnalyzeContext,
+	symbol: ts.Symbol,
+	parent?: Reflection
+): Promise<Reflection> {
 	const reflection = await createReflectionInternal(ctx, symbol, parent);
 	ctx.project.registerForPackageName(ctx.packageName, reflection);
 
