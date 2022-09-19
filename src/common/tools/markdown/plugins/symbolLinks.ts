@@ -6,18 +6,14 @@ import { getPageType } from '../../CodeTools';
 import { findSymbolByMember } from '../../ReferenceTools';
 import { getPackagePath } from '../../StringTools';
 
-function insertAt(
-	array: Parent['children'],
-	index: number,
-	...items: Content[]
-): Parent['children'] {
+function insertAt(array: Parent['children'], index: number, ...items: Content[]): Parent['children'] {
 	return [...array.slice(0, index), ...items, ...array.slice(index)];
 }
 
 export function symbolLinks(): Transformer {
 	return function transformer(tree) {
 		function visitor(node: Text, index: number | null, parent: Parent | null) {
-			const symbolLinkRegex = /{@((\w+)(?:#(\w+))?)}/g;
+			const symbolLinkRegex = /{@link ((\w+)(?:#(\w+))?)}/g;
 			let match = null;
 			while (node.value && (match = symbolLinkRegex.exec(node.value))) {
 				const [fullMatch, fullSymbolName, symbolName, memberName] = match;
@@ -32,7 +28,7 @@ export function symbolLinks(): Transformer {
 					continue;
 				}
 
-				let pretextNode: Text | null  = null;
+				let pretextNode: Text | null = null;
 				if (match.index > 0) {
 					pretextNode = {
 						type: 'text',
