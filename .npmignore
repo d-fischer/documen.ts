@@ -11,3 +11,10 @@ yarn.lock
 publishNewVersion.sh
 .editorconfig
 testdocs
+
+.devcontainer
+.eslintignore
+.eslintrc.js
+.prettierignore
+.prettierrc.js
+.vscode
