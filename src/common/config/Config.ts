@@ -29,6 +29,15 @@ export interface ConfigArticleGroup {
 	articles?: ConfigArticle[];
 }
 
+export interface ReferenceConfigCategory {
+	name: string;
+	title: string;
+}
+
+export interface ReferenceConfig {
+	categories?: ReferenceConfigCategory[];
+}
+
 export interface Manifest {
 	versions?: string[];
 	defaultVersion: string;
@@ -63,8 +72,15 @@ export interface Config {
 	indexFile: string;
 	indexTitle: string;
 	categories?: ConfigArticleCategory[];
+	referenceConfig?: Record<string, ReferenceConfig>;
 	shouldEnhance: boolean;
-	webpackProgressCallback?: (percentage: number, msg: string, moduleProgress?: string, activeModules?: string, moduleName?: string) => void;
+	webpackProgressCallback?: (
+		percentage: number,
+		msg: string,
+		moduleProgress?: string,
+		activeModules?: string,
+		moduleName?: string
+	) => void;
 	/** @private */
 	__devManifest?: Manifest;
 }

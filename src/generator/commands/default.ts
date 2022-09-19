@@ -214,6 +214,7 @@ export default class CLICommand extends Command {
 			indexTitle: (options.indexTitle || getConfigValue(importedConfig, 'indexTitle')) ?? 'Welcome',
 			indexFile,
 			categories: categories ?? undefined,
+			referenceConfig: getConfigValue(importedConfig, 'referenceConfig') ?? undefined,
 			shouldEnhance: true,
 			webpackProgressCallback: (percentage, msg, moduleProgress) => {
 				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);
