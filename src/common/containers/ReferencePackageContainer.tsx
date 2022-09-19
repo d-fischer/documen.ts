@@ -16,7 +16,7 @@ import type {
 } from '../reference';
 import { partition } from '../tools/ArrayTools';
 import { getPageType } from '../tools/CodeTools';
-import { checkVisibility, defaultNodeSort } from '../tools/NodeTools';
+import { checkVisibility, defaultNodeSort, getNodeMeta } from '../tools/NodeTools';
 import { getPackageRoot } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
 import PageSwitch from './PageSwitch';
@@ -69,18 +69,14 @@ export const ReferencePackageContainer: React.FC = () => {
 	const [uncategorizedNodes, categorizedNodes] = useMemo(
 		() =>
 			partition(visibleNodes, node => {
-				const categoryTag = node.comment?.tags?.find(tag => tag.tag === 'category');
-				if (!categoryTag?.param) {
-					return false;
-				}
-
-				return referenceCategoryNames.includes(categoryTag.param);
+				const category = getNodeMeta(node, 'category');
+				return category ? referenceCategoryNames.includes(category) : false;
 			}),
 		[visibleNodes]
 	);
 
 	const nodesByCategory = useMemo(
-		() => groupBy(categorizedNodes, node => node.comment!.tags!.find(tag => tag.tag === 'category')!.param!),
+		() => groupBy(categorizedNodes, node => getNodeMeta(node, 'category')!),
 		[categorizedNodes]
 	);
 
@@ -116,7 +112,7 @@ export const ReferencePackageContainer: React.FC = () => {
 								path={`/reference${pkgPath}/${getPageType(node)}/${node.name}`}
 								title={node.name}
 							>
-								{node.name}
+								{getNodeMeta(node, 'categorizedTitle') ?? node.name}
 							</NavMenuItem>
 						))}
 					</NavMenuGroup>

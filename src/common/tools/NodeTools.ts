@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
-import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, ReferenceNode, ReferenceReferenceType, ReferenceType } from '../reference';
+import type {
+	CallSignatureReferenceNode,
+	ConstructSignatureReferenceNode,
+	ReferenceNode,
+	ReferenceReferenceType,
+	ReferenceType
+} from '../reference';
 import { hasTag } from './CodeTools';
 
 export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
@@ -61,4 +67,8 @@ export function useAsyncType(sig: CallSignatureReferenceNode | ConstructSignatur
 		}
 		return { isAsync: false, returnType: sig.type };
 	}, [sig]);
+}
+
+export function getNodeMeta(node: ReferenceNode, name: string): string | undefined {
+	return node.comment?.tags?.find(tag => tag.tag === 'meta' && tag.param === name)?.text;
 }
