@@ -70,5 +70,7 @@ export function useAsyncType(sig: CallSignatureReferenceNode | ConstructSignatur
 }
 
 export function getNodeMeta(node: ReferenceNode, name: string): string | undefined {
-	return node.comment?.tags?.find(tag => tag.tag === 'meta' && tag.param === name)?.text;
+	return node.comment?.tags
+		?.find(tag => tag.tag === 'meta' && (tag.text === name || tag.text?.startsWith(`${name} `)))
+		?.text!.slice(name.length + 1);
 }
