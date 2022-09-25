@@ -5,6 +5,7 @@ module.exports = {
 		'filenames/match-exported': 'off',
 		'react/prop-types': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
+		'@typescript-eslint/naming-convention': 'off',
 		'jsdoc/check-tag-names': [
 			'error',
 			{
