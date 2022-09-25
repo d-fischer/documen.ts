@@ -13,17 +13,20 @@ interface CodeLinkProps {
 	className?: string;
 }
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		color: theme.colors.accent.default,
-		transition: 'color .3s ease-in-out',
-		marginLeft: '1em',
+const useStyles = makeStyles(
+	theme => ({
+		root: {
+			color: theme.colors.accent.default,
+			transition: 'color .3s ease-in-out',
+			marginLeft: '1em',
 
-		'&:hover': {
-			color: theme.colors.accent.focus
+			'&:hover': {
+				color: theme.colors.accent.focus
+			}
 		}
-	}
-}), { name: 'CodeLink' });
+	}),
+	{ name: 'CodeLink' }
+);
 
 const CodeLink: React.FC<CodeLinkProps> = ({ signature, symbol, className }) => {
 	const classes = useStyles();
@@ -40,21 +43,24 @@ const CodeLink: React.FC<CodeLinkProps> = ({ signature, symbol, className }) => 
 	}
 
 	const { fileName, line } = location;
-	return <a
-		className={classNames(classes.root, className)}
-		href={`https://github.com/${[
-			config.repoUser,
-			config.repoName,
-			'blob',
-			config.repoBranch,
-			fileName
-		].join('/')}#L${line}`}
-		target="_blank"
-		rel="noopener noreferrer"
-		title="Go to the code"
-	>
-		<Icon icon={faCode} size="lg"/>
-	</a>;
+
+	if (fileName.includes('node_modules/')) {
+		return null;
+	}
+
+	return (
+		<a
+			className={classNames(classes.root, className)}
+			href={`https://github.com/${[config.repoUser, config.repoName, 'blob', config.repoBranch, fileName].join(
+				'/'
+			)}#L${line}`}
+			target="_blank"
+			rel="noopener noreferrer"
+			title="Go to the code"
+		>
+			<Icon icon={faCode} size="lg" />
+		</a>
+	);
 };
 
 export default CodeLink;
