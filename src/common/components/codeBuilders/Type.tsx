@@ -34,14 +34,12 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				if (undefIndex !== -1) {
 					const defIndex = +!undefIndex; // 0 => 1, 1 => 0 to find the type that isn't undefined
 					if (ignoreUndefined) {
-						return (
-							<Type def={types[defIndex]} ignoreUndefined={true}/>
-						);
+						return <Type def={types[defIndex]} ignoreUndefined={true} />;
 					}
 					return (
 						<>
 							?
-							<Type def={types[defIndex]}/>
+							<Type def={types[defIndex]} />
 						</>
 					);
 				}
@@ -51,7 +49,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				return (
 					<>
 						?
-						<Type def={types[0]}/>
+						<Type def={types[0]} />
 					</>
 				);
 			}
@@ -61,7 +59,7 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 					{types.map((type, idx) => (
 						<React.Fragment key={idx}>
 							{idx === 0 ? '' : ' | '}
-							<Type def={type}/>
+							<Type def={type} />
 						</React.Fragment>
 					))}
 				</>
@@ -75,14 +73,18 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				return (
 					<>
 						{isOptional ? '?' : ''}
-						(<Type def={def.elementType}/>)[]
+						(<Type def={def.elementType} />
+						)[]
 					</>
 				);
 			}
-			return <>
-				{isOptional ? '?' : ''}
-				<Type def={def.elementType}/>[]
-			</>;
+			return (
+				<>
+					{isOptional ? '?' : ''}
+					<Type def={def.elementType} />
+					[]
+				</>
+			);
 		}
 		case 'literal': {
 			return (
@@ -101,12 +103,15 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 						return (
 							<>
 								{isOptional ? '?' : ''}(
-								{signature.parameters.length ? signature.parameters.map((param, i) => (
-									<React.Fragment key={param.name}>
-										{i === 0 ? null : ', '}{param.name}: <Type def={param.type}/>
-									</React.Fragment>
-								)) : null}
-								) =&gt; <Type def={signature.type}/>
+								{signature.parameters.length
+									? signature.parameters.map((param, i) => (
+											<React.Fragment key={param.name}>
+												{i === 0 ? null : ', '}
+												{param.name}: <Type def={param.type} />
+											</React.Fragment>
+									  ))
+									: null}
+								) =&gt; <Type def={signature.type} />
 							</>
 						);
 					}
@@ -131,41 +136,53 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				if (referencedDesc) {
 					const { symbol: referencedType } = referencedDesc;
 					if (referencedType.kind === 'typeAlias') {
-						return <TypeAliasHint symbol={referencedType}/>;
+						return <TypeAliasHint symbol={referencedType} />;
 					}
 					// TODO forward the CORRECT type arguments if this is a superclass
-					return <ReferenceTypeView def={referencedType} typeArguments={def.typeArguments} isOptional={isOptional}/>;
+					return (
+						<ReferenceTypeView
+							def={referencedType}
+							typeArguments={def.typeArguments}
+							isOptional={isOptional}
+						/>
+					);
 				}
 			}
-			return <ReferenceTypeView def={def} typeArguments={def.typeArguments} isOptional={isOptional}/>;
+			return <ReferenceTypeView def={def} typeArguments={def.typeArguments} isOptional={isOptional} />;
 		}
 		case 'tuple': {
 			return (
-				<>[{def.elements.map((type, idx) => (
-					<React.Fragment key={idx}>
-						{idx === 0 ? '' : ', '}
-						<Type def={type}/>
-					</React.Fragment>
-				))}]</>
+				<>
+					[
+					{def.elements.map((type, idx) => (
+						<React.Fragment key={idx}>
+							{idx === 0 ? '' : ', '}
+							<Type def={type} />
+						</React.Fragment>
+					))}
+					]
+				</>
 			);
 		}
 		case 'named-tuple-member': {
 			return (
-				<>{def.name}: <Type def={def.elementType}/></>
-			)
+				<>
+					{def.name}: <Type def={def.elementType} />
+				</>
+			);
 		}
 		case 'optional': {
 			return (
 				<>
 					?
-					<Type def={def.elementType}/>
+					<Type def={def.elementType} />
 				</>
 			);
 		}
 		case 'typeOperator': {
 			return (
 				<>
-					{def.operator} <Type def={def.target}/>
+					{def.operator} <Type def={def.target} />
 				</>
 			);
 		}

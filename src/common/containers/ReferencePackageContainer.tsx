@@ -12,7 +12,8 @@ import type {
 	EnumReferenceNode,
 	FunctionReferenceNode,
 	InterfaceReferenceNode,
-	ReferenceNode
+	ReferenceNode,
+	TypeAliasReferenceNode
 } from '../reference';
 import { partition } from '../tools/ArrayTools';
 import { getPageType } from '../tools/CodeTools';
@@ -96,6 +97,10 @@ export const ReferencePackageContainer: React.FC = () => {
 		() => uncategorizedNodes.filter((sym): sym is InterfaceReferenceNode => sym.kind === 'interface'),
 		[root]
 	);
+	const typeNodes = useMemo(
+		() => uncategorizedNodes.filter((sym): sym is TypeAliasReferenceNode => sym.kind === 'typeAlias'),
+		[root]
+	);
 	const enumNodes = useMemo(
 		() => uncategorizedNodes.filter((sym): sym is EnumReferenceNode => sym.kind === 'enum'),
 		[root]
@@ -149,6 +154,19 @@ export const ReferencePackageContainer: React.FC = () => {
 							<NavMenuItem
 								key={value.id}
 								path={`/reference${pkgPath}/interfaces/${value.name}`}
+								title={value.name}
+							>
+								{value.name}
+							</NavMenuItem>
+						))}
+					</NavMenuGroup>
+				) : null}
+				{typeNodes.length ? (
+					<NavMenuGroup title="Type aliases">
+						{typeNodes.sort(defaultNodeSort).map(value => (
+							<NavMenuItem
+								key={value.id}
+								path={`/reference${pkgPath}/types/${value.name}`}
 								title={value.name}
 							>
 								{value.name}

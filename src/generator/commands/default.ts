@@ -1,5 +1,4 @@
 /* eslint-disable no-console,max-classes-per-file */
-import ansi from 'ansi-escapes';
 import { Command, command, ExpectedError, metadata, option, Options } from 'clime';
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
@@ -215,13 +214,7 @@ export default class CLICommand extends Command {
 			indexFile,
 			categories: categories ?? undefined,
 			referenceConfig: getConfigValue(importedConfig, 'referenceConfig') ?? undefined,
-			shouldEnhance: true,
-			webpackProgressCallback: (percentage, msg, moduleProgress) => {
-				process.stdout.write(`${ansi.eraseLine}\rcompiling with webpack... ${percentage * 100}%`);
-				if (moduleProgress) {
-					process.stdout.write(` (${moduleProgress})`);
-				}
-			}
+			shouldEnhance: true
 		};
 
 		const generator = this._getGeneratorForConfig(generatorConfig);
@@ -256,6 +249,10 @@ export default class CLICommand extends Command {
 				await fsp.rm(outputDir, { force: true, recursive: true });
 				await fsp.mkdir(outputDir, { recursive: true });
 			}
+		} else {
+			console.log('Cleaning up generated files');
+			await fsp.rm(outputDir, { force: true, recursive: true });
+			await fsp.mkdir(outputDir, { recursive: true });
 		}
 
 		const reference = await generator.createReferenceStructure();

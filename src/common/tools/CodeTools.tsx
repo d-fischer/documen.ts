@@ -21,7 +21,7 @@ export const getTag = (node: ReferenceNode, name: string): string | null => {
 	name = name.toLowerCase();
 
 	const foundTag = node.comment?.tags?.find(tag => tag.tag === name);
-	return foundTag ? (foundTag.text ?? '') : null;
+	return foundTag ? foundTag.text ?? '' : null;
 };
 
 export const hasTag = (node: ReferenceNode, name: string): boolean => getTag(node, name) !== null;
@@ -49,6 +49,8 @@ export const getPageType = (node: ReferenceNode): string => {
 			return 'interfaces';
 		case 'function':
 			return 'functions';
+		case 'typeAlias':
+			return 'types';
 		case 'enum':
 			return 'enums';
 		default:

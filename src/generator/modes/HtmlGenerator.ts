@@ -1,11 +1,12 @@
 import { omit } from '@d-fischer/shared-utils';
 import * as vfs from '@typescript/vfs';
+import react from '@vitejs/plugin-react';
 import fs from 'fs-extra';
 import path from 'path';
 import * as prettier from 'prettier';
 import * as ts from 'typescript';
 import resolveHome from 'untildify';
-import webpack from 'webpack';
+import { build } from 'vite';
 import type { ArticleContent } from '../../common/components/PageArticle';
 import type { Config, ConfigInternalArticle } from '../../common/config/Config';
 import type Paths from '../../common/Paths';
@@ -13,8 +14,6 @@ import type { ReferenceNode, SerializedProject } from '../../common/reference';
 import { filterByMember } from '../../common/tools/ArrayTools';
 import { checkVisibility } from '../../common/tools/NodeTools';
 import { getPackagePath } from '../../common/tools/StringTools';
-import WebpackBuildError from '../errors/WebpackBuildError';
-import WebpackError from '../errors/WebpackError';
 import type { GeneratorProgressCallback } from './Generator';
 import { OutputGenerator } from './OutputGenerator';
 
@@ -22,6 +21,8 @@ type RenderEntry = [string, string, Promise<string>];
 
 export default class HtmlGenerator extends OutputGenerator {
 	async generate(data: SerializedProject, paths: Paths) {
+		const fsMap = await this._generateFsMap();
+		await this._buildWebpack(data, paths, fsMap);
 		await this._generateCommons(paths);
 		await this._generateDocs(paths);
 		await this._generateReference(data, paths);
@@ -31,7 +32,7 @@ export default class HtmlGenerator extends OutputGenerator {
 		const { shouldEnhance, baseDir, outputDir } = this._config;
 		const outDir = path.resolve(baseDir, resolveHome(outputDir));
 		if (shouldEnhance) {
-			await fs.copyFile(path.join(paths.tmpDir, 'pe.js'), path.join(outDir, 'pe.js'));
+			await fs.copyFile(path.join(paths.tmpDir, 'pe.umd.js'), path.join(outDir, 'pe.js'));
 		}
 	}
 
@@ -39,32 +40,41 @@ export default class HtmlGenerator extends OutputGenerator {
 		const { monorepoRoot, baseDir, outputDir, configDir, indexFile, categories, indexTitle } = this._config;
 		const outDir = path.resolve(baseDir, resolveHome(outputDir));
 
-		const monoReadmePath = (monorepoRoot && !indexFile) ? path.join(baseDir, 'README.md') : undefined;
-		const pathToRead = configDir ? (
-			monoReadmePath && await fs.pathExists(monoReadmePath)
+		const monoReadmePath = monorepoRoot && !indexFile ? path.join(baseDir, 'README.md') : undefined;
+		const pathToRead = configDir
+			? monoReadmePath && (await fs.pathExists(monoReadmePath))
 				? monoReadmePath
 				: path.resolve(configDir, indexFile)
-		) : undefined;
+			: undefined;
 
 		const indexPromise = pathToRead && fs.readFile(pathToRead, 'utf-8');
 
 		// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-		const { default: render } = require(path.join(paths.tmpDir, 'generator.js'));
+		const render = require(path.join(paths.tmpDir, 'generator.js'));
 
-		const articleEntries = configDir == null ? [] : categories?.flatMap(
-			cat => (
-				[
-					[`/docs/${cat.name}/`, cat.indexTitle ?? cat.name, fs.readFile(path.join(configDir, cat.indexFile!), 'utf-8')] as RenderEntry,
-					...cat.groups?.flatMap(
-						grp => grp.articles
-								?.filter(
-									(art): art is ConfigInternalArticle => 'file' in art
-								).map(art => ([`/docs/${cat.name}/${grp.name}/${art.name}`, art.title, fs.readFile(path.join(configDir, art.file), 'utf-8')] as RenderEntry))
-							?? []
-					) ?? []
-				]
-			)
-		) ?? [];
+		const articleEntries =
+			configDir == null
+				? []
+				: categories?.flatMap(cat => [
+						[
+							`/docs/${cat.name}/`,
+							cat.indexTitle ?? cat.name,
+							fs.readFile(path.join(configDir, cat.indexFile!), 'utf-8')
+						] as RenderEntry,
+						...(cat.groups?.flatMap(
+							grp =>
+								grp.articles
+									?.filter((art): art is ConfigInternalArticle => 'file' in art)
+									.map(
+										art =>
+											[
+												`/docs/${cat.name}/${grp.name}/${art.name}`,
+												art.title,
+												fs.readFile(path.join(configDir, art.file), 'utf-8')
+											] as RenderEntry
+									) ?? []
+						) ?? [])
+				  ]) ?? [];
 
 		const totalCount = +!!indexPromise + articleEntries.length;
 
@@ -90,10 +100,15 @@ export default class HtmlGenerator extends OutputGenerator {
 		});
 	}
 
-	async _generateReference(data: SerializedProject, paths: Paths, subPackage?: string, progressCallback?: GeneratorProgressCallback) {
+	async _generateReference(
+		data: SerializedProject,
+		paths: Paths,
+		subPackage?: string,
+		progressCallback?: GeneratorProgressCallback
+	) {
 		const { monorepoRoot, baseDir, outputDir, packageScope } = this._config;
 
-		const outDir = path.resolve(this._config.baseDir, resolveHome(outputDir));
+		const outDir = path.resolve(baseDir, resolveHome(outputDir));
 		const pkgPath = getPackagePath(subPackage);
 
 		const fullDir = path.join(outDir, 'reference', pkgPath);
@@ -105,24 +120,41 @@ export default class HtmlGenerator extends OutputGenerator {
 		}
 
 		const packageReadmePath = monorepoRoot ? path.join(baseDir, monorepoRoot, subPackage!, 'README.md') : undefined;
-		const packageReadmePromise = packageReadmePath && await fs.pathExists(packageReadmePath) ? fs.readFile(packageReadmePath, 'utf-8') : undefined;
+		const packageReadmePromise =
+			packageReadmePath && (await fs.pathExists(packageReadmePath))
+				? fs.readFile(packageReadmePath, 'utf-8')
+				: undefined;
 
 		// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-		const { default: render } = require(path.join(paths.tmpDir, 'generator.js'));
+		const render = require(path.join(paths.tmpDir, 'generator.js'));
 
-		const packageData = data.packages.find(pkg => pkg.packageName === subPackage)!;
+		const packageData = monorepoRoot
+			? data.packages.find(pkg => pkg.packageName === subPackage)!
+			: data.packages[0];
 
 		const isNodeVisible = (node: ReferenceNode) => checkVisibility(node);
 		const packageChildren = packageData.symbols.filter(isNodeVisible);
 
 		const packageRootPath = `/reference${pkgPath}`;
 
-		const classPaths = filterByMember(packageChildren, 'kind', 'class').filter(isNodeVisible).map(value => `${packageRootPath}/classes/${value.name}`);
-		const functionPaths = filterByMember(packageChildren, 'kind', 'function').filter(isNodeVisible).map(value => `${packageRootPath}/functions/${value.name}`);
-		const interfacePaths = filterByMember(packageChildren, 'kind', 'interface').filter(isNodeVisible).map(value => `${packageRootPath}/interfaces/${value.name}`);
-		const enumPaths = filterByMember(packageChildren, 'kind', 'enum').filter(isNodeVisible).map(value => `${packageRootPath}/enums/${value.name}`);
+		const classPaths = filterByMember(packageChildren, 'kind', 'class')
+			.filter(isNodeVisible)
+			.map(value => `${packageRootPath}/classes/${value.name}`);
+		const functionPaths = filterByMember(packageChildren, 'kind', 'function')
+			.filter(isNodeVisible)
+			.map(value => `${packageRootPath}/functions/${value.name}`);
+		const interfacePaths = filterByMember(packageChildren, 'kind', 'interface')
+			.filter(isNodeVisible)
+			.map(value => `${packageRootPath}/interfaces/${value.name}`);
+		const typePaths = filterByMember(packageChildren, 'kind', 'typeAlias')
+			.filter(isNodeVisible)
+			.map(value => `${packageRootPath}/types/${value.name}`);
+		const enumPaths = filterByMember(packageChildren, 'kind', 'enum')
+			.filter(isNodeVisible)
+			.map(value => `${packageRootPath}/enums/${value.name}`);
 
-		const totalCount = 1 + classPaths.length + functionPaths.length + interfacePaths.length + enumPaths.length;
+		const totalCount =
+			1 + classPaths.length + functionPaths.length + interfacePaths.length + typePaths.length + enumPaths.length;
 
 		await this.withProgress(totalCount, progressCallback, async reportProgress => {
 			const renderFromPath = async (resourcePath: string) => {
@@ -145,10 +177,10 @@ export default class HtmlGenerator extends OutputGenerator {
 			reportProgress(0);
 
 			if (packageReadmePromise) {
-				const packageFullName = packageScope ? `@${packageScope}/${subPackage!}` : subPackage!
+				const packageFullName = packageScope ? `@${packageScope}/${subPackage!}` : subPackage!;
 				await renderFromEntry([`${packageRootPath}/`, packageFullName, packageReadmePromise]);
 			} else {
-				await renderFromPath(packageRootPath);
+				await renderFromPath(`${packageRootPath}/`);
 			}
 
 			for (const classPath of classPaths) {
@@ -160,6 +192,9 @@ export default class HtmlGenerator extends OutputGenerator {
 			for (const interfacePath of interfacePaths) {
 				await renderFromPath(interfacePath);
 			}
+			for (const typePath of typePaths) {
+				await renderFromPath(typePath);
+			}
 			for (const enumPath of enumPaths) {
 				await renderFromPath(enumPath);
 			}
@@ -167,49 +202,65 @@ export default class HtmlGenerator extends OutputGenerator {
 	}
 
 	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>) {
-		process.chdir(path.join(__dirname, '../../..'));
-
 		const fsMapEntries = this._config.shouldEnhance ? [...fsMap.entries()] : [];
 
-		// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-var-requires
-		let webpackConfigs = require('../../../config/webpack.config.html')(paths.tmpDir, this._config) as webpack.Configuration | webpack.Configuration[];
-		if (!Array.isArray(webpackConfigs)) {
-			webpackConfigs = [webpackConfigs];
-		}
-		for (const webpackConfig of webpackConfigs) {
-			// eslint-disable-next-line @typescript-eslint/no-loop-func
-			await new Promise<void>((resolve, reject) => {
-				const webpackCompiler = webpack(webpackConfig);
+		const globalDefinitions: Record<string, string> = {
+			__DOCTS_REFERENCE: JSON.stringify(data),
+			__DOCTS_MOCK_FS: 'null',
+			__DOCTS_CONFIG: JSON.stringify(this._config),
+			__DOCTS_PATHS: JSON.stringify(omit(paths, ['tmpDir']))
+		};
 
-				if (this._config.webpackProgressCallback) {
-					(new webpack.ProgressPlugin(this._config.webpackProgressCallback)).apply(webpackCompiler);
+		const externals = ['fs', 'path', 'crypto', 'os'];
+
+		await build({
+			mode: 'development',
+			configFile: false,
+			define: {
+				...globalDefinitions,
+				__DOCTS_COMPONENT_MODE: JSON.stringify('static')
+			},
+			build: {
+				emptyOutDir: true,
+				outDir: paths.tmpDir,
+				minify: false,
+				lib: {
+					entry: path.resolve(__dirname, '../../..', './src/html/index.ts'),
+					formats: ['cjs'],
+					name: 'generator',
+					fileName: 'generator'
+				},
+				rollupOptions: {
+					external: externals
 				}
+			},
+			plugins: [react()]
+		});
 
-				/* eslint-disable @typescript-eslint/naming-convention */
-				const definitions: Record<string, string> = {
-					__DOCTS_REFERENCE: JSON.stringify(data),
-					__DOCTS_MOCK_FS: 'null',
-					__DOCTS_CONFIG: JSON.stringify(omit(this._config, ['webpackProgressCallback'])),
-					__DOCTS_PATHS: JSON.stringify(omit(paths, ['tmpDir']))
-				};
-				if (this._config.shouldEnhance && webpackConfig.output?.filename === 'pe.js') {
-					definitions.__DOCTS_FSMAP = JSON.stringify(fsMapEntries);
-				}
-				/* eslint-enable @typescript-eslint/naming-convention */
-
-				(new webpack.DefinePlugin(definitions)).apply(webpackCompiler);
-
-				webpackCompiler.run((err, stats) => {
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					if (err) {
-						reject(new WebpackError(err));
-					} else if (stats?.hasErrors()) {
-						reject(new WebpackBuildError(stats));
-					} else {
-						process.stdout.write('\n\n');
-						resolve();
+		if (this._config.shouldEnhance) {
+			await build({
+				mode: this._config.dev ? 'development' : 'production',
+				configFile: false,
+				define: {
+					...globalDefinitions,
+					__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic'),
+					__DOCTS_FSMAP: JSON.stringify(fsMapEntries)
+				},
+				build: {
+					emptyOutDir: false,
+					outDir: paths.tmpDir,
+					minify: !this._config.dev,
+					lib: {
+						entry: path.resolve(__dirname, '../../..', './src/progressiveEnhancement/index.tsx'),
+						formats: ['umd'],
+						name: 'pe',
+						fileName: 'pe'
+					},
+					rollupOptions: {
+						external: externals
 					}
-				});
+				},
+				plugins: [react()]
 			});
 		}
 	}
@@ -220,7 +271,13 @@ export default class HtmlGenerator extends OutputGenerator {
 		return fsMap;
 	}
 
-	private async _renderToFile(render: (filePath: string, config: Config, article?: ArticleContent) => string, resourcePath: string, outDir: string, config: Config, content?: ArticleContent) {
+	private async _renderToFile(
+		render: (filePath: string, config: Config, article?: ArticleContent) => string,
+		resourcePath: string,
+		outDir: string,
+		config: Config,
+		content?: ArticleContent
+	) {
 		let relativeOutFile = resourcePath;
 		if (resourcePath.endsWith('/')) {
 			relativeOutFile += 'index.html';

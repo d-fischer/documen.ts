@@ -127,24 +127,35 @@ const MainMenu: React.FC = () => {
 					{cat.title ?? cat.name}
 				</NavLink>
 			))}
-			<div className={classes.referenceWrapper}>
-				<div className={classNames(classes.entry, { [classes.entryActive]: referenceActive })}>Reference</div>
-				<div className={classes.referenceMenu}>
-					{packageNames.map(pkg => (
-						<NavLink
-							to={`reference/${pkg}/`}
-							className={({ isActive }) =>
-								classNames(classes.entry, classes.referenceMenuEntry, {
-									[classes.referenceMenuEntryActive]: isActive
-								})
-							}
-							key={pkg}
-						>
-							{pkg}
-						</NavLink>
-					))}
+			{config.monorepoRoot ? (
+				<div className={classes.referenceWrapper}>
+					<div className={classNames(classes.entry, { [classes.entryActive]: referenceActive })}>
+						Reference
+					</div>
+					<div className={classes.referenceMenu}>
+						{packageNames.map(pkg => (
+							<NavLink
+								to={`reference/${pkg}/`}
+								className={({ isActive }) =>
+									classNames(classes.entry, classes.referenceMenuEntry, {
+										[classes.referenceMenuEntryActive]: isActive
+									})
+								}
+								key={pkg}
+							>
+								{pkg}
+							</NavLink>
+						))}
+					</div>
 				</div>
-			</div>
+			) : (
+				<NavLink
+					to="reference/"
+					className={({ isActive }) => classNames(classes.entry, { [classes.entryActive]: isActive })}
+				>
+					Reference
+				</NavLink>
+			)}
 			<div className={classes.spacer} />
 			{config.repoUser && config.repoName ? (
 				<a href={`https://github.com/${config.repoUser}/${config.repoName}`} className={classes.entry}>

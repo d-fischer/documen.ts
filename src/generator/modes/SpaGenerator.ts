@@ -23,21 +23,13 @@ export default class SpaGenerator extends OutputGenerator {
 
 			const webpackCompiler = webpack(webpackConfig);
 
-			const { webpackProgressCallback, ...configWithoutCallback } = this._config;
-
-			if (webpackProgressCallback) {
-				(new webpack.ProgressPlugin(webpackProgressCallback)).apply(webpackCompiler);
-			}
-
-			(new webpack.DefinePlugin({
-				/* eslint-disable @typescript-eslint/naming-convention */
+			new webpack.DefinePlugin({
 				__DOCTS_REFERENCE: JSON.stringify(data),
-				__DOCTS_CONFIG: JSON.stringify(configWithoutCallback),
+				__DOCTS_CONFIG: JSON.stringify(this._config),
 				// TODO
 				__DOCTS_MOCK_FS: 'undefined',
 				__DOCTS_PATHS: JSON.stringify(paths)
-				/* eslint-enable @typescript-eslint/naming-convention */
-			})).apply(webpackCompiler);
+			}).apply(webpackCompiler);
 
 			webpackCompiler.run((err, stats) => {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -52,11 +44,9 @@ export default class SpaGenerator extends OutputGenerator {
 		});
 	}
 
-	async _generateCommons(): Promise<void> {
-		await Promise.resolve(undefined);
-	}
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	async _generateCommons(): Promise<void> {}
 
-	async _generateDocs(): Promise<void> {
-		await Promise.resolve(undefined);
-	}
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	async _generateDocs(): Promise<void> {}
 }

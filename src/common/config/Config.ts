@@ -74,13 +74,6 @@ export interface Config {
 	categories?: ConfigArticleCategory[];
 	referenceConfig?: Record<string, ReferenceConfig>;
 	shouldEnhance: boolean;
-	webpackProgressCallback?: (
-		percentage: number,
-		msg: string,
-		moduleProgress?: string,
-		activeModules?: string,
-		moduleName?: string
-	) => void;
 	/** @private */
 	__devManifest?: Manifest;
 }
