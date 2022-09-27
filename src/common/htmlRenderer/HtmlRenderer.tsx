@@ -58,7 +58,7 @@ ${config.shouldEnhance ? `<script src="${path.posix.join(baseUrl, 'pe.js')}"></s
 const render = (url: string, config: Config, article?: ArticleContent) => {
 	// eslint-disable-next-line @typescript-eslint/init-declarations
 	let elem: React.ReactElement;
-	const baseUrl = path.posix.join('/', config.baseUrl || '');
+	const baseUrl = path.posix.join('/', config.baseUrl || '').replace(/\/?$/, '/');
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	const routerMode: RouterMode = config.routerMode || 'server';
 	const sheets = new ServerStyleSheets();
@@ -71,7 +71,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 					<PageArticleContext.Provider value={article}>
 						<ThemeProvider theme={theme}>
 							<StaticRouterWithSuffix basename={baseUrl} location={joinedUrl} suffix=".html">
-								<App/>
+								<App />
 							</StaticRouterWithSuffix>
 						</ThemeProvider>
 					</PageArticleContext.Provider>
@@ -87,7 +87,7 @@ const render = (url: string, config: Config, article?: ArticleContent) => {
 					<PageArticleContext.Provider value={article}>
 						<ThemeProvider theme={theme}>
 							<StaticRouter location={joinedUrl}>
-								<App/>
+								<App />
 							</StaticRouter>
 						</ThemeProvider>
 					</PageArticleContext.Provider>

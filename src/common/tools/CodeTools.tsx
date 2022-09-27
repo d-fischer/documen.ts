@@ -1,4 +1,4 @@
-import type { ReferenceNode, ReferenceType } from '../reference';
+import type { ExternalPackageReference, ReferenceNode, ReferenceType } from '../reference';
 
 export const isOptionalType = (def?: ReferenceType) => {
 	if (!def) {
@@ -41,8 +41,8 @@ export const isLiteral = (def?: ReferenceType): boolean => {
 	}
 };
 
-export const getPageType = (node: ReferenceNode): string => {
-	switch (node.kind) {
+export const getPageTypeForNodeKind = (kind: string): string => {
+	switch (kind) {
 		case 'class':
 			return 'classes';
 		case 'interface':
@@ -57,3 +57,16 @@ export const getPageType = (node: ReferenceNode): string => {
 			return 'unknown';
 	}
 };
+
+export const getPageType = (node: ReferenceNode): string => getPageTypeForNodeKind(node.kind);
+
+export function createExternalLink(ref?: ExternalPackageReference): string | null {
+	if (ref?.generator !== 'documen.ts') {
+		return null;
+	}
+
+	// TODO link to monorepo support & different router config
+	return `${ref.baseUrl.replace(/\/$/, '')}/reference/${getPageTypeForNodeKind(ref.nodeKind)}/${
+		ref.originalName
+	}.html`;
+}

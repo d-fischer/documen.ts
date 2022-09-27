@@ -25,6 +25,14 @@ export interface ReferenceLocation {
 	character: number;
 }
 
+export interface ExternalPackageReference {
+	generator: string;
+	packageName: string;
+	baseUrl: string;
+	originalName: string;
+	nodeKind: string;
+}
+
 export interface IntrinsicReferenceType {
 	type: 'intrinsic';
 	name: string;
@@ -36,6 +44,7 @@ export interface ReferenceReferenceType {
 	id?: number;
 	isTypeParameter?: true;
 	package?: string;
+	externalReference?: ExternalPackageReference;
 	typeArguments?: ReferenceType[];
 }
 

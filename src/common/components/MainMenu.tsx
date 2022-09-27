@@ -100,7 +100,7 @@ const MainMenu: React.FC = () => {
 		[]
 	);
 
-	// check if reference is active, stolen from NavLink but we don't want it to be a link
+	// check if reference is active - stolen from NavLink, but we don't want it to be a link
 	const location = useLocation();
 	const path = useResolvedPath('/reference');
 	const locationPathname = location.pathname;

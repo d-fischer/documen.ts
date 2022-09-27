@@ -3,7 +3,12 @@ import path from 'path';
 import type { PackageJson } from 'type-fest';
 import * as ts from 'typescript';
 import type { Config } from '../../common/config/Config';
-import type { ReferenceLocation, SerializedPackage, SerializedProject } from '../../common/reference';
+import type {
+	ExternalPackageReference,
+	ReferenceLocation,
+	SerializedPackage,
+	SerializedProject
+} from '../../common/reference';
 import { parseConfig } from '../../common/tools/ConfigTools';
 import { AnalyzeContext } from './AnalyzeContext';
 import { createReflection } from './createReflection';
@@ -11,6 +16,11 @@ import type { Reflection } from './reflections/Reflection';
 import type { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
 import type { ReferenceType } from './types/ReferenceType';
 import { nodeToSymbol } from './util/symbols';
+
+interface PackageJsonDocumentation {
+	generator: string;
+	url?: string;
+}
 
 export class Project {
 	private readonly _symbolsByPackage = new Map<string, Reflection[]>();
@@ -36,8 +46,7 @@ export class Project {
 		return path.join(tsconfig.options.rootDir!, innerOutPath.replace(/\.m?js$/, '.ts'));
 	}
 
-	constructor(private readonly _config: Config) {
-	}
+	constructor(private readonly _config: Config) {}
 
 	async analyzeSinglePackage(packageJson: PackageJson) {
 		const parsedConfig = parseConfig(path.join(this._config.baseDir, 'tsconfig.json'));
@@ -63,11 +72,13 @@ export class Project {
 	}
 
 	serialize(): SerializedProject {
-		const packages: SerializedPackage[] = [...this._symbolsByPackage.entries()].map(([packageName, packageSymbols]) => ({
-			packageName,
-			folderName: this._packageNameToDir.get(packageName),
-			symbols: packageSymbols.map(sym => sym.serialize())
-		}));
+		const packages: SerializedPackage[] = [...this._symbolsByPackage.entries()].map(
+			([packageName, packageSymbols]) => ({
+				packageName,
+				folderName: this._packageNameToDir.get(packageName),
+				symbols: packageSymbols.map(sym => sym.serialize())
+			})
+		);
 
 		return { packages };
 	}
@@ -169,7 +180,71 @@ export class Project {
 		};
 	}
 
-	private async _analyzePackage(packageName: string, packageFolder: string, packageJson: PackageJson, tsconfig: ts.ParsedCommandLine, program?: ts.Program) {
+	findExternalPackageReference(
+		declaration: ts.Declaration,
+		originalName: string
+	): ExternalPackageReference | undefined {
+		const sf = declaration.getSourceFile();
+		const nodeModulesPath = path.join(this._config.baseDir, 'node_modules');
+		if (sf.fileName.startsWith(nodeModulesPath)) {
+			const parts = sf.fileName.slice(nodeModulesPath.length + 1).split(path.sep);
+			let packageName = parts.shift()!;
+			let packagePathName = packageName;
+			if (packageName.startsWith('@')) {
+				const scopedName = parts.shift()!;
+				packageName += `/${scopedName}`;
+				packagePathName = path.join(packagePathName, scopedName);
+			}
+
+			// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires
+			const packageJson = require(path.join(nodeModulesPath, packagePathName, 'package.json')) as PackageJson;
+
+			if ('documentation' in packageJson) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const documentation = packageJson.documentation as any as PackageJsonDocumentation;
+				const baseUrl = documentation.url ?? packageJson.homepage;
+				if (baseUrl) {
+					const symbolKind = this._getTypeDeclarationKind(declaration);
+					if (symbolKind) {
+						return {
+							generator: documentation.generator,
+							packageName,
+							baseUrl,
+							originalName,
+							nodeKind: symbolKind
+						};
+					}
+				}
+			}
+		}
+
+		return undefined;
+	}
+
+	private _getTypeDeclarationKind(declaration: ts.Declaration): string | undefined {
+		if (ts.isInterfaceDeclaration(declaration)) {
+			return 'interface';
+		}
+		if (ts.isClassDeclaration(declaration)) {
+			return 'class';
+		}
+		if (ts.isTypeAliasDeclaration(declaration)) {
+			return 'typeAlias';
+		}
+		if (ts.isEnumDeclaration(declaration)) {
+			return 'enum';
+		}
+
+		return undefined;
+	}
+
+	private async _analyzePackage(
+		packageName: string,
+		packageFolder: string,
+		packageJson: PackageJson,
+		tsconfig: ts.ParsedCommandLine,
+		program?: ts.Program
+	) {
 		const { options, fileNames } = tsconfig;
 		program ??= ts.createProgram({
 			options,

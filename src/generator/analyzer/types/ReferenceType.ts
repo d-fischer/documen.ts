@@ -1,6 +1,6 @@
 import assert from 'assert';
 import ts, { SyntaxKind } from 'typescript';
-import type { ReferenceReferenceType } from '../../../common/reference';
+import type { ExternalPackageReference, ReferenceReferenceType } from '../../../common/reference';
 import { findSourceMappedId } from '../createReflection';
 import type { TypeReflector } from '../createType';
 import { createTypeFromNode, createTypeFromTsType } from '../createType';
@@ -15,6 +15,7 @@ export class ReferenceType extends Type {
 		private readonly _typeArguments?: Type[],
 		private _id?: number,
 		private _package?: string,
+		private readonly _externalReference?: ExternalPackageReference,
 		private readonly _isTypeParameter?: true
 	) {
 		super();
@@ -36,6 +37,7 @@ export class ReferenceType extends Type {
 			id: this._id,
 			package: this._package,
 			typeArguments: this._typeArguments?.map(arg => arg.serialize()),
+			externalReference: this._externalReference,
 			isTypeParameter: this._isTypeParameter
 		};
 	}
@@ -46,8 +48,11 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 
 	async fromNode(ctx, node) {
 		const isArray =
-			ctx.checker.typeToTypeNode(ctx.checker.getTypeAtLocation(node.typeName), void 0, ts.NodeBuilderFlags.IgnoreErrors)
-				?.kind === ts.SyntaxKind.ArrayType;
+			ctx.checker.typeToTypeNode(
+				ctx.checker.getTypeAtLocation(node.typeName),
+				void 0,
+				ts.NodeBuilderFlags.IgnoreErrors
+			)?.kind === ts.SyntaxKind.ArrayType;
 
 		if (isArray) {
 			return new ArrayType(await createTypeFromNode(ctx, node.typeArguments?.[0]));
@@ -60,18 +65,31 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const declaration = origSymbol.declarations?.[0];
 		assert(declaration);
 
-		const reflectionIdForSymbol = (await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const reflectionIdForSymbol =
+			(await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
+
+		// if no internal link found, try to interlink external packages
+		const externalReference = reflectionIdForSymbol
+			? undefined
+			: ctx.project.findExternalPackageReference(declaration, origSymbol.name);
+
 		const result = new ReferenceType(
 			name,
-			await resolvePromiseArray(node.typeArguments?.map(async typeNode => await createTypeFromNode(ctx, typeNode))),
+			await resolvePromiseArray(
+				node.typeArguments?.map(async typeNode => await createTypeFromNode(ctx, typeNode))
+			),
 			reflectionIdForSymbol,
 			packageForSymbol,
+			externalReference,
 			// eslint-disable-next-line no-bitwise
 			origSymbol.flags & ts.SymbolFlags.TypeParameter ? true : undefined
 		);
 
-		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {
+		if (
+			(reflectionIdForSymbol === undefined || packageForSymbol === undefined) &&
+			externalReference !== undefined
+		) {
 			ctx.project.registerBrokenReference(origSymbol, result);
 		}
 
@@ -84,16 +102,27 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
 		const declaration = origSymbol.declarations?.[0];
 		assert(declaration);
-		const reflectionIdForSymbol = (await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const reflectionIdForSymbol =
+			(await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
+
+		// if no internal link found, try to interlink external packages
+		const externalReference = reflectionIdForSymbol
+			? undefined
+			: ctx.project.findExternalPackageReference(declaration, origSymbol.name);
+
 		const result = new ReferenceType(
 			symbol.name,
 			await resolvePromiseArray(typeArgs?.map(async arg => await createTypeFromTsType(ctx, arg))),
 			reflectionIdForSymbol,
-			packageForSymbol
+			packageForSymbol,
+			externalReference
 		);
 
-		if (reflectionIdForSymbol === undefined || packageForSymbol === undefined) {
+		if (
+			(reflectionIdForSymbol === undefined || packageForSymbol === undefined) &&
+			externalReference !== undefined
+		) {
 			ctx.project.registerBrokenReference(origSymbol, result);
 		}
 
@@ -109,11 +138,12 @@ export const exprWithTypeArgsReflector: TypeReflector<ts.ExpressionWithTypeArgum
 		const origSymbol = resolveAliasesForSymbol(ctx, symbol);
 		const declaration = origSymbol.declarations?.[0];
 		assert(declaration);
-		const reflectionIdForSymbol = (await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
+		const reflectionIdForSymbol =
+			(await findSourceMappedId(ctx, declaration)) ?? ctx.project.getReflectionIdForSymbol(origSymbol);
 		const packageForSymbol = ctx.project.getPackageNameForReflectionId(reflectionIdForSymbol);
 		const result = new ReferenceType(
 			origSymbol.name,
-			await resolvePromiseArray(node.typeArguments?.map(async (type) => await createTypeFromNode(ctx, type))),
+			await resolvePromiseArray(node.typeArguments?.map(async type => await createTypeFromNode(ctx, type))),
 			reflectionIdForSymbol,
 			packageForSymbol
 		);
