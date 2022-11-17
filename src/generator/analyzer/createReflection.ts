@@ -36,8 +36,10 @@ export async function findSourceMappedId(
 					line: lac.line + 1,
 					column: lac.character
 				});
-				const fullPath = path.resolve(path.dirname(declSf.fileName), path.dirname(url), origPos.source!);
-				return ctx.project.findIdAtPosition(fullPath, origPos.line! - 1, origPos.column!);
+				if (origPos.source) {
+					const fullPath = path.resolve(path.dirname(declSf.fileName), path.dirname(url), origPos.source);
+					return ctx.project.findIdAtPosition(fullPath, origPos.line! - 1, origPos.column!);
+				}
 			}
 		}
 	}
