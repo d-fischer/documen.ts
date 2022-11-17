@@ -13,6 +13,7 @@ import { getTag, hasTag } from '../../tools/CodeTools';
 import MarkdownParser from '../../tools/markdown/MarkdownParser';
 import { useAsyncType } from '../../tools/NodeTools';
 import Badge from '../Badge';
+import BetaNotice from '../BetaNotice';
 import DeprecationNotice from '../DeprecationNotice';
 import FunctionSignature from '../FunctionSignature';
 
@@ -22,19 +23,22 @@ interface FunctionCardHeaderProps {
 	sig: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
 }
 
-const useStyles = makeStyles(theme => ({
-	root: {},
-	asyncBadge: {
-		backgroundColor: theme.colors.badges.async
-	},
-}), { name: 'FunctionCardHeader' });
+const useStyles = makeStyles(
+	theme => ({
+		root: {},
+		asyncBadge: {
+			backgroundColor: theme.colors.badges.async
+		}
+	}),
+	{ name: 'FunctionCardHeader' }
+);
 
 export const FunctionCardHeader: React.FunctionComponent<FunctionCardHeaderProps> = ({ sig, definition, parent }) => {
 	const classes = useStyles();
 	const { isAsync } = useAsyncType(sig);
 	return (
 		<>
-			<FunctionSignature signature={sig} parent={parent}/>
+			<FunctionSignature signature={sig} parent={parent} />
 			{definition.flags?.isStatic && <Badge>static</Badge>}
 			{isAsync && (
 				<Badge
@@ -47,9 +51,10 @@ export const FunctionCardHeader: React.FunctionComponent<FunctionCardHeaderProps
 			)}
 			{hasTag(sig, 'deprecated') && (
 				<DeprecationNotice>
-					<MarkdownParser source={getTag(sig, 'deprecated')!}/>
+					<MarkdownParser source={getTag(sig, 'deprecated')!} />
 				</DeprecationNotice>
 			)}
+			{hasTag(sig, 'beta') && <BetaNotice />}
 		</>
 	);
 };

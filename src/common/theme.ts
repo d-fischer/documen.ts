@@ -15,7 +15,8 @@ const theme = {
 		},
 		badges: {
 			async: '#cccc70',
-			deprecated: '#cc7070'
+			deprecated: '#cc7070',
+			beta: '#ab9120'
 		}
 	},
 	fonts: {
@@ -32,6 +33,5 @@ export type Theme = typeof theme;
 
 declare module '@material-ui/styles' {
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
-	interface DefaultTheme extends Theme {
-	}
+	interface DefaultTheme extends Theme {}
 }

@@ -43,6 +43,10 @@ const insertIntoSkeleton = (html: string, css: string, baseUrl: string, config: 
 			background: #141414;
 			color: #b9b9b9;
 		}
+
+		p {
+			margin: 8px 0;
+		}
 		
 		${dom.css()}
 

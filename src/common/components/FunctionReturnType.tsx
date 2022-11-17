@@ -9,15 +9,15 @@ interface FunctionReturnTypeProps {
 }
 
 const useStyles = makeStyles(
-	{
+	theme => ({
 		root: {
 			fontWeight: 'bold',
-			margin: '1em 0 0'
+			margin: `${theme.spacing.unit * 2}px 0 0`
 		},
 		type: {
 			fontWeight: 'normal'
 		}
-	},
+	}),
 	{ name: 'FunctionReturnType' }
 );
 
