@@ -1,12 +1,14 @@
 import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import BetaNotice from '../components/BetaNotice';
+import DeprecationNotice from '../components/DeprecationNotice';
 import OverviewTable from '../components/overviewTable/OverviewTable';
 import SymbolHeader from '../components/SymbolHeader';
 import Card from '../containers/Card';
 import PageContent from '../containers/PageContent';
 import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer';
 import type { EnumMemberReferenceNode, EnumReferenceNode } from '../reference';
-import { getPageType } from '../tools/CodeTools';
+import { getPageType, getTag, hasTag } from '../tools/CodeTools';
 import MarkdownParser from '../tools/markdown/MarkdownParser';
 import { defaultNodeSort } from '../tools/NodeTools';
 import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools';
@@ -30,16 +32,22 @@ const EnumPage: React.FC = () => {
 
 	const correctPageType = getPageType(symbol);
 	if (correctPageType !== 'enums') {
-		return <Navigate replace to={`/reference${getPackagePath(packageName)}/${correctPageType}/${name}`}/>;
+		return <Navigate replace to={`/reference${getPackagePath(packageName)}/${correctPageType}/${name}`} />;
 	}
 
 	const members: EnumMemberReferenceNode[] = filterChildrenByMember(symbol, 'kind', 'enumMember');
 
 	return (
 		<>
-			<SymbolHeader symbol={symbol}/>
+			<SymbolHeader symbol={symbol} />
 			<PageContent>
-				{symbol.comment?.text && <MarkdownParser source={symbol.comment.text}/>}
+				{hasTag(symbol, 'deprecated') && (
+					<DeprecationNotice>
+						<MarkdownParser source={getTag(symbol, 'deprecated')!} />
+					</DeprecationNotice>
+				)}
+				{hasTag(symbol, 'beta') && <BetaNotice />}
+				{symbol.comment?.text && <MarkdownParser source={symbol.comment.text} />}
 				{members.length ? (
 					<>
 						<h2>Overview</h2>

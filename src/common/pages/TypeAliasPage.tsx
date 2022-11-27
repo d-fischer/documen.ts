@@ -1,12 +1,14 @@
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import BetaNotice from '../components/BetaNotice';
 import Type from '../components/codeBuilders/Type';
+import DeprecationNotice from '../components/DeprecationNotice';
 import SymbolHeader from '../components/SymbolHeader';
 import PageContent from '../containers/PageContent';
 import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer';
 import type { TypeAliasReferenceNode } from '../reference';
-import { getPageType } from '../tools/CodeTools';
+import { getPageType, getTag, hasTag } from '../tools/CodeTools';
 import MarkdownParser from '../tools/markdown/MarkdownParser';
 import { findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
@@ -46,6 +48,12 @@ const TypeAliasPage: React.FC = () => {
 		<>
 			<SymbolHeader symbol={symbol} />
 			<PageContent>
+				{hasTag(symbol, 'deprecated') && (
+					<DeprecationNotice>
+						<MarkdownParser source={getTag(symbol, 'deprecated')!} />
+					</DeprecationNotice>
+				)}
+				{hasTag(symbol, 'beta') && <BetaNotice />}
 				{symbol.comment?.text && <MarkdownParser source={symbol.comment.text} />}
 				<p>
 					Aliased type:{' '}
