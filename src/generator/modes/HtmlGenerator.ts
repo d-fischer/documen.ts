@@ -244,7 +244,8 @@ export default class HtmlGenerator extends OutputGenerator {
 				define: {
 					...globalDefinitions,
 					__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic'),
-					__DOCTS_FSMAP: JSON.stringify(fsMapEntries)
+					__DOCTS_FSMAP: JSON.stringify(fsMapEntries),
+					'process.env': {}
 				},
 				build: {
 					emptyOutDir: false,
