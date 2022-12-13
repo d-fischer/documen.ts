@@ -238,14 +238,15 @@ export default class HtmlGenerator extends OutputGenerator {
 		});
 
 		if (this._config.shouldEnhance) {
+			const mode = this._config.dev ? 'development' : 'production';
 			await build({
-				mode: this._config.dev ? 'development' : 'production',
+				mode,
 				configFile: false,
 				define: {
 					...globalDefinitions,
 					__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic'),
 					__DOCTS_FSMAP: JSON.stringify(fsMapEntries),
-					'process.env': {}
+					'process.env.NODE_ENV': JSON.stringify(mode)
 				},
 				build: {
 					emptyOutDir: false,
