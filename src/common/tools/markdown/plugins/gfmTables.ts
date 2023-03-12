@@ -9,11 +9,14 @@ export function gfmTables(this: Processor, options: GfmTableOptions): void {
 
 	function add(field: string, value: unknown) {
 		/* istanbul ignore if - other extensions. */
-		if (data[field]) (data[field] as unknown[]).push(value)
-		else data[field] = [value]
+		if (data[field]) {
+			(data[field] as unknown[]).push(value);
+		} else {
+			data[field] = [value];
+		}
 	}
 
-	add('micromarkExtensions', gfmTable)
-	add('fromMarkdownExtensions', fromMarkdown)
-	add('toMarkdownExtensions', toMarkdown(options))
+	add('micromarkExtensions', gfmTable);
+	add('fromMarkdownExtensions', fromMarkdown);
+	add('toMarkdownExtensions', toMarkdown(options));
 }
