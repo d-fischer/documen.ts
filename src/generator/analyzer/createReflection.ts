@@ -57,6 +57,18 @@ export async function createReflectionInternal(
 
 	const sourceMappedId = await findSourceMappedId(ctx, declaration);
 	if (sourceMappedId !== undefined) {
+		if (
+			(ts.isPropertyDeclaration(declaration) ||
+				ts.isPropertySignature(declaration) ||
+				ts.isMethodDeclaration(declaration) ||
+				ts.isMethodSignature(declaration)) &&
+			parent instanceof SymbolBasedReflection
+		) {
+			const propParentSymbol = ctx.checker.getSymbolAtLocation(declaration.parent);
+			if (propParentSymbol !== parent.symbol) {
+				return await PropertyReflection.fromSymbol(ctx, symbol, parent);
+			}
+		}
 		return new ReferenceReflection(ctx, symbol, sourceMappedId);
 	}
 

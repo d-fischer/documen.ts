@@ -1,9 +1,9 @@
+import { toHast } from 'mdast-util-to-hast';
+import { type MdastNodes } from 'mdast-util-to-hast/lib';
 import remarkDirective from 'remark-directive';
 import type { Processor, Transformer } from 'unified';
 import type { Node } from 'unist';
 import { visit } from 'unist-util-visit';
-import { toHast } from 'mdast-util-to-hast';
-import type { MdastNode } from 'mdast-util-to-hast/lib';
 
 interface CustomDirectivesOptions {
 	classes: Record<string, string>;
@@ -26,7 +26,7 @@ export function customDirectives(this: Processor, { classes }: CustomDirectivesO
 						type: 'element',
 						tagName: 'h3',
 						properties: {
-							className: classes.warningTitle,
+							className: classes.warningTitle
 						},
 						children: [
 							{
@@ -35,9 +35,9 @@ export function customDirectives(this: Processor, { classes }: CustomDirectivesO
 							}
 						]
 					},
-					...((node.children as MdastNode[] | undefined)?.map(c => toHast(c)) ?? [])
+					...((node.children as MdastNodes[] | undefined)?.map(c => toHast(c)) ?? [])
 				]
-			}
+			};
 		}
 
 		return true;
