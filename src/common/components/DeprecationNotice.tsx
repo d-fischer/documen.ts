@@ -7,9 +7,11 @@ const useStyles = makeStyles(
 			display: 'flow-root',
 			borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.badges.deprecated}`,
 			backgroundColor: theme.colors.background.active,
-			padding: theme.spacing.unit * 2,
-			paddingBottom: theme.spacing.unit,
+			padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
 			margin: `${theme.spacing.unit * 2}px 0`
+		},
+		title: {
+			margin: `${theme.spacing.unit}px 0`
 		}
 	}),
 	{ name: 'DeprecationNotice' }
@@ -19,7 +21,7 @@ const DeprecationNotice: React.FC<React.PropsWithChildren> = ({ children }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
-			<h3>Deprecated</h3>
+			<h3 className={classes.title}>Deprecated</h3>
 			{children}
 		</div>
 	);
