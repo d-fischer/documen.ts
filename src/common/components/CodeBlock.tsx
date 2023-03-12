@@ -1,12 +1,12 @@
-import { makeStyles } from '@material-ui/styles';
-import { twoslasher } from '@typescript/twoslash';
-import * as lzString from 'lz-string';
-import React, { useCallback, useMemo, useState } from 'react';
 import { Light as SyntaxHighlighter } from '@d-fischer/react-syntax-highlighter';
 import jsHighlight from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import json from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/json';
 import tsHighlight from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import darcula from '@d-fischer/react-syntax-highlighter/dist/esm/styles/hljs/darcula';
+import { makeStyles } from '@material-ui/styles';
+import { twoslasher } from '@typescript/twoslash';
+import * as lzString from 'lz-string';
+import React, { useCallback, useMemo, useState } from 'react';
 import * as ts from 'typescript';
 import { getRandomString } from '../tools/StringTools';
 
@@ -36,20 +36,16 @@ export function friendlyCjsTransform(): ts.TransformerFactory<ts.SourceFile> {
 					factory.createVariableDeclarationList(
 						[
 							factory.createVariableDeclaration(
-								factory.createObjectBindingPattern(node.importClause.namedBindings.elements.map(elem => factory.createBindingElement(
-									undefined,
-									elem.propertyName,
-									elem.name
-								))),
+								factory.createObjectBindingPattern(
+									node.importClause.namedBindings.elements.map(elem =>
+										factory.createBindingElement(undefined, elem.propertyName, elem.name)
+									)
+								),
 								undefined,
 								undefined,
-								factory.createCallExpression(
-									factory.createIdentifier('require'),
-									undefined,
-									[
-										node.moduleSpecifier
-									]
-								)
+								factory.createCallExpression(factory.createIdentifier('require'), undefined, [
+									node.moduleSpecifier
+								])
 							)
 						],
 						ts.NodeFlags.Const
@@ -92,8 +88,11 @@ const useStyles = makeStyles(theme => ({
 			borderLeft: '0 none'
 		},
 		'input:checked + &': {
-			background: theme.colors.border,
+			background: theme.colors.border
 		}
+	},
+	code: {
+		tabSize: 2
 	},
 	diffAddedLine: {
 		display: 'block',
@@ -125,134 +124,181 @@ function parseRanges(str: string | undefined) {
 	});
 }
 
-export const CodeBlock: React.FC<CodeBlockProps> = __DOCTS_COMPONENT_MODE === 'static' ? (
-	props => {
-		const { lang, langMeta, text } = props;
-		const classes = useStyles();
-		const [langMetaName, ...langMetaAdditional] = langMeta;
-		if (langMetaName === 'twoslash') {
-			const cleanText = getCleanText(text);
-			return (
-				<div data-dynamic-component="CodeBlock" data-component-props={JSON.stringify(props)}>
-					<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
-						{cleanText}
-					</SyntaxHighlighter>
-				</div>
-			);
-		}
-
-		if (langMetaName === 'diff') {
-			const expandedAdded = parseRanges(langMetaAdditional.find(tk => tk.startsWith('+'))?.slice(1));
-			const expandedRemoved = parseRanges(langMetaAdditional.find(tk => tk.startsWith('-'))?.slice(1));
-			return (
-				<SyntaxHighlighter
-					wrapLongLines
-					language={lang}
-					style={darcula as unknown}
-					wrapLines
-					lineProps={lineNumber => {
-						let className: string | undefined = undefined;
-						if (expandedAdded?.includes(lineNumber)) {
-							className = classes.diffAddedLine;
-						} else if (expandedRemoved?.includes(lineNumber)) {
-							className = classes.diffRemovedLine;
-						}
-
-						return { className };
-					}}>
-					{text}
-				</SyntaxHighlighter>
-			);
-		}
-
-		return (
-			<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
-				{text}
-			</SyntaxHighlighter>
-		);
-	}
-) : (
-	({ lang, langMeta, text }) => {
-		const [langMetaName, ...langMetaAdditional] = langMeta;
-		const isTwoslash = langMetaName === 'twoslash';
-		const classes = useStyles();
-		const [idSuffix] = useState(() => getRandomString(8));
-		const [mode, setMode] = useState('ts');
-		const transpile = mode !== 'ts';
-		const showCjs = mode === 'cjs';
-		const changeMode = useCallback<React.EventHandler<React.FormEvent<HTMLInputElement>>>((e) => {
-			setMode(e.currentTarget.value);
-		}, []);
-		const twoslashed = useMemo(() => {
-			if (isTwoslash) {
-				try {
-					return twoslasher(text, 'ts', {
-						defaultOptions: { showEmit: transpile },
-						tsModule: ts,
-						lzstringModule: lzString,
-						// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-						fsMap: require('../../progressiveEnhancement/fsMap').fsMap,
-						customTransformers: showCjs ? { after: [friendlyCjsTransform()] } : undefined
-					});
-				} catch (e) {
-					// eslint-disable-next-line no-console
-					console.error('Error rendering twoslash', e);
-					return {
-						code: getCleanText(text),
-						error: e as Error
-					};
+export const CodeBlock: React.FC<CodeBlockProps> =
+	__DOCTS_COMPONENT_MODE === 'static'
+		? props => {
+				const { lang, langMeta, text } = props;
+				const classes = useStyles();
+				const [langMetaName, ...langMetaAdditional] = langMeta;
+				if (langMetaName === 'twoslash') {
+					const cleanText = getCleanText(text);
+					return (
+						<div data-dynamic-component="CodeBlock" data-component-props={JSON.stringify(props)}>
+							<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
+								{cleanText}
+							</SyntaxHighlighter>
+						</div>
+					);
 				}
-			} else {
-				return undefined;
-			}
-		}, [text, transpile, showCjs]);
 
-		if (isTwoslash) {
-			return (
-				<div className={classes.wrapper}>
-					<form className={classes.modeSwitcher}>
-						<input className={classes.modeInput} type="radio" name="mode" id={`mode-ts-${idSuffix}`} value="ts" checked={mode === 'ts'} onClick={changeMode}/>
-						<label className={classes.mode} htmlFor={`mode-ts-${idSuffix}`} title="TypeScript">TS</label>
-						<input className={classes.modeInput} type="radio" name="mode" id={`mode-esm-${idSuffix}`} value="esm" checked={mode === 'esm'} onClick={changeMode}/>
-						<label className={classes.mode} htmlFor={`mode-esm-${idSuffix}`} title="ES Modules">ESM</label>
-						<input className={classes.modeInput} type="radio" name="mode" id={`mode-cjs-${idSuffix}`} value="cjs" checked={mode === 'cjs'} onClick={changeMode}/>
-						<label className={classes.mode} htmlFor={`mode-cjs-${idSuffix}`} title="CommonJS">CJS</label>
-					</form>
-					<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
-						{twoslashed!.code}
+				if (langMetaName === 'diff') {
+					const expandedAdded = parseRanges(langMetaAdditional.find(tk => tk.startsWith('+'))?.slice(1));
+					const expandedRemoved = parseRanges(langMetaAdditional.find(tk => tk.startsWith('-'))?.slice(1));
+					return (
+						<SyntaxHighlighter
+							wrapLongLines
+							language={lang}
+							style={darcula as unknown}
+							wrapLines
+							lineProps={lineNumber => {
+								let className: string | undefined = undefined;
+								if (expandedAdded?.includes(lineNumber)) {
+									className = classes.diffAddedLine;
+								} else if (expandedRemoved?.includes(lineNumber)) {
+									className = classes.diffRemovedLine;
+								}
+
+								return { className };
+							}}
+						>
+							{text}
+						</SyntaxHighlighter>
+					);
+				}
+
+				return (
+					<SyntaxHighlighter
+						wrapLongLines
+						language={lang}
+						style={darcula as unknown}
+						codeTagProps={{ className: classes.code }}
+					>
+						{text}
 					</SyntaxHighlighter>
-				</div>
-			);
-		}
-
-		if (langMetaName === 'diff') {
-			const expandedAdded = parseRanges(langMetaAdditional.find(tk => tk.startsWith('+'))?.slice(1));
-			const expandedRemoved = parseRanges(langMetaAdditional.find(tk => tk.startsWith('-'))?.slice(1));
-			return (
-				<SyntaxHighlighter
-					wrapLongLines
-					language={lang}
-					style={darcula as unknown}
-					wrapLines
-					lineProps={lineNumber => {
-						let className: string | undefined = undefined;
-						if (expandedAdded?.includes(lineNumber)) {
-							className = classes.diffAddedLine;
-						} else if (expandedRemoved?.includes(lineNumber)) {
-							className = classes.diffRemovedLine;
+				);
+		  }
+		: ({ lang, langMeta, text }) => {
+				const [langMetaName, ...langMetaAdditional] = langMeta;
+				const isTwoslash = langMetaName === 'twoslash';
+				const classes = useStyles();
+				const [idSuffix] = useState(() => getRandomString(8));
+				const [mode, setMode] = useState('ts');
+				const transpile = mode !== 'ts';
+				const showCjs = mode === 'cjs';
+				const changeMode = useCallback<React.EventHandler<React.FormEvent<HTMLInputElement>>>(e => {
+					setMode(e.currentTarget.value);
+				}, []);
+				const twoslashed = useMemo(() => {
+					if (isTwoslash) {
+						try {
+							return twoslasher(text, 'ts', {
+								defaultOptions: { showEmit: transpile },
+								tsModule: ts,
+								lzstringModule: lzString,
+								// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
+								fsMap: require('../../progressiveEnhancement/fsMap').fsMap,
+								customTransformers: showCjs ? { after: [friendlyCjsTransform()] } : undefined
+							});
+						} catch (e) {
+							// eslint-disable-next-line no-console
+							console.error('Error rendering twoslash', e);
+							return {
+								code: getCleanText(text),
+								error: e as Error
+							};
 						}
+					} else {
+						return undefined;
+					}
+				}, [text, transpile, showCjs]);
 
-						return { className };
-					}}>
-					{text}
-				</SyntaxHighlighter>
-			);
-		}
+				if (isTwoslash) {
+					return (
+						<div className={classes.wrapper}>
+							<form className={classes.modeSwitcher}>
+								<input
+									className={classes.modeInput}
+									type="radio"
+									name="mode"
+									id={`mode-ts-${idSuffix}`}
+									value="ts"
+									checked={mode === 'ts'}
+									onClick={changeMode}
+								/>
+								<label className={classes.mode} htmlFor={`mode-ts-${idSuffix}`} title="TypeScript">
+									TS
+								</label>
+								<input
+									className={classes.modeInput}
+									type="radio"
+									name="mode"
+									id={`mode-esm-${idSuffix}`}
+									value="esm"
+									checked={mode === 'esm'}
+									onClick={changeMode}
+								/>
+								<label className={classes.mode} htmlFor={`mode-esm-${idSuffix}`} title="ES Modules">
+									ESM
+								</label>
+								<input
+									className={classes.modeInput}
+									type="radio"
+									name="mode"
+									id={`mode-cjs-${idSuffix}`}
+									value="cjs"
+									checked={mode === 'cjs'}
+									onClick={changeMode}
+								/>
+								<label className={classes.mode} htmlFor={`mode-cjs-${idSuffix}`} title="CommonJS">
+									CJS
+								</label>
+							</form>
+							<SyntaxHighlighter
+								wrapLongLines
+								language={lang}
+								style={darcula as unknown}
+								codeTagProps={{ className: classes.code }}
+							>
+								{twoslashed!.code}
+							</SyntaxHighlighter>
+						</div>
+					);
+				}
 
-		return (
-			<SyntaxHighlighter wrapLongLines language={lang} style={darcula as unknown}>
-				{text}
-			</SyntaxHighlighter>
-		);
-	}
-);
+				if (langMetaName === 'diff') {
+					const expandedAdded = parseRanges(langMetaAdditional.find(tk => tk.startsWith('+'))?.slice(1));
+					const expandedRemoved = parseRanges(langMetaAdditional.find(tk => tk.startsWith('-'))?.slice(1));
+					return (
+						<SyntaxHighlighter
+							wrapLongLines
+							language={lang}
+							style={darcula as unknown}
+							wrapLines
+							lineProps={lineNumber => {
+								let className: string | undefined = undefined;
+								if (expandedAdded?.includes(lineNumber)) {
+									className = classes.diffAddedLine;
+								} else if (expandedRemoved?.includes(lineNumber)) {
+									className = classes.diffRemovedLine;
+								}
+
+								return { className };
+							}}
+							codeTagProps={{ className: classes.code }}
+						>
+							{text}
+						</SyntaxHighlighter>
+					);
+				}
+
+				return (
+					<SyntaxHighlighter
+						wrapLongLines
+						language={lang}
+						style={darcula as unknown}
+						codeTagProps={{ className: classes.code }}
+					>
+						{text}
+					</SyntaxHighlighter>
+				);
+		  };
