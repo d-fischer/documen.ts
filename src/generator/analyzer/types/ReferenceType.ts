@@ -88,7 +88,7 @@ export const referenceTypeReflector: TypeReflector<ts.TypeReferenceNode, ts.Type
 
 		if (
 			(reflectionIdForSymbol === undefined || packageForSymbol === undefined) &&
-			externalReference !== undefined
+			externalReference === undefined
 		) {
 			ctx.project.registerBrokenReference(origSymbol, result);
 		}
