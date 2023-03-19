@@ -11,6 +11,7 @@ yarn.lock
 publishNewVersion.sh
 .editorconfig
 testdocs
+/dist
 
 .devcontainer
 .eslintignore

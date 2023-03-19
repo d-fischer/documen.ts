@@ -31,6 +31,7 @@
 		"node_modules",
 		"build",
 		"scripts",
-		"config"
+		"config",
+		"vite.config.dev.ts"
 	]
 }

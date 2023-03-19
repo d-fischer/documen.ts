@@ -20,7 +20,6 @@ import { Project } from '../analyzer/Project';
 import Generator from './Generator';
 import HtmlGenerator from './HtmlGenerator';
 import type { OutputGenerator } from './OutputGenerator';
-import SpaGenerator from './SpaGenerator';
 
 export default class MonorepoGenerator extends Generator {
 	async createReferenceStructure() {
@@ -106,7 +105,7 @@ export default class MonorepoGenerator extends Generator {
 		const { ignoredPackages } = this._config;
 
 		const fsMap = await this._generateFsMap(data, paths);
-		await generator._buildWebpack(data, paths, fsMap);
+		await generator._buildBundle(data, paths, fsMap);
 
 		await generator._generateCommons(paths);
 
@@ -138,7 +137,7 @@ export default class MonorepoGenerator extends Generator {
 		}
 	}
 
-	protected async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
+	async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
 		const input = Object.fromEntries(
 			data.packages.map(pkg => {
 				let packageName = pkg.packageName;
@@ -168,17 +167,7 @@ export default class MonorepoGenerator extends Generator {
 	}
 
 	private _createGenerator(config: Config): OutputGenerator {
-		switch (this._config.mode) {
-			case 'spa': {
-				return new SpaGenerator(config);
-			}
-			case 'html': {
-				return new HtmlGenerator(config);
-			}
-			default: {
-				throw new Error(`Generator '${this._config.mode as string}' not found`);
-			}
-		}
+		return new HtmlGenerator(config);
 	}
 
 	private async _createReferenceRootProgram(

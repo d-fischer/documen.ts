@@ -31,7 +31,7 @@ export default abstract class Generator {
 	abstract generate(data: SerializedProject, paths: Paths): Promise<void>;
 
 	/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function */
-	async _buildWebpack(
+	async _buildBundle(
 		data: SerializedProject,
 		paths: Paths,
 		fsMap: Map<string, string>,
@@ -40,7 +40,7 @@ export default abstract class Generator {
 	/* eslint-enable @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function */
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	protected async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
+	async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
 		return new Map();
 	}
 

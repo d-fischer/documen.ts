@@ -1,4 +1,3 @@
-import { GeneratorMode } from '../GeneratorMode';
 import RouterMode from '../htmlRenderer/RouterMode';
 
 export interface ConfigInternalArticle {
@@ -50,7 +49,6 @@ export interface Config {
 	configDir: string | null;
 	outputDir: string;
 	persistentFiles?: string[];
-	mode: GeneratorMode;
 	routerMode: RouterMode;
 	baseDir: string;
 	baseUrl: string;

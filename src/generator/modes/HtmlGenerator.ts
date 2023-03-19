@@ -22,7 +22,7 @@ type RenderEntry = [string, string, Promise<string>];
 export default class HtmlGenerator extends OutputGenerator {
 	async generate(data: SerializedProject, paths: Paths) {
 		const fsMap = await this._generateFsMap();
-		await this._buildWebpack(data, paths, fsMap);
+		await this._buildBundle(data, paths, fsMap);
 		await this._generateCommons(paths);
 		await this._generateDocs(paths);
 		await this._generateReference(data, paths);
@@ -201,7 +201,7 @@ export default class HtmlGenerator extends OutputGenerator {
 		});
 	}
 
-	async _buildWebpack(data: SerializedProject, paths: Paths, fsMap: Map<string, string>) {
+	async _buildBundle(data: SerializedProject, paths: Paths, fsMap: Map<string, string>) {
 		const fsMapEntries = this._config.shouldEnhance ? [...fsMap.entries()] : [];
 
 		const globalDefinitions: Record<string, string> = {
@@ -267,7 +267,7 @@ export default class HtmlGenerator extends OutputGenerator {
 		}
 	}
 
-	protected async _generateFsMap() {
+	async _generateFsMap() {
 		const fsMap = vfs.createDefaultMapFromNodeModules({ target: ts.ScriptTarget.ES2015 });
 		vfs.addAllFilesFromFolder(fsMap, path.join(this._config.baseDir, 'node_modules'));
 		return fsMap;

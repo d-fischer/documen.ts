@@ -4,7 +4,8 @@
 	"include": [
 		"types",
 		"src/common",
-		"src/spa"
+		"src/dev",
+		"vite.config.dev.ts"
 	],
 	"compilerOptions": {
 		"importHelpers": false

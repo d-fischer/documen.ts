@@ -14,7 +14,7 @@ module.exports = {
 		]
 	},
 	parserOptions: {
-		project: ['tsconfig.json', 'tsconfig-html.json', 'tsconfig-spa.json', 'tsconfig-enhance.json']
+		project: ['tsconfig.json', 'tsconfig-html.json', 'tsconfig-dev.json', 'tsconfig-enhance.json']
 	},
 	settings: {
 		react: {

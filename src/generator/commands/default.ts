@@ -9,12 +9,9 @@ import RouterMode from '../../common/htmlRenderer/RouterMode';
 import type Paths from '../../common/Paths';
 import { fileExists } from '../../common/tools/FileTools';
 import { removeSlash } from '../../common/tools/StringTools';
-import WebpackBuildError from '../errors/WebpackBuildError';
-import WebpackError from '../errors/WebpackError';
 import type Generator from '../modes/Generator';
 import HtmlGenerator from '../modes/HtmlGenerator';
 import MonorepoGenerator from '../modes/MonorepoGenerator';
-import SpaGenerator from '../modes/SpaGenerator';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class CLICommandOptions extends Options {
@@ -36,9 +33,6 @@ export class CLICommandOptions extends Options {
 
 	@option({ flag: 'o', description: 'output directory' })
 	outDir!: string;
-
-	@option({ flag: 'm', description: 'output mode', default: 'html' })
-	mode!: 'spa' | 'html';
 
 	@option({
 		flag: 'r',
@@ -189,8 +183,6 @@ export default class CLICommand extends Command {
 			prettier: getConfigValue(importedConfig, 'prettier') ?? options.prettier ?? options.dev ?? false,
 			configDir,
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			mode: options.mode || getConfigValue(importedConfig, 'mode') || 'html',
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			routerMode: options.routerMode || getConfigValue(importedConfig, 'routerMode') || 'htmlSuffix',
 			outputDir,
 			baseUrl,
@@ -278,19 +270,9 @@ export default class CLICommand extends Command {
 		try {
 			await generator.generate(reference, paths);
 		} catch (e) {
-			if (e instanceof WebpackError) {
-				process.stderr.write('\nerror building with webpack:\n');
-				console.error(e.originalError);
-				process.exit(1);
-			} else if (e instanceof WebpackBuildError) {
-				process.stderr.write('\nerror building with webpack:\n');
-				console.error(e.stats?.toString());
-				process.exit(1);
-			} else {
-				process.stderr.write('\nerror building the documentation:\n');
-				console.error(e);
-				process.exit(1);
-			}
+			process.stderr.write('\nerror building the documentation:\n');
+			console.error(e);
+			process.exit(1);
 		} finally {
 			await tmpResult.cleanup();
 		}
@@ -324,16 +306,7 @@ export default class CLICommand extends Command {
 		if (config.monorepoRoot) {
 			return new MonorepoGenerator(config);
 		}
-		switch (config.mode) {
-			case 'spa': {
-				return new SpaGenerator(config);
-			}
-			case 'html': {
-				return new HtmlGenerator(config);
-			}
-			default: {
-				throw new Error(`Generator '${config.mode as string}' not found`);
-			}
-		}
+
+		return new HtmlGenerator(config);
 	}
 }

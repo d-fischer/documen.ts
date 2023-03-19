@@ -1,17 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-import registerServiceWorker from './registerServiceWorker';
-
-import App from '../common/containers/App';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
-
 import { Light as SyntaxHighlighter } from '@d-fischer/react-syntax-highlighter';
 import js from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import json from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/json';
 import ts from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import { ThemeProvider } from '@material-ui/styles';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
+
+import App from '../common/containers/App';
 import theme from '../common/theme';
+
+import registerServiceWorker from './registerServiceWorker';
 
 const Router = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
 
@@ -24,7 +23,7 @@ SyntaxHighlighter.registerLanguage('ts', ts);
 ReactDOM.render(
 	<ThemeProvider theme={theme}>
 		<Router>
-			<App/>
+			<App />
 		</Router>
 	</ThemeProvider>,
 	document.getElementById('app-root')
