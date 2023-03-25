@@ -63,6 +63,11 @@ export interface UnionReferenceType {
 	types: ReferenceType[];
 }
 
+export interface IntersectionReferenceType {
+	type: 'intersection';
+	types: ReferenceType[];
+}
+
 export interface LiteralReferenceType {
 	type: 'literal';
 	value: string | number | null;
@@ -96,6 +101,7 @@ export type ReferenceType =
 	| ReferenceReferenceType
 	| ArrayReferenceType
 	| UnionReferenceType
+	| IntersectionReferenceType
 	| LiteralReferenceType
 	| OptionalReferenceType
 	| ReflectionReferenceType

@@ -3,12 +3,13 @@ import ts from 'typescript';
 import type { AnalyzeContext } from './AnalyzeContext';
 import { arrayTypeReflector } from './types/ArrayType';
 import { functionTypeReflector } from './types/FunctionType';
+import { intersectionTypeReflector } from './types/IntersectionType';
 import { IntrinsicType, intrinsicTypeReflector } from './types/IntrinsicType';
 import { literalTypeReflector } from './types/LiteralType';
 import { namedTupleElementReflector } from './types/NamedTupleElementType';
 import { objectLiteralTypeReflector } from './types/ObjectLiteralType';
 import { optionalTypeReflector } from './types/OptionalType';
-import { exprWithTypeArgsReflector, referenceTypeReflector } from './types/ReferenceType';
+import { exprWithTypeArgsReflector, importTypeReflector, referenceTypeReflector } from './types/ReferenceType';
 import { tupleTypeReflector } from './types/TupleType';
 import type { Type } from './types/Type';
 import { typeOperatorTypeReflector } from './types/TypeOperatorType';
@@ -36,6 +37,8 @@ function loadTypeReflectors() {
 		arrayTypeReflector,
 		exprWithTypeArgsReflector,
 		functionTypeReflector,
+		importTypeReflector,
+		intersectionTypeReflector,
 		intrinsicTypeReflector,
 		literalTypeReflector,
 		namedTupleElementReflector,

@@ -65,6 +65,18 @@ const Type: React.FunctionComponent<TypeProps> = ({ def, ignoreUndefined = false
 				</>
 			);
 		}
+		case 'intersection': {
+			return (
+				<>
+					{def.types.map((type, idx) => (
+						<React.Fragment key={idx}>
+							{idx === 0 ? '' : ' & '}
+							<Type def={type} />
+						</React.Fragment>
+					))}
+				</>
+			);
+		}
 		case 'array': {
 			if (!def.elementType) {
 				return <>Array</>;
