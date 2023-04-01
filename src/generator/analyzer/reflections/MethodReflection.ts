@@ -29,7 +29,12 @@ export class MethodReflection extends SymbolBasedReflection {
 		return that;
 	}
 
-	static async fromArrowSymbol(ctx: AnalyzeContext, symbol: ts.Symbol, arrow: ts.ArrowFunction, parent: SymbolBasedReflection) {
+	static async fromArrowSymbol(
+		ctx: AnalyzeContext,
+		symbol: ts.Symbol,
+		arrow: ts.ArrowFunction,
+		parent: SymbolBasedReflection
+	) {
 		const that = new MethodReflection(ctx, symbol);
 		that.parent = parent;
 
@@ -39,10 +44,11 @@ export class MethodReflection extends SymbolBasedReflection {
 		assert(signature);
 
 		that.signatures = [
-			await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, signature, that, arrow),
-		]
+			await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, signature, that, arrow)
+		];
 
 		that._handleFlags(parentDeclaration);
+		that._processJsDoc();
 
 		handleInheritance(ctx, that);
 
