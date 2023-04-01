@@ -4,7 +4,17 @@ import type { AnalyzeContext } from '../AnalyzeContext';
 import { DocComment } from '../DocComment';
 import { SignatureReflection } from './SignatureReflection';
 
-export type ReflectionFlag = 'isPrivate' | 'isProtected' | 'isPublic' | 'isReadonly' | 'isAbstract' | 'isStatic' | 'isOptional' | 'isRest' | 'isExternal';
+export type ReflectionFlag =
+	| 'isPrivate'
+	| 'isProtected'
+	| 'isPublic'
+	| 'isReadonly'
+	| 'isAbstract'
+	| 'isStatic'
+	| 'isOptional'
+	| 'isRest'
+	| 'isExternal'
+	| 'isInternal';
 
 export abstract class Reflection {
 	readonly id: number;
@@ -41,7 +51,7 @@ export abstract class Reflection {
 
 	protected _calculateLocation() {
 		if (!this._locationCalculated) {
-			const locationNode = this.locationNode ?? this.declarations[0] as ts.Declaration | undefined;
+			const locationNode = this.locationNode ?? (this.declarations[0] as ts.Declaration | undefined);
 			this.location = this._ctx.project.getNodeLocation(locationNode);
 			this._locationCalculated = true;
 		}
@@ -91,13 +101,17 @@ export abstract class Reflection {
 		}
 		/* eslint-enable no-bitwise */
 
+		if (ts.isInternalDeclaration(declaration, declaration.getSourceFile())) {
+			this.flags.add('isInternal');
+		}
+
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-member-access
 		if (!!(declaration as any).questionToken) {
 			this.flags.add('isOptional');
 		}
 
 		if (this.parent?.flags.has('isExternal')) {
-			this.flags.add('isExternal')
+			this.flags.add('isExternal');
 		} else {
 			const location = this._calculateLocation();
 			if (location && /(?:^|\/)node_modules\//.test(location.fileName)) {
@@ -113,31 +127,42 @@ export abstract class Reflection {
 		}
 
 		const sf = declaration.getSourceFile();
-		const jsDocCommentRanges = ts.getLeadingCommentRanges(sf.text, declaration.pos)?.filter(range => sf.text.substr(range.pos, 3) === '/**');
+		const jsDocCommentRanges = ts
+			.getLeadingCommentRanges(sf.text, declaration.pos)
+			?.filter(range => sf.text.substr(range.pos, 3) === '/**');
 		if (jsDocCommentRanges?.length) {
 			const lastJsDocCommentRange = jsDocCommentRanges[jsDocCommentRanges.length - 1];
 			const rawComment = sf.text.substring(lastJsDocCommentRange.pos, lastJsDocCommentRange.end);
 			const comment = DocComment.parse(rawComment);
 
-			comment.consumeTags(tag => tag.name === 'private', () => {
-				this.flags.add('isPrivate');
-				if (this instanceof SignatureReflection) {
-					// console.log(`Passing private property from ${this.name} to parent ${ts.SyntaxKind[this.kind]}`);
-					this.parent?.flags.add('isPrivate');
+			comment.consumeTags(
+				tag => tag.name === 'private',
+				() => {
+					this.flags.add('isPrivate');
+					if (this instanceof SignatureReflection) {
+						// console.log(`Passing private property from ${this.name} to parent ${ts.SyntaxKind[this.kind]}`);
+						this.parent?.flags.add('isPrivate');
+					}
 				}
-			});
-			comment.consumeTags(tag => tag.name === 'protected', () => {
-				this.flags.add('isProtected');
-				if (this instanceof SignatureReflection) {
-					this.parent?.flags.add('isProtected');
+			);
+			comment.consumeTags(
+				tag => tag.name === 'protected',
+				() => {
+					this.flags.add('isProtected');
+					if (this instanceof SignatureReflection) {
+						this.parent?.flags.add('isProtected');
+					}
 				}
-			});
-			comment.consumeTags(tag => tag.name === 'public', () => {
-				this.flags.add('isPublic');
-				if (this instanceof SignatureReflection) {
-					this.parent?.flags.add('isPublic');
+			);
+			comment.consumeTags(
+				tag => tag.name === 'public',
+				() => {
+					this.flags.add('isPublic');
+					if (this instanceof SignatureReflection) {
+						this.parent?.flags.add('isPublic');
+					}
 				}
-			});
+			);
 
 			if (comment.shortText || comment.text || comment.tags?.length) {
 				this.comment = comment;

@@ -10,4 +10,6 @@ declare module 'typescript' {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-qualifier
 		origin?: ts.Type;
 	}
+
+	function isInternalDeclaration(node: Declaration, sourceFile: SourceFile): boolean;
 }

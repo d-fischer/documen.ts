@@ -9,7 +9,7 @@ import type {
 import { hasTag } from './CodeTools';
 
 export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
-	if (node.flags?.isPrivate) {
+	if (node.flags?.isPrivate || node.flags?.isInternal) {
 		return false;
 	}
 

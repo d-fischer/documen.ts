@@ -5,6 +5,7 @@ interface ReferenceFlags {
 	isPrivate?: boolean;
 	isStatic?: boolean;
 	isExternal?: boolean;
+	isInternal?: boolean;
 }
 
 export interface ReferenceCommentTag {
