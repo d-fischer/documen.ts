@@ -63,7 +63,7 @@ export default defineConfig(async () => {
 		define: {
 			__DOCTS_REFERENCE: monoRefJson,
 			__DOCTS_CONFIG: JSON.stringify(generatorConfig),
-			__DOCTS_FSMAP: JSON.stringify([...fsMap.entries()]).replace(/\$/g, '$$$$'),
+			__DOCTS_FSMAP: JSON.stringify([...fsMap.entries()]),
 			__DOCTS_MOCK_FS: mockFs ? JSON.stringify([...mockFs]) : 'null',
 			__DOCTS_PATHS: JSON.stringify({ projectBase: path.resolve('../twitch') }),
 			__DOCTS_COMPONENT_MODE: JSON.stringify('dynamic'),
