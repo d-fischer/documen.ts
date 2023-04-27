@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -12,94 +12,121 @@ interface MarkdownParserProps {
 	source: string;
 }
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		'& table': {
-			borderCollapse: 'collapse'
-		},
+const useStyles = makeStyles(
+	theme => ({
+		root: {
+			'& table': {
+				borderCollapse: 'collapse'
+			},
 
-		'& th, & td': {
-			border: `1px solid ${theme.colors.border}`,
-			padding: theme.spacing.unit
-		},
+			'& th, & td': {
+				border: `1px solid ${theme.colors.border}`,
+				padding: theme.spacing.unit
+			},
 
-		'& li': {
-			margin: `${theme.spacing.unit * 2}px 0`,
+			'& li': {
+				margin: `${theme.spacing.unit * 2}px 0`,
 
-			'&::marker': {
-				color: '#647d0f'
+				'&::marker': {
+					color: '#647d0f'
+				}
 			}
-		}
-	},
-	link: {
-		color: 'inherit',
-		fontWeight: 'bold',
-		textDecoration: 'none',
-		borderBottom: `1.5px solid ${theme.colors.accent.default}`,
-		transition: 'border-color .3s ease-in-out',
+		},
+		link: {
+			color: 'inherit',
+			fontWeight: 'bold',
+			textDecoration: 'none',
+			borderBottom: `1.5px solid ${theme.colors.accent.default}`,
+			transition: 'border-color .3s ease-in-out',
 
-		'&:hover': {
-			borderBottomColor: theme.colors.accent.focus
+			'&:hover': {
+				borderBottomColor: theme.colors.accent.focus
+			}
+		},
+		warning: {
+			display: 'flow-root',
+			borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.warning}`,
+			backgroundColor: theme.colors.background.active,
+			marginBottom: '1em',
+			padding: '0 1em'
+		},
+		warningTitle: {
+			fontSize: '1em'
 		}
-	},
-	warning: {
-		display: 'flow-root',
-		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.warning}`,
-		backgroundColor: theme.colors.background.active,
-		marginBottom: '1em',
-		padding: '0 1em'
-	},
-	warningTitle: {
-		fontSize: '1em',
-	}
-}), { name: 'MarkdownParser' });
+	}),
+	{ name: 'MarkdownParser' }
+);
 
 const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 	const classes = useStyles();
 
-	const components = useMemo(() => ({
-		/* eslint-disable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/naming-convention
-		a: function MdLink(mdProps: any) {
-			const props = {
-				key: mdProps.nodeKey,
-				className: mdProps.className
-			};
+	const components = useMemo(
+		() => ({
+			/* eslint-disable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/naming-convention
+			a: function MdLink(mdProps: any) {
+				const props = {
+					key: mdProps.nodeKey,
+					className: mdProps.className
+				};
 
-			if (mdProps.href.startsWith('/')) {
-				return (
-					<HashLink {...props} className={classNames(props.className, classes.link)} to={mdProps.href}>
-						{mdProps.children}
-					</HashLink>
-				);
-			} else {
-				return (
-					<a className={classes.link} href={mdProps.href}>
-						{mdProps.children}
-					</a>
-				);
-			}
-		},
-
-		// eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/no-explicit-any
-		code: function MdCodeBlock({node, inline, className, children, ...props}: any) {
-			if (!inline) {
-				const match = /language-(\w+)/.exec(className || '');
-				if (match) {
-					return <CodeBlock lang={match[1]} langMeta={node.data?.meta.split(' ') ?? []} text={String(children).trimEnd()}/>;
+				if (mdProps.href.startsWith('/')) {
+					return (
+						<HashLink {...props} className={classNames(props.className, classes.link)} to={mdProps.href}>
+							{mdProps.children}
+						</HashLink>
+					);
+				} else {
+					return (
+						<a className={classes.link} href={mdProps.href}>
+							{mdProps.children}
+						</a>
+					);
 				}
+			},
+
+			// eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/no-explicit-any
+			code: function MdCodeBlock({ node, inline, className, children, ...props }: any) {
+				if (!inline) {
+					const match = /language-(\w+)/.exec(className || '');
+					if (match) {
+						return (
+							<CodeBlock
+								lang={match[1]}
+								langMeta={node.data?.meta.split(' ') ?? []}
+								text={String(children).trimEnd()}
+							/>
+						);
+					}
+				}
+				return (
+					<code className={className} {...props}>
+						{children}
+					</code>
+				);
 			}
-			return <code className={className} {...props}>{children}</code>;
-		},
-		/* eslint-enable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
-	}), [classes]);
+			/* eslint-enable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
+		}),
+		[classes]
+	);
 
-	const customDirectiveClasses = useMemo(() => ({
-		warning: classes.warning,
-		warningTitle: classes.warningTitle
-	}), [classes]);
+	const customDirectiveClasses = useMemo(
+		() => ({
+			warning: classes.warning,
+			warningTitle: classes.warningTitle
+		}),
+		[classes]
+	);
 
-	return <ReactMarkdown className={classes.root} remarkPlugins={[symbolLinks, gfmTables, [customDirectives, { classes: customDirectiveClasses }]]} components={components}>{source}</ReactMarkdown>
+	return (
+		<ReactMarkdown
+			className={classes.root}
+			remarkPlugins={[symbolLinks, gfmTables, [customDirectives, { classes: customDirectiveClasses }]]}
+			components={components}
+		>
+			{source}
+		</ReactMarkdown>
+	);
 };
 
 export default React.memo(MarkdownParser);

@@ -1,7 +1,7 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import React from 'react';
 import Card from '../../containers/Card';
-import type { ParameterReferenceNode, PropertyReferenceNode, CallSignatureReferenceNode } from '../../reference';
+import type { CallSignatureReferenceNode, ParameterReferenceNode, PropertyReferenceNode } from '../../reference';
 import { getTag, hasTag } from '../../tools/CodeTools';
 import MarkdownParser from '../../tools/markdown/MarkdownParser';
 import { getAnchorName } from '../../tools/NodeTools';

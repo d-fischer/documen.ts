@@ -3,7 +3,7 @@ import jsHighlight from '@d-fischer/react-syntax-highlighter/dist/esm/languages/
 import json from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/json';
 import tsHighlight from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import darcula from '@d-fischer/react-syntax-highlighter/dist/esm/styles/hljs/darcula';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import { twoslasher } from '@typescript/twoslash';
 import * as lzString from 'lz-string';
 import React, { useCallback, useMemo, useState } from 'react';

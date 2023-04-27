@@ -1,8 +1,8 @@
+import { makeStyles } from '@mui/styles';
 import React from 'react';
 import type { TypeAliasReferenceNode } from '../reference';
-import { makeStyles } from '@material-ui/styles';
-import Type from './codeBuilders/Type';
 import MarkdownParser from '../tools/markdown/MarkdownParser';
+import Type from './codeBuilders/Type';
 
 interface TypeAliasHintProps {
 	symbol: TypeAliasReferenceNode;

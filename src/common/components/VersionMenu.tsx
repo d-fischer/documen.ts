@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { ConfigContext, rootUrl } from '../config';

@@ -1,32 +1,35 @@
-import React from 'react';
+import { makeStyles } from '@mui/styles';
 
 import classNames from 'classnames';
-import { makeStyles } from '@material-ui/styles';
+import React from 'react';
 
 interface CardProps {
 	className?: string;
 	id?: string;
 }
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		margin: `${theme.spacing.unit * 2}px 0`,
-		padding: theme.spacing.unit * 2,
-		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.border}`,
+const useStyles = makeStyles(
+	theme => ({
+		root: {
+			margin: `${theme.spacing.unit * 2}px 0`,
+			padding: theme.spacing.unit * 2,
+			borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.border}`,
 
-		'& h3, & h4': {
-			margin: 0
-		},
+			'& h3, & h4': {
+				margin: 0
+			},
 
-		'& > :last-child': {
-			marginBottom: 0
-		},
+			'& > :last-child': {
+				marginBottom: 0
+			},
 
-		'&:target': {
-			backgroundColor: theme.colors.background.active
+			'&:target': {
+				backgroundColor: theme.colors.background.active
+			}
 		}
-	}
-}), { name: 'Card' });
+	}),
+	{ name: 'Card' }
+);
 
 const Card: React.FC<React.PropsWithChildren<CardProps>> = ({ className, id, children }) => {
 	const classes = useStyles();

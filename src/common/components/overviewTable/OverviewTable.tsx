@@ -1,27 +1,35 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import React from 'react';
-import type { AccessorReferenceNode, EnumMemberReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../../reference';
+import type {
+	AccessorReferenceNode,
+	EnumMemberReferenceNode,
+	MethodReferenceNode,
+	PropertyReferenceNode
+} from '../../reference';
 import OverviewTableEntry from './OverviewTableEntry';
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		display: 'flex',
-		marginBottom: theme.spacing.unit * 2,
-		padding: theme.spacing.unit * 2,
-	},
-	column: {
-		minWidth: 300
-	},
-	heading: {
-		margin: 0,
-		marginBottom: theme.spacing.unit
-	},
-	list: {
-		margin: 0,
-		paddingLeft: theme.spacing.unit,
-		borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.border}`
-	}
-}), { name: 'OverviewTable' });
+const useStyles = makeStyles(
+	theme => ({
+		root: {
+			display: 'flex',
+			marginBottom: theme.spacing.unit * 2,
+			padding: theme.spacing.unit * 2
+		},
+		column: {
+			minWidth: 300
+		},
+		heading: {
+			margin: 0,
+			marginBottom: theme.spacing.unit
+		},
+		list: {
+			margin: 0,
+			paddingLeft: theme.spacing.unit,
+			borderLeft: `${theme.spacing.unit / 2}px solid ${theme.colors.border}`
+		}
+	}),
+	{ name: 'OverviewTable' }
+);
 
 type OverviewTablePropertyEntry = PropertyReferenceNode | AccessorReferenceNode;
 
@@ -41,7 +49,9 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ members, events, properti
 				<div className={classes.column}>
 					<h3 className={classes.heading}>Members</h3>
 					<ul className={classes.list}>
-						{members.map(member => <OverviewTableEntry key={member.id} node={member}/>)}
+						{members.map(member => (
+							<OverviewTableEntry key={member.id} node={member} />
+						))}
 					</ul>
 				</div>
 			) : null}
@@ -49,7 +59,9 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ members, events, properti
 				<div className={classes.column}>
 					<h3 className={classes.heading}>Events</h3>
 					<ul className={classes.list}>
-						{events.map(event => <OverviewTableEntry key={event.id} node={event}/>)}
+						{events.map(event => (
+							<OverviewTableEntry key={event.id} node={event} />
+						))}
 					</ul>
 				</div>
 			) : null}
@@ -57,7 +69,9 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ members, events, properti
 				<div className={classes.column}>
 					<h3 className={classes.heading}>Properties</h3>
 					<ul className={classes.list}>
-						{properties.map(prop => <OverviewTableEntry key={prop.id} node={prop}/>)}
+						{properties.map(prop => (
+							<OverviewTableEntry key={prop.id} node={prop} />
+						))}
 					</ul>
 				</div>
 			) : null}
@@ -65,7 +79,9 @@ const OverviewTable: React.FC<OverviewTableProps> = ({ members, events, properti
 				<div className={classes.column}>
 					<h3 className={classes.heading}>Methods</h3>
 					<ul className={classes.list}>
-						{methods.map(method => <OverviewTableEntry key={method.id} node={method}/>)}
+						{methods.map(method => (
+							<OverviewTableEntry key={method.id} node={method} />
+						))}
 					</ul>
 				</div>
 			) : null}

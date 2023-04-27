@@ -1,5 +1,5 @@
 import { groupBy } from '@d-fischer/shared-utils';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import React, { useContext, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 

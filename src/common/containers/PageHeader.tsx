@@ -1,33 +1,32 @@
+import { makeStyles } from '@mui/styles';
 import React from 'react';
-import { makeStyles } from '@material-ui/styles';
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		padding: theme.spacing.unit * 2,
-		position: 'relative',
-		backgroundColor: theme.colors.background.active,
-		color: theme.colors.text,
+const useStyles = makeStyles(
+	theme => ({
+		root: {
+			padding: theme.spacing.unit * 2,
+			position: 'relative',
+			backgroundColor: theme.colors.background.active,
+			color: theme.colors.text,
 
-		'& h1': {
-			fontWeight: 'normal',
-			margin: 0,
-			fontSize: '1.5em',
-			display: 'inline'
-		},
+			'& h1': {
+				fontWeight: 'normal',
+				margin: 0,
+				fontSize: '1.5em',
+				display: 'inline'
+			},
 
-		'& p': {
-			margin: 0
+			'& p': {
+				margin: 0
+			}
 		}
-	}
-}), { name: 'PageHeader' });
+	}),
+	{ name: 'PageHeader' }
+);
 
 const PageHeader: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 	const classes = useStyles();
-	return (
-		<div className={classes.root}>
-			{children}
-		</div>
-	);
+	return <div className={classes.root}>{children}</div>;
 };
 
 export default PageHeader;

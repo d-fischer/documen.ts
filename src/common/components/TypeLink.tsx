@@ -1,10 +1,10 @@
+import { makeStyles } from '@mui/styles';
 import React from 'react';
-import type { ReferenceNode } from '../reference';
 import { Link } from 'react-router-dom';
+import type { ReferenceNode } from '../reference';
 import { getPageType } from '../tools/CodeTools';
 import { findSymbolByMember } from '../tools/ReferenceTools';
 import { getPackagePath } from '../tools/StringTools';
-import { makeStyles } from '@material-ui/styles';
 
 interface TypeLinkProps {
 	id?: number;
@@ -12,13 +12,16 @@ interface TypeLinkProps {
 	symbol?: ReferenceNode;
 }
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		color: theme.colors.link,
-		fontWeight: 'bold',
-		textDecoration: 'none'
-	}
-}), { name: 'TypeLink' });
+const useStyles = makeStyles(
+	theme => ({
+		root: {
+			color: theme.colors.link,
+			fontWeight: 'bold',
+			textDecoration: 'none'
+		}
+	}),
+	{ name: 'TypeLink' }
+);
 
 const TypeLink: React.FC<React.PropsWithChildren<TypeLinkProps>> = ({ id, name, children, symbol }) => {
 	const classes = useStyles();
@@ -37,7 +40,11 @@ const TypeLink: React.FC<React.PropsWithChildren<TypeLinkProps>> = ({ id, name, 
 		return <>{children}</>;
 	}
 
-	return <Link className={classes.root} to={`/reference${getPackagePath(packageName)}/${getPageType(symbol)}/${name}`}>{children}</Link>;
+	return (
+		<Link className={classes.root} to={`/reference${getPackagePath(packageName)}/${getPageType(symbol)}/${name}`}>
+			{children}
+		</Link>
+	);
 };
 
 export default TypeLink;

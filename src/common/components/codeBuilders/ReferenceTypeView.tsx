@@ -1,11 +1,11 @@
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons';
-import { makeStyles } from '@material-ui/styles';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { makeStyles } from '@mui/styles';
+import React from 'react';
+import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../../reference';
 import { createExternalLink } from '../../tools/CodeTools';
 import TypeLink from '../TypeLink';
-import React from 'react';
 import Type from './Type';
-import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../../reference';
 
 interface ReferenceTypeProps {
 	isOptional: boolean;

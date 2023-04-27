@@ -1,5 +1,5 @@
-import type { DefaultTheme } from '@material-ui/styles';
-import { makeStyles } from '@material-ui/styles';
+import type { DefaultTheme } from '@mui/styles';
+import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React from 'react';
 

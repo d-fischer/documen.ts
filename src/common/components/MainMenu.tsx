@@ -1,6 +1,6 @@
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { makeStyles } from '@material-ui/styles';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React, { useContext, useMemo } from 'react';
 import { NavLink, useLocation, useResolvedPath } from 'react-router-dom';

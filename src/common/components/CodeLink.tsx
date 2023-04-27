@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
-import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, ReferenceNode } from '../reference';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCode } from '@fortawesome/free-solid-svg-icons';
-import { ConfigContext } from '../config';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { makeStyles } from '@mui/styles';
 
 import classNames from 'classnames';
-import { makeStyles } from '@material-ui/styles';
+import React, { useContext } from 'react';
+import { ConfigContext } from '../config';
+import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, ReferenceNode } from '../reference';
 
 interface CodeLinkProps {
 	symbol: ReferenceNode;

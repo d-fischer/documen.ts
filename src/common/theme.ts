@@ -31,7 +31,7 @@ const theme = {
 export default theme;
 export type Theme = typeof theme;
 
-declare module '@material-ui/styles' {
+declare module '@mui/styles' {
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
 	interface DefaultTheme extends Theme {}
 }

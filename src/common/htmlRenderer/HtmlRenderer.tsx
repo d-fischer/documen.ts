@@ -1,17 +1,17 @@
+import { dom } from '@fortawesome/fontawesome-svg-core';
+import { ServerStyleSheets, ThemeProvider } from '@mui/styles';
 import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { ConfigContext } from '../config';
-import type { Config } from '../config/Config';
-import StaticRouterWithSuffix from './StaticRouterWithSuffix';
-import App from '../containers/App';
-import type RouterMode from './RouterMode';
 import { StaticRouter } from 'react-router-dom/server';
 import type { ArticleContent } from '../components/PageArticle';
 import { PageArticleContext } from '../components/PageArticle';
-import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
+import { ConfigContext } from '../config';
+import type { Config } from '../config/Config';
+import App from '../containers/App';
 import theme from '../theme';
-import { dom } from '@fortawesome/fontawesome-svg-core';
+import type RouterMode from './RouterMode';
+import StaticRouterWithSuffix from './StaticRouterWithSuffix';
 
 const insertIntoSkeleton = (html: string, css: string, baseUrl: string, config: Config) =>
 	`<!doctype html>

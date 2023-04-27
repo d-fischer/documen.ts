@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import NavMenu from '../components/NavMenu';
@@ -33,7 +33,11 @@ const useStyles = makeStyles({
 
 const DocPage: React.FC = () => {
 	const classes = useStyles();
-	const { group: groupName, category: categoryName, article: articleName } = useParams() as unknown as DocPageRouteParams;
+	const {
+		group: groupName,
+		category: categoryName,
+		article: articleName
+	} = useParams() as unknown as DocPageRouteParams;
 	const article = useContext(PageArticleContext);
 	const config = useContext(ConfigContext);
 
@@ -49,7 +53,9 @@ const DocPage: React.FC = () => {
 
 		if (!title) {
 			if (groupName) {
-				const confArticle = confCategory.groups?.find(grp => grp.name === groupName)?.articles?.find(art => art.name === articleName);
+				const confArticle = confCategory.groups
+					?.find(grp => grp.name === groupName)
+					?.articles?.find(art => art.name === articleName);
 
 				if (!confArticle) {
 					return null;
@@ -78,18 +84,26 @@ const DocPage: React.FC = () => {
 		<div className={classes.root}>
 			{confCategory?.groups?.length && confCategory.groups.some(grp => grp.articles?.length) ? (
 				<NavMenu className={classes.nav}>
-					<NavMenuItem path={`/docs/${confCategory.name}/`}>{confCategory.indexTitle ?? confCategory.name}</NavMenuItem>
+					<NavMenuItem path={`/docs/${confCategory.name}/`}>
+						{confCategory.indexTitle ?? confCategory.name}
+					</NavMenuItem>
 					{confCategory.groups.map(grp => (
 						<NavMenuGroup key={grp.name} title={grp.title}>
-							{grp.articles?.map(art => 'externalLink' in art ? (
-								<NavMenuItem key={art.name} external path={art.externalLink} title={art.title}>
-									{art.title}
-								</NavMenuItem>
-							) : (
-								<NavMenuItem key={art.name} path={`/docs/${confCategory!.name}/${grp.name}/${art.name}`} title={art.title}>
-									{art.title}
-								</NavMenuItem>
-							))}
+							{grp.articles?.map(art =>
+								'externalLink' in art ? (
+									<NavMenuItem key={art.name} external path={art.externalLink} title={art.title}>
+										{art.title}
+									</NavMenuItem>
+								) : (
+									<NavMenuItem
+										key={art.name}
+										path={`/docs/${confCategory!.name}/${grp.name}/${art.name}`}
+										title={art.title}
+									>
+										{art.title}
+									</NavMenuItem>
+								)
+							)}
 						</NavMenuGroup>
 					))}
 				</NavMenu>
@@ -101,7 +115,7 @@ const DocPage: React.FC = () => {
 					</PageHeader>
 				) : null}
 				<PageContent>
-					<PageArticle mockContent={mockContent}/>
+					<PageArticle mockContent={mockContent} />
 				</PageContent>
 			</div>
 		</div>

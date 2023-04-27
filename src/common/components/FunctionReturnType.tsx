@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import React from 'react';
 import type { CallSignatureReferenceNode } from '../reference';
 import { useAsyncType } from '../tools/NodeTools';

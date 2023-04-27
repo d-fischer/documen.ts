@@ -2,7 +2,7 @@ import { Light as SyntaxHighlighter } from '@d-fischer/react-syntax-highlighter'
 import js from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 import json from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/json';
 import ts from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/typescript';
-import { ThemeProvider } from '@material-ui/styles';
+import { ThemeProvider } from '@mui/styles';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
