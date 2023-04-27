@@ -17,7 +17,7 @@ const useStyles = makeStyles(
 	{ name: 'DeprecationNotice' }
 );
 
-const DeprecationNotice: React.FC<React.PropsWithChildren> = ({ children }) => {
+const DeprecationNotice: React.FC = ({ children }) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
