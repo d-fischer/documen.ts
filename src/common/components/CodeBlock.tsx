@@ -25,7 +25,7 @@ interface CodeBlockProps {
 export function friendlyCjsTransform(): ts.TransformerFactory<ts.SourceFile> {
 	return (ctx: ts.TransformationContext) => {
 		const { factory } = ctx;
-		const visitor: ts.Visitor = node => {
+		const visitor = (node: ts.Node): ts.Node => {
 			if (
 				ts.isImportDeclaration(node) &&
 				node.importClause?.namedBindings &&
@@ -54,7 +54,7 @@ export function friendlyCjsTransform(): ts.TransformerFactory<ts.SourceFile> {
 			}
 			return ts.visitEachChild(node, visitor, ctx);
 		};
-		return node => ts.visitNode(node, visitor);
+		return node => ts.visitNode(node, visitor, ts.isSourceFile);
 	};
 }
 

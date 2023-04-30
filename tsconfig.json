@@ -15,12 +15,12 @@
 		"rootDir": "src",
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
-		"suppressImplicitAnyIndexErrors": true,
 		"noUnusedLocals": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"importHelpers": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"skipLibCheck": true
 	},
 	"include": [
 		"types",
