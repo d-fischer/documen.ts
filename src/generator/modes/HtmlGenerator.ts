@@ -219,7 +219,7 @@ export default class HtmlGenerator extends OutputGenerator {
 			define: {
 				...globalDefinitions,
 				__DOCTS_COMPONENT_MODE: JSON.stringify('static'),
-				__DOCTS_FSMAP: {}
+				__DOCTS_FSMAP: []
 			},
 			build: {
 				emptyOutDir: true,
