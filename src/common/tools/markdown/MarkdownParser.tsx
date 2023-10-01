@@ -30,6 +30,23 @@ const useStyles = makeStyles(
 				'&::marker': {
 					color: '#647d0f'
 				}
+			},
+
+			'& code': {
+				outline: `1px solid ${theme.colors.border}`,
+				padding: `0 ${theme.spacing.unit / 4}px`,
+				borderRadius: 3,
+				color: theme.colors.accent.focus,
+				backgroundColor: theme.colors.background.active
+			},
+
+			// cancel out the above for code blocks
+			'& pre > code': {
+				outline: '0 none',
+				padding: 0,
+				borderRadius: 0,
+				color: 'inherit',
+				backgroundColor: 'inherit'
 			}
 		},
 		link: {
