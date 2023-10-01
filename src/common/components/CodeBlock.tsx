@@ -8,6 +8,7 @@ import { twoslasher } from '@typescript/twoslash';
 import * as lzString from 'lz-string';
 import React, { useCallback, useMemo, useState } from 'react';
 import * as ts from 'typescript';
+import { fsMap } from '../../progressiveEnhancement/fsMap';
 import { getRandomString } from '../tools/StringTools';
 
 SyntaxHighlighter.registerLanguage('javascript', jsHighlight);
@@ -191,14 +192,17 @@ export const CodeBlock: React.FC<CodeBlockProps> =
 				const twoslashed = useMemo(() => {
 					if (isTwoslash) {
 						try {
-							return twoslasher(text, 'ts', {
+							const result = twoslasher(text, 'ts', {
 								defaultOptions: { showEmit: transpile },
 								tsModule: ts,
 								lzstringModule: lzString,
-								// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-								fsMap: require('../../progressiveEnhancement/fsMap').fsMap,
+								fsMap,
 								customTransformers: showCjs ? { after: [friendlyCjsTransform()] } : undefined
 							});
+
+							result.code = result.code.replace(/\n$/, '');
+
+							return result;
 						} catch (e) {
 							// eslint-disable-next-line no-console
 							console.error('Error rendering twoslash', e);
