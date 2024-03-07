@@ -10,7 +10,7 @@ export class ReflectionType extends Type {
 	serialize(): ReflectionReferenceType {
 		return {
 			type: 'reflection',
-			declaration: this._reflection.serialize(),
+			declaration: this._reflection.serialize()
 		};
 	}
 }

@@ -5,8 +5,7 @@ import * as vfs from '@typescript/vfs';
 import fs from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
-import type { OutputChunk } from 'rollup';
-import { rollup } from 'rollup';
+import { rollup, type OutputChunk } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import toposort from 'toposort';
 import type { PackageJson } from 'type-fest';
@@ -140,7 +139,7 @@ export default class MonorepoGenerator extends Generator {
 	async _generateFsMap(data: SerializedProject, paths: Paths): Promise<Map<string, string>> {
 		const input = Object.fromEntries(
 			data.packages.map(pkg => {
-				let packageName = pkg.packageName;
+				let { packageName } = pkg;
 				if (this._config.packageScope) {
 					packageName = `${this._config.packageScope}__${packageName}`;
 				}
@@ -152,7 +151,7 @@ export default class MonorepoGenerator extends Generator {
 		);
 		const bundle = await rollup({
 			// TODO get proper entry point
-			input: input,
+			input,
 			plugins: [dts()]
 		});
 		const { output } = await bundle.generate({ format: 'es' });
@@ -220,7 +219,7 @@ export default class MonorepoGenerator extends Generator {
 				return ts.createProgram({
 					options: parsedRootConfig.options,
 					configFileParsingDiagnostics: parsedRootConfig.errors,
-					rootNames: rootNames,
+					rootNames,
 					host: ts.createCompilerHost(parsedRootConfig.options)
 				});
 			}

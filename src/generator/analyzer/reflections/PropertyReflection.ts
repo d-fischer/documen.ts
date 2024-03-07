@@ -23,7 +23,11 @@ export class PropertyReflection extends SymbolBasedReflection {
 
 		const declaration = declarations?.[0];
 		if (declaration) {
-			if (ts.isPropertyDeclaration(declaration) && declaration.initializer && ts.isArrowFunction(declaration.initializer)) {
+			if (
+				ts.isPropertyDeclaration(declaration) &&
+				declaration.initializer &&
+				ts.isArrowFunction(declaration.initializer)
+			) {
 				return await MethodReflection.fromArrowSymbol(ctx, symbol, declaration.initializer, parent);
 			}
 		}
@@ -31,10 +35,16 @@ export class PropertyReflection extends SymbolBasedReflection {
 		const that = new PropertyReflection(ctx, symbol);
 		that.parent = parent;
 
-		that._type = declaration && (ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) && declaration.type
-			? await createTypeFromNode(ctx, declaration.type)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			: await createTypeFromTsType(ctx, ctx.checker.getTypeOfSymbolAtLocation(symbol, { kind: ts.SyntaxKind.SourceFile } as any));
+		that._type =
+			declaration &&
+			(ts.isPropertyDeclaration(declaration) || ts.isPropertySignature(declaration)) &&
+			declaration.type
+				? await createTypeFromNode(ctx, declaration.type)
+				: await createTypeFromTsType(
+						ctx,
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						ctx.checker.getTypeOfSymbolAtLocation(symbol, { kind: ts.SyntaxKind.SourceFile } as any)
+				  );
 
 		that._handleFlags();
 		that._processJsDoc();

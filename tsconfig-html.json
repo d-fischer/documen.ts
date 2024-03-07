@@ -1,10 +1,6 @@
 {
 	"extends": "./tsconfig.json",
-	"include": [
-		"types",
-		"src/common",
-		"src/html"
-	],
+	"include": ["types", "src/common", "src/html"],
 	"compilerOptions": {
 		"importHelpers": false
 	}

@@ -1,12 +1,10 @@
 import ts from 'typescript';
 import type { NamedTupleMemberReferenceType } from '../../../common/reference';
-import type { TypeReflector } from '../createType';
-import { createTypeFromNode } from '../createType';
+import { createTypeFromNode, type TypeReflector } from '../createType';
 import type { Type } from './Type';
 
 export class NamedTupleElementType {
-	constructor(private readonly _name: string, private readonly _optional: boolean, private readonly _type: Type) {
-	}
+	constructor(private readonly _name: string, private readonly _optional: boolean, private readonly _type: Type) {}
 
 	get name() {
 		return this._name;
@@ -26,13 +24,17 @@ export class NamedTupleElementType {
 			name: this._name,
 			isOptional: this._optional,
 			elementType: this._type.serialize()
-		}
+		};
 	}
 }
 
 export const namedTupleElementReflector: TypeReflector<ts.NamedTupleMember> = {
 	kinds: [ts.SyntaxKind.NamedTupleMember],
 	async fromNode(ctx, node) {
-		return new NamedTupleElementType(node.name.getText(), !!node.questionToken, await createTypeFromNode(ctx, node.type));
-	},
+		return new NamedTupleElementType(
+			node.name.getText(),
+			!!node.questionToken,
+			await createTypeFromNode(ctx, node.type)
+		);
+	}
 };

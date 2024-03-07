@@ -1,7 +1,6 @@
-import type React from 'react';
-import { useEffect } from 'react';
+import { type DependencyList, useEffect } from 'react';
 
-export function useAsyncEffect(fn: () => Promise<void>, deps: React.DependencyList) {
+export function useAsyncEffect(fn: () => Promise<void>, deps: DependencyList) {
 	useEffect(() => {
 		// drop promise to prevent React warning
 		void fn();

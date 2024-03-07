@@ -17,7 +17,7 @@ export class ParameterReflection extends Reflection {
 
 		const that = new ParameterReflection(ctx, declaration);
 
-		const valueDeclaration = symbol.valueDeclaration;
+		const { valueDeclaration } = symbol;
 		// eslint-disable-next-line @typescript-eslint/init-declarations
 		let type: Type;
 		if (valueDeclaration) {

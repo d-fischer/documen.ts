@@ -7,5 +7,5 @@ export function getPackagePath(packageName?: string) {
 }
 
 export function getRandomString(length: number, permitted = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
-	return Array.from({ length }, () => permitted[Math.floor(Math.random() * permitted.length)]).join('')
+	return Array.from({ length }, () => permitted[Math.floor(Math.random() * permitted.length)]).join('');
 }

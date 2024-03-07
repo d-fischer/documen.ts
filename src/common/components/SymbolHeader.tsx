@@ -13,13 +13,11 @@ const SymbolHeader: React.FC<SymbolHeaderProps> = ({ symbol }) => (
 		<h1>
 			{symbol.name}
 			{'typeParameters' in symbol && symbol.typeParameters?.length && (
-				<>
-					&lt;{symbol.typeParameters.map(param => param.name).join(', ')}&gt;
-				</>
+				<>&lt;{symbol.typeParameters.map(param => param.name).join(', ')}&gt;</>
 			)}
 		</h1>
-		<CodeLink symbol={symbol}/>
-		{symbol.comment?.shortText && <MarkdownParser source={symbol.comment.shortText}/>}
+		<CodeLink symbol={symbol} />
+		{symbol.comment?.shortText && <MarkdownParser source={symbol.comment.shortText} />}
 	</PageHeader>
 );
 

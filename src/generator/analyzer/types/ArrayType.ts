@@ -1,8 +1,7 @@
 import assert from 'assert';
 import ts from 'typescript';
 import type { ArrayReferenceType } from '../../../common/reference';
-import type { TypeReflector } from '../createType';
-import { createTypeFromNode, createTypeFromTsType } from '../createType';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
 import { Type } from './Type';
 
 export class ArrayType extends Type {
@@ -27,5 +26,5 @@ export const arrayTypeReflector: TypeReflector<ts.ArrayTypeNode, ts.TypeReferenc
 		const typeParams = ctx.checker.getTypeArguments(type);
 		assert(typeParams.length);
 		return new ArrayType(await createTypeFromTsType(ctx, typeParams[0]));
-	},
+	}
 };

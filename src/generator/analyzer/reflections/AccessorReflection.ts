@@ -1,5 +1,9 @@
 import * as ts from 'typescript';
-import type { AccessorReferenceNode, GetSignatureReferenceNode, SetSignatureReferenceNode } from '../../../common/reference';
+import type {
+	AccessorReferenceNode,
+	GetSignatureReferenceNode,
+	SetSignatureReferenceNode
+} from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import type { ReferenceType } from '../types/ReferenceType';
 import { handleInheritance } from '../util/inheritance';
@@ -45,7 +49,11 @@ export class AccessorReflection extends SymbolBasedReflection {
 		};
 	}
 
-	private async _findAndConvertSignature<T extends ts.AccessorDeclaration>(ctx: AnalyzeContext, declarations: ts.Declaration[] | undefined, predicate: (decl: ts.Declaration) => decl is T) {
+	private async _findAndConvertSignature<T extends ts.AccessorDeclaration>(
+		ctx: AnalyzeContext,
+		declarations: ts.Declaration[] | undefined,
+		predicate: (decl: ts.Declaration) => decl is T
+	) {
 		const decl = declarations?.find(predicate);
 		if (decl) {
 			const sig = ctx.checker.getSignatureFromDeclaration(decl);

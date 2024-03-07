@@ -9,6 +9,7 @@ import type {
 import { hasTag } from './CodeTools';
 
 export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
+	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	if (node.flags?.isPrivate || node.flags?.isInternal) {
 		return false;
 	}

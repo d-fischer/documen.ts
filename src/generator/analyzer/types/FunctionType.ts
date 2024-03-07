@@ -1,6 +1,5 @@
 import ts from 'typescript';
-import type { TypeReflector } from '../createType';
-import { createTypeFromNode } from '../createType';
+import { createTypeFromNode, type TypeReflector } from '../createType';
 import { ParameterReflection } from '../reflections/ParameterReflection';
 import { SignatureReflection } from '../reflections/SignatureReflection';
 import { TypeLiteralReflection } from '../reflections/TypeLiteralReflection';
@@ -17,7 +16,9 @@ export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 			return new IntrinsicType('Function');
 		}
 
-		const params = await Promise.all(node.parameters.map(async param => await ParameterReflection.fromNode(ctx, param)));
+		const params = await Promise.all(
+			node.parameters.map(async param => await ParameterReflection.fromNode(ctx, param))
+		);
 		const returnType = await createTypeFromNode(ctx, node.type);
 		const signature = await SignatureReflection.fromParts(ctx, ts.SyntaxKind.CallSignature, params, returnType);
 
@@ -31,8 +32,10 @@ export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 			return new IntrinsicType('Function');
 		}
 
-		const literalReflection = TypeLiteralReflection.fromParts(ctx, undefined, [await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])]);
+		const literalReflection = TypeLiteralReflection.fromParts(ctx, undefined, [
+			await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, type.getCallSignatures()[0])
+		]);
 
 		return new ReflectionType(literalReflection);
-	},
+	}
 };

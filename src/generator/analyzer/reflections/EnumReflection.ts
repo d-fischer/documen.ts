@@ -11,10 +11,12 @@ export class EnumReflection extends SymbolBasedReflection {
 		const that = new EnumReflection(ctx, symbol);
 
 		that._members = symbol.exports
-			? await Promise.all([...(symbol.exports as Map<string, ts.Symbol>).values()]
-				// eslint-disable-next-line no-bitwise
-				.filter(exp => exp.flags & ts.SymbolFlags.EnumMember)
-				.map(async exp => await EnumMemberReflection.fromSymbol(ctx, exp)))
+			? await Promise.all(
+					[...(symbol.exports as Map<string, ts.Symbol>).values()]
+						// eslint-disable-next-line no-bitwise
+						.filter(exp => exp.flags & ts.SymbolFlags.EnumMember)
+						.map(async exp => await EnumMemberReflection.fromSymbol(ctx, exp))
+			  )
 			: [];
 
 		that._handleFlags();

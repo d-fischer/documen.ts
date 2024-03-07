@@ -2,7 +2,11 @@ import type { ReferenceType } from '../../../common/reference';
 import { Type } from './Type';
 
 export class UnknownType extends Type {
-	constructor(private readonly _name: string, private readonly _debugKind: string, private readonly _source = 'direct') {
+	constructor(
+		private readonly _name: string,
+		private readonly _debugKind: string,
+		private readonly _source = 'direct'
+	) {
 		super();
 	}
 

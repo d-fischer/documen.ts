@@ -21,9 +21,7 @@ export class DocComment {
 		const tags: DocCommentTag[] = [];
 
 		for (const line of lines) {
-			const cleanedLine = line
-				.replace(/^\s*\*? ?/, '')
-				.trimEnd();
+			const cleanedLine = line.replace(/^\s*\*? ?/, '').trimEnd();
 
 			if (/^\s*```(?!.*```)/.test(cleanedLine)) {
 				isInCodeBlock = !isInCodeBlock;
@@ -40,7 +38,7 @@ export class DocComment {
 					if (tagName === 'param') {
 						const param = /^[^\s]+/.exec(tagText);
 						if (param) {
-							currentTagRelatedName = param[0];
+							[currentTagRelatedName] = param;
 							tagText = tagText.substr(currentTagRelatedName.length + 1).trimStart();
 						}
 					}
@@ -56,13 +54,11 @@ export class DocComment {
 				if (hasAnyShortText) {
 					shortTextFinished = true;
 				}
+			} else if (shortTextFinished) {
+				text = text === undefined ? cleanedLine : `${text}\n${cleanedLine}`;
 			} else {
-				if (shortTextFinished) {
-					text = text === undefined ? cleanedLine : `${text}\n${cleanedLine}`;
-				} else {
-					shortText = shortText === undefined ? cleanedLine : `${shortText}\n${cleanedLine}`;
-					hasAnyShortText = true;
-				}
+				shortText = shortText === undefined ? cleanedLine : `${shortText}\n${cleanedLine}`;
+				hasAnyShortText = true;
 			}
 		}
 
@@ -73,8 +69,11 @@ export class DocComment {
 		return new DocComment(shortText?.trimEnd(), text?.trimEnd(), tags);
 	}
 
-	constructor(private readonly _shortText?: string, private readonly _text?: string, private readonly _tags?: DocCommentTag[]) {
-	}
+	constructor(
+		private readonly _shortText?: string,
+		private readonly _text?: string,
+		private readonly _tags?: DocCommentTag[]
+	) {}
 
 	get shortText() {
 		return this._shortText;
@@ -109,11 +108,13 @@ export class DocComment {
 		return {
 			shortText: this._shortText,
 			text: this._text,
-			tags: this._tags?.map((tag): ReferenceCommentTag => ({
-				tag: tag.name,
-				text: tag.text,
-				param: tag.relatedName
-			}))
+			tags: this._tags?.map(
+				(tag): ReferenceCommentTag => ({
+					tag: tag.name,
+					text: tag.text,
+					param: tag.relatedName
+				})
+			)
 		};
 	}
 }

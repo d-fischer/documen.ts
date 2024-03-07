@@ -6,10 +6,8 @@ import VersionMenu from '../common/components/VersionMenu';
 import theme from '../common/theme';
 
 const registeredComponents = {
-	/* eslint-disable @typescript-eslint/naming-convention */
 	CodeBlock,
 	VersionMenu
-	/* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const generateClassName = createGenerateClassName({

@@ -23,5 +23,5 @@ export const objectLiteralTypeReflector: TypeReflector<ts.TypeLiteralNode> = {
 		}
 
 		return new ReflectionType(await TypeLiteralReflection.fromTsType(ctx, type));
-	},
+	}
 };

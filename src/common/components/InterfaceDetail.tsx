@@ -19,13 +19,21 @@ const InterfaceDetail: React.FC<InterfaceDetailProps> = ({ symbol }) => {
 			{methods.length ? (
 				<>
 					<h2>Methods</h2>
-					{methods.sort(defaultNodeSort).map(method => method.signatures?.map(sig => <MethodCard key={sig.id} parent={symbol} definition={method} sig={sig}/>))}
+					{methods
+						.sort(defaultNodeSort)
+						.map(method =>
+							method.signatures?.map(sig => (
+								<MethodCard key={sig.id} parent={symbol} definition={method} sig={sig} />
+							))
+						)}
 				</>
 			) : null}
 			{properties.length ? (
 				<>
 					<h2>Properties</h2>
-					{properties.sort(defaultNodeSort).map(prop => <PropertyCard key={prop.id} definition={prop}/>)}
+					{properties.sort(defaultNodeSort).map(prop => (
+						<PropertyCard key={prop.id} definition={prop} />
+					))}
 				</>
 			) : null}
 		</>

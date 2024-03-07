@@ -106,7 +106,7 @@ export abstract class Reflection {
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-member-access
-		if (!!(declaration as any).questionToken) {
+		if ((declaration as any).questionToken) {
 			this.flags.add('isOptional');
 		}
 
@@ -164,6 +164,7 @@ export abstract class Reflection {
 				}
 			);
 
+			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 			if (comment.shortText || comment.text || comment.tags?.length) {
 				this.comment = comment;
 			}

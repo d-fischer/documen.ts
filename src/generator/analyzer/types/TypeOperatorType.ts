@@ -1,8 +1,7 @@
 import assert from 'assert';
 import ts from 'typescript';
 import type { TypeOperatorReferenceType } from '../../../common/reference';
-import type { TypeReflector } from '../createType';
-import { createTypeFromNode, createTypeFromTsType } from '../createType';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
 import { resolvePromiseArray } from '../util/promises';
 import { ArrayType } from './ArrayType';
 import { TupleType } from './TupleType';
@@ -41,9 +40,16 @@ export const typeOperatorTypeReflector: TypeReflector<ts.TypeOperatorNode> = {
 	async fromType(ctx, type, node) {
 		if (node.operator === ts.SyntaxKind.ReadonlyKeyword) {
 			assert(isObjectType(type));
-			const typeArguments = await resolvePromiseArray(ctx.checker.getTypeArguments(type as ts.TypeReference).map(async typeArg => await createTypeFromTsType(ctx, typeArg)));
-			// eslint-disable-next-line no-bitwise
-			const inner = type.objectFlags & ts.ObjectFlags.Tuple ? new TupleType(typeArguments) : new ArrayType(typeArguments[0]);
+			const typeArguments = await resolvePromiseArray(
+				ctx.checker
+					.getTypeArguments(type as ts.TypeReference)
+					.map(async typeArg => await createTypeFromTsType(ctx, typeArg))
+			);
+			const inner =
+				// eslint-disable-next-line no-bitwise
+				type.objectFlags & ts.ObjectFlags.Tuple
+					? new TupleType(typeArguments)
+					: new ArrayType(typeArguments[0]);
 
 			return new TypeOperatorType('readonly', inner);
 		}

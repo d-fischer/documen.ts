@@ -12,7 +12,6 @@ export async function getSourceMapConsumer(baseFileName: string, mapUrl: string)
 	}
 
 	const mapContents = await fs.readFile(absolutePath, 'utf8');
-	// eslint-disable-next-line @typescript-eslint/await-thenable
 	const newConsumer = (await new SourceMapConsumer(mapContents)) as SourceMapConsumer;
 	consumers.set(absolutePath, newConsumer);
 

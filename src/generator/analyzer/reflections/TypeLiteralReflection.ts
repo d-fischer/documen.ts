@@ -15,8 +15,14 @@ export class TypeLiteralReflection extends Reflection {
 	static async fromTsType(ctx: AnalyzeContext, type: ts.Type) {
 		const that = new TypeLiteralReflection(ctx);
 
-		that._members = await resolvePromiseArray(ctx.checker.getPropertiesOfType(type).map(async prop => await createReflection(ctx, prop, that)));
-		that._signatures = await resolvePromiseArray(type.getCallSignatures().map(async sig => await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig)));
+		that._members = await resolvePromiseArray(
+			ctx.checker.getPropertiesOfType(type).map(async prop => await createReflection(ctx, prop, that))
+		);
+		that._signatures = await resolvePromiseArray(
+			type
+				.getCallSignatures()
+				.map(async sig => await SignatureReflection.fromTsSignature(ctx, ts.SyntaxKind.CallSignature, sig))
+		);
 
 		return that;
 	}
@@ -44,7 +50,7 @@ export class TypeLiteralReflection extends Reflection {
 			...this._baseSerialize(),
 			kind: 'typeLiteral',
 			members: this._members?.map(mem => mem.serialize()) ?? [],
-			signatures: this._signatures?.map(sig => sig.serialize() as CallSignatureReferenceNode),
+			signatures: this._signatures?.map(sig => sig.serialize() as CallSignatureReferenceNode)
 		};
 	}
 }

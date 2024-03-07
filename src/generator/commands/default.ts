@@ -13,7 +13,6 @@ import type Generator from '../modes/Generator';
 import HtmlGenerator from '../modes/HtmlGenerator';
 import MonorepoGenerator from '../modes/MonorepoGenerator';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export class CLICommandOptions extends Options {
 	@option({ description: 'development mode; disable some optimizations in favor of speed' })
 	dev?: boolean;
@@ -65,7 +64,6 @@ export class CLICommandOptions extends Options {
 }
 
 @command()
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export default class CLICommand extends Command {
 	@metadata
 	async execute(options: CLICommandOptions) {
@@ -162,6 +160,7 @@ export default class CLICommand extends Command {
 			}
 			needsManifest = true;
 			versionAware = true;
+			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 		} else if (versionBranchPrefix || versionFolder) {
 			console.error(
 				'Please either specify both the "versionBranchPrefix" and "versionFolder" options, or neither. Specifying only one of them is not supported.'
@@ -279,7 +278,6 @@ export default class CLICommand extends Command {
 
 		if (needsManifest) {
 			const manifestPath = path.join(baseDir, rootOutputDir, 'manifest.json');
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			let manifest: Partial<Manifest> = {};
 			try {
 				const manifestJson = await fsp.readFile(manifestPath, 'utf-8');
@@ -292,7 +290,6 @@ export default class CLICommand extends Command {
 			if (version) {
 				versionsSet.add(version);
 			}
-			// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 			manifest.versions = [...versionsSet].sort();
 			manifest.defaultVersion = defaultVersion;
 			manifest.rootUrl = rootUrl;

@@ -14,7 +14,7 @@ interface PageArticleProps {
 
 const PageArticle: React.FC<PageArticleProps> = ({ mockContent }) => (
 	<PageArticleContext.Consumer>
-		{article => <MarkdownParser source={mockContent ?? article?.content ?? ''}/>}
+		{article => <MarkdownParser source={mockContent ?? article?.content ?? ''} />}
 	</PageArticleContext.Consumer>
 );
 

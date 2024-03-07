@@ -268,7 +268,6 @@ export interface SerializedProject {
 }
 
 declare global {
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const __DOCTS_REFERENCE: SerializedProject;
 }
 

@@ -2,8 +2,16 @@ import { Config } from './Config';
 import { ExpectedError } from 'clime';
 
 export function getConfigValue<K extends keyof Config>(config: Config | null, key: K): NonNullable<Config[K]> | null;
-export function getConfigValue<K extends keyof Config>(config: Config | null, key: K, throws: true): NonNullable<Config[K]>;
-export function getConfigValue<K extends keyof Config>(config: Config | null, key: K, throws: boolean = false): NonNullable<Config[K]> | null {
+export function getConfigValue<K extends keyof Config>(
+	config: Config | null,
+	key: K,
+	throws: true
+): NonNullable<Config[K]>;
+export function getConfigValue<K extends keyof Config>(
+	config: Config | null,
+	key: K,
+	throws: boolean = false
+): NonNullable<Config[K]> | null {
 	const value = config?.[key];
 	if (value == null) {
 		if (throws) {

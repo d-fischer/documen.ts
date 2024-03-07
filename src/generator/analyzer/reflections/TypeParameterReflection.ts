@@ -43,7 +43,11 @@ export class TypeParameterReflection extends Reflection {
 		return that;
 	}
 
-	constructor(ctx: AnalyzeContext, private readonly _declaration?: ts.TypeParameterDeclaration, private readonly _name?: string) {
+	constructor(
+		ctx: AnalyzeContext,
+		private readonly _declaration?: ts.TypeParameterDeclaration,
+		private readonly _name?: string
+	) {
 		super(ctx);
 	}
 
@@ -61,7 +65,7 @@ export class TypeParameterReflection extends Reflection {
 			kind: 'typeParameter',
 			name: this.name,
 			constraint: this._constraint?.serialize(),
-			default: this._default?.serialize(),
+			default: this._default?.serialize()
 		};
 	}
 }

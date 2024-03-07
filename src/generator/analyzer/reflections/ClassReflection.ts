@@ -23,11 +23,16 @@ export class ClassReflection extends SymbolBasedReflection {
 		assert(instanceType.isClassOrInterface());
 
 		const extendsTypes = await resolvePromiseArray(
-			symbol.getDeclarations()
+			symbol
+				.getDeclarations()
 				?.filter((decl): decl is ts.ClassDeclaration => ts.isClassDeclaration(decl))
-				.flatMap(decl => decl.heritageClauses
-					?.filter(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)
-					.flatMap(clause => clause.types.map(async type => await Heritage.fromTypeNode(ctx, type))) ?? []
+				.flatMap(
+					decl =>
+						decl.heritageClauses
+							?.filter(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)
+							.flatMap(clause =>
+								clause.types.map(async type => await Heritage.fromTypeNode(ctx, type))
+							) ?? []
 				)
 		);
 
@@ -42,19 +47,34 @@ export class ClassReflection extends SymbolBasedReflection {
 		const staticType = ctx.checker.getTypeOfSymbolAtLocation(symbol, classDeclaration);
 		const staticMembers = ctx.checker.getPropertiesOfType(staticType);
 
-		that.typeParameters = await resolvePromiseArray(instanceType.typeParameters?.map(async (param) => {
-			const declaration = param.symbol.declarations?.[0];
-			assert(declaration && ts.isTypeParameterDeclaration(declaration));
-			return await TypeParameterReflection.fromDeclaration(ctx, declaration);
-		}));
+		that.typeParameters = await resolvePromiseArray(
+			instanceType.typeParameters?.map(async param => {
+				const declaration = param.symbol.declarations?.[0];
+				assert(declaration && ts.isTypeParameterDeclaration(declaration));
+				return await TypeParameterReflection.fromDeclaration(ctx, declaration);
+			})
+		);
 
+		// eslint-disable-next-line require-atomic-updates
 		ctx.staticContext = true;
-		// eslint-disable-next-line no-bitwise
-		that.members = await Promise.all(staticMembers.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype)).map(async mem => await (createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>)));
+		that.members = await Promise.all(
+			staticMembers
+				// eslint-disable-next-line no-bitwise
+				.filter(mem => !(mem.flags & ts.SymbolFlags.Prototype))
+				.map(async mem => await (createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>))
+		);
+		// eslint-disable-next-line require-atomic-updates
 		ctx.staticContext = false;
 
-		that.members.push(...(await Promise.all(instanceMembers.map(async mem => await (createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>)))));
+		that.members.push(
+			...(await Promise.all(
+				instanceMembers.map(
+					async mem => await (createReflection(ctx, mem, that) as Promise<SymbolBasedReflection>)
+				)
+			))
+		);
 
+		// eslint-disable-next-line require-atomic-updates
 		that.ctor = await ConstructorReflection.fromSignatures(ctx, symbol, staticType.getConstructSignatures(), that);
 
 		that._handleFlags(symbol.getDeclarations()?.[0]);

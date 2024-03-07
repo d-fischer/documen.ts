@@ -1,12 +1,7 @@
 {
 	"extends": "./tsconfig.json",
 	"outDir": "tmp",
-	"include": [
-		"types",
-		"src/common",
-		"src/dev",
-		"vite.config.dev.ts"
-	],
+	"include": ["types", "src/common", "src/dev", "vite.config.dev.ts"],
 	"compilerOptions": {
 		"importHelpers": false
 	}

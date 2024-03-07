@@ -36,7 +36,7 @@ export class Project {
 
 	static getEntryPointForPackageFolder(dir: string, pkg: PackageJson, tsconfig: ts.ParsedCommandLine) {
 		let mainJsFile: string = pkg.main!;
-		const lastPathPart = mainJsFile.split(path.delimiter).reverse()[0];
+		const lastPathPart = mainJsFile.split(path.delimiter).at(-1)!;
 		if (!/\.m?js]$/.test(lastPathPart)) {
 			mainJsFile = path.join(mainJsFile, 'index.js');
 		}
@@ -102,7 +102,7 @@ export class Project {
 
 	findIdAtPosition(fullPath: string, line: number, column: number): number | undefined {
 		for (const [id, rs] of this._reflectionsById) {
-			const declarations = rs.declarations;
+			const { declarations } = rs;
 			for (const declaration of declarations) {
 				const declSf = declaration.getSourceFile();
 				if (declSf.fileName !== fullPath) {
@@ -262,9 +262,8 @@ export class Project {
 				const clause = expDecl.exportClause!;
 				if (ts.isNamedExports(clause)) {
 					return clause.elements;
-				} else {
-					throw new Error(`Namespace exports not supported yet (file: ${expDecl.getSourceFile().fileName})`);
 				}
+				throw new Error(`Namespace exports not supported yet (file: ${expDecl.getSourceFile().fileName})`);
 			})
 			.map(exp => {
 				const id = exp.name;

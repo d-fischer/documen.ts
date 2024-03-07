@@ -1,7 +1,6 @@
 import ts from 'typescript';
 import type { IntersectionReferenceType } from '../../../common/reference';
-import type { TypeReflector } from '../createType';
-import { createTypeFromNode, createTypeFromTsType } from '../createType';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
 import { resolvePromiseArray } from '../util/promises';
 import { Type } from './Type';
 

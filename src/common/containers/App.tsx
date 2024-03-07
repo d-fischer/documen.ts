@@ -12,10 +12,13 @@ const App: React.FunctionComponent = () => {
 		<>
 			<Routes>
 				<Route element={<AppLayout />}>
-					<Route path="" element={<DocPage/>}/>
-					<Route path={isMono ? 'reference/:packageName/*' : '/reference/*'} element={<ReferencePackageContainer/>}/>
-					<Route path="docs/:category" element={<DocPage/>}/>
-					<Route path="docs/:category/:group/:article" element={<DocPage/>}/>
+					<Route path="" element={<DocPage />} />
+					<Route
+						path={isMono ? 'reference/:packageName/*' : '/reference/*'}
+						element={<ReferencePackageContainer />}
+					/>
+					<Route path="docs/:category" element={<DocPage />} />
+					<Route path="docs/:category/:group/:article" element={<DocPage />} />
 				</Route>
 			</Routes>
 		</>

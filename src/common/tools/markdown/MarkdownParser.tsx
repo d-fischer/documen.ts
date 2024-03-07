@@ -80,7 +80,6 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 	const components = useMemo(
 		() => ({
 			/* eslint-disable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/naming-convention
 			a: function MdLink(mdProps: any) {
 				const props = {
 					key: mdProps.nodeKey,
@@ -93,16 +92,15 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 							{mdProps.children}
 						</HashLink>
 					);
-				} else {
-					return (
-						<a className={classes.link} href={mdProps.href}>
-							{mdProps.children}
-						</a>
-					);
 				}
+				return (
+					<a className={classes.link} href={mdProps.href}>
+						{mdProps.children}
+					</a>
+				);
 			},
 
-			// eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			code: function MdCodeBlock({ node, inline, className, children, ...props }: any) {
 				if (!inline) {
 					const match = /language-(\w+)/.exec(className || '');

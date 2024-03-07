@@ -3,11 +3,7 @@
 		"outDir": "lib",
 		"module": "commonjs",
 		"target": "es6",
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"es2019"
-		],
+		"lib": ["dom", "dom.iterable", "es2019"],
 		"sourceMap": true,
 		"allowJs": true,
 		"jsx": "react",
@@ -22,16 +18,6 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true
 	},
-	"include": [
-		"types",
-		"src/common",
-		"src/generator"
-	],
-	"exclude": [
-		"node_modules",
-		"build",
-		"scripts",
-		"config",
-		"vite.config.dev.ts"
-	]
+	"include": ["types", "src/common", "src/generator"],
+	"exclude": ["node_modules", "build", "scripts", "config", "vite.config.dev.ts"]
 }

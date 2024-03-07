@@ -47,12 +47,12 @@ export const intrinsicTypeReflector: TypeReflector<ts.KeywordTypeNode> = {
 		ts.SyntaxKind.SymbolKeyword,
 		ts.SyntaxKind.UndefinedKeyword,
 		ts.SyntaxKind.UnknownKeyword,
-		ts.SyntaxKind.VoidKeyword,
+		ts.SyntaxKind.VoidKeyword
 	],
 	async fromNode(ctx, node) {
 		return new IntrinsicType(keywordToString[node.kind]);
 	},
 	async fromType(ctx, type, node) {
 		return new IntrinsicType(keywordToString[node.kind]);
-	},
+	}
 };

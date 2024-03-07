@@ -1,7 +1,6 @@
 import ts from 'typescript';
 import type { UnionReferenceType } from '../../../common/reference';
-import type { TypeReflector } from '../createType';
-import { createTypeFromNode, createTypeFromTsType } from '../createType';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
 import { resolvePromiseArray } from '../util/promises';
 import { IntrinsicType } from './IntrinsicType';
 import { LiteralType } from './LiteralType';
@@ -53,12 +52,16 @@ export class UnionType extends Type {
 export const unionTypeReflector: TypeReflector<ts.UnionTypeNode, ts.UnionType> = {
 	kinds: [ts.SyntaxKind.UnionType],
 	async fromNode(ctx, node) {
-		return new UnionType(await resolvePromiseArray(node.types.map(async subTypeNode => await createTypeFromNode(ctx, subTypeNode))));
+		return new UnionType(
+			await resolvePromiseArray(node.types.map(async subTypeNode => await createTypeFromNode(ctx, subTypeNode)))
+		);
 	},
 	async fromType(ctx, type) {
 		if (type.origin) {
 			return await createTypeFromTsType(ctx, type.origin);
 		}
-		return new UnionType(await resolvePromiseArray(type.types.map(async (subType) => await createTypeFromTsType(ctx, subType))));
-	},
+		return new UnionType(
+			await resolvePromiseArray(type.types.map(async subType => await createTypeFromTsType(ctx, subType)))
+		);
+	}
 };

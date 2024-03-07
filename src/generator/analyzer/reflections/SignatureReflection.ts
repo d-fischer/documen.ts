@@ -1,5 +1,10 @@
 import * as ts from 'typescript';
-import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, GetSignatureReferenceNode, SetSignatureReferenceNode } from '../../../common/reference';
+import type {
+	CallSignatureReferenceNode,
+	ConstructSignatureReferenceNode,
+	GetSignatureReferenceNode,
+	SetSignatureReferenceNode
+} from '../../../common/reference';
 import type { AnalyzeContext } from '../AnalyzeContext';
 import { createTypeFromTsType } from '../createType';
 import type { Type } from '../types/Type';

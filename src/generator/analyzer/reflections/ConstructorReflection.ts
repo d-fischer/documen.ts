@@ -13,7 +13,12 @@ export class ConstructorReflection extends SymbolBasedReflection {
 	readonly isInheritable = true;
 	inheritedFrom?: Type;
 
-	static async fromSignatures(ctx: AnalyzeContext, classSymbol: ts.Symbol, signatures: readonly ts.Signature[], parent: ClassReflection) {
+	static async fromSignatures(
+		ctx: AnalyzeContext,
+		classSymbol: ts.Symbol,
+		signatures: readonly ts.Signature[],
+		parent: ClassReflection
+	) {
 		const declaration = signatures[0].declaration as ts.ConstructSignatureDeclaration | undefined;
 		const symbol = declaration?.symbol;
 		const registerReverse = (declaration?.parent as ts.ClassDeclaration | undefined)?.name?.text === parent.name;
@@ -23,13 +28,16 @@ export class ConstructorReflection extends SymbolBasedReflection {
 		that._signatures = await Promise.all(
 			signatures
 				.filter(sig => !!sig.declaration)
-				.map(async (sig, i) => await SignatureReflection.fromTsSignature(
-					ctx,
-					ts.SyntaxKind.ConstructSignature,
-					sig,
-					that,
-					symbol?.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
-				))
+				.map(
+					async (sig, i) =>
+						await SignatureReflection.fromTsSignature(
+							ctx,
+							ts.SyntaxKind.ConstructSignature,
+							sig,
+							that,
+							symbol?.getDeclarations()?.[i] as ts.SignatureDeclaration | undefined
+						)
+				)
 		);
 
 		handleConstructorInheritance(ctx, that, signatures);

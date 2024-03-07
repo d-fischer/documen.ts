@@ -43,7 +43,7 @@ export const literalTypeReflector: TypeReflector<ts.LiteralTypeNode, ts.LiteralT
 				return new LiteralType(BigInt(node.literal.getText().replace('n', '')));
 			}
 			case ts.SyntaxKind.PrefixUnaryExpression: {
-				const operand = (node.literal as ts.PrefixUnaryExpression).operand;
+				const { operand } = node.literal as ts.PrefixUnaryExpression;
 				switch (operand.kind) {
 					case ts.SyntaxKind.NumericLiteral:
 						return new LiteralType(Number(node.literal.getText()));

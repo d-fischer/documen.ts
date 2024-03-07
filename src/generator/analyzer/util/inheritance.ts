@@ -9,11 +9,14 @@ import type { MethodReflection } from '../reflections/MethodReflection';
 import type { PropertyReflection } from '../reflections/PropertyReflection';
 import { ReferenceType } from '../types/ReferenceType';
 
-export function handleInheritance(ctx: AnalyzeContext, reflection: PropertyReflection | MethodReflection | AccessorReflection) {
+export function handleInheritance(
+	ctx: AnalyzeContext,
+	reflection: PropertyReflection | MethodReflection | AccessorReflection
+) {
 	const parentReflection = reflection.parent;
 	// TODO handle interfaces
 	if (parentReflection instanceof ClassReflection || parentReflection instanceof InterfaceReflection) {
-		const parentDeclaration = parentReflection.declarations[0];
+		const [parentDeclaration] = parentReflection.declarations;
 		assert(parentDeclaration);
 		const isStatic = reflection.flags.has('isStatic');
 
@@ -27,18 +30,25 @@ export function handleInheritance(ctx: AnalyzeContext, reflection: PropertyRefle
 			if (!tsProperty) {
 				continue;
 			}
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			const tsSuperProperty = tsSuperType.getProperties().find(prop => (prop.escapedName ?? prop.name) === reflection.name);
+			const tsSuperProperty = tsSuperType
+				.getProperties()
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				.find(prop => (prop.escapedName ?? prop.name) === reflection.name);
 			if (tsSuperProperty) {
 				const inherits = tsProperty.getDeclarations()?.some(decl => decl.parent !== parentDeclaration);
 				const key = inherits ? 'inheritedFrom' : 'overwrites';
 
-				const superReflection = ctx.project.getReflectionForSymbol(tsSuperType.symbol) as ClassReflection | InterfaceReflection | undefined;
+				const superReflection = ctx.project.getReflectionForSymbol(tsSuperType.symbol) as
+					| ClassReflection
+					| InterfaceReflection
+					| undefined;
 				const qualifiedName = `${tsSuperType.symbol.name}.${reflection.name}`;
 				if (superReflection) {
 					// might be uninitialized here
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					const superProperty = superReflection.members?.find(mem => mem.name === reflection.name && mem.flags.has('isStatic') === isStatic);
+					const superProperty = superReflection.members?.find(
+						mem => mem.name === reflection.name && mem.flags.has('isStatic') === isStatic
+					);
 					if (superProperty) {
 						const packageForSuperProperty = ctx.project.getPackageNameForReflectionId(superProperty.id);
 
@@ -61,7 +71,11 @@ export function handleInheritance(ctx: AnalyzeContext, reflection: PropertyRefle
 	}
 }
 
-export function handleConstructorInheritance(ctx: AnalyzeContext, reflection: ConstructorReflection, signatures: readonly ts.Signature[]) {
+export function handleConstructorInheritance(
+	ctx: AnalyzeContext,
+	reflection: ConstructorReflection,
+	signatures: readonly ts.Signature[]
+) {
 	const cls = reflection.parent as ClassReflection;
 	const extendedClass = cls.extends?.[0];
 	if (!extendedClass) {
@@ -87,12 +101,7 @@ export function handleConstructorInheritance(ctx: AnalyzeContext, reflection: Co
 		}
 		const packageForSuperProperty = ctx.project.getPackageNameForReflectionId(ctorReflection.id);
 
-		const ref = new ReferenceType(
-			qualifiedName,
-			undefined,
-			ctorReflection.id,
-			packageForSuperProperty
-		);
+		const ref = new ReferenceType(qualifiedName, undefined, ctorReflection.id, packageForSuperProperty);
 		reflection.inheritedFrom = ref;
 		if (!packageForSuperProperty) {
 			ctx.project.registerBrokenReference(ctorSymbol, ref);

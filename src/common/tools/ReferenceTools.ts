@@ -1,11 +1,10 @@
-import type {
-	ClassReferenceNode,
-	EnumReferenceNode,
-	InterfaceReferenceNode,
-	ReferenceNode,
-	TypeLiteralReferenceNode
+import reference, {
+	type ClassReferenceNode,
+	type EnumReferenceNode,
+	type InterfaceReferenceNode,
+	type ReferenceNode,
+	type TypeLiteralReferenceNode
 } from '../reference';
-import reference from '../reference';
 import { filterByMember, findByMember } from './ArrayTools';
 import { checkVisibility } from './NodeTools';
 
@@ -51,7 +50,7 @@ export function findSymbolByMember<T extends ReferenceNode, K extends keyof T, R
 		return undefined;
 	}
 
-	const parent = reference.packages[0];
+	const [parent] = reference.packages;
 
 	const foundInParent = findByMember(parent.symbols as T[], key, value);
 
