@@ -226,7 +226,7 @@ export default class HtmlGenerator extends OutputGenerator {
 				outDir: paths.tmpDir,
 				minify: false,
 				lib: {
-					entry: path.resolve(__dirname, '../../..', './src/html/index.ts'),
+					entry: path.resolve(import.meta.dirname, '../../..', './src/html/index.ts'),
 					formats: ['cjs'],
 					name: 'generator',
 					fileName: 'generator'
@@ -254,7 +254,7 @@ export default class HtmlGenerator extends OutputGenerator {
 					outDir: paths.tmpDir,
 					minify: !this._config.dev,
 					lib: {
-						entry: path.resolve(__dirname, '../../..', './src/progressiveEnhancement/index.tsx'),
+						entry: path.resolve(import.meta.dirname, '../../..', './src/progressiveEnhancement/index.tsx'),
 						formats: ['umd'],
 						name: 'pe',
 						fileName: 'pe'

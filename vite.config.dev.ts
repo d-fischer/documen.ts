@@ -2,8 +2,8 @@ import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import { defineConfig } from 'vite';
-import Paths from './src/common/Paths';
-import MonorepoGenerator from './src/generator/modes/MonorepoGenerator';
+import Paths from './src/common/Paths.js';
+import MonorepoGenerator from './src/generator/modes/MonorepoGenerator.js';
 
 export default defineConfig(async () => {
 	const monoRefJson = fs.readFileSync(path.join(process.cwd(), 'docs-mono.json'), 'utf-8');
@@ -12,7 +12,7 @@ export default defineConfig(async () => {
 	let generatorConfig;
 	let mockFs;
 	try {
-		const generatorConfigJson = fs.readFileSync(path.join(__dirname, './testdocs/config.json'), 'utf-8');
+		const generatorConfigJson = fs.readFileSync(path.join(import.meta.dirname, './testdocs/config.json'), 'utf-8');
 		generatorConfig = {
 			...JSON.parse(generatorConfigJson),
 			versionBranchPrefix: undefined
@@ -34,7 +34,7 @@ export default defineConfig(async () => {
 
 			return new Map(worker(dirPath));
 		}
-		mockFs = createMockFs(path.resolve(__dirname, './testdocs'));
+		mockFs = createMockFs(path.resolve(import.meta.dirname, './testdocs'));
 	} catch (e) {
 		console.error(e);
 		generatorConfig = {
