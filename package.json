@@ -1,7 +1,7 @@
 {
   "name": "@d-fischer/documen.ts",
   "type": "module",
-  "version": "0.17.3",
+  "version": "0.17.4",
   "homepage": "https://github.com/d-fischer/documen.ts",
   "main": "lib/generator/index.js",
   "engines": {
