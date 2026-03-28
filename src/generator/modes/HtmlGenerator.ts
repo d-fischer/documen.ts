@@ -49,8 +49,8 @@ export default class HtmlGenerator extends OutputGenerator {
 
 		const indexPromise = pathToRead && fs.readFile(pathToRead, 'utf-8');
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const render = await import(path.join(paths.tmpDir, 'generator.js'));
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+		const render = (await import(path.join(paths.tmpDir, 'generator.js'))).default;
 
 		const articleEntries =
 			configDir == null
@@ -125,8 +125,8 @@ export default class HtmlGenerator extends OutputGenerator {
 				? fs.readFile(packageReadmePath, 'utf-8')
 				: undefined;
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const render = await import(path.join(paths.tmpDir, 'generator.js'));
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+		const render = (await import(path.join(paths.tmpDir, 'generator.js'))).default;
 
 		const packageData = monorepoRoot
 			? data.packages.find(pkg => pkg.packageName === subPackage)!
