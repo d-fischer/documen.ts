@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { Config } from './Config';
-import Paths from '../../common/Paths';
+import Paths from '../../common/Paths.js';
+import { Config } from './Config.js';
 
 declare global {
 	const __DOCTS_CONFIG: Config;

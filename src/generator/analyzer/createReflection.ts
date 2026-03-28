@@ -1,20 +1,20 @@
 import assert from 'assert';
 import path from 'path';
 import * as ts from 'typescript';
-import type { AnalyzeContext } from './AnalyzeContext';
-import { AccessorReflection } from './reflections/AccessorReflection';
-import { ClassReflection } from './reflections/ClassReflection';
-import { EnumReflection } from './reflections/EnumReflection';
-import { FunctionReflection } from './reflections/FunctionReflection';
-import { InterfaceReflection } from './reflections/InterfaceReflection';
-import { MethodReflection } from './reflections/MethodReflection';
-import { ParameterReflection } from './reflections/ParameterReflection';
-import { PropertyReflection } from './reflections/PropertyReflection';
-import { ReferenceReflection } from './reflections/ReferenceReflection';
-import type { Reflection } from './reflections/Reflection';
-import { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
-import { TypeAliasReflection } from './reflections/TypeAliasReflection';
-import { getSourceMapConsumer } from './util/sourceMaps';
+import type { AnalyzeContext } from './AnalyzeContext.js';
+import { AccessorReflection } from './reflections/AccessorReflection.js';
+import { ClassReflection } from './reflections/ClassReflection.js';
+import { EnumReflection } from './reflections/EnumReflection.js';
+import { FunctionReflection } from './reflections/FunctionReflection.js';
+import { InterfaceReflection } from './reflections/InterfaceReflection.js';
+import { MethodReflection } from './reflections/MethodReflection.js';
+import { ParameterReflection } from './reflections/ParameterReflection.js';
+import { PropertyReflection } from './reflections/PropertyReflection.js';
+import { ReferenceReflection } from './reflections/ReferenceReflection.js';
+import type { Reflection } from './reflections/Reflection.js';
+import { SymbolBasedReflection } from './reflections/SymbolBasedReflection.js';
+import { TypeAliasReflection } from './reflections/TypeAliasReflection.js';
+import { getSourceMapConsumer } from './util/sourceMaps.js';
 
 export async function findSourceMappedId(
 	ctx: AnalyzeContext,

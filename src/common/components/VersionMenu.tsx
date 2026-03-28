@@ -1,9 +1,9 @@
 import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
-import { ConfigContext, rootUrl } from '../config';
-import { type Manifest } from '../config/Config';
-import { useAsyncEffect } from '../tools/FunctionTools';
+import { ConfigContext, rootUrl } from '../config/index.js';
+import { type Manifest } from '../config/Config.js';
+import { useAsyncEffect } from '../tools/FunctionTools.js';
 
 const useStyles = makeStyles(
 	theme => ({

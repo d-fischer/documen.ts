@@ -1,5 +1,5 @@
 import { makeStyles } from '@mui/styles';
-import React from 'react';
+import { type PropsWithChildren } from 'react';
 
 const useStyles = makeStyles(
 	theme => ({
@@ -24,7 +24,7 @@ const useStyles = makeStyles(
 	{ name: 'PageHeader' }
 );
 
-const PageHeader: React.FC = ({ children }) => {
+const PageHeader = ({ children }: PropsWithChildren) => {
 	const classes = useStyles();
 	return <div className={classes.root}>{children}</div>;
 };

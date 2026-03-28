@@ -1,16 +1,20 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import Card from '../../containers/Card';
-import type { CallSignatureReferenceNode, ParameterReferenceNode, PropertyReferenceNode } from '../../reference';
-import { getTag, hasTag } from '../../tools/CodeTools';
-import MarkdownParser from '../../tools/markdown/MarkdownParser';
-import { getAnchorName } from '../../tools/NodeTools';
-import { findSymbolByMember } from '../../tools/ReferenceTools';
-import BetaNotice from '../BetaNotice';
-import DeprecationNotice from '../DeprecationNotice';
+import Card from '../../containers/Card.js';
+import type {
+	CallSignatureReferenceNode,
+	ParameterReferenceNode,
+	PropertyReferenceNode
+} from '../../reference/index.js';
+import { getTag, hasTag } from '../../tools/CodeTools.js';
+import MarkdownParser from '../../tools/markdown/MarkdownParser.js';
+import { getAnchorName } from '../../tools/NodeTools.js';
+import { findSymbolByMember } from '../../tools/ReferenceTools.js';
+import BetaNotice from '../BetaNotice.js';
+import DeprecationNotice from '../DeprecationNotice.js';
 
-import FunctionParamDesc from '../FunctionParamDesc';
-import CardToolbar from './CardToolbar';
+import FunctionParamDesc from '../FunctionParamDesc.js';
+import CardToolbar from './CardToolbar.js';
 
 interface EventCardProps {
 	name?: string;
@@ -18,21 +22,17 @@ interface EventCardProps {
 }
 
 function getParamDefinition(param: ParameterReferenceNode) {
-	if (
-		param.type.type === 'reflection' &&
-		param.type.declaration.signatures &&
-		param.type.declaration.signatures.length
-	) {
+	if (param.type.type === 'reflection' && param.type.declaration.signatures?.length) {
 		return param.type.declaration.signatures[0];
-	} else if (param.type.type === 'reference' && param.type.id) {
+	}
+	if (param.type.type === 'reference' && param.type.id) {
 		const ref = findSymbolByMember('id', param.type.id);
 		if (ref) {
 			const { symbol } = ref;
 			if (
 				symbol.kind === 'typeAlias' &&
 				symbol.type.type === 'reflection' &&
-				symbol.type.declaration.signatures &&
-				symbol.type.declaration.signatures.length
+				symbol.type.declaration.signatures?.length
 			) {
 				return symbol.type.declaration.signatures[0];
 			}
@@ -64,11 +64,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, definition }) => {
 	const classes = useStyles();
 	let handlerDefinition: CallSignatureReferenceNode | undefined = undefined;
 	let handlerParamDefinition: CallSignatureReferenceNode | undefined = undefined;
-	if (
-		definition.type.type === 'reflection' &&
-		definition.type.declaration.signatures &&
-		definition.type.declaration.signatures.length
-	) {
+	if (definition.type.type === 'reflection' && definition.type.declaration.signatures?.length) {
 		handlerDefinition = definition.type.declaration.signatures[0];
 		if (handlerDefinition.parameters.length) {
 			handlerParamDefinition = getParamDefinition(handlerDefinition.parameters[0]);

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { ConfigContext } from '../config';
-import DocPage from '../pages/DocPage';
-import AppLayout from './AppLayout';
-import ReferencePackageContainer from './ReferencePackageContainer';
+import { Route, Routes } from 'react-router';
+import { ConfigContext } from '../config/index.js';
+import DocPage from '../pages/DocPage.js';
+import AppLayout from './AppLayout.js';
+import ReferencePackageContainer from './ReferencePackageContainer.js';
 
 const App: React.FunctionComponent = () => {
 	const config = useContext(ConfigContext);

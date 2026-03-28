@@ -1,5 +1,5 @@
 import { makeStyles } from '@mui/styles';
-import React from 'react';
+import { type PropsWithChildren } from 'react';
 
 const useStyles = makeStyles(
 	theme => ({
@@ -17,7 +17,7 @@ const useStyles = makeStyles(
 	{ name: 'DeprecationNotice' }
 );
 
-const DeprecationNotice: React.FC = ({ children }) => {
+const DeprecationNotice = ({ children }: PropsWithChildren) => {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>

@@ -1,6 +1,6 @@
-import type Paths from '../../common/Paths';
-import type { SerializedProject } from '../../common/reference';
-import Generator, { type GeneratorProgressCallback } from './Generator';
+import type Paths from '../../common/Paths.js';
+import type { SerializedProject } from '../../common/reference/index.js';
+import Generator, { type GeneratorProgressCallback } from './Generator.js';
 
 export abstract class OutputGenerator extends Generator {
 	abstract _generateCommons(paths: Paths): Promise<void>;

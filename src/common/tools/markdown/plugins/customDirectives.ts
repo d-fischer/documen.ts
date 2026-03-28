@@ -1,5 +1,5 @@
+import { type Nodes as MdastNodes } from 'mdast';
 import { toHast } from 'mdast-util-to-hast';
-import { type MdastNodes } from 'mdast-util-to-hast/lib';
 import remarkDirective from 'remark-directive';
 import type { Processor, Transformer } from 'unified';
 import type { Node } from 'unist';

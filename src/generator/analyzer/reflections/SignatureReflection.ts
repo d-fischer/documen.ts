@@ -4,14 +4,14 @@ import type {
 	ConstructSignatureReferenceNode,
 	GetSignatureReferenceNode,
 	SetSignatureReferenceNode
-} from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createTypeFromTsType } from '../createType';
-import type { Type } from '../types/Type';
-import { resolvePromiseArray } from '../util/promises';
-import { ParameterReflection } from './ParameterReflection';
-import { Reflection } from './Reflection';
-import { TypeParameterReflection } from './TypeParameterReflection';
+} from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createTypeFromTsType } from '../createType.js';
+import type { Type } from '../types/Type.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { ParameterReflection } from './ParameterReflection.js';
+import { Reflection } from './Reflection.js';
+import { TypeParameterReflection } from './TypeParameterReflection.js';
 
 type SignatureReflectionKind =
 	| ts.SyntaxKind.CallSignature

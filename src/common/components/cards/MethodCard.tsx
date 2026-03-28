@@ -1,6 +1,6 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import Card from '../../containers/Card';
+import Card from '../../containers/Card.js';
 import type {
 	CallSignatureReferenceNode,
 	ClassReferenceNode,
@@ -8,13 +8,13 @@ import type {
 	ConstructSignatureReferenceNode,
 	InterfaceReferenceNode,
 	MethodReferenceNode
-} from '../../reference';
-import MarkdownParser from '../../tools/markdown/MarkdownParser';
-import { getAnchorName } from '../../tools/NodeTools';
-import FunctionParamDesc from '../FunctionParamDesc';
-import { FunctionReturnType } from '../FunctionReturnType';
-import CardToolbar from './CardToolbar';
-import { FunctionCardHeader } from './FunctionCardHeader';
+} from '../../reference/index.js';
+import MarkdownParser from '../../tools/markdown/MarkdownParser.js';
+import { getAnchorName } from '../../tools/NodeTools.js';
+import FunctionParamDesc from '../FunctionParamDesc.js';
+import { FunctionReturnType } from '../FunctionReturnType.js';
+import CardToolbar from './CardToolbar.js';
+import { FunctionCardHeader } from './FunctionCardHeader.js';
 
 interface MethodCardProps {
 	parent: ClassReferenceNode | InterfaceReferenceNode;

@@ -1,9 +1,9 @@
 import assert from 'assert';
 import * as ts from 'typescript';
-import { zip } from '../../../common/tools/ArrayTools';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { SignatureReflection } from '../reflections/SignatureReflection';
-import type { SymbolBasedReflection } from '../reflections/SymbolBasedReflection';
+import { zip } from '../../../common/tools/ArrayTools.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { SignatureReflection } from '../reflections/SignatureReflection.js';
+import type { SymbolBasedReflection } from '../reflections/SymbolBasedReflection.js';
 
 export async function getReflectedCallSignatures(
 	ctx: AnalyzeContext,

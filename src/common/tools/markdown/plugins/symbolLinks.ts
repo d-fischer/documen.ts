@@ -2,9 +2,9 @@ import type { Content, Link, Text } from 'mdast';
 import type { Transformer } from 'unified';
 import type { Parent } from 'unist';
 import { visit } from 'unist-util-visit';
-import { getPageType } from '../../CodeTools';
-import { findSymbolByMember } from '../../ReferenceTools';
-import { getPackagePath } from '../../StringTools';
+import { getPageType } from '../../CodeTools.js';
+import { findSymbolByMember } from '../../ReferenceTools.js';
+import { getPackagePath } from '../../StringTools.js';
 
 function insertAt(array: Parent['children'], index: number, ...items: Content[]): Parent['children'] {
 	return [...array.slice(0, index), ...items, ...array.slice(index)];

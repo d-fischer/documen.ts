@@ -1,8 +1,8 @@
 import React from 'react';
-import PageHeader from '../containers/PageHeader';
-import type { ReferenceNode } from '../reference';
-import MarkdownParser from '../tools/markdown/MarkdownParser';
-import CodeLink from './CodeLink';
+import PageHeader from '../containers/PageHeader.js';
+import type { ReferenceNode } from '../reference/index.js';
+import MarkdownParser from '../tools/markdown/MarkdownParser.js';
+import CodeLink from './CodeLink.js';
 
 interface SymbolHeaderProps {
 	symbol: ReferenceNode;

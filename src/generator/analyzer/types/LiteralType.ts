@@ -1,7 +1,7 @@
 import ts from 'typescript';
-import type { LiteralReferenceType } from '../../../common/reference';
-import type { TypeReflector } from '../createType';
-import { Type } from './Type';
+import type { LiteralReferenceType } from '../../../common/reference/index.js';
+import type { TypeReflector } from '../createType.js';
+import { Type } from './Type.js';
 
 export type LiteralValue = boolean | number | string | null | bigint;
 

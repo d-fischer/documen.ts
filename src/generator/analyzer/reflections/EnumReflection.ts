@@ -1,8 +1,8 @@
 import ts from 'typescript';
-import type { EnumReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { EnumMemberReflection } from './EnumMemberReflection';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
+import type { EnumReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { EnumMemberReflection } from './EnumMemberReflection.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
 
 export class EnumReflection extends SymbolBasedReflection {
 	private _members!: EnumMemberReflection[];

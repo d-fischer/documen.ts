@@ -5,8 +5,8 @@ import type {
 	EnumMemberReferenceNode,
 	MethodReferenceNode,
 	PropertyReferenceNode
-} from '../../reference';
-import OverviewTableEntry from './OverviewTableEntry';
+} from '../../reference/index.js';
+import OverviewTableEntry from './OverviewTableEntry.js';
 
 const useStyles = makeStyles(
 	theme => ({

@@ -3,10 +3,10 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React, { useContext, useMemo } from 'react';
-import { NavLink, useLocation, useResolvedPath } from 'react-router-dom';
-import { ConfigContext } from '../config';
-import { getPackageList } from '../tools/ReferenceTools';
-import VersionMenu from './VersionMenu';
+import { NavLink, useLocation, useResolvedPath } from 'react-router';
+import { ConfigContext } from '../config/index.js';
+import { getPackageList } from '../tools/ReferenceTools.js';
+import VersionMenu from './VersionMenu.js';
 
 const useStyles = makeStyles(
 	theme => ({

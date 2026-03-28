@@ -1,10 +1,10 @@
 import ts from 'typescript';
-import type { TupleReferenceType } from '../../../common/reference';
-import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
-import { resolvePromiseArray } from '../util/promises';
-import { removeUndefined } from '../util/types';
-import { NamedTupleElementType } from './NamedTupleElementType';
-import { Type } from './Type';
+import type { TupleReferenceType } from '../../../common/reference/index.js';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { removeUndefined } from '../util/types.js';
+import { NamedTupleElementType } from './NamedTupleElementType.js';
+import { Type } from './Type.js';
 
 export class TupleType extends Type {
 	constructor(private readonly _elements: Array<Type | NamedTupleElementType>) {

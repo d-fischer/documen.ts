@@ -1,4 +1,4 @@
-import RouterMode from '../htmlRenderer/RouterMode';
+import RouterMode from '../htmlRenderer/RouterMode.js';
 
 export interface ConfigInternalArticle {
 	name: string;

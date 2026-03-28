@@ -15,7 +15,7 @@ testdocs
 
 .devcontainer
 .eslintignore
-.eslintrc.js
+.eslintrc.cjs
 .prettierignore
-.prettierrc.js
+.prettierrc.cjs
 .vscode

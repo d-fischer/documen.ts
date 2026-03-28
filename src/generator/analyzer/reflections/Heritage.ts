@@ -1,7 +1,7 @@
 import type { ExpressionWithTypeArguments } from 'typescript';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createTypeFromNode } from '../createType';
-import type { Type } from '../types/Type';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createTypeFromNode } from '../createType.js';
+import type { Type } from '../types/Type.js';
 
 export class Heritage {
 	readonly type: Type;

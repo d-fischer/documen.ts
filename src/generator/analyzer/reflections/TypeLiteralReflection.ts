@@ -1,10 +1,10 @@
 import ts from 'typescript';
-import type { CallSignatureReferenceNode, TypeLiteralReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createReflection } from '../createReflection';
-import { resolvePromiseArray } from '../util/promises';
-import { Reflection } from './Reflection';
-import { SignatureReflection } from './SignatureReflection';
+import type { CallSignatureReferenceNode, TypeLiteralReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createReflection } from '../createReflection.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { Reflection } from './Reflection.js';
+import { SignatureReflection } from './SignatureReflection.js';
 
 export class TypeLiteralReflection extends Reflection {
 	readonly name = '__type';

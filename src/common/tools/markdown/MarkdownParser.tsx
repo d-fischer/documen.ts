@@ -2,11 +2,11 @@ import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { HashLink } from 'react-router-hash-link';
-import { CodeBlock } from '../../components/CodeBlock';
-import { customDirectives } from './plugins/customDirectives';
-import { gfmTables } from './plugins/gfmTables';
-import { symbolLinks } from './plugins/symbolLinks';
+import { Link } from 'react-router';
+import { CodeBlock } from '../../components/CodeBlock.js';
+import { customDirectives } from './plugins/customDirectives.js';
+import { gfmTables } from './plugins/gfmTables.js';
+import { symbolLinks } from './plugins/symbolLinks.js';
 
 interface MarkdownParserProps {
 	source: string;
@@ -88,9 +88,9 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 
 				if (mdProps.href.startsWith('/')) {
 					return (
-						<HashLink {...props} className={classNames(props.className, classes.link)} to={mdProps.href}>
+						<Link {...props} className={classNames(props.className, classes.link)} to={mdProps.href}>
 							{mdProps.children}
-						</HashLink>
+						</Link>
 					);
 				}
 				return (

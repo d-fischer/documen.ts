@@ -1,4 +1,4 @@
-import type { ExternalPackageReference, ReferenceNode, ReferenceType } from '../reference';
+import type { ExternalPackageReference, ReferenceNode, ReferenceType } from '../reference/index.js';
 
 export const isOptionalType = (def?: ReferenceType) => {
 	if (!def) {

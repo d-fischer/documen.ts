@@ -7,15 +7,15 @@ import * as prettier from 'prettier';
 import * as ts from 'typescript';
 import resolveHome from 'untildify';
 import { build } from 'vite';
-import type { ArticleContent } from '../../common/components/PageArticle';
-import type { Config, ConfigInternalArticle } from '../../common/config/Config';
-import type Paths from '../../common/Paths';
-import type { ReferenceNode, SerializedProject } from '../../common/reference';
-import { filterByMember } from '../../common/tools/ArrayTools';
-import { checkVisibility } from '../../common/tools/NodeTools';
-import { getPackagePath } from '../../common/tools/StringTools';
-import type { GeneratorProgressCallback } from './Generator';
-import { OutputGenerator } from './OutputGenerator';
+import type { ArticleContent } from '../../common/components/PageArticle.js';
+import type { Config, ConfigInternalArticle } from '../../common/config/Config.js';
+import type Paths from '../../common/Paths.js';
+import type { ReferenceNode, SerializedProject } from '../../common/reference/index.js';
+import { filterByMember } from '../../common/tools/ArrayTools.js';
+import { checkVisibility } from '../../common/tools/NodeTools.js';
+import { getPackagePath } from '../../common/tools/StringTools.js';
+import type { GeneratorProgressCallback } from './Generator.js';
+import { OutputGenerator } from './OutputGenerator.js';
 
 type RenderEntry = [string, string, Promise<string>];
 

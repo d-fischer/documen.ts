@@ -11,12 +11,12 @@ import type {
 	ParameterReferenceNode,
 	PropertyReferenceNode,
 	VariableReferenceNode
-} from '../reference';
-import { hasTag, isOptionalType } from '../tools/CodeTools';
-import MarkdownParser from '../tools/markdown/MarkdownParser';
-import { defaultNodeSort } from '../tools/NodeTools';
-import { findSymbolByMember, getChildren } from '../tools/ReferenceTools';
-import Type from './codeBuilders/Type';
+} from '../reference/index.js';
+import { hasTag, isOptionalType } from '../tools/CodeTools.js';
+import MarkdownParser from '../tools/markdown/MarkdownParser.js';
+import { defaultNodeSort } from '../tools/NodeTools.js';
+import { findSymbolByMember, getChildren } from '../tools/ReferenceTools.js';
+import Type from './codeBuilders/Type.js';
 
 interface FunctionParamDescEntryProps {
 	param: ParameterReferenceNode | VariableReferenceNode | PropertyReferenceNode;

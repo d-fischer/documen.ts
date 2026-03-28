@@ -1,10 +1,10 @@
 import ts from 'typescript';
-import type { UnionReferenceType } from '../../../common/reference';
-import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
-import { resolvePromiseArray } from '../util/promises';
-import { IntrinsicType } from './IntrinsicType';
-import { LiteralType } from './LiteralType';
-import { Type } from './Type';
+import type { UnionReferenceType } from '../../../common/reference/index.js';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { IntrinsicType } from './IntrinsicType.js';
+import { LiteralType } from './LiteralType.js';
+import { Type } from './Type.js';
 
 export class UnionType extends Type {
 	constructor(private readonly _elements: Type[]) {

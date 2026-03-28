@@ -1,12 +1,12 @@
 import ts from 'typescript';
-import type { PropertyReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createTypeFromNode, createTypeFromTsType } from '../createType';
-import type { ReferenceType } from '../types/ReferenceType';
-import type { Type } from '../types/Type';
-import { handleInheritance } from '../util/inheritance';
-import { MethodReflection } from './MethodReflection';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
+import type { PropertyReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createTypeFromNode, createTypeFromTsType } from '../createType.js';
+import type { ReferenceType } from '../types/ReferenceType.js';
+import type { Type } from '../types/Type.js';
+import { handleInheritance } from '../util/inheritance.js';
+import { MethodReflection } from './MethodReflection.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
 
 export class PropertyReflection extends SymbolBasedReflection {
 	private _type!: Type;

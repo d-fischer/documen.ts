@@ -1,12 +1,12 @@
 import assert from 'assert';
 import * as ts from 'typescript';
-import type { TypeAliasReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createTypeFromNode } from '../createType';
-import type { Type } from '../types/Type';
-import { resolvePromiseArray } from '../util/promises';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
-import { TypeParameterReflection } from './TypeParameterReflection';
+import type { TypeAliasReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createTypeFromNode } from '../createType.js';
+import type { Type } from '../types/Type.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
+import { TypeParameterReflection } from './TypeParameterReflection.js';
 
 export class TypeAliasReflection extends SymbolBasedReflection {
 	private _type!: Type;

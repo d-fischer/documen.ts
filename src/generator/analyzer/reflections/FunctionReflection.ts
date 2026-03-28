@@ -1,9 +1,9 @@
 import type * as ts from 'typescript';
-import type { FunctionReferenceNode, CallSignatureReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { getReflectedCallSignatures } from '../util/functions';
-import type { SignatureReflection } from './SignatureReflection';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
+import type { CallSignatureReferenceNode, FunctionReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { getReflectedCallSignatures } from '../util/functions.js';
+import type { SignatureReflection } from './SignatureReflection.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
 
 export class FunctionReflection extends SymbolBasedReflection {
 	private _signatures!: SignatureReflection[];

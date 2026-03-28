@@ -1,5 +1,5 @@
-import type { ReferenceType } from '../../../common/reference';
-import { Type } from './Type';
+import type { ReferenceType } from '../../../common/reference/index.js';
+import { Type } from './Type.js';
 
 export class UnknownType extends Type {
 	constructor(

@@ -7,11 +7,11 @@ import type {
 	FunctionReferenceNode,
 	MethodReferenceNode,
 	PropertyReferenceNode
-} from '../reference';
+} from '../reference/index.js';
 
-import { hasTag } from '../tools/CodeTools';
+import { hasTag } from '../tools/CodeTools.js';
 
-import FunctionParamDescEntry from './FunctionParamDescEntry';
+import FunctionParamDescEntry from './FunctionParamDescEntry.js';
 
 interface FunctionParamDescProps {
 	functionDefinition: FunctionReferenceNode | MethodReferenceNode | ConstructorReferenceNode | PropertyReferenceNode;

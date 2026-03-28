@@ -1,8 +1,8 @@
 import ts from 'typescript';
-import type { OptionalReferenceType } from '../../../common/reference';
-import { createTypeFromNode, type TypeReflector } from '../createType';
-import { removeUndefined } from '../util/types';
-import { Type } from './Type';
+import type { OptionalReferenceType } from '../../../common/reference/index.js';
+import { createTypeFromNode, type TypeReflector } from '../createType.js';
+import { removeUndefined } from '../util/types.js';
+import { Type } from './Type.js';
 
 export class OptionalType extends Type {
 	constructor(private readonly _element: Type) {

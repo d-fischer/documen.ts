@@ -1,15 +1,15 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import Card from '../../containers/Card';
-import type { AccessorReferenceNode, PropertyReferenceNode } from '../../reference';
-import { getTag, hasTag, isLiteral } from '../../tools/CodeTools';
-import MarkdownParser from '../../tools/markdown/MarkdownParser';
-import { getAnchorName } from '../../tools/NodeTools';
-import Badge from '../Badge';
-import BetaNotice from '../BetaNotice';
-import Type from '../codeBuilders/Type';
-import DeprecationNotice from '../DeprecationNotice';
-import CardToolbar from './CardToolbar';
+import Card from '../../containers/Card.js';
+import type { AccessorReferenceNode, PropertyReferenceNode } from '../../reference/index.js';
+import { getTag, hasTag, isLiteral } from '../../tools/CodeTools.js';
+import MarkdownParser from '../../tools/markdown/MarkdownParser.js';
+import { getAnchorName } from '../../tools/NodeTools.js';
+import Badge from '../Badge.js';
+import BetaNotice from '../BetaNotice.js';
+import Type from '../codeBuilders/Type.js';
+import DeprecationNotice from '../DeprecationNotice.js';
+import CardToolbar from './CardToolbar.js';
 
 interface PropertyCardProps {
 	name?: string;
@@ -42,7 +42,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ name, definition }) => {
 		return null;
 	}
 
-	const type = sig.type;
+	const { type } = sig;
 	return (
 		<Card className={classes.root} id={getAnchorName(definition, name)} key={definition.id}>
 			<CardToolbar className={classes.toolbar} name={name} definition={definition} />

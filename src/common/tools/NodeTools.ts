@@ -5,8 +5,8 @@ import type {
 	ReferenceNode,
 	ReferenceReferenceType,
 	ReferenceType
-} from '../reference';
-import { hasTag } from './CodeTools';
+} from '../reference/index.js';
+import { hasTag } from './CodeTools.js';
 
 export function checkVisibility(node: ReferenceNode, parent?: ReferenceNode) {
 	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing

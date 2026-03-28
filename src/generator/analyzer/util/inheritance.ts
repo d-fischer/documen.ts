@@ -1,13 +1,13 @@
 import assert from 'assert';
 import type ts from 'typescript';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import type { AccessorReflection } from '../reflections/AccessorReflection';
-import { ClassReflection } from '../reflections/ClassReflection';
-import type { ConstructorReflection } from '../reflections/ConstructorReflection';
-import { InterfaceReflection } from '../reflections/InterfaceReflection';
-import type { MethodReflection } from '../reflections/MethodReflection';
-import type { PropertyReflection } from '../reflections/PropertyReflection';
-import { ReferenceType } from '../types/ReferenceType';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import type { AccessorReflection } from '../reflections/AccessorReflection.js';
+import { ClassReflection } from '../reflections/ClassReflection.js';
+import type { ConstructorReflection } from '../reflections/ConstructorReflection.js';
+import { InterfaceReflection } from '../reflections/InterfaceReflection.js';
+import type { MethodReflection } from '../reflections/MethodReflection.js';
+import type { PropertyReflection } from '../reflections/PropertyReflection.js';
+import { ReferenceType } from '../types/ReferenceType.js';
 
 export function handleInheritance(
 	ctx: AnalyzeContext,

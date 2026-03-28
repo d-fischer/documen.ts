@@ -1,5 +1,5 @@
 import type ts from 'typescript';
-import type { Project } from './Project';
+import type { Project } from './Project.js';
 
 export class AnalyzeContext {
 	staticContext = false;

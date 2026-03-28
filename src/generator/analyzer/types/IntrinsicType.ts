@@ -1,7 +1,7 @@
 import ts from 'typescript';
-import type { IntrinsicReferenceType } from '../../../common/reference';
-import type { TypeReflector } from '../createType';
-import { Type } from './Type';
+import type { IntrinsicReferenceType } from '../../../common/reference/index.js';
+import type { TypeReflector } from '../createType.js';
+import { Type } from './Type.js';
 
 export class IntrinsicType extends Type {
 	constructor(private readonly _name: string) {

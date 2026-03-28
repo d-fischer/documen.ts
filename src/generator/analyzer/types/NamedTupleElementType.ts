@@ -1,7 +1,7 @@
 import ts from 'typescript';
-import type { NamedTupleMemberReferenceType } from '../../../common/reference';
-import { createTypeFromNode, type TypeReflector } from '../createType';
-import type { Type } from './Type';
+import type { NamedTupleMemberReferenceType } from '../../../common/reference/index.js';
+import { createTypeFromNode, type TypeReflector } from '../createType.js';
+import type { Type } from './Type.js';
 
 export class NamedTupleElementType {
 	constructor(private readonly _name: string, private readonly _optional: boolean, private readonly _type: Type) {}

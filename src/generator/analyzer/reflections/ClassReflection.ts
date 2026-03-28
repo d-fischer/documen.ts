@@ -1,13 +1,13 @@
 import assert from 'assert';
 import * as ts from 'typescript';
-import type { ClassReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createReflection } from '../createReflection';
-import { resolvePromiseArray } from '../util/promises';
-import { ConstructorReflection } from './ConstructorReflection';
-import { Heritage } from './Heritage';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
-import { TypeParameterReflection } from './TypeParameterReflection';
+import type { ClassReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createReflection } from '../createReflection.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { ConstructorReflection } from './ConstructorReflection.js';
+import { Heritage } from './Heritage.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
+import { TypeParameterReflection } from './TypeParameterReflection.js';
 
 export class ClassReflection extends SymbolBasedReflection {
 	ctor?: ConstructorReflection;

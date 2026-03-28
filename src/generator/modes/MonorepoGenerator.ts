@@ -5,20 +5,20 @@ import * as vfs from '@typescript/vfs';
 import fs from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
-import { rollup, type OutputChunk } from 'rollup';
+import { type OutputChunk, rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import toposort from 'toposort';
 import type { PackageJson } from 'type-fest';
 import * as ts from 'typescript';
-import type { Config } from '../../common/config/Config';
-import type Paths from '../../common/Paths';
-import type { SerializedProject } from '../../common/reference';
-import { parseConfig, parseConfigObject } from '../../common/tools/ConfigTools';
-import { fileExists } from '../../common/tools/FileTools';
-import { Project } from '../analyzer/Project';
-import Generator from './Generator';
-import HtmlGenerator from './HtmlGenerator';
-import type { OutputGenerator } from './OutputGenerator';
+import type { Config } from '../../common/config/Config.js';
+import type Paths from '../../common/Paths.js';
+import type { SerializedProject } from '../../common/reference/index.js';
+import { parseConfig, parseConfigObject } from '../../common/tools/ConfigTools.js';
+import { fileExists } from '../../common/tools/FileTools.js';
+import { Project } from '../analyzer/Project.js';
+import Generator from './Generator.js';
+import HtmlGenerator from './HtmlGenerator.js';
+import type { OutputGenerator } from './OutputGenerator.js';
 
 export default class MonorepoGenerator extends Generator {
 	async createReferenceStructure() {

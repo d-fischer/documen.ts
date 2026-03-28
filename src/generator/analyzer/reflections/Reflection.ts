@@ -1,8 +1,8 @@
 import * as ts from 'typescript';
-import type { ReferenceLocation, ReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { DocComment } from '../DocComment';
-import { SignatureReflection } from './SignatureReflection';
+import type { ReferenceLocation, ReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { DocComment } from '../DocComment.js';
+import { SignatureReflection } from './SignatureReflection.js';
 
 export type ReflectionFlag =
 	| 'isPrivate'

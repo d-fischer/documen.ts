@@ -1,11 +1,11 @@
 import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React from 'react';
-import { HashLink } from 'react-router-hash-link';
-import type { InterfaceReferenceNode } from '../reference';
-import { defaultNodeSort } from '../tools/NodeTools';
-import { getChildren } from '../tools/ReferenceTools';
-import Type from './codeBuilders/Type';
+import { Link } from 'react-router';
+import type { InterfaceReferenceNode } from '../reference/index.js';
+import { defaultNodeSort } from '../tools/NodeTools.js';
+import { getChildren } from '../tools/ReferenceTools.js';
+import Type from './codeBuilders/Type.js';
 
 interface InterfaceRepresentationProps {
 	symbol: InterfaceReferenceNode;
@@ -57,9 +57,9 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 									<div className={classes.comment}>{member.comment.shortText}</div>
 								) : null}
 								<div>
-									<HashLink to={`#${member.name}`} className={classes.name}>
+									<Link to={`#${member.name}`} className={classes.name}>
 										{member.name}
-									</HashLink>
+									</Link>
 									{member.flags?.isOptional ? '?' : ''}
 									: <Type def={member.type} ignoreUndefined />
 								</div>
@@ -74,9 +74,9 @@ const InterfaceRepresentation: React.FC<InterfaceRepresentationProps> = ({ symbo
 									<div className={classes.comment}>{sig.comment.shortText}</div>
 								) : null}
 								<div>
-									<HashLink to={`#${member.name}`} className={classes.name}>
+									<Link to={`#${member.name}`} className={classes.name}>
 										{member.name}
-									</HashLink>
+									</Link>
 									{member.flags?.isOptional ? '?' : ''}
 									(): <Type def={member.signatures![0].type} />
 								</div>

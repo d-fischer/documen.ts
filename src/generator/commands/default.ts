@@ -3,15 +3,15 @@ import { Command, command, ExpectedError, metadata, option, Options } from 'clim
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
 import tmp from 'tmp-promise';
-import type { Config, Manifest } from '../../common/config/Config';
-import { getConfigValue } from '../../common/config/Util';
-import RouterMode from '../../common/htmlRenderer/RouterMode';
-import type Paths from '../../common/Paths';
-import { fileExists } from '../../common/tools/FileTools';
-import { removeSlash } from '../../common/tools/StringTools';
-import type Generator from '../modes/Generator';
-import HtmlGenerator from '../modes/HtmlGenerator';
-import MonorepoGenerator from '../modes/MonorepoGenerator';
+import type { Config, Manifest } from '../../common/config/Config.js';
+import { getConfigValue } from '../../common/config/Util.js';
+import RouterMode from '../../common/htmlRenderer/RouterMode.js';
+import type Paths from '../../common/Paths.js';
+import { fileExists } from '../../common/tools/FileTools.js';
+import { removeSlash } from '../../common/tools/StringTools.js';
+import type Generator from '../modes/Generator.js';
+import HtmlGenerator from '../modes/HtmlGenerator.js';
+import MonorepoGenerator from '../modes/MonorepoGenerator.js';
 
 export class CLICommandOptions extends Options {
 	@option({ description: 'development mode; disable some optimizations in favor of speed' })

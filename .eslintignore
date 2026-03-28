@@ -3,4 +3,4 @@ bin
 lib
 src/server
 config
-.eslintrc.js
+.eslintrc.cjs

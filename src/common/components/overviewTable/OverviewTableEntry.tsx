@@ -1,10 +1,10 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import { HashLink } from 'react-router-hash-link';
-import type { ReferenceNode } from '../../reference';
-import { hasTag } from '../../tools/CodeTools';
-import { getAnchorName, typeIsAsync } from '../../tools/NodeTools';
-import Badge from '../Badge';
+import { Link } from 'react-router';
+import type { ReferenceNode } from '../../reference/index.js';
+import { hasTag } from '../../tools/CodeTools.js';
+import { getAnchorName, typeIsAsync } from '../../tools/NodeTools.js';
+import Badge from '../Badge.js';
 
 const useStyles = makeStyles(
 	theme => ({
@@ -39,9 +39,9 @@ const OverviewTableEntry: React.FC<OverviewTableEntryProps> = ({ node }) => {
 
 	return (
 		<li className={classes.root}>
-			<HashLink className={classes.link} to={`#${getAnchorName(node)}`}>
+			<Link className={classes.link} to={`#${getAnchorName(node)}`}>
 				{node.name}
-			</HashLink>
+			</Link>
 			{hasTag(node, 'deprecated') ||
 			(node.kind === 'method' && node.signatures?.some(sig => hasTag(sig, 'deprecated'))) ||
 			(node.kind === 'accessor' && node.getSignature && hasTag(node.getSignature, 'deprecated')) ? (

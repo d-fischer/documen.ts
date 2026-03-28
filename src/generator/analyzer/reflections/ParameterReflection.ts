@@ -1,11 +1,11 @@
 import * as ts from 'typescript';
-import type { ParameterReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createTypeFromNode, createTypeFromTsType } from '../createType';
-import type { Type } from '../types/Type';
-import { stringifyExpression } from '../util/expressions';
-import { removeUndefined } from '../util/types';
-import { Reflection } from './Reflection';
+import type { ParameterReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createTypeFromNode, createTypeFromTsType } from '../createType.js';
+import type { Type } from '../types/Type.js';
+import { stringifyExpression } from '../util/expressions.js';
+import { removeUndefined } from '../util/types.js';
+import { Reflection } from './Reflection.js';
 
 export class ParameterReflection extends Reflection {
 	private _name!: string;

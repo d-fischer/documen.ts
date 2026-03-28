@@ -4,8 +4,8 @@ import { makeStyles } from '@mui/styles';
 
 import classNames from 'classnames';
 import React, { useContext } from 'react';
-import { ConfigContext } from '../config';
-import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, ReferenceNode } from '../reference';
+import { ConfigContext } from '../config/index.js';
+import type { CallSignatureReferenceNode, ConstructSignatureReferenceNode, ReferenceNode } from '../reference/index.js';
 
 interface CodeLinkProps {
 	symbol: ReferenceNode;

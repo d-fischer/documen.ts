@@ -1,13 +1,13 @@
 {
 	"compilerOptions": {
 		"outDir": "lib",
-		"module": "commonjs",
-		"target": "es6",
-		"lib": ["dom", "dom.iterable", "es2019"],
+		"module": "node16",
+		"moduleResolution": "node16",
+		"target": "es2022",
+		"lib": ["dom", "dom.iterable", "es2022"],
 		"sourceMap": true,
 		"allowJs": true,
-		"jsx": "react",
-		"moduleResolution": "node",
+		"jsx": "react-jsx",
 		"rootDir": "src",
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,

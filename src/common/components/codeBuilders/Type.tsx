@@ -1,8 +1,8 @@
 import React from 'react';
-import type { ReferenceType } from '../../reference';
-import { findSymbolByMember } from '../../tools/ReferenceTools';
-import TypeAliasHint from '../TypeAliasHint';
-import ReferenceTypeView from './ReferenceTypeView';
+import type { ReferenceType } from '../../reference/index.js';
+import { findSymbolByMember } from '../../tools/ReferenceTools.js';
+import TypeAliasHint from '../TypeAliasHint.js';
+import ReferenceTypeView from './ReferenceTypeView.js';
 
 interface TypeProps {
 	def?: ReferenceType;

@@ -1,15 +1,15 @@
 import { makeStyles } from '@mui/styles';
 import React, { useContext } from 'react';
-import { useParams } from 'react-router-dom';
-import NavMenu from '../components/NavMenu';
-import NavMenuGroup from '../components/NavMenuGroup';
-import NavMenuItem from '../components/NavMenuItem';
-import PageArticle, { PageArticleContext } from '../components/PageArticle';
-import { ConfigContext, mockFs } from '../config';
-import type { ConfigArticleCategory, ConfigInternalArticle } from '../config/Config';
-import PageContent from '../containers/PageContent';
+import { useParams } from 'react-router';
+import NavMenu from '../components/NavMenu.js';
+import NavMenuGroup from '../components/NavMenuGroup.js';
+import NavMenuItem from '../components/NavMenuItem.js';
+import PageArticle, { PageArticleContext } from '../components/PageArticle.js';
+import type { ConfigArticleCategory, ConfigInternalArticle } from '../config/Config.js';
+import { ConfigContext, mockFs } from '../config/index.js';
+import PageContent from '../containers/PageContent.js';
 
-import PageHeader from '../containers/PageHeader';
+import PageHeader from '../containers/PageHeader.js';
 
 interface DocPageRouteParams {
 	category?: string;
@@ -97,7 +97,7 @@ const DocPage: React.FC = () => {
 								) : (
 									<NavMenuItem
 										key={art.name}
-										path={`/docs/${confCategory!.name}/${grp.name}/${art.name}`}
+										path={`/docs/${confCategory.name}/${grp.name}/${art.name}`}
 										title={art.title}
 									>
 										{art.title}

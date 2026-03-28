@@ -1,6 +1,6 @@
 import type * as ts from 'typescript';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { Reflection } from './Reflection';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { Reflection } from './Reflection.js';
 
 export class SymbolBasedReflection extends Reflection {
 	static async unknown(ctx: AnalyzeContext, symbol: ts.Symbol) {

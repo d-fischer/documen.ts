@@ -1,10 +1,10 @@
 import ts from 'typescript';
-import { createTypeFromNode, type TypeReflector } from '../createType';
-import { ParameterReflection } from '../reflections/ParameterReflection';
-import { SignatureReflection } from '../reflections/SignatureReflection';
-import { TypeLiteralReflection } from '../reflections/TypeLiteralReflection';
-import { IntrinsicType } from './IntrinsicType';
-import { ReflectionType } from './ReflectionType';
+import { createTypeFromNode, type TypeReflector } from '../createType.js';
+import { ParameterReflection } from '../reflections/ParameterReflection.js';
+import { SignatureReflection } from '../reflections/SignatureReflection.js';
+import { TypeLiteralReflection } from '../reflections/TypeLiteralReflection.js';
+import { IntrinsicType } from './IntrinsicType.js';
+import { ReflectionType } from './ReflectionType.js';
 
 export const functionTypeReflector: TypeReflector<ts.FunctionTypeNode> = {
 	kinds: [ts.SyntaxKind.FunctionType],

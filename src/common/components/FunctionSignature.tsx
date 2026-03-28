@@ -5,7 +5,7 @@ import type {
 	ClassReferenceNode,
 	ConstructSignatureReferenceNode,
 	InterfaceReferenceNode
-} from '../reference';
+} from '../reference/index.js';
 
 interface FunctionSignatureProps {
 	signature: CallSignatureReferenceNode | ConstructSignatureReferenceNode;
@@ -26,7 +26,7 @@ const useStyles = makeStyles(
 const FunctionSignature: React.FC<FunctionSignatureProps> = ({ signature, parent }) => {
 	const classes = useStyles();
 
-	let name = signature.name;
+	let { name } = signature;
 
 	if (signature.kind === 'constructSignature' && parent) {
 		name = `new ${parent.name}`;

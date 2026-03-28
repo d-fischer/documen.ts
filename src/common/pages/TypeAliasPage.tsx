@@ -1,17 +1,17 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import { Navigate, useParams } from 'react-router-dom';
-import BetaNotice from '../components/BetaNotice';
-import Type from '../components/codeBuilders/Type';
-import DeprecationNotice from '../components/DeprecationNotice';
-import SymbolHeader from '../components/SymbolHeader';
-import PageContent from '../containers/PageContent';
-import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer';
-import type { TypeAliasReferenceNode } from '../reference';
-import { getPageType, getTag, hasTag } from '../tools/CodeTools';
-import MarkdownParser from '../tools/markdown/MarkdownParser';
-import { findSymbolByMember } from '../tools/ReferenceTools';
-import { getPackagePath } from '../tools/StringTools';
+import { Navigate, useParams } from 'react-router';
+import BetaNotice from '../components/BetaNotice.js';
+import Type from '../components/codeBuilders/Type.js';
+import DeprecationNotice from '../components/DeprecationNotice.js';
+import SymbolHeader from '../components/SymbolHeader.js';
+import PageContent from '../containers/PageContent.js';
+import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer.js';
+import type { TypeAliasReferenceNode } from '../reference/index.js';
+import { getPageType, getTag, hasTag } from '../tools/CodeTools.js';
+import MarkdownParser from '../tools/markdown/MarkdownParser.js';
+import { findSymbolByMember } from '../tools/ReferenceTools.js';
+import { getPackagePath } from '../tools/StringTools.js';
 
 interface TypeAliasPageRouteParams extends PackageContainerRouteParams {
 	name: string;

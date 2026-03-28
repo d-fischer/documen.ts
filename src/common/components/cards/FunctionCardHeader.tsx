@@ -8,14 +8,14 @@ import type {
 	FunctionReferenceNode,
 	InterfaceReferenceNode,
 	MethodReferenceNode
-} from '../../reference';
-import { getTag, hasTag } from '../../tools/CodeTools';
-import MarkdownParser from '../../tools/markdown/MarkdownParser';
-import { useAsyncType } from '../../tools/NodeTools';
-import Badge from '../Badge';
-import BetaNotice from '../BetaNotice';
-import DeprecationNotice from '../DeprecationNotice';
-import FunctionSignature from '../FunctionSignature';
+} from '../../reference/index.js';
+import { getTag, hasTag } from '../../tools/CodeTools.js';
+import MarkdownParser from '../../tools/markdown/MarkdownParser.js';
+import { useAsyncType } from '../../tools/NodeTools.js';
+import Badge from '../Badge.js';
+import BetaNotice from '../BetaNotice.js';
+import DeprecationNotice from '../DeprecationNotice.js';
+import FunctionSignature from '../FunctionSignature.js';
 
 interface FunctionCardHeaderProps {
 	parent?: ClassReferenceNode | InterfaceReferenceNode;

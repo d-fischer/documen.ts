@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import type { AnalyzeContext } from '../AnalyzeContext';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
 
 export function resolveAliasesForSymbol(ctx: AnalyzeContext, symbol: ts.Symbol): ts.Symbol;
 export function resolveAliasesForSymbol(ctx: AnalyzeContext, symbol: ts.Symbol | undefined): ts.Symbol | undefined;

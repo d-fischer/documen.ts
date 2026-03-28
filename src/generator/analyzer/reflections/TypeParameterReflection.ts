@@ -1,9 +1,9 @@
 import type ts from 'typescript';
-import type { TypeParameterReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import { createTypeFromNode, createTypeFromTsType } from '../createType';
-import type { Type } from '../types/Type';
-import { Reflection } from './Reflection';
+import type { TypeParameterReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import { createTypeFromNode, createTypeFromTsType } from '../createType.js';
+import type { Type } from '../types/Type.js';
+import { Reflection } from './Reflection.js';
 
 export class TypeParameterReflection extends Reflection {
 	private _constraint?: Type;

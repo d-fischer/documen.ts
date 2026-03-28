@@ -8,8 +8,8 @@ import { twoslasher } from '@typescript/twoslash';
 import * as lzString from 'lz-string';
 import React, { useCallback, useMemo, useState } from 'react';
 import * as ts from 'typescript';
-import { fsMap } from '../../progressiveEnhancement/fsMap';
-import { getRandomString } from '../tools/StringTools';
+import { fsMap } from '../../progressiveEnhancement/fsMap.js';
+import { getRandomString } from '../tools/StringTools.js';
 
 SyntaxHighlighter.registerLanguage('javascript', jsHighlight);
 SyntaxHighlighter.registerLanguage('js', jsHighlight);

@@ -1,8 +1,8 @@
 import ts from 'typescript';
-import type { TypeReflector } from '../createType';
-import { TypeLiteralReflection } from '../reflections/TypeLiteralReflection';
-import { IntrinsicType } from './IntrinsicType';
-import { ReflectionType } from './ReflectionType';
+import type { TypeReflector } from '../createType.js';
+import { TypeLiteralReflection } from '../reflections/TypeLiteralReflection.js';
+import { IntrinsicType } from './IntrinsicType.js';
+import { ReflectionType } from './ReflectionType.js';
 
 export const objectLiteralTypeReflector: TypeReflector<ts.TypeLiteralNode> = {
 	kinds: [ts.SyntaxKind.TypeLiteral],

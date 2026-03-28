@@ -1,12 +1,12 @@
 import assert from 'assert';
 import ts from 'typescript';
-import type { TypeOperatorReferenceType } from '../../../common/reference';
-import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
-import { resolvePromiseArray } from '../util/promises';
-import { ArrayType } from './ArrayType';
-import { TupleType } from './TupleType';
-import { Type } from './Type';
-import { UnknownType } from './UnknownType';
+import type { TypeOperatorReferenceType } from '../../../common/reference/index.js';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { ArrayType } from './ArrayType.js';
+import { TupleType } from './TupleType.js';
+import { Type } from './Type.js';
+import { UnknownType } from './UnknownType.js';
 
 export class TypeOperatorType extends Type {
 	constructor(private readonly _operator: 'keyof' | 'unique' | 'readonly', private readonly _type: Type) {

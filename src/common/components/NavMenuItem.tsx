@@ -1,7 +1,7 @@
 import { makeStyles } from '@mui/styles';
 import classNames from 'classnames';
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 
 interface NavMenuItemProps {
 	path: string;

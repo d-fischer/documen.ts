@@ -1,11 +1,11 @@
 import * as ts from 'typescript';
-import type { CallSignatureReferenceNode, ConstructorReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import type { Type } from '../types/Type';
-import { handleConstructorInheritance } from '../util/inheritance';
-import type { ClassReflection } from './ClassReflection';
-import { SignatureReflection } from './SignatureReflection';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
+import type { CallSignatureReferenceNode, ConstructorReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import type { Type } from '../types/Type.js';
+import { handleConstructorInheritance } from '../util/inheritance.js';
+import type { ClassReflection } from './ClassReflection.js';
+import { SignatureReflection } from './SignatureReflection.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
 
 export class ConstructorReflection extends SymbolBasedReflection {
 	private _signatures!: SignatureReflection[];

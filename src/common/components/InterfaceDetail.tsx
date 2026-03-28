@@ -1,9 +1,9 @@
 import React from 'react';
-import type { InterfaceReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference';
-import { defaultNodeSort } from '../tools/NodeTools';
-import { filterChildrenByMember } from '../tools/ReferenceTools';
-import MethodCard from './cards/MethodCard';
-import PropertyCard from './cards/PropertyCard';
+import type { InterfaceReferenceNode, MethodReferenceNode, PropertyReferenceNode } from '../reference/index.js';
+import { defaultNodeSort } from '../tools/NodeTools.js';
+import { filterChildrenByMember } from '../tools/ReferenceTools.js';
+import MethodCard from './cards/MethodCard.js';
+import PropertyCard from './cards/PropertyCard.js';
 
 interface InterfaceDetailProps {
 	symbol: InterfaceReferenceNode;

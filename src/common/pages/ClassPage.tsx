@@ -1,14 +1,14 @@
 import React from 'react';
-import { Navigate, useParams } from 'react-router-dom';
-import BetaNotice from '../components/BetaNotice';
-import EventCard from '../components/cards/EventCard';
-import MethodCard from '../components/cards/MethodCard';
-import PropertyCard from '../components/cards/PropertyCard';
-import DeprecationNotice from '../components/DeprecationNotice';
-import OverviewTable from '../components/overviewTable/OverviewTable';
-import SymbolHeader from '../components/SymbolHeader';
-import PageContent from '../containers/PageContent';
-import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer';
+import { Navigate, useParams } from 'react-router';
+import BetaNotice from '../components/BetaNotice.js';
+import EventCard from '../components/cards/EventCard.js';
+import MethodCard from '../components/cards/MethodCard.js';
+import PropertyCard from '../components/cards/PropertyCard.js';
+import DeprecationNotice from '../components/DeprecationNotice.js';
+import OverviewTable from '../components/overviewTable/OverviewTable.js';
+import SymbolHeader from '../components/SymbolHeader.js';
+import PageContent from '../containers/PageContent.js';
+import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer.js';
 import type {
 	AccessorReferenceNode,
 	CallSignatureReferenceNode,
@@ -16,13 +16,13 @@ import type {
 	ConstructorReferenceNode,
 	MethodReferenceNode,
 	PropertyReferenceNode
-} from '../reference';
-import { partition } from '../tools/ArrayTools';
-import { getPageType, getTag, hasTag } from '../tools/CodeTools';
-import MarkdownParser from '../tools/markdown/MarkdownParser';
-import { checkVisibility, defaultNodeSort } from '../tools/NodeTools';
-import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools';
-import { getPackagePath } from '../tools/StringTools';
+} from '../reference/index.js';
+import { partition } from '../tools/ArrayTools.js';
+import { getPageType, getTag, hasTag } from '../tools/CodeTools.js';
+import MarkdownParser from '../tools/markdown/MarkdownParser.js';
+import { checkVisibility, defaultNodeSort } from '../tools/NodeTools.js';
+import { filterChildrenByMember, findSymbolByMember } from '../tools/ReferenceTools.js';
+import { getPackagePath } from '../tools/StringTools.js';
 
 interface ClassPageRouteParams extends PackageContainerRouteParams {
 	name: string;

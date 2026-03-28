@@ -1,20 +1,20 @@
 import assert from 'assert';
 import ts from 'typescript';
-import type { AnalyzeContext } from './AnalyzeContext';
-import { arrayTypeReflector } from './types/ArrayType';
-import { functionTypeReflector } from './types/FunctionType';
-import { intersectionTypeReflector } from './types/IntersectionType';
-import { IntrinsicType, intrinsicTypeReflector } from './types/IntrinsicType';
-import { literalTypeReflector } from './types/LiteralType';
-import { namedTupleElementReflector } from './types/NamedTupleElementType';
-import { objectLiteralTypeReflector } from './types/ObjectLiteralType';
-import { optionalTypeReflector } from './types/OptionalType';
-import { exprWithTypeArgsReflector, importTypeReflector, referenceTypeReflector } from './types/ReferenceType';
-import { tupleTypeReflector } from './types/TupleType';
-import type { Type } from './types/Type';
-import { typeOperatorTypeReflector } from './types/TypeOperatorType';
-import { unionTypeReflector } from './types/UnionType';
-import { UnknownType } from './types/UnknownType';
+import type { AnalyzeContext } from './AnalyzeContext.js';
+import { arrayTypeReflector } from './types/ArrayType.js';
+import { functionTypeReflector } from './types/FunctionType.js';
+import { intersectionTypeReflector } from './types/IntersectionType.js';
+import { IntrinsicType, intrinsicTypeReflector } from './types/IntrinsicType.js';
+import { literalTypeReflector } from './types/LiteralType.js';
+import { namedTupleElementReflector } from './types/NamedTupleElementType.js';
+import { objectLiteralTypeReflector } from './types/ObjectLiteralType.js';
+import { optionalTypeReflector } from './types/OptionalType.js';
+import { exprWithTypeArgsReflector, importTypeReflector, referenceTypeReflector } from './types/ReferenceType.js';
+import { tupleTypeReflector } from './types/TupleType.js';
+import type { Type } from './types/Type.js';
+import { typeOperatorTypeReflector } from './types/TypeOperatorType.js';
+import { unionTypeReflector } from './types/UnionType.js';
+import { UnknownType } from './types/UnknownType.js';
 
 export interface TypeReflector<NodeType extends ts.TypeNode = ts.TypeNode, TypeType extends ts.Type = ts.Type> {
 	kinds: Array<NodeType['kind']>;

@@ -1,8 +1,8 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import type { CallSignatureReferenceNode } from '../reference';
-import { useAsyncType } from '../tools/NodeTools';
-import Type from './codeBuilders/Type';
+import type { CallSignatureReferenceNode } from '../reference/index.js';
+import { useAsyncType } from '../tools/NodeTools.js';
+import Type from './codeBuilders/Type.js';
 
 interface FunctionReturnTypeProps {
 	signature: CallSignatureReferenceNode;

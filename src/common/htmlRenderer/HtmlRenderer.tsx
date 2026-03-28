@@ -3,15 +3,14 @@ import { ServerStyleSheets, ThemeProvider } from '@mui/styles';
 import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server';
-import type { ArticleContent } from '../components/PageArticle';
-import { PageArticleContext } from '../components/PageArticle';
-import { ConfigContext } from '../config';
-import type { Config } from '../config/Config';
-import App from '../containers/App';
-import theme from '../theme';
-import type RouterMode from './RouterMode';
-import StaticRouterWithSuffix from './StaticRouterWithSuffix';
+import { StaticRouter } from 'react-router';
+import { type ArticleContent, PageArticleContext } from '../components/PageArticle.js';
+import type { Config } from '../config/Config.js';
+import { ConfigContext } from '../config/index.js';
+import App from '../containers/App.js';
+import theme from '../theme.js';
+import type RouterMode from './RouterMode.js';
+import StaticRouterWithSuffix from './StaticRouterWithSuffix.js';
 
 const insertIntoSkeleton = (html: string, css: string, baseUrl: string, config: Config) =>
 	`<!doctype html>

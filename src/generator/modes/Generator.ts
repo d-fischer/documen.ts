@@ -1,10 +1,10 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { PackageJson } from 'type-fest';
-import type { Config } from '../../common/config/Config';
-import type Paths from '../../common/Paths';
-import type { SerializedProject } from '../../common/reference';
-import { Project } from '../analyzer/Project';
+import type { Config } from '../../common/config/Config.js';
+import type Paths from '../../common/Paths.js';
+import type { SerializedProject } from '../../common/reference/index.js';
+import { Project } from '../analyzer/Project.js';
 
 export type GeneratorProgressCallback = (progress: number, total: number) => void;
 

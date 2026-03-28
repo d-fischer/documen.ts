@@ -2,20 +2,20 @@ import assert from 'assert';
 import path from 'path';
 import type { PackageJson } from 'type-fest';
 import * as ts from 'typescript';
-import type { Config } from '../../common/config/Config';
+import type { Config } from '../../common/config/Config.js';
 import type {
 	ExternalPackageReference,
 	ReferenceLocation,
 	SerializedPackage,
 	SerializedProject
-} from '../../common/reference';
-import { parseConfig } from '../../common/tools/ConfigTools';
-import { AnalyzeContext } from './AnalyzeContext';
-import { createReflection } from './createReflection';
-import type { Reflection } from './reflections/Reflection';
-import type { SymbolBasedReflection } from './reflections/SymbolBasedReflection';
-import type { ReferenceType } from './types/ReferenceType';
-import { nodeToSymbol } from './util/symbols';
+} from '../../common/reference/index.js';
+import { parseConfig } from '../../common/tools/ConfigTools.js';
+import { AnalyzeContext } from './AnalyzeContext.js';
+import { createReflection } from './createReflection.js';
+import type { Reflection } from './reflections/Reflection.js';
+import type { SymbolBasedReflection } from './reflections/SymbolBasedReflection.js';
+import type { ReferenceType } from './types/ReferenceType.js';
+import { nodeToSymbol } from './util/symbols.js';
 
 interface PackageJsonDocumentation {
 	generator: string;

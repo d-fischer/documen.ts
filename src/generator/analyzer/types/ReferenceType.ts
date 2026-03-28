@@ -1,12 +1,12 @@
 import assert from 'assert';
 import ts, { SyntaxKind } from 'typescript';
-import type { ExternalPackageReference, ReferenceReferenceType } from '../../../common/reference';
-import { findSourceMappedId } from '../createReflection';
-import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
-import { resolvePromiseArray } from '../util/promises';
-import { resolveAliasesForSymbol } from '../util/symbols';
-import { ArrayType } from './ArrayType';
-import { Type } from './Type';
+import type { ExternalPackageReference, ReferenceReferenceType } from '../../../common/reference/index.js';
+import { findSourceMappedId } from '../createReflection.js';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType.js';
+import { resolvePromiseArray } from '../util/promises.js';
+import { resolveAliasesForSymbol } from '../util/symbols.js';
+import { ArrayType } from './ArrayType.js';
+import { Type } from './Type.js';
 
 export class ReferenceType extends Type {
 	constructor(

@@ -2,10 +2,10 @@ import { faExternalLink } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../../reference';
-import { createExternalLink } from '../../tools/CodeTools';
-import TypeLink from '../TypeLink';
-import Type from './Type';
+import type { ReferenceNode, ReferenceReferenceType, ReferenceType } from '../../reference/index.js';
+import { createExternalLink } from '../../tools/CodeTools.js';
+import TypeLink from '../TypeLink.js';
+import Type from './Type.js';
 
 interface ReferenceTypeProps {
 	isOptional: boolean;

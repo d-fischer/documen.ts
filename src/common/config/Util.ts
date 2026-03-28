@@ -1,4 +1,4 @@
-import { Config } from './Config';
+import { Config } from './Config.js';
 import { ExpectedError } from 'clime';
 
 export function getConfigValue<K extends keyof Config>(config: Config | null, key: K): NonNullable<Config[K]> | null;

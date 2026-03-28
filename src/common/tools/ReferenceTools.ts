@@ -4,9 +4,9 @@ import reference, {
 	type InterfaceReferenceNode,
 	type ReferenceNode,
 	type TypeLiteralReferenceNode
-} from '../reference';
-import { filterByMember, findByMember } from './ArrayTools';
-import { checkVisibility } from './NodeTools';
+} from '../reference/index.js';
+import { filterByMember, findByMember } from './ArrayTools.js';
+import { checkVisibility } from './NodeTools.js';
 
 interface SymbolDefinition<T extends ReferenceNode> {
 	symbol: T;

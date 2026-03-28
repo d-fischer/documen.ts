@@ -1,19 +1,19 @@
 import React from 'react';
-import { Navigate, useParams } from 'react-router-dom';
-import BetaNotice from '../components/BetaNotice';
-import { FunctionCardHeader } from '../components/cards/FunctionCardHeader';
-import DeprecationNotice from '../components/DeprecationNotice';
-import FunctionParamDesc from '../components/FunctionParamDesc';
-import { FunctionReturnType } from '../components/FunctionReturnType';
-import SymbolHeader from '../components/SymbolHeader';
-import Card from '../containers/Card';
-import PageContent from '../containers/PageContent';
-import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer';
-import type { FunctionReferenceNode } from '../reference';
-import { getPageType, getTag, hasTag } from '../tools/CodeTools';
-import MarkdownParser from '../tools/markdown/MarkdownParser';
-import { findSymbolByMember } from '../tools/ReferenceTools';
-import { getPackagePath } from '../tools/StringTools';
+import { Navigate, useParams } from 'react-router';
+import BetaNotice from '../components/BetaNotice.js';
+import { FunctionCardHeader } from '../components/cards/FunctionCardHeader.js';
+import DeprecationNotice from '../components/DeprecationNotice.js';
+import FunctionParamDesc from '../components/FunctionParamDesc.js';
+import { FunctionReturnType } from '../components/FunctionReturnType.js';
+import SymbolHeader from '../components/SymbolHeader.js';
+import Card from '../containers/Card.js';
+import PageContent from '../containers/PageContent.js';
+import type { PackageContainerRouteParams } from '../containers/ReferencePackageContainer.js';
+import type { FunctionReferenceNode } from '../reference/index.js';
+import { getPageType, getTag, hasTag } from '../tools/CodeTools.js';
+import MarkdownParser from '../tools/markdown/MarkdownParser.js';
+import { findSymbolByMember } from '../tools/ReferenceTools.js';
+import { getPackagePath } from '../tools/StringTools.js';
 
 interface FunctionPageRouteParams extends PackageContainerRouteParams {
 	name: string;

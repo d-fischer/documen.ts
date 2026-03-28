@@ -4,6 +4,7 @@ module.exports = {
 	rules: {
 		'filenames/match-exported': 'off',
 		'react/prop-types': 'off',
+		'react/react-in-jsx-scope': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'@typescript-eslint/naming-convention': 'off',
 		'jsdoc/check-tag-names': [

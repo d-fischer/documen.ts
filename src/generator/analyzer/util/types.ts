@@ -1,6 +1,6 @@
-import { IntrinsicType } from '../types/IntrinsicType';
-import type { Type } from '../types/Type';
-import { UnionType } from '../types/UnionType';
+import { IntrinsicType } from '../types/IntrinsicType.js';
+import type { Type } from '../types/Type.js';
+import { UnionType } from '../types/UnionType.js';
 
 export function removeUndefined(type: Type) {
 	if (type instanceof UnionType) {

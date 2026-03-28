@@ -1,5 +1,5 @@
-import type { ReferenceComment, ReferenceCommentTag } from '../../common/reference';
-import { DocCommentTag } from './DocCommentTag';
+import type { ReferenceComment, ReferenceCommentTag } from '../../common/reference/index.js';
+import { DocCommentTag } from './DocCommentTag.js';
 
 export class DocComment {
 	static parse(str: string): DocComment {

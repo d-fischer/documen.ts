@@ -1,8 +1,8 @@
 import assert from 'assert';
 import ts from 'typescript';
-import type { ArrayReferenceType } from '../../../common/reference';
-import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType';
-import { Type } from './Type';
+import type { ArrayReferenceType } from '../../../common/reference/index.js';
+import { createTypeFromNode, createTypeFromTsType, type TypeReflector } from '../createType.js';
+import { Type } from './Type.js';
 
 export class ArrayType extends Type {
 	constructor(private readonly _element: Type) {

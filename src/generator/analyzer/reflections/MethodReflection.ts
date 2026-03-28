@@ -1,12 +1,12 @@
 import assert from 'assert';
 import * as ts from 'typescript';
-import type { CallSignatureReferenceNode, MethodReferenceNode } from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import type { ReferenceType } from '../types/ReferenceType';
-import { getReflectedCallSignatures } from '../util/functions';
-import { handleInheritance } from '../util/inheritance';
-import { SignatureReflection } from './SignatureReflection';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
+import type { CallSignatureReferenceNode, MethodReferenceNode } from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import type { ReferenceType } from '../types/ReferenceType.js';
+import { getReflectedCallSignatures } from '../util/functions.js';
+import { handleInheritance } from '../util/inheritance.js';
+import { SignatureReflection } from './SignatureReflection.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
 
 export class MethodReflection extends SymbolBasedReflection {
 	signatures!: SignatureReflection[];

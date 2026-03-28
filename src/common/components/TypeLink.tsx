@@ -1,10 +1,10 @@
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import type { ReferenceNode } from '../reference';
-import { getPageType } from '../tools/CodeTools';
-import { findSymbolByMember } from '../tools/ReferenceTools';
-import { getPackagePath } from '../tools/StringTools';
+import { Link } from 'react-router';
+import type { ReferenceNode } from '../reference/index.js';
+import { getPageType } from '../tools/CodeTools.js';
+import { findSymbolByMember } from '../tools/ReferenceTools.js';
+import { getPackagePath } from '../tools/StringTools.js';
 
 interface TypeLinkProps {
 	id?: number;
@@ -31,8 +31,7 @@ const TypeLink: React.FC<React.PropsWithChildren<TypeLinkProps>> = ({ id, name, 
 	if (!symbol) {
 		const symbolDef = id ? findSymbolByMember('id', id) : findSymbolByMember('name', name);
 		if (symbolDef) {
-			symbol = symbolDef.symbol;
-			packageName = symbolDef.packageName;
+			({ symbol, packageName } = symbolDef);
 		}
 	}
 

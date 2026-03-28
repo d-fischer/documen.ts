@@ -1,12 +1,12 @@
 import { groupBy } from '@d-fischer/shared-utils';
 import { makeStyles } from '@mui/styles';
 import React, { useContext, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
-import NavMenu from '../components/NavMenu';
-import NavMenuGroup from '../components/NavMenuGroup';
-import NavMenuItem from '../components/NavMenuItem';
-import { ConfigContext } from '../config';
+import NavMenu from '../components/NavMenu.js';
+import NavMenuGroup from '../components/NavMenuGroup.js';
+import NavMenuItem from '../components/NavMenuItem.js';
+import { ConfigContext } from '../config/index.js';
 import type {
 	ClassReferenceNode,
 	EnumReferenceNode,
@@ -14,13 +14,13 @@ import type {
 	InterfaceReferenceNode,
 	ReferenceNode,
 	TypeAliasReferenceNode
-} from '../reference';
-import { partition } from '../tools/ArrayTools';
-import { getPageType } from '../tools/CodeTools';
-import { checkVisibility, defaultNodeSort, getNodeMeta } from '../tools/NodeTools';
-import { getPackageRoot } from '../tools/ReferenceTools';
-import { getPackagePath } from '../tools/StringTools';
-import PageSwitch from './PageSwitch';
+} from '../reference/index.js';
+import { partition } from '../tools/ArrayTools.js';
+import { getPageType } from '../tools/CodeTools.js';
+import { checkVisibility, defaultNodeSort, getNodeMeta } from '../tools/NodeTools.js';
+import { getPackageRoot } from '../tools/ReferenceTools.js';
+import { getPackagePath } from '../tools/StringTools.js';
+import PageSwitch from './PageSwitch.js';
 
 const useStyles = makeStyles(
 	{
@@ -111,7 +111,7 @@ export const ReferencePackageContainer: React.FC = () => {
 			<NavMenu className={classes.nav}>
 				{filledReferenceCategories?.map(cat => (
 					<NavMenuGroup key={cat.name} title={cat.title}>
-						{nodesByCategory[cat.name]!.map(node => (
+						{nodesByCategory[cat.name].map(node => (
 							<NavMenuItem
 								key={node.id}
 								path={`/reference${pkgPath}/${getPageType(node)}/${node.name}`}

@@ -3,12 +3,12 @@ import type {
 	AccessorReferenceNode,
 	GetSignatureReferenceNode,
 	SetSignatureReferenceNode
-} from '../../../common/reference';
-import type { AnalyzeContext } from '../AnalyzeContext';
-import type { ReferenceType } from '../types/ReferenceType';
-import { handleInheritance } from '../util/inheritance';
-import { SignatureReflection } from './SignatureReflection';
-import { SymbolBasedReflection } from './SymbolBasedReflection';
+} from '../../../common/reference/index.js';
+import type { AnalyzeContext } from '../AnalyzeContext.js';
+import type { ReferenceType } from '../types/ReferenceType.js';
+import { handleInheritance } from '../util/inheritance.js';
+import { SignatureReflection } from './SignatureReflection.js';
+import { SymbolBasedReflection } from './SymbolBasedReflection.js';
 
 export class AccessorReflection extends SymbolBasedReflection {
 	private _getSignature?: SignatureReflection;

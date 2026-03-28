@@ -3,14 +3,13 @@ import js from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/java
 import json from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/json';
 import ts from '@d-fischer/react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import { ThemeProvider } from '@mui/styles';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, HashRouter } from 'react-router';
 
-import App from '../common/containers/App';
-import theme from '../common/theme';
+import App from '../common/containers/App.js';
+import theme from '../common/theme.js';
 
-import registerServiceWorker from './registerServiceWorker';
+import registerServiceWorker from './registerServiceWorker.js';
 
 const Router = process.env.SUPPORTS_DYNAMIC_ROUTING ? BrowserRouter : HashRouter;
 
@@ -20,13 +19,14 @@ SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('typescript', ts);
 SyntaxHighlighter.registerLanguage('ts', ts);
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('app-root'));
+
+root.render(
 	<ThemeProvider theme={theme}>
 		<Router>
 			<App />
 		</Router>
-	</ThemeProvider>,
-	document.getElementById('app-root')
+	</ThemeProvider>
 );
 
 // eslint-disable-next-line no-console
