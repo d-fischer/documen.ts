@@ -1,4 +1,5 @@
 import assert from 'assert';
+import fs from 'fs';
 import path from 'path';
 import type { PackageJson } from 'type-fest';
 import * as ts from 'typescript';
@@ -196,9 +197,9 @@ export class Project {
 				packagePathName = path.join(packagePathName, scopedName);
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires
-			const packageJson = require(path.join(nodeModulesPath, packagePathName, 'package.json')) as PackageJson;
-
+			const packageJson = JSON.parse(
+				fs.readFileSync(path.join(nodeModulesPath, packagePathName, 'package.json'), 'utf-8')
+			) as PackageJson;
 			if ('documentation' in packageJson) {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const documentation = packageJson.documentation as any as PackageJsonDocumentation;
