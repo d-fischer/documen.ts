@@ -80,21 +80,17 @@ const MarkdownParser: React.FC<MarkdownParserProps> = ({ source }) => {
 	const components = useMemo(
 		() => ({
 			/* eslint-disable @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call */
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			a: function MdLink(mdProps: any) {
-				const props = {
-					key: mdProps.nodeKey,
-					className: mdProps.className
-				};
-
 				if (mdProps.href.startsWith('/')) {
 					return (
-						<Link {...props} className={classNames(props.className, classes.link)} to={mdProps.href}>
+						<Link key={mdProps.nodeKey} className={classNames(mdProps.className, classes.link)} to={mdProps.href}>
 							{mdProps.children}
 						</Link>
 					);
 				}
 				return (
-					<a className={classes.link} href={mdProps.href}>
+					<a key={mdProps.nodeKey} className={classNames(mdProps.className, classes.link)} href={mdProps.href}>
 						{mdProps.children}
 					</a>
 				);
